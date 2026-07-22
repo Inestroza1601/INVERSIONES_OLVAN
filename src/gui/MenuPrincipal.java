@@ -1,0 +1,263 @@
+package gui;
+
+import com.formdev.flatlaf.FlatLightLaf;
+import javax.swing.*;
+import java.awt.*;
+
+public class MenuPrincipal extends JFrame {
+
+    private JPanel panelCentral;
+    private JPanel panelLateralIzquierdo;
+    private JButton btnAdministracion;
+    private JButton btnInventario;
+    private JButton btnClientes;
+    private JButton btnPuntoVenta;
+    private JButton btnGarantias;
+    private JButton btnCerrarSesion;
+    private JButton botonActivo = null;
+    private JButton btnEstadisticas;
+    
+    // --- PALETA DE COLORES "SOFT LIGHT" INVERSIONES OLVAN ---
+    // Gris nube: Relaja la vista pero mantiene el estilo claro
+    private final Color COLOR_FONDO_PRINCIPAL = new Color(240, 242, 245); 
+    private final Color COLOR_TEXTO_MENU = new Color(85, 85, 85); // Gris oscuro para no usar negro puro
+    
+    // Tonos de acento
+    private final Color COLOR_VERDE_MENTA = new Color(39, 174, 96); // Menta ligeramente más oscuro para legibilidad en fondo claro
+    private final Color COLOR_VERDE_CLARO = new Color(46, 204, 113, 25); // Hover súper sutil
+    private final Color COLOR_ROJO_LOGO = new Color(227, 0, 15); 
+    private final Color COLOR_ROJO_CLARO = new Color(227, 0, 15, 20); 
+    
+    private final Color COLOR_BORDE_LATERAL = new Color(220, 222, 225); // Borde suave
+
+    public MenuPrincipal() {
+        setTitle("ORION SYSTEMS - CONEXION A TU ALCANCE");
+        try {
+            java.net.URL imgURL = getClass().getResource("/image/logo.png");
+            if (imgURL != null) {
+                setIconImage(new javax.swing.ImageIcon(imgURL).getImage());
+            }
+        } catch (Exception e) {
+            System.err.println("No se pudo cargar el logo: " + e.getMessage());
+        }
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setSize(1024, 768);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(COLOR_FONDO_PRINCIPAL);
+
+        // Panel Lateral
+        panelLateralIzquierdo = new JPanel();
+        panelLateralIzquierdo.setLayout(new BoxLayout(panelLateralIzquierdo, BoxLayout.Y_AXIS)); 
+        panelLateralIzquierdo.setPreferredSize(new Dimension(240, 0));
+        panelLateralIzquierdo.setBackground(COLOR_FONDO_PRINCIPAL);
+        
+        panelLateralIzquierdo.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 0, 1, COLOR_BORDE_LATERAL), 
+            BorderFactory.createEmptyBorder(40, 0, 40, 0) 
+        ));
+
+        JLabel lblMenu = new JLabel("MENÚ PRINCIPAL");
+        lblMenu.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        lblMenu.setForeground(new Color(140, 145, 150)); 
+        lblMenu.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblMenu.setBorder(BorderFactory.createEmptyBorder(0, 25, 20, 0)); 
+        
+        // Botones
+        btnAdministracion = crearBotonWeb("Administración", new IconoMenu(1), false);
+        btnClientes = crearBotonWeb("Clientes", new IconoMenu(2), false);
+        btnInventario = crearBotonWeb("Inventario", new IconoMenu(3), false);
+        btnPuntoVenta = crearBotonWeb("Punto de Venta", new IconoMenu(4), false);
+        btnGarantias = crearBotonWeb("Garantías", new IconoMenu(5), false);
+        btnEstadisticas = crearBotonWeb("Estadísticas", new IconoMenu(7), false);
+        btnCerrarSesion = crearBotonWeb("Salir del Sistema", new IconoMenu(6), true);
+
+        panelLateralIzquierdo.add(lblMenu);
+        panelLateralIzquierdo.add(Box.createVerticalStrut(30)); 
+        panelLateralIzquierdo.add(btnAdministracion);
+        panelLateralIzquierdo.add(Box.createVerticalStrut(15)); 
+        panelLateralIzquierdo.add(btnClientes);
+        panelLateralIzquierdo.add(Box.createVerticalStrut(15)); 
+        panelLateralIzquierdo.add(btnInventario);     
+        panelLateralIzquierdo.add(Box.createVerticalStrut(15)); 
+        panelLateralIzquierdo.add(btnPuntoVenta);
+        panelLateralIzquierdo.add(Box.createVerticalStrut(15)); 
+        panelLateralIzquierdo.add(btnGarantias); 
+        panelLateralIzquierdo.add(Box.createVerticalStrut(15));
+        panelLateralIzquierdo.add(btnEstadisticas);         
+        
+        panelLateralIzquierdo.add(Box.createVerticalGlue());     
+        panelLateralIzquierdo.add(btnCerrarSesion);
+        
+        // Panel Central
+        panelCentral = new JPanel();
+        panelCentral.setLayout(new BorderLayout());
+        panelCentral.setBackground(COLOR_FONDO_PRINCIPAL); 
+        panelCentral.add(new PanelEstadisticas(), BorderLayout.CENTER);
+        marcarBotonActivo(btnEstadisticas, false);
+
+        add(panelLateralIzquierdo, BorderLayout.WEST); 
+        add(panelCentral, BorderLayout.CENTER);
+
+        // Eventos
+        btnAdministracion.addActionListener(e -> mostrarPanelHijo(new PanelAdministracion()));
+        btnClientes.addActionListener(e -> mostrarPanelHijo(new PanelGestionClientes()));
+        btnInventario.addActionListener(e -> mostrarPanelHijo(new PanelInventario()));
+        btnPuntoVenta.addActionListener(e -> mostrarPanelHijo(new PanelPuntoVenta()));
+        btnGarantias.addActionListener(e -> mostrarPanelHijo(new PanelGestionGarantias()));
+        btnCerrarSesion.addActionListener(e -> System.exit(0));
+        btnEstadisticas.addActionListener(e -> mostrarPanelHijo(new PanelEstadisticas()));
+    }
+
+    public void mostrarPanelHijo(JPanel nuevoPanel) {
+        panelCentral.removeAll(); 
+        nuevoPanel.setBackground(COLOR_FONDO_PRINCIPAL); 
+        panelCentral.add(nuevoPanel, BorderLayout.CENTER); 
+        panelCentral.revalidate(); 
+        panelCentral.repaint(); 
+    }
+
+    public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(new FlatLightLaf()); // Volvemos al tema claro base
+        } catch (Exception ex) {
+            System.err.println("Error al inicializar FlatLaf: " + ex.getMessage());
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            MenuPrincipal menu = new MenuPrincipal();
+            menu.setVisible(true);
+        });
+    }
+    
+    private JButton crearBotonWeb(String texto, Icon icono, boolean esPeligro) {
+        JButton boton = new JButton(texto); 
+        
+        boton.setIcon(icono);
+        boton.setIconTextGap(15); 
+        
+        boton.setPreferredSize(new Dimension(Integer.MAX_VALUE, 55));
+        boton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 55));
+        boton.setFont(new Font("Segoe UI", Font.BOLD, 14)); 
+        
+        boton.setBackground(COLOR_FONDO_PRINCIPAL);
+        boton.setForeground(COLOR_TEXTO_MENU); 
+        boton.setFocusPainted(false);
+        boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        boton.setHorizontalAlignment(SwingConstants.LEFT); 
+        boton.setAlignmentX(Component.LEFT_ALIGNMENT); 
+        
+        javax.swing.border.Border bordeNormal = BorderFactory.createEmptyBorder(0, 25, 0, 0);
+        boton.setBorder(bordeNormal);
+        boton.putClientProperty("JButton.buttonType", "borderless");
+
+        Color colorFondoHover = esPeligro ? COLOR_ROJO_CLARO : COLOR_VERDE_CLARO;
+        Color colorLineaLateral = esPeligro ? COLOR_ROJO_LOGO : COLOR_VERDE_MENTA; 
+        Color colorTextoHover = esPeligro ? COLOR_ROJO_LOGO : COLOR_VERDE_MENTA;
+        
+        javax.swing.border.Border bordeHover = BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 5, 0, 0, colorLineaLateral),
+            BorderFactory.createEmptyBorder(0, 20, 0, 0) 
+        );
+
+        boton.addActionListener(e -> marcarBotonActivo(boton, esPeligro));
+
+        boton.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                if (boton != botonActivo) {
+                    boton.setBackground(colorFondoHover);
+                    boton.setForeground(colorTextoHover); 
+                    boton.setBorder(bordeHover);      
+                }
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                if (boton != botonActivo) {
+                    boton.setBackground(COLOR_FONDO_PRINCIPAL);
+                    boton.setForeground(COLOR_TEXTO_MENU);
+                    boton.setBorder(bordeNormal);     
+                }
+            }
+        });
+
+        return boton;
+    }
+    
+    private class IconoMenu implements Icon {
+        private int tipo;
+        public IconoMenu(int tipo) { this.tipo = tipo; }
+
+        @Override public int getIconWidth() { return 22; }
+        @Override public int getIconHeight() { return 22; }
+
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            
+            g2.setColor(c.getForeground()); 
+            g2.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+
+            switch(tipo) {
+                case 1: 
+                   g2.drawLine(x+2, y+7, x+20, y+7); g2.drawOval(x+14, y+4, 4, 5);
+                   g2.drawLine(x+2, y+15, x+20, y+15); g2.drawOval(x+4, y+12, 4, 5);
+                   break;
+                case 2: 
+                   g2.drawOval(x+7, y+2, 8, 8);
+                   g2.drawArc(x+2, y+10, 18, 14, 0, 180);
+                   break;
+                case 3: 
+                   g2.drawRect(x+3, y+5, 16, 13);
+                   g2.drawLine(x+3, y+10, x+19, y+10);
+                   g2.drawLine(x+11, y+10, x+11, y+18);
+                   break;
+                case 4: 
+                   g2.drawPolygon(new int[]{x+3, x+11, x+19, x+11}, new int[]{y+11, y+3, y+11, y+19}, 4);
+                   g2.drawOval(x+7, y+10, 2, 2);
+                   break;
+                case 5: 
+                   g2.drawPolygon(new int[]{x+3, x+19, x+19, x+11, x+3}, new int[]{y+3, y+3, y+11, y+19, y+11}, 5);
+                   g2.drawLine(x+8, y+10, x+11, y+13);
+                   g2.drawLine(x+11, y+13, x+15, y+7);
+                   break;
+                case 6: 
+                   g2.drawArc(x+4, y+4, 14, 14, -240, 300);
+                   g2.drawLine(x+11, y+2, x+11, y+10);
+                   break;
+                case 7: 
+                   g2.drawLine(x+2, y+19, x+20, y+19); 
+                   g2.fillRect(x+4, y+10, 3, 9);       
+                   g2.fillRect(x+10, y+4, 3, 15);      
+                   g2.fillRect(x+16, y+13, 3, 6);      
+                   break;
+            }
+            g2.dispose();
+        }
+    }
+    
+    private void marcarBotonActivo(JButton botonSeleccionado, boolean esPeligro) {
+        if (botonActivo != null && botonActivo != botonSeleccionado) {
+            botonActivo.setBackground(COLOR_FONDO_PRINCIPAL);
+            botonActivo.setForeground(COLOR_TEXTO_MENU);
+            botonActivo.setBorder(BorderFactory.createEmptyBorder(0, 25, 0, 0));
+        }
+
+        botonActivo = botonSeleccionado;
+        
+        Color colorFondoHover = esPeligro ? COLOR_ROJO_CLARO : COLOR_VERDE_CLARO;
+        Color colorLineaLateral = esPeligro ? COLOR_ROJO_LOGO : COLOR_VERDE_MENTA; 
+        Color colorTextoActivo = esPeligro ? COLOR_ROJO_LOGO : COLOR_VERDE_MENTA;
+        
+        botonActivo.setBackground(colorFondoHover);
+        botonActivo.setForeground(colorTextoActivo); 
+        botonActivo.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 5, 0, 0, colorLineaLateral),
+            BorderFactory.createEmptyBorder(0, 20, 0, 0) 
+        ));
+    }
+}

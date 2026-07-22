@@ -1,0 +1,739 @@
+package utilidades;
+
+import modelo.Empresa;
+import javax.swing.*;
+import java.awt.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import com.itextpdf.text.Phrase;
+
+// Importaciones de iTextPDF para generar y dibujar el documento
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfTemplate;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.BaseColor;
+import java.io.FileOutputStream;
+
+public class GeneradorTickets {
+
+    /**
+     * Construye la vista previa del ticket para la interfaz gráfica.
+     * Ahora estructurado exactamente igual que el PDF generado.
+     */
+    /**
+     * VISTA PREVIA EDITABLE: Usado exclusivamente por PanelConfiguracionImpresion
+     * para mostrar datos ficticios y permitir editar el pie de página.
+     */
+   /**
+     * VISTA PREVIA EDITABLE: Usado exclusivamente por PanelConfiguracionImpresion
+     * para mostrar datos ficticios y permitir editar el pie de página.
+     */
+    /**
+     * VISTA PREVIA EDITABLE: Usado exclusivamente por PanelConfiguracionImpresion
+     * para mostrar datos ficticios y permitir editar el pie de página.
+     */
+    public static JPanel crearTicketVistaPrevia(String tituloDocumento, JTextArea txtAreaEditable) {
+        JPanel panelCentrador = new JPanel(new GridBagLayout());
+        panelCentrador.setBackground(new Color(30, 30, 30)); 
+
+        JPanel pnlTicket = new JPanel();
+        pnlTicket.setLayout(new BoxLayout(pnlTicket, BoxLayout.Y_AXIS));
+        pnlTicket.setBackground(Color.WHITE);
+        pnlTicket.setPreferredSize(new Dimension(300, 600));
+        pnlTicket.setMinimumSize(new Dimension(300, 600));
+        pnlTicket.setMaximumSize(new Dimension(300, 600));
+
+        pnlTicket.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
+            BorderFactory.createEmptyBorder(20, 15, 20, 15)
+        ));
+
+        Font fBold = new Font("Courier New", Font.BOLD, 13);
+        Font fNormal = new Font("Courier New", Font.PLAIN, 12);
+        Font fTitulo = new Font("Courier New", Font.BOLD, 16);
+
+        modelo.Empresa emp = utilidades.SesionGlobal.getEmpresaActual();
+        
+        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORION STORE";
+        String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
+        String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
+        
+        pnlTicket.add(crearLabelCentrado(empNombre, fTitulo, Color.BLACK));
+        pnlTicket.add(Box.createVerticalStrut(5));
+        
+        if (!empDueño.isEmpty()) pnlTicket.add(crearLabelCentrado(empDueño, fBold, Color.DARK_GRAY));
+        pnlTicket.add(crearLabelCentrado(empRtn, fBold, Color.DARK_GRAY));
+        pnlTicket.add(Box.createVerticalStrut(10));
+
+        if (emp != null) {
+            if (emp.getDireccionEmpresa() != null && !emp.getDireccionEmpresa().isEmpty()) pnlTicket.add(crearLabelConIcono("dir", emp.getDireccionEmpresa(), fNormal, Color.BLACK));
+            if (emp.getNumeroTelefono() != null && !emp.getNumeroTelefono().isEmpty()) pnlTicket.add(crearLabelConIcono("tel", emp.getNumeroTelefono(), fNormal, Color.BLACK));
+            if (emp.getTelefonoSecundario() != null && !emp.getTelefonoSecundario().isEmpty()) pnlTicket.add(crearLabelConIcono("tel", emp.getTelefonoSecundario(), fNormal, Color.BLACK));
+            if (emp.getWhatsapp() != null && !emp.getWhatsapp().isEmpty()) pnlTicket.add(crearLabelConIcono("wa", emp.getWhatsapp(), fNormal, Color.BLACK));
+            if (emp.getFacebook() != null && !emp.getFacebook().isEmpty()) pnlTicket.add(crearLabelConIcono("fb", emp.getFacebook(), fNormal, Color.BLACK));
+            if (emp.getEmail() != null && !emp.getEmail().isEmpty()) pnlTicket.add(crearLabelConIcono("mail", emp.getEmail(), fNormal, Color.BLACK));
+            if (emp.getWeb() != null && !emp.getWeb().isEmpty()) pnlTicket.add(crearLabelConIcono("web", emp.getWeb(), fNormal, Color.BLACK));
+        }
+        
+        pnlTicket.add(Box.createVerticalStrut(10));
+        pnlTicket.add(crearLabelCentrado(tituloDocumento, fBold, Color.BLACK));
+        pnlTicket.add(Box.createVerticalStrut(10));
+
+        pnlTicket.add(crearLabelCentrado("Cliente: CONSUMIDOR FINAL", fNormal, Color.BLACK));
+        pnlTicket.add(crearLabelCentrado("Fecha: 01/01/2026 12:00", fNormal, Color.BLACK));
+        pnlTicket.add(crearLabelCentrado("Pago via: Efectivo", fNormal, Color.BLACK));
+        pnlTicket.add(crearLabelCentrado("-------------------------------", fNormal, Color.BLACK));
+        pnlTicket.add(crearLabelCentrado("C. DESCRIPCION        TOTAL", fNormal, Color.BLACK));
+        pnlTicket.add(crearLabelCentrado("-------------------------------", fNormal, Color.BLACK));
+        pnlTicket.add(crearLabelCentrado("1  Reemplazo LCD     1500.00", fNormal, Color.BLACK));
+        pnlTicket.add(crearLabelCentrado("   S/N: 35848291039384", fNormal, Color.DARK_GRAY));
+        pnlTicket.add(crearLabelCentrado("   Gtia: 30 dias (Vence 31/01)", fNormal, Color.DARK_GRAY));
+        pnlTicket.add(crearLabelCentrado("1  Mantenimiento      500.00", fNormal, Color.BLACK));
+        pnlTicket.add(crearLabelCentrado("-------------------------------", fNormal, Color.BLACK));
+        
+        JPanel pnlTotales = new JPanel(new GridLayout(3, 1));
+        pnlTotales.setOpaque(false);
+        pnlTotales.add(crearLabelAlineadoDer("SUBTOTAL: L  1739.13", fBold));
+        pnlTotales.add(crearLabelAlineadoDer("I.S.V (15%): L   260.87", fBold));
+        pnlTotales.add(crearLabelAlineadoDer("TOTAL A PAGAR: L  2000.00", fBold));
+        
+        pnlTotales.setMaximumSize(new Dimension(250, 60));
+        pnlTicket.add(pnlTotales);
+        
+        pnlTicket.add(crearLabelCentrado("===============================", fNormal, Color.BLACK));
+        pnlTicket.add(Box.createVerticalStrut(10));
+
+        // El TextArea editable se inyecta al final
+        txtAreaEditable.setAlignmentX(Component.CENTER_ALIGNMENT);
+        pnlTicket.add(txtAreaEditable);
+
+        panelCentrador.add(pnlTicket);
+        return panelCentrador;
+    }
+    
+   public static JPanel crearTicketVistaPrevia(String tituloDocumento, String cliente, String fecha, java.util.List<Object[]> detalles, double subtotal, double isv, double total, String metodoPago, String refPago, String bancoPago) {
+        JPanel panelCentrador = new JPanel(new GridBagLayout());
+        panelCentrador.setBackground(new Color(30, 30, 30)); 
+
+        JPanel pnlTicket = new JPanel();
+        pnlTicket.setLayout(new BoxLayout(pnlTicket, BoxLayout.Y_AXIS));
+        pnlTicket.setBackground(Color.WHITE);
+        // Aumentamos el tamaño para que quepa toda la nueva cabecera
+        pnlTicket.setPreferredSize(new Dimension(300, 600));
+        pnlTicket.setMinimumSize(new Dimension(300, 600));
+        pnlTicket.setMaximumSize(new Dimension(300, 600));
+
+        pnlTicket.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
+            BorderFactory.createEmptyBorder(20, 15, 20, 15)
+        ));
+
+        Font fBold = new Font("Courier New", Font.BOLD, 13);
+        Font fNormal = new Font("Courier New", Font.PLAIN, 12);
+        Font fTitulo = new Font("Courier New", Font.BOLD, 16);
+
+        modelo.Empresa emp = SesionGlobal.getEmpresaActual();
+        
+        // --- 1. EXTRACCIÓN EXACTA COMO EN EL PDF ---
+        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORION STORE";
+        String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
+        String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
+        
+        pnlTicket.add(crearLabelCentrado(empNombre, fTitulo, Color.BLACK));
+        pnlTicket.add(Box.createVerticalStrut(5));
+        
+        if (!empDueño.isEmpty()) pnlTicket.add(crearLabelCentrado(empDueño, fBold, Color.DARK_GRAY));
+        pnlTicket.add(crearLabelCentrado(empRtn, fBold, Color.DARK_GRAY));
+        pnlTicket.add(Box.createVerticalStrut(10));
+
+        // --- 2. DIBUJO DE ÍCONOS VECTORIALES CON JAVA 2D ---
+        if (emp != null) {
+            if (emp.getDireccionEmpresa() != null && !emp.getDireccionEmpresa().isEmpty()) 
+                pnlTicket.add(crearLabelConIcono("dir", emp.getDireccionEmpresa(), fNormal, Color.BLACK));
+            if (emp.getNumeroTelefono() != null && !emp.getNumeroTelefono().isEmpty()) 
+                pnlTicket.add(crearLabelConIcono("tel", emp.getNumeroTelefono(), fNormal, Color.BLACK));
+            if (emp.getTelefonoSecundario() != null && !emp.getTelefonoSecundario().isEmpty()) 
+                pnlTicket.add(crearLabelConIcono("tel", emp.getTelefonoSecundario(), fNormal, Color.BLACK));
+            if (emp.getWhatsapp() != null && !emp.getWhatsapp().isEmpty()) 
+                pnlTicket.add(crearLabelConIcono("wa", emp.getWhatsapp(), fNormal, Color.BLACK));
+            if (emp.getFacebook() != null && !emp.getFacebook().isEmpty()) 
+                pnlTicket.add(crearLabelConIcono("fb", emp.getFacebook(), fNormal, Color.BLACK));
+            if (emp.getEmail() != null && !emp.getEmail().isEmpty()) 
+                pnlTicket.add(crearLabelConIcono("mail", emp.getEmail(), fNormal, Color.BLACK));
+            if (emp.getWeb() != null && !emp.getWeb().isEmpty()) 
+                pnlTicket.add(crearLabelConIcono("web", emp.getWeb(), fNormal, Color.BLACK));
+        }
+        
+       // --- 3. DATOS REALES ASIGNADOS HISTÓRICAMENTE ---
+        pnlTicket.add(crearLabelCentrado("Cliente: " + cliente, fNormal, Color.BLACK));
+        pnlTicket.add(crearLabelCentrado("Fecha: " + fecha, fNormal, Color.BLACK));
+        
+        if (metodoPago != null) pnlTicket.add(crearLabelCentrado("Pago via: " + metodoPago, fNormal, Color.BLACK));
+        if (bancoPago != null && !bancoPago.isEmpty()) pnlTicket.add(crearLabelCentrado("Banco: " + bancoPago, fNormal, Color.BLACK));
+        if (refPago != null && !refPago.isEmpty()) pnlTicket.add(crearLabelCentrado("Ref/Voucher: " + refPago, fNormal, Color.BLACK));
+        
+        // Bucle para pintar los productos reales
+        for (Object[] fila : detalles) {
+            String imei = (fila[1] != null) ? fila[1].toString() : "";
+            String nom = fila[2].toString();
+            int cant = (int) fila[3];
+            double totalFila = (double) fila[5];
+            int diasGarantia = (fila.length > 6 && fila[6] != null) ? (int) fila[6] : 0;
+            
+            // Nombre abreviado a 15 caracteres para que cuadre en la vista
+            String nomCorto = nom.length() > 15 ? nom.substring(0, 15) : String.format("%-15s", nom);
+            pnlTicket.add(crearLabelCentrado(String.format("%-2s %s %6.2f", cant, nomCorto, totalFila), fNormal, Color.BLACK));
+            
+            if (!imei.isEmpty()) pnlTicket.add(crearLabelCentrado("   S/N: " + imei, fNormal, Color.DARK_GRAY));
+            if (diasGarantia > 0) {
+                java.util.Calendar cal = java.util.Calendar.getInstance(); cal.add(java.util.Calendar.DAY_OF_YEAR, diasGarantia);
+                pnlTicket.add(crearLabelCentrado("   Gtia: " + diasGarantia + " dias", fNormal, Color.DARK_GRAY));
+            }
+        }
+        pnlTicket.add(crearLabelCentrado("-------------------------------", fNormal, Color.BLACK));
+        
+        JPanel pnlTotales = new JPanel(new GridLayout(3, 1));
+        pnlTotales.setOpaque(false);
+        pnlTotales.add(crearLabelAlineadoDer(String.format("SUBTOTAL: L %8.2f", subtotal), fBold));
+        pnlTotales.add(crearLabelAlineadoDer(String.format("I.S.V (15%%): L %8.2f", isv), fBold));
+        pnlTotales.add(crearLabelAlineadoDer(String.format("TOTAL: L %8.2f", total), fBold));
+        
+        pnlTotales.setMaximumSize(new Dimension(250, 60));
+        pnlTicket.add(pnlTotales);
+        
+        pnlTicket.add(crearLabelCentrado("===============================", fNormal, Color.BLACK));
+        pnlTicket.add(Box.createVerticalStrut(10));
+
+        panelCentrador.add(pnlTicket);
+        return panelCentrador;
+    }
+
+    /**
+     * Helper para alinear los totales a la derecha simulando el PDF
+     */
+    private static JLabel crearLabelAlineadoDer(String texto, Font fuente) {
+        JLabel lbl = new JLabel(texto, SwingConstants.RIGHT);
+        lbl.setFont(fuente);
+        lbl.setForeground(Color.BLACK);
+        lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        return lbl;
+    }
+
+    public static JLabel crearLabelCentrado(String texto, Font fuente, Color color) {
+        JLabel lbl = new JLabel(texto);
+        lbl.setFont(fuente);
+        lbl.setForeground(color);
+        lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        return lbl;
+    }
+
+    /**
+     * Genera el archivo PDF físico del ticket de venta utilizando iTextPDF.
+     * Incorpora dibujos vectoriales para las redes sociales y salto de línea en descripciones largas.
+     */
+    public static void generarTicketVentaPDF(String rutaDestino, String nombreCliente, String fecha, java.util.List<Object[]> detalles, double subtotal, double isv, double total, boolean esFactura, String metodoPago, String referenciaPago, String bancoPago) throws Exception {        Rectangle tamanoTicket = new Rectangle(226, 800); // Formato de ticket térmico 80mm
+        Document documento = new Document(tamanoTicket, 10, 10, 10, 10);
+        PdfWriter writer = PdfWriter.getInstance(documento, new FileOutputStream(rutaDestino));
+        documento.open();
+
+        com.itextpdf.text.Font fNormal = FontFactory.getFont(FontFactory.COURIER, 9);
+        com.itextpdf.text.Font fBold = FontFactory.getFont(FontFactory.COURIER_BOLD, 9);
+        com.itextpdf.text.Font fTitulo = FontFactory.getFont(FontFactory.COURIER_BOLD, 12);
+
+        Empresa emp = SesionGlobal.getEmpresaActual();
+        
+        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORIN STORE";
+        String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
+        String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
+
+        // Título Principal
+        Paragraph parrafoNombre = new Paragraph(empNombre + "\n", fTitulo);
+        parrafoNombre.setAlignment(Element.ALIGN_CENTER);
+        documento.add(parrafoNombre);
+
+        // Cabecera Texto Plano (Dueño y RTN)
+        Paragraph cabeceraTexto = new Paragraph();
+        cabeceraTexto.setAlignment(Element.ALIGN_CENTER);
+        cabeceraTexto.setFont(fBold);
+        if (!empDueño.isEmpty()) cabeceraTexto.add(new Chunk(empDueño + "\n"));
+        cabeceraTexto.add(new Chunk(empRtn + "\n\n"));
+        documento.add(cabeceraTexto);
+
+        // --- SECCIÓN DE DATOS CON ÍCONOS DIBUJADOS ---
+        Paragraph cabeceraIconos = new Paragraph();
+        cabeceraIconos.setAlignment(Element.ALIGN_CENTER);
+        cabeceraIconos.setFont(fNormal);
+
+        if (emp != null) {
+            agregarLineaIcono(cabeceraIconos, writer, "dir", emp.getDireccionEmpresa());
+            agregarLineaIcono(cabeceraIconos, writer, "tel", emp.getNumeroTelefono());
+            agregarLineaIcono(cabeceraIconos, writer, "tel", emp.getTelefonoSecundario());
+            agregarLineaIcono(cabeceraIconos, writer, "wa", emp.getWhatsapp());
+            agregarLineaIcono(cabeceraIconos, writer, "fb", emp.getFacebook());
+            agregarLineaIcono(cabeceraIconos, writer, "mail", emp.getEmail());
+            agregarLineaIcono(cabeceraIconos, writer, "web", emp.getWeb());
+        }
+        documento.add(cabeceraIconos);
+
+        // Título del Documento
+        String tituloDocumento = esFactura ? "FACTURA" : "COMPROBANTE DE VENTA";
+        Paragraph tituloDoc = new Paragraph("===============================\n" + tituloDocumento + "\n===============================\n", fBold);
+        tituloDoc.setAlignment(Element.ALIGN_CENTER);
+        documento.add(tituloDoc);
+
+        // Información de Venta y Control de Pago
+        StringBuilder sbInfo = new StringBuilder();
+        sbInfo.append("Cliente: ").append(nombreCliente).append("\n");
+        
+        // CORRECCIÓN: Fijamos la fecha histórica provista por el parámetro
+        sbInfo.append("Fecha: ").append(fecha).append("\n");
+        
+        sbInfo.append("Pago via: ").append(metodoPago).append("\n");
+        if (bancoPago != null && !bancoPago.trim().isEmpty()) {
+            sbInfo.append("Banco: ").append(bancoPago.trim()).append("\n");
+        }
+        if (referenciaPago != null && !referenciaPago.trim().isEmpty()) {
+            sbInfo.append("Ref/Voucher: ").append(referenciaPago.trim()).append("\n");
+        }
+        sbInfo.append("-------------------------------\n");
+
+        Paragraph info = new Paragraph(sbInfo.toString(), fNormal);
+        info.setAlignment(Element.ALIGN_LEFT);
+        documento.add(info);
+
+        // --- DETALLES DE PRODUCTOS CON SALTO DE LÍNEA E IDENTIFICADORES ---
+        StringBuilder sbDetalles = new StringBuilder();
+        sbDetalles.append(String.format("%-2s %-15s %6s\n", "C.", "DESCRIPCION", "TOTAL"));
+        sbDetalles.append("-------------------------------\n");
+        
+        boolean ticketTieneGarantias = false; // Bandera para saber si imprimimos políticas al final
+        
+        for (Object[] fila : detalles) {
+            String imei = (fila[1] != null) ? fila[1].toString() : "";
+            String nom = fila[2].toString();
+            int cant = (int) fila[3];
+            double totalFila = (double) fila[5];
+            int diasGarantia = (fila.length > 6 && fila[6] != null) ? (int) fila[6] : 0;
+
+            int maxLen = 15; 
+            
+            // 1. Imprimir Nombre, Cantidad y Precio
+            if (nom.length() <= maxLen) {
+                sbDetalles.append(String.format("%-2s %-15s %6.2f\n", cant, nom, totalFila));
+            } else {
+                sbDetalles.append(String.format("%-2s %-15s %6.2f\n", cant, nom.substring(0, maxLen), totalFila));
+                int index = maxLen;
+                while (index < nom.length()) {
+                    int end = Math.min(index + maxLen, nom.length());
+                    sbDetalles.append(String.format("   %-15s\n", nom.substring(index, end)));
+                    index += maxLen;
+                }
+            }
+            
+            // 2. Imprimir Identificador y Vencimiento de Garantía (Si Aplica)
+            if (!imei.isEmpty() || diasGarantia > 0) {
+                ticketTieneGarantias = true;
+                if (!imei.isEmpty()) {
+                    sbDetalles.append(String.format("   S/N: %s\n", imei));
+                }
+                if (diasGarantia > 0) {
+                    // Calculamos automáticamente la fecha de vencimiento
+                    java.util.Calendar cal = java.util.Calendar.getInstance();
+                    cal.add(java.util.Calendar.DAY_OF_YEAR, diasGarantia);
+                    String fechaVence = new java.text.SimpleDateFormat("dd/MM/yy").format(cal.getTime());
+                    sbDetalles.append(String.format("   Gtia: %d dias (Vence %s)\n", diasGarantia, fechaVence));
+                }
+            }
+        }
+        sbDetalles.append("-------------------------------\n");
+        Paragraph parrafoDetalles = new Paragraph(sbDetalles.toString(), fNormal);
+        documento.add(parrafoDetalles);
+        if (ticketTieneGarantias) {
+            String textoPoliticas = emp != null && emp.getPoliticasGarantia() != null ? emp.getPoliticasGarantia() : "Conserve este ticket. La garantía no aplica por daños físicos, humedad, exposición a líquidos o manipulación por terceros.";
+            
+            // 1. Título Centrado y en Negrita (Usa fBold)
+            Paragraph tituloGarantia = new Paragraph("--- POLITICAS DE GARANTIA ---\n", fBold);
+            tituloGarantia.setAlignment(Element.ALIGN_CENTER);
+            documento.add(tituloGarantia);
+
+            // 2. Texto de las políticas Justificado y Normal (Usa fNormal)
+            Paragraph parrafoGarantia = new Paragraph(textoPoliticas + "\n\n", fNormal);
+            parrafoGarantia.setAlignment(Element.ALIGN_JUSTIFIED);
+            documento.add(parrafoGarantia);
+        }
+
+        // --- TOTALES FINALES ---
+        Paragraph totales = new Paragraph(
+            String.format("%-15s L %8.2f\n", "SUBTOTAL:", subtotal) +
+            String.format("%-15s L %8.2f\n", "I.S.V (15%):", isv) +
+            String.format("%-15s L %8.2f\n", "TOTAL A PAGAR:", total) +
+            "\n===============================\n", fBold);
+        totales.setAlignment(Element.ALIGN_RIGHT);
+        documento.add(totales);
+
+        // Pie de Página
+        String msjPie = emp != null && emp.getMensajeTicketPieFactura() != null ? emp.getMensajeTicketPieFactura() : "¡Gracias por su preferencia!";
+        if (!esFactura) {
+            msjPie = emp != null && emp.getMensajeTicketPieRecibo() != null ? emp.getMensajeTicketPieRecibo() : "Este documento no es valido como factura.";
+        }
+        Paragraph pie = new Paragraph(msjPie, fNormal);
+        pie.setAlignment(Element.ALIGN_CENTER);
+        documento.add(pie);
+
+        documento.close();
+    }
+
+    // ==============================================================================
+    // MOTOR DE DIBUJO VECTORIAL PARA EL PDF
+    // ==============================================================================
+
+    /**
+     * Agrega el bloque de ícono + texto alineado a la cabecera.
+     */
+    private static void agregarLineaIcono(Paragraph p, PdfWriter writer, String tipo, String texto) throws Exception {
+        if (texto != null && !texto.trim().isEmpty()) {
+            Image icon = crearIconoVectorial(writer, tipo);
+            p.add(new Chunk(icon, 0, -1)); // -1 alinea el icono ligeramente con el texto
+            p.add(new Chunk(" " + texto.trim() + "\n"));
+        }
+    }
+
+    /**
+     * Dibuja los iconos literalmente a través de figuras geométricas usando PdfContentByte.
+     */
+    private static Image crearIconoVectorial(PdfWriter writer, String tipo) throws Exception {
+        PdfContentByte cb = writer.getDirectContent();
+        PdfTemplate tp = cb.createTemplate(10, 10);
+        tp.setColorStroke(BaseColor.DARK_GRAY);
+        tp.setColorFill(BaseColor.DARK_GRAY);
+        tp.setLineWidth(0.8f);
+
+        switch (tipo) {
+            case "tel":
+                // Dibuja un teléfono móvil clásico (Bordes redondeados y la rayita del altavoz)
+                tp.roundRectangle(2, 1, 6, 8, 1); 
+                tp.stroke();
+                tp.moveTo(4, 2); tp.lineTo(6, 2); 
+                tp.stroke();
+                break;
+            case "wa":
+                // Dibuja una burbuja de chat de WhatsApp (Círculo con colita)
+                tp.circle(5, 5, 4); 
+                tp.stroke();
+                tp.moveTo(2, 3); tp.lineTo(1, 1); tp.lineTo(3, 2); 
+                tp.stroke();
+                break;
+            case "fb":
+                // Dibuja la 'f' característica de Facebook en un bloque cuadrado
+                tp.rectangle(1, 1, 8, 8); 
+                tp.fill();
+                tp.setColorStroke(BaseColor.WHITE); 
+                tp.setLineWidth(1.2f);
+                tp.moveTo(6, 8); tp.lineTo(4, 8); tp.lineTo(4, 1); tp.stroke();
+                tp.moveTo(3, 5); tp.lineTo(6, 5); tp.stroke();
+                break;
+            case "mail":
+                // Dibuja el sobre de un correo electrónico
+                tp.rectangle(1, 2, 8, 6); 
+                tp.stroke();
+                tp.moveTo(1, 8); tp.lineTo(5, 5); tp.lineTo(9, 8); 
+                tp.stroke();
+                break;
+            case "web":
+                // Dibuja un ícono global (El mundo de internet)
+                tp.circle(5, 5, 4); 
+                tp.stroke();
+                tp.moveTo(1, 5); tp.lineTo(9, 5); tp.stroke();
+                tp.moveTo(5, 1); tp.lineTo(5, 9); tp.stroke();
+                break;
+            case "dir":
+                // Dibuja un pin de ubicación (Globo con pico hacia abajo)
+                tp.circle(5, 7, 2.5f); 
+                tp.stroke();
+                tp.moveTo(3.2f, 5.2f); tp.lineTo(5, 1); tp.lineTo(6.8f, 5.2f); 
+                tp.stroke();
+                break;
+        }
+        return Image.getInstance(tp);
+    }
+    
+    // ==============================================================================
+    // DIBUJO DE ÍCONOS VECTORIALES PARA LA VISTA PREVIA (INTERFAZ GRÁFICA)
+    // ==============================================================================
+    private static class IconoVectorialUI implements Icon {
+        private String tipo;
+        public IconoVectorialUI(String tipo) { this.tipo = tipo; }
+        @Override public int getIconWidth() { return 16; }
+        @Override public int getIconHeight() { return 16; }
+        @Override public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(Color.DARK_GRAY);
+            g2.setStroke(new BasicStroke(1.5f));
+            
+            switch (tipo) {
+                case "tel":
+                    g2.drawRoundRect(x + 4, y + 1, 8, 13, 4, 4);
+                    g2.drawLine(x + 6, y + 3, x + 10, y + 3);
+                    break;
+                case "wa":
+                    g2.drawOval(x + 2, y + 2, 11, 11);
+                    g2.drawLine(x + 3, y + 11, x + 1, y + 15);
+                    g2.drawLine(x + 1, y + 15, x + 5, y + 12);
+                    break;
+                case "fb":
+                    g2.fillRect(x + 2, y + 2, 12, 12);
+                    g2.setColor(Color.WHITE);
+                    g2.drawLine(x + 8, y + 14, x + 8, y + 4);
+                    g2.drawLine(x + 8, y + 4, x + 11, y + 4);
+                    g2.drawLine(x + 5, y + 8, x + 11, y + 8);
+                    break;
+                case "mail":
+                    g2.drawRect(x + 1, y + 4, 14, 9);
+                    g2.drawLine(x + 1, y + 4, x + 8, y + 9);
+                    g2.drawLine(x + 15, y + 4, x + 8, y + 9);
+                    break;
+                case "web":
+                    g2.drawOval(x + 2, y + 2, 12, 12);
+                    g2.drawLine(x + 2, y + 8, x + 14, y + 8);
+                    g2.drawLine(x + 8, y + 2, x + 8, y + 14);
+                    g2.drawOval(x + 5, y + 2, 6, 12);
+                    break;
+                case "dir":
+                    g2.drawOval(x + 4, y + 1, 8, 8);
+                    g2.drawLine(x + 5, y + 8, x + 8, y + 14);
+                    g2.drawLine(x + 11, y + 8, x + 8, y + 14);
+                    break;
+            }
+            g2.dispose();
+        }
+    }
+
+    public static JLabel crearLabelConIcono(String tipoIcono, String texto, Font fuente, Color color) {
+        JLabel lbl = new JLabel(" " + texto); 
+        lbl.setIcon(new IconoVectorialUI(tipoIcono));
+        lbl.setFont(fuente);
+        lbl.setForeground(color);
+        lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        return lbl;
+    }
+    
+    // ==============================================================================
+    // GENERACIÓN AUTOMÁTICA DESDE LA BASE DE DATOS
+    // ==============================================================================
+
+    public static java.io.File generarFactura(int idVenta) throws Exception {
+        java.io.File dir = new java.io.File("reportes");
+        if (!dir.exists()) dir.mkdirs(); // Crea la carpeta si no existe
+        String ruta = "reportes/Recibo_Venta_" + idVenta + ".pdf";
+
+        String cliente = "CONSUMIDOR FINAL";
+        String fecha = "";
+        double subtotal = 0, isv = 0, total = 0;
+        String metodo = "Efectivo", ref = "", banco = "";
+        java.util.List<Object[]> detalles = new java.util.ArrayList<>();
+
+        factory.ConexionFactory cf = new factory.ConexionFactory();
+        try (Connection con = cf.getConexion()) {
+            // 1. Cabecera de la venta
+            String sqlVenta = "SELECT v.fecha_venta, v.subtotal_venta, v.impuesto_venta, v.total_venta, " +
+                              "v.referencia_pago, v.banco_pago, c.nombre_cliente, c.apellido_cliente " +
+                              "FROM VENTAS v LEFT JOIN CLIENTES c ON v.id_cliente_venta = c.id_cliente " +
+                              "WHERE v.id_ventas = ?";
+            try (PreparedStatement ps = con.prepareStatement(sqlVenta)) {
+                ps.setInt(1, idVenta);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    if (rs.getString("nombre_cliente") != null) {
+                        cliente = rs.getString("nombre_cliente") + " " + (rs.getString("apellido_cliente") != null ? rs.getString("apellido_cliente") : "");
+                    }
+                    fecha = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(rs.getTimestamp("fecha_venta"));
+                    subtotal = rs.getDouble("subtotal_venta");
+                    isv = rs.getDouble("impuesto_venta");
+                    total = rs.getDouble("total_venta");
+                    ref = rs.getString("referencia_pago");
+                    banco = rs.getString("banco_pago");
+                }
+            }
+
+            // 2. Detalles de la factura
+            String sqlDet = "SELECT identificador_serie, descripcion_venta, cantidad_venta, precio_unitario_venta, subtotal_venta, dias_garantia " +
+                            "FROM DETALLES_VENTA WHERE id_ventas = ?";
+            try (PreparedStatement ps = con.prepareStatement(sqlDet)) {
+                ps.setInt(1, idVenta);
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    detalles.add(new Object[]{
+                        0, // id oculto (no importa aqui)
+                        rs.getString("identificador_serie"),
+                        rs.getString("descripcion_venta"),
+                        rs.getInt("cantidad_venta"),
+                        rs.getDouble("precio_unitario_venta"),
+                        rs.getDouble("subtotal_venta"),
+                        rs.getInt("dias_garantia")
+                    });
+                }
+            }
+        }
+        
+        // Llamamos a tu método maestro que ya dibuja el PDF maravillosamente
+        generarTicketVentaPDF(ruta, cliente.trim(), fecha, detalles, subtotal, isv, total, true, metodo, ref, banco);
+        return new java.io.File(ruta);
+    }
+
+    public static java.io.File generarCertificadoGarantia(int idDetalleVenta) throws Exception {
+        java.io.File dir = new java.io.File("reportes");
+        if (!dir.exists()) dir.mkdirs();
+        String ruta = "reportes/Certificado_Garantia_" + idDetalleVenta + ".pdf";
+
+        String cliente = "CONSUMIDOR FINAL";
+        String idVentaReal = "";
+        String producto = "";
+        String serie = "N/A";
+        String fechaCompra = "";
+        String fechaVence = "";
+        int dias = 0;
+
+        factory.ConexionFactory cf = new factory.ConexionFactory();
+        try (Connection con = cf.getConexion()) {
+            String sql = "SELECT c.nombre_cliente, c.apellido_cliente, d.descripcion_venta, " +
+                         "d.identificador_serie, v.fecha_venta, d.dias_garantia, v.id_ventas " +
+                         "FROM DETALLES_VENTA d INNER JOIN VENTAS v ON d.id_ventas = v.id_ventas " +
+                         "LEFT JOIN CLIENTES c ON v.id_cliente_venta = c.id_cliente " +
+                         "WHERE d.id_detalle_venta = ?";
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, idDetalleVenta);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    if (rs.getString("nombre_cliente") != null) {
+                        cliente = rs.getString("nombre_cliente") + " " + (rs.getString("apellido_cliente") != null ? rs.getString("apellido_cliente") : "");
+                    }
+                    idVentaReal = "VN-" + rs.getInt("id_ventas");
+                    producto = rs.getString("descripcion_venta");
+                    if (rs.getString("identificador_serie") != null && !rs.getString("identificador_serie").trim().isEmpty()) {
+                        serie = rs.getString("identificador_serie");
+                    }
+                    
+                    java.sql.Timestamp fVenta = rs.getTimestamp("fecha_venta");
+                    dias = rs.getInt("dias_garantia");
+                    
+                    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm");
+                    fechaCompra = sdf.format(fVenta);
+                    
+                    java.util.Calendar cal = java.util.Calendar.getInstance();
+                    cal.setTime(fVenta);
+                    cal.add(java.util.Calendar.DAY_OF_YEAR, dias);
+                    java.text.SimpleDateFormat sdfVence = new java.text.SimpleDateFormat("dd/MM/yyyy");
+                    fechaVence = sdfVence.format(cal.getTime());
+                }
+            }
+        }
+
+        // --- CONFIGURACIÓN IDÉNTICA AL COMPROBANTE (80mm) ---
+        Rectangle tamanoTicket = new Rectangle(226, 800); 
+        // Usamos los mismos márgenes (10) de tu método principal
+        Document documento = new Document(tamanoTicket, 10, 10, 10, 10);
+        PdfWriter writer = PdfWriter.getInstance(documento, new FileOutputStream(ruta));
+        documento.open();
+
+        // Mismas fuentes exactas del comprobante
+        com.itextpdf.text.Font fNormal = FontFactory.getFont(FontFactory.COURIER, 9);
+        com.itextpdf.text.Font fBold = FontFactory.getFont(FontFactory.COURIER_BOLD, 9);
+        com.itextpdf.text.Font fTitulo = FontFactory.getFont(FontFactory.COURIER_BOLD, 12);
+
+        Empresa emp = SesionGlobal.getEmpresaActual();
+        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORION SYSTEM";
+        String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
+        String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "";
+
+        // 1. TÍTULO PRINCIPAL
+        Paragraph parrafoNombre = new Paragraph(empNombre + "\n", fTitulo);
+        parrafoNombre.setAlignment(Element.ALIGN_CENTER);
+        documento.add(parrafoNombre);
+
+        // 2. DUEÑO Y RTN
+        Paragraph cabeceraTexto = new Paragraph();
+        cabeceraTexto.setAlignment(Element.ALIGN_CENTER);
+        cabeceraTexto.setFont(fBold);
+        if (!empDueño.isEmpty()) cabeceraTexto.add(new Chunk(empDueño + "\n"));
+        if (!empRtn.isEmpty()) cabeceraTexto.add(new Chunk(empRtn + "\n\n"));
+        documento.add(cabeceraTexto);
+
+        // 3. SECCIÓN DE ÍCONOS VECTORIALES (Igual que en el recibo)
+        Paragraph cabeceraIconos = new Paragraph();
+        cabeceraIconos.setAlignment(Element.ALIGN_CENTER);
+        cabeceraIconos.setFont(fNormal);
+        if (emp != null) {
+            agregarLineaIcono(cabeceraIconos, writer, "dir", emp.getDireccionEmpresa());
+            agregarLineaIcono(cabeceraIconos, writer, "tel", emp.getNumeroTelefono());
+            agregarLineaIcono(cabeceraIconos, writer, "tel", emp.getTelefonoSecundario());
+            agregarLineaIcono(cabeceraIconos, writer, "fb", emp.getFacebook());
+            agregarLineaIcono(cabeceraIconos, writer, "mail", emp.getEmail());
+            agregarLineaIcono(cabeceraIconos, writer, "web", emp.getWeb());
+        }
+        documento.add(cabeceraIconos);
+
+        // 4. SEPARADOR Y TÍTULO DEL DOCUMENTO
+        Paragraph pTitulo = new Paragraph("===============================\nCERTIFICADO DE GARANTIA\n===============================\n", fBold);
+        pTitulo.setAlignment(Element.ALIGN_CENTER);
+        documento.add(pTitulo);
+
+        // 5. CUERPO DEL DOCUMENTO (Usando la misma estética de guiones)
+        StringBuilder sbInfo = new StringBuilder();
+        sbInfo.append("Cliente: ").append(cliente.trim()).append("\n");
+        sbInfo.append("Factura: ").append(idVentaReal).append("\n");
+        sbInfo.append("Fecha:   ").append(fechaCompra).append("\n");
+        sbInfo.append("-------------------------------\n");
+        sbInfo.append("EQUIPO CUBIERTO\n");
+        sbInfo.append("-------------------------------\n");
+        
+        Paragraph info1 = new Paragraph(sbInfo.toString(), fNormal);
+        info1.setAlignment(Element.ALIGN_LEFT);
+        documento.add(info1);
+
+        // Producto y Serie con formato indentado
+        Paragraph pProducto = new Paragraph(producto + "\nS/N o IMEI: " + serie + "\n", fNormal);
+        pProducto.setAlignment(Element.ALIGN_LEFT);
+        documento.add(pProducto);
+
+        StringBuilder sbEstado = new StringBuilder();
+        sbEstado.append("-------------------------------\n");
+        sbEstado.append("ESTADO DE COBERTURA\n");
+        sbEstado.append("-------------------------------\n");
+        sbEstado.append("Tiempo:      ").append(dias).append(" dias\n");
+        sbEstado.append("Vencimiento: ").append(fechaVence).append("\n");
+        sbEstado.append("Estado:      VIGENTE\n");
+        sbEstado.append("-------------------------------\n\n");
+
+        Paragraph info2 = new Paragraph(sbEstado.toString(), fNormal);
+        info2.setAlignment(Element.ALIGN_LEFT);
+        documento.add(info2);
+
+        // 6. POLÍTICAS DE GARANTÍA
+        String textoPoliticas = emp != null && emp.getPoliticasGarantia() != null ? emp.getPoliticasGarantia() : "Conserve este ticket. La garantía no aplica por daños físicos, humedad, exposición a líquidos o manipulación por terceros.";
+        
+        Paragraph tituloPol = new Paragraph("--- POLITICAS DE GARANTIA ---\n", fBold);
+        tituloPol.setAlignment(Element.ALIGN_CENTER);
+        documento.add(tituloPol);
+
+        Paragraph pol = new Paragraph(textoPoliticas + "\n\n\n\n", fNormal);
+        pol.setAlignment(Element.ALIGN_JUSTIFIED);
+        documento.add(pol);
+
+        // 7. FIRMA AL PIE (Opcional, pero le da formalidad)
+        Paragraph pFirma = new Paragraph("________________________\nFirma / Sello de Validez", fNormal);
+        pFirma.setAlignment(Element.ALIGN_CENTER);
+        documento.add(pFirma);
+
+        documento.close();
+        return new java.io.File(ruta);
+    }
+}
