@@ -133,7 +133,7 @@ public class PanelBuscarProducto extends JPanel {
                     if (columna == 1 && SwingUtilities.isLeftMouseButton(e)) {
                         int filaModelo = tablaInventario.convertRowIndexToModel(fila);
                         String rutaImagen = (String) modeloTabla.getValueAt(filaModelo, 1);
-                        if (rutaImagen == null || rutaImagen.isEmpty() || !new File(rutaImagen).exists()) {
+                        if (rutaImagen == null || rutaImagen.isEmpty()) {
                             if (SesionGlobal.getEmpresaActual() != null && SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
                                 rutaImagen = SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
                             }
@@ -191,18 +191,17 @@ public class PanelBuscarProducto extends JPanel {
             label.setOpaque(true);
             label.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
 
-            String rutaImagen = (value != null) ? value.toString() : null;
+            String imgVal = (value != null) ? value.toString() : null;
 
-            if (rutaImagen == null || rutaImagen.isEmpty() || !new File(rutaImagen).exists()) {
+            if (imgVal == null || imgVal.trim().isEmpty()) {
                 if (SesionGlobal.getEmpresaActual() != null && SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
-                    rutaImagen = SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
+                    imgVal = SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
                 }
             }
 
-            if (rutaImagen != null && new File(rutaImagen).exists()) {
-                ImageIcon icon = new ImageIcon(rutaImagen);
-                Image img = icon.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
-                label.setIcon(new ImageIcon(img));
+            ImageIcon icon = utilidades.ImagenHelper.obtenerIcono(imgVal, 60, 60);
+            if (icon != null) {
+                label.setIcon(icon);
             } else {
                 label.setText("No Img");
                 label.setForeground(Color.GRAY);
@@ -211,38 +210,26 @@ public class PanelBuscarProducto extends JPanel {
         }
     }
     
-    private void mostrarZoomImagen(String ruta) {
-        if (ruta == null || !new File(ruta).exists()) return;
+    private void mostrarZoomImagen(String imgVal) {
+        if (imgVal == null || imgVal.trim().isEmpty()) {
+            if (SesionGlobal.getEmpresaActual() != null && SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
+                imgVal = SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
+            }
+        }
+        if (imgVal == null || imgVal.trim().isEmpty()) return;
+        
+        ImageIcon icon = utilidades.ImagenHelper.obtenerIcono(imgVal, 500, 500);
+        if (icon == null) return;
         
         JDialog zoomDialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Previsualización del Producto", true);
         zoomDialog.setLayout(new BorderLayout());
-        zoomDialog.getContentPane().setBackground(new Color(240, 242, 245)); // Gris Nube
+        zoomDialog.getContentPane().setBackground(new Color(240, 242, 245));
+        zoomDialog.setSize(520, 520);
         
-        int tamanoEstandar = 600;
-        zoomDialog.setSize(tamanoEstandar, tamanoEstandar);
-        
-        Image imgOriginal = new ImageIcon(ruta).getImage();
-        int anchoOriginal = imgOriginal.getWidth(null);
-        int altoOriginal = imgOriginal.getHeight(null);
-        
-        if (anchoOriginal <= 0 || altoOriginal <= 0) return;
-
-        int nuevoAncho = tamanoEstandar - 40;
-        int nuevoAlto = tamanoEstandar - 40;
-        
-        if (anchoOriginal > altoOriginal) {
-            nuevoAlto = (altoOriginal * nuevoAncho) / anchoOriginal;
-        } else {
-            nuevoAncho = (anchoOriginal * nuevoAlto) / altoOriginal;
-        }
-        
-        // --- LLAMADA AL MOTOR DE ESCALADO PROGRESIVO ---
-        java.awt.image.BufferedImage imgNitida = escalarConMaximaNitidez(imgOriginal, nuevoAncho, nuevoAlto);
-        
-        JLabel lblZoom = new JLabel(new ImageIcon(imgNitida));
+        JLabel lblZoom = new JLabel(icon);
         lblZoom.setHorizontalAlignment(SwingConstants.CENTER);
-        
         zoomDialog.add(lblZoom, BorderLayout.CENTER);
+        
         zoomDialog.setLocationRelativeTo(this);
         zoomDialog.setVisible(true);
     }
@@ -289,6 +276,11 @@ public class PanelBuscarProducto extends JPanel {
     // MENÚ CONTEXTUAL (ESTILO WINDOWS) Y ACCIONES
     // =========================================================
     private void mostrarMenuOpciones(Component componente, int x, int y, int filaVista) {
+        int rolId = (SesionGlobal.getUsuarioActual() != null) ? SesionGlobal.getUsuarioActual().getIdRol() : 1;
+        if (rolId == 3) {
+            return; // Cajeros no tienen acceso a editar/eliminar productos
+        }
+
         JPopupMenu menu = new JPopupMenu();
         menu.setBackground(new Color(255, 255, 255)); // Blanco puro
         menu.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225), 1));

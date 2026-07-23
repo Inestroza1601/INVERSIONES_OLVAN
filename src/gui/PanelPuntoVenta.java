@@ -3,8 +3,11 @@ package gui;
 import dao.ClienteDAO;
 import dao.InventarioDAO;
 import dao.VentasDAO;
+import dao.ApartadoDAO;
 import modelo.Cliente;
 import modelo.Producto;
+import modelo.Apartado;
+import modelo.DetalleApartado;
 import utilidades.SesionGlobal;
 
 import javax.swing.*;
@@ -13,6 +16,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +33,7 @@ public class PanelPuntoVenta extends JPanel {
     private DefaultTableModel modeloTablaVentas;
     
     private JComboBox<ItemPago> cmbMetodoPago;
+    private JComboBox<String> cmbTipoTransaccion;
     private JLabel lblSubtotal;
     private JLabel lblImpuesto;
     private JLabel lblTotal;
@@ -173,14 +178,24 @@ public class PanelPuntoVenta extends JPanel {
 
         JButton btnCobrar = new JButton("Cobrar Venta"); btnCobrar.setBackground(new Color(13, 110, 253)); btnCobrar.setForeground(Color.WHITE); btnCobrar.setFont(new Font("Segoe UI", Font.BOLD, 16)); btnCobrar.setPreferredSize(new Dimension(0, 50)); btnCobrar.setFocusPainted(false); btnCobrar.setCursor(new Cursor(Cursor.HAND_CURSOR)); btnCobrar.setBorder(BorderFactory.createEmptyBorder(0,0,0,0)); btnCobrar.addActionListener(e -> procesarVenta());
 
-        gbc.gridy = 0; pnlLiquidacion.add(new JLabel("Método de Pago:"){{setForeground(new Color(100, 100, 100));}}, gbc);
-        gbc.gridy = 1; pnlLiquidacion.add(cmbMetodoPago, gbc);
-        gbc.gridy = 2; gbc.insets = new Insets(10, 0, 10, 0); pnlLiquidacion.add(pnlCamposExtraPago, gbc);
-        gbc.gridy = 3; gbc.insets = new Insets(15, 0, 0, 0); pnlLiquidacion.add(lblSubtotal, gbc);
-        gbc.gridy = 4; gbc.insets = new Insets(5, 0, 0, 0); pnlLiquidacion.add(lblImpuesto, gbc);
-        gbc.gridy = 5; gbc.insets = new Insets(15, 0, 0, 0); pnlLiquidacion.add(new JLabel("TOTAL:"){{setForeground(new Color(45, 45, 45)); setFont(new Font("Segoe UI", Font.BOLD, 14));}}, gbc);
-        gbc.gridy = 6; gbc.insets = new Insets(0, 0, 20, 0); pnlLiquidacion.add(lblTotal, gbc);
-        gbc.gridy = 7; pnlLiquidacion.add(btnCobrar, gbc);
+        cmbTipoTransaccion = new JComboBox<>(new String[]{"Venta Directa", "Apartado (Abonos)"});
+        cmbTipoTransaccion.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        cmbTipoTransaccion.setBackground(Color.WHITE);
+        cmbTipoTransaccion.addActionListener(e -> {
+            boolean esApartado = cmbTipoTransaccion.getSelectedIndex() == 1;
+            btnCobrar.setText(esApartado ? "Registrar Apartado" : "Cobrar Venta");
+        });
+
+        gbc.gridy = 0; pnlLiquidacion.add(new JLabel("Tipo Transacción:"){{setForeground(new Color(100, 100, 100));}}, gbc);
+        gbc.gridy = 1; pnlLiquidacion.add(cmbTipoTransaccion, gbc);
+        gbc.gridy = 2; gbc.insets = new Insets(10, 0, 5, 0); pnlLiquidacion.add(new JLabel("Método de Pago:"){{setForeground(new Color(100, 100, 100));}}, gbc);
+        gbc.gridy = 3; pnlLiquidacion.add(cmbMetodoPago, gbc);
+        gbc.gridy = 4; gbc.insets = new Insets(5, 0, 5, 0); pnlLiquidacion.add(pnlCamposExtraPago, gbc);
+        gbc.gridy = 5; gbc.insets = new Insets(15, 0, 0, 0); pnlLiquidacion.add(lblSubtotal, gbc);
+        gbc.gridy = 6; gbc.insets = new Insets(5, 0, 0, 0); pnlLiquidacion.add(lblImpuesto, gbc);
+        gbc.gridy = 7; gbc.insets = new Insets(15, 0, 0, 0); pnlLiquidacion.add(new JLabel("TOTAL:"){{setForeground(new Color(45, 45, 45)); setFont(new Font("Segoe UI", Font.BOLD, 14));}}, gbc);
+        gbc.gridy = 8; gbc.insets = new Insets(0, 0, 20, 0); pnlLiquidacion.add(lblTotal, gbc);
+        gbc.gridy = 9; pnlLiquidacion.add(btnCobrar, gbc);
         pnlControlVenta.add(pnlLiquidacion, BorderLayout.NORTH);
         this.add(pnlControlVenta, BorderLayout.EAST);
     }
@@ -382,6 +397,13 @@ public class PanelPuntoVenta extends JPanel {
     private void procesarVenta() {
         if(modeloTablaVentas.getRowCount() == 0) { JOptionPane.showMessageDialog(this, "La venta está vacía.", "Aviso", JOptionPane.WARNING_MESSAGE); return; }
         
+        // Validar que la caja esté abierta
+        modelo.ControlCaja CCActiva = new dao.ControlCajaDAO().obtenerSesionActiva();
+        if (CCActiva == null) {
+            JOptionPane.showMessageDialog(this, "Operación denegada: El turno de caja no está abierto. Abra la caja antes de registrar transacciones.", "Caja Cerrada", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         VentasDAO dao = new VentasDAO();
         ItemPago pago = (ItemPago) cmbMetodoPago.getSelectedItem();
         if(pago == null) return;
@@ -399,6 +421,128 @@ public class PanelPuntoVenta extends JPanel {
             }
             refPago = txtReferenciaPago.getText().trim();
             bancoSeleccionado = cmbBanco.getSelectedItem().toString();
+        }
+
+        boolean esApartado = cmbTipoTransaccion.getSelectedIndex() == 1;
+
+        if (esApartado) {
+            JTextField txtAbonoInicial = new JTextField("0.00");
+            JTextField txtDiasPlazo = new JTextField("30");
+            Object[] fields = {
+                "Total de la Compra: L " + String.format("%.2f", granTotal),
+                "Abono Inicial (L):", txtAbonoInicial,
+                "Plazo de Pago (Días):", txtDiasPlazo
+            };
+
+            int opApartado = JOptionPane.showConfirmDialog(this, fields, "Detalles del Apartado", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (opApartado != JOptionPane.OK_OPTION) return;
+
+            try {
+                double abono = Double.parseDouble(txtAbonoInicial.getText().trim());
+                int dias = Integer.parseInt(txtDiasPlazo.getText().trim());
+
+                if (abono < 0 || abono > granTotal) {
+                    JOptionPane.showMessageDialog(this, "El abono inicial debe ser menor o igual al total.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (dias <= 0) {
+                    JOptionPane.showMessageDialog(this, "El plazo en días debe ser mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Password signature
+                JPasswordField pfPass = new JPasswordField();
+                int opSign = JOptionPane.showConfirmDialog(this, new Object[]{"Ingrese su contraseña para firmar el apartado:", pfPass}, "Firma Requerida", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                if (opSign != JOptionPane.OK_OPTION) return;
+
+                String pass = new String(pfPass.getPassword());
+                int idUsuarioAutorizado = dao.obtenerIdUsuarioPorPassword(pass);
+
+                if (idUsuarioAutorizado <= 0) {
+                    JOptionPane.showMessageDialog(this, "Contraseña incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Create Apartado
+                Apartado a = new Apartado();
+                a.setTotalApartado(granTotal);
+                a.setAbonoInicial(abono);
+                a.setSaldoPendiente(granTotal - abono);
+                a.setIdClienteApartado(idClienteActual);
+                a.setIdUsuario(idUsuarioAutorizado);
+                a.setIdMetodoPago(pago.id);
+                a.setReferenciaPago(refPago);
+                a.setBancoPago(bancoSeleccionado);
+                
+                // Fecha limite
+                java.util.Calendar cal = java.util.Calendar.getInstance();
+                cal.add(java.util.Calendar.DAY_OF_YEAR, dias);
+                a.setFechaLimite(new Timestamp(cal.getTimeInMillis()));
+
+                // Detalles
+                List<DetalleApartado> detallesA = new ArrayList<>();
+                List<Object[]> detallesPDF = new ArrayList<>();
+                for (int i = 0; i < modeloTablaVentas.getRowCount(); i++) {
+                    DetalleApartado d = new DetalleApartado();
+                    d.setIdProducto((int) modeloTablaVentas.getValueAt(i, 0));
+                    d.setDescripcionApartado((String) modeloTablaVentas.getValueAt(i, 2));
+                    d.setCantidadApartado((int) modeloTablaVentas.getValueAt(i, 3));
+                    d.setPrecioUnitarioApartado((double) modeloTablaVentas.getValueAt(i, 4));
+                    d.setSubtotalApartado((double) modeloTablaVentas.getValueAt(i, 5));
+                    d.setIdentificadorSerie(modeloTablaVentas.getValueAt(i, 9) != null ? modeloTablaVentas.getValueAt(i, 9).toString() : null);
+                    detallesA.add(d);
+
+                    detallesPDF.add(new Object[]{
+                        modeloTablaVentas.getValueAt(i, 0), modeloTablaVentas.getValueAt(i, 8), modeloTablaVentas.getValueAt(i, 2),
+                        modeloTablaVentas.getValueAt(i, 3), modeloTablaVentas.getValueAt(i, 4), modeloTablaVentas.getValueAt(i, 5),
+                        modeloTablaVentas.getValueAt(i, 9)
+                    });
+                }
+
+                ApartadoDAO apDAO = new ApartadoDAO();
+                if (apDAO.registrarApartado(a, detallesA)) {
+                    // Generar PDF
+                    txtReferenciaPago.setText(""); cmbBanco.setSelectedIndex(0); pnlCamposExtraPago.setVisible(false);
+                    JFileChooser chooser = new JFileChooser();
+                    chooser.setDialogTitle("Guardar Comprobante de Apartado");
+                    chooser.setSelectedFile(new File("Apartado_Nexar_" + System.currentTimeMillis() + ".pdf"));
+
+                    if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+                        File archivoDestino = chooser.getSelectedFile();
+                        if (!archivoDestino.getName().toLowerCase().endsWith(".pdf")) archivoDestino = new File(archivoDestino.getAbsolutePath() + ".pdf");
+
+                        try {
+                            String fechaActual = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date());
+                            String fechaLim = new java.text.SimpleDateFormat("dd/MM/yyyy").format(a.getFechaLimite());
+
+                            utilidades.GeneradorTickets.generarTicketApartadoPDF(
+                                archivoDestino.getAbsolutePath(),
+                                lblClienteSeleccionado.getText(),
+                                fechaActual,
+                                fechaLim,
+                                detallesPDF,
+                                granTotal,
+                                abono,
+                                a.getSaldoPendiente(),
+                                pago.nombre
+                            );
+                            JOptionPane.showMessageDialog(this, "Apartado registrado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                            if (Desktop.isDesktopSupported()) Desktop.getDesktop().open(archivoDestino);
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(this, "El apartado se guardó, pero hubo un error al generar el PDF:\n" + ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
+                        }
+                    }
+
+                    modeloTablaVentas.setRowCount(0); recalcularTotales();
+                    lblClienteSeleccionado.setText("CONSUMIDOR FINAL"); idClienteActual = 1;
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error crítico al guardar el apartado en la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Verifique los valores numéricos ingresados.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            return;
         }
 
         JPasswordField pfPass = new JPasswordField();
@@ -470,17 +614,17 @@ public class PanelPuntoVenta extends JPanel {
     private class ImagenMiniaturaRenderer extends DefaultTableCellRenderer {
         @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             JLabel label = new JLabel(); label.setHorizontalAlignment(SwingConstants.CENTER); label.setOpaque(true); label.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
-            String ruta = (value != null) ? value.toString() : null;
+            String imgVal = (value != null) ? value.toString() : null;
             
-            // --- LÓGICA DEL LOGO POR DEFECTO DE LA EMPRESA ---
-            if (ruta == null || ruta.trim().isEmpty() || !new File(ruta).exists()) {
+            if (imgVal == null || imgVal.trim().isEmpty()) {
                 if (utilidades.SesionGlobal.getEmpresaActual() != null && utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
-                    ruta = utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
+                    imgVal = utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
                 }
             }
             
-            if (ruta != null && new File(ruta).exists()) {
-                label.setIcon(new ImageIcon(new ImageIcon(ruta).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
+            ImageIcon icon = utilidades.ImagenHelper.obtenerIcono(imgVal, 50, 50);
+            if (icon != null) {
+                label.setIcon(icon);
             } else { label.setText("No Img"); label.setForeground(new Color(140, 145, 150)); }
             return label;
         }

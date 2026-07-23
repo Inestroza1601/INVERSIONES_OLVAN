@@ -30,7 +30,10 @@ public class PanelInventario extends JPanel {
         btnBuscarProducto = crearBotonSubMenu("Buscar Producto / Inventario"); 
 
         panelSubMenu.add(btnBuscarProducto); // Ponemos buscar primero, es la acción más común
-        panelSubMenu.add(btnCrearProducto);
+        int rolId = (utilidades.SesionGlobal.getUsuarioActual() != null) ? utilidades.SesionGlobal.getUsuarioActual().getIdRol() : 1;
+        if (rolId != 3) {
+            panelSubMenu.add(btnCrearProducto);
+        }
 
         // 3. Crear el contenedor central (VACÍO, sin el JLabel)
         panelContenedorInventario = new JPanel();
