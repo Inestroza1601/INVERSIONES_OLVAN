@@ -380,12 +380,13 @@ public class PanelCrearProducto extends JPanel {
         for (int i = 0; i < valoresGarantia.length; i++) { if (valoresGarantia[i] == dias) index = i; }
         cmbDiasGarantia.setSelectedIndex(index);
         
-        if(productoAEditar.getRutaImagen() != null && new File(productoAEditar.getRutaImagen()).exists()) {
+        if(productoAEditar.getRutaImagen() != null && !productoAEditar.getRutaImagen().trim().isEmpty()) {
             rutaImagenSeleccionada = productoAEditar.getRutaImagen();
-            ImageIcon icono = new ImageIcon(rutaImagenSeleccionada);
-            Image img = icono.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-            lblVistaPreviaImagen.setText("");
-            lblVistaPreviaImagen.setIcon(new ImageIcon(img));
+            ImageIcon icono = utilidades.ImagenHelper.obtenerIcono(rutaImagenSeleccionada, 150, 150);
+            if (icono != null) {
+                lblVistaPreviaImagen.setText("");
+                lblVistaPreviaImagen.setIcon(icono);
+            }
         }
     }
     
@@ -567,9 +568,18 @@ public class PanelCrearProducto extends JPanel {
     private void seleccionarImagen() {
         JFileChooser fileChooser = new JFileChooser(); fileChooser.setFileFilter(new FileNameExtensionFilter("Imágenes (JPG, PNG)", "jpg", "jpeg", "png"));
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File archivo = fileChooser.getSelectedFile(); rutaImagenSeleccionada = archivo.getAbsolutePath();
-            ImageIcon iconoOriginal = new ImageIcon(rutaImagenSeleccionada); Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-            lblVistaPreviaImagen.setText(""); lblVistaPreviaImagen.setIcon(new ImageIcon(imagenEscalada));
+            File archivo = fileChooser.getSelectedFile();
+            String b64 = utilidades.ImagenHelper.comprimirYConvertirABase64(archivo);
+            if (b64 != null) {
+                rutaImagenSeleccionada = b64;
+                ImageIcon icon = utilidades.ImagenHelper.obtenerIcono(rutaImagenSeleccionada, 150, 150);
+                if (icon != null) {
+                    lblVistaPreviaImagen.setText("");
+                    lblVistaPreviaImagen.setIcon(icon);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al procesar y comprimir la imagen.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

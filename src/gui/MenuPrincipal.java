@@ -12,6 +12,9 @@ public class MenuPrincipal extends JFrame {
     private JButton btnInventario;
     private JButton btnClientes;
     private JButton btnPuntoVenta;
+    private JButton btnControlCaja;
+    private JButton btnApartados;
+    private JButton btnHistorialVentas;
     private JButton btnGarantias;
     private JButton btnCerrarSesion;
     private JButton botonActivo = null;
@@ -69,23 +72,40 @@ public class MenuPrincipal extends JFrame {
         btnClientes = crearBotonWeb("Clientes", new IconoMenu(2), false);
         btnInventario = crearBotonWeb("Inventario", new IconoMenu(3), false);
         btnPuntoVenta = crearBotonWeb("Punto de Venta", new IconoMenu(4), false);
+        btnControlCaja = crearBotonWeb("Control de Caja", new IconoMenu(8), false);
+        btnApartados = crearBotonWeb("Apartados", new IconoMenu(9), false);
+        btnHistorialVentas = crearBotonWeb("Historial de Ventas", new IconoMenu(9), false);
         btnGarantias = crearBotonWeb("Garantías", new IconoMenu(5), false);
         btnEstadisticas = crearBotonWeb("Estadísticas", new IconoMenu(7), false);
         btnCerrarSesion = crearBotonWeb("Salir del Sistema", new IconoMenu(6), true);
 
+        int rolId = (utilidades.SesionGlobal.getUsuarioActual() != null) ? utilidades.SesionGlobal.getUsuarioActual().getIdRol() : 1;
+
         panelLateralIzquierdo.add(lblMenu);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(30)); 
-        panelLateralIzquierdo.add(btnAdministracion);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(15)); 
+        panelLateralIzquierdo.add(Box.createVerticalStrut(20)); 
+        
+        if (rolId != 3) {
+            panelLateralIzquierdo.add(btnAdministracion);
+            panelLateralIzquierdo.add(Box.createVerticalStrut(12)); 
+        }
         panelLateralIzquierdo.add(btnClientes);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(15)); 
+        panelLateralIzquierdo.add(Box.createVerticalStrut(12)); 
         panelLateralIzquierdo.add(btnInventario);     
-        panelLateralIzquierdo.add(Box.createVerticalStrut(15)); 
+        panelLateralIzquierdo.add(Box.createVerticalStrut(12)); 
         panelLateralIzquierdo.add(btnPuntoVenta);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(15)); 
+        panelLateralIzquierdo.add(Box.createVerticalStrut(12)); 
+        panelLateralIzquierdo.add(btnControlCaja);
+        panelLateralIzquierdo.add(Box.createVerticalStrut(12));
+        panelLateralIzquierdo.add(btnApartados);
+        panelLateralIzquierdo.add(Box.createVerticalStrut(12));
+        panelLateralIzquierdo.add(btnHistorialVentas);
+        panelLateralIzquierdo.add(Box.createVerticalStrut(12));
         panelLateralIzquierdo.add(btnGarantias); 
-        panelLateralIzquierdo.add(Box.createVerticalStrut(15));
-        panelLateralIzquierdo.add(btnEstadisticas);         
+        
+        if (rolId != 3) {
+            panelLateralIzquierdo.add(Box.createVerticalStrut(12));
+            panelLateralIzquierdo.add(btnEstadisticas);
+        }
         
         panelLateralIzquierdo.add(Box.createVerticalGlue());     
         panelLateralIzquierdo.add(btnCerrarSesion);
@@ -94,8 +114,13 @@ public class MenuPrincipal extends JFrame {
         panelCentral = new JPanel();
         panelCentral.setLayout(new BorderLayout());
         panelCentral.setBackground(COLOR_FONDO_PRINCIPAL); 
-        panelCentral.add(new PanelEstadisticas(), BorderLayout.CENTER);
-        marcarBotonActivo(btnEstadisticas, false);
+        if (rolId == 3) {
+            panelCentral.add(new PanelPuntoVenta(), BorderLayout.CENTER);
+            marcarBotonActivo(btnPuntoVenta, false);
+        } else {
+            panelCentral.add(new PanelEstadisticas(), BorderLayout.CENTER);
+            marcarBotonActivo(btnEstadisticas, false);
+        }
 
         add(panelLateralIzquierdo, BorderLayout.WEST); 
         add(panelCentral, BorderLayout.CENTER);
@@ -105,6 +130,9 @@ public class MenuPrincipal extends JFrame {
         btnClientes.addActionListener(e -> mostrarPanelHijo(new PanelGestionClientes()));
         btnInventario.addActionListener(e -> mostrarPanelHijo(new PanelInventario()));
         btnPuntoVenta.addActionListener(e -> mostrarPanelHijo(new PanelPuntoVenta()));
+        btnControlCaja.addActionListener(e -> mostrarPanelHijo(new PanelControlCaja()));
+        btnApartados.addActionListener(e -> mostrarPanelHijo(new PanelApartados()));
+        btnHistorialVentas.addActionListener(e -> mostrarPanelHijo(new PanelHistorialVentas()));
         btnGarantias.addActionListener(e -> mostrarPanelHijo(new PanelGestionGarantias()));
         btnCerrarSesion.addActionListener(e -> System.exit(0));
         btnEstadisticas.addActionListener(e -> mostrarPanelHijo(new PanelEstadisticas()));
@@ -126,8 +154,7 @@ public class MenuPrincipal extends JFrame {
         }
 
         SwingUtilities.invokeLater(() -> {
-            MenuPrincipal menu = new MenuPrincipal();
-            menu.setVisible(true);
+            new FrameLogin().setVisible(true);
         });
     }
     
@@ -234,6 +261,18 @@ public class MenuPrincipal extends JFrame {
                    g2.fillRect(x+4, y+10, 3, 9);       
                    g2.fillRect(x+10, y+4, 3, 15);      
                    g2.fillRect(x+16, y+13, 3, 6);      
+                   break;
+                case 8: 
+                   g2.drawRect(x+3, y+5, 16, 12);
+                   g2.drawLine(x+3, y+11, x+19, y+11);
+                   g2.drawOval(x+10, y+7, 2, 2);
+                   g2.drawLine(x+8, y+14, x+14, y+14);
+                   break;
+                case 9: 
+                   g2.drawRect(x+4, y+3, 14, 16);
+                   g2.drawLine(x+7, y+7, x+15, y+7);
+                   g2.drawLine(x+7, y+11, x+15, y+11);
+                   g2.drawLine(x+7, y+15, x+12, y+15);
                    break;
             }
             g2.dispose();

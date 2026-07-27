@@ -736,4 +736,179 @@ public class GeneradorTickets {
         documento.close();
         return new java.io.File(ruta);
     }
+
+    public static void generarTicketApartadoPDF(String rutaDestino, String nombreCliente, String fecha, String fechaLimite, java.util.List<Object[]> detalles, double total, double abono, double saldo, String metodoPago) throws Exception {
+        Rectangle tamanoTicket = new Rectangle(226, 800); // Formato de ticket térmico 80mm
+        Document documento = new Document(tamanoTicket, 10, 10, 10, 10);
+        PdfWriter writer = PdfWriter.getInstance(documento, new FileOutputStream(rutaDestino));
+        documento.open();
+
+        com.itextpdf.text.Font fNormal = FontFactory.getFont(FontFactory.COURIER, 9);
+        com.itextpdf.text.Font fBold = FontFactory.getFont(FontFactory.COURIER_BOLD, 9);
+        com.itextpdf.text.Font fTitulo = FontFactory.getFont(FontFactory.COURIER_BOLD, 12);
+
+        Empresa emp = SesionGlobal.getEmpresaActual();
+        
+        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORIN STORE";
+        String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
+        String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
+
+        // Título Principal
+        Paragraph parrafoNombre = new Paragraph(empNombre + "\n", fTitulo);
+        parrafoNombre.setAlignment(Element.ALIGN_CENTER);
+        documento.add(parrafoNombre);
+
+        // Cabecera Texto Plano (Dueño y RTN)
+        Paragraph cabeceraTexto = new Paragraph();
+        cabeceraTexto.setAlignment(Element.ALIGN_CENTER);
+        cabeceraTexto.setFont(fBold);
+        if (!empDueño.isEmpty()) cabeceraTexto.add(new Chunk(empDueño + "\n"));
+        cabeceraTexto.add(new Chunk(empRtn + "\n\n"));
+        documento.add(cabeceraTexto);
+
+        // --- SECCIÓN DE DATOS CON ÍCONOS DIBUJADOS ---
+        Paragraph cabeceraIconos = new Paragraph();
+        cabeceraIconos.setAlignment(Element.ALIGN_CENTER);
+        cabeceraIconos.setFont(fNormal);
+
+        if (emp != null) {
+            agregarLineaIcono(cabeceraIconos, writer, "dir", emp.getDireccionEmpresa());
+            agregarLineaIcono(cabeceraIconos, writer, "tel", emp.getNumeroTelefono());
+            agregarLineaIcono(cabeceraIconos, writer, "wa", emp.getWhatsapp());
+        }
+        documento.add(cabeceraIconos);
+
+        Paragraph tituloDoc = new Paragraph("===============================\nCOMPROBANTE DE APARTADO\n===============================\n", fBold);
+        tituloDoc.setAlignment(Element.ALIGN_CENTER);
+        documento.add(tituloDoc);
+
+        // Información de Apartado
+        StringBuilder sbInfo = new StringBuilder();
+        sbInfo.append("Cliente:      ").append(nombreCliente).append("\n");
+        sbInfo.append("Fecha:        ").append(fecha).append("\n");
+        sbInfo.append("Límite Pago:  ").append(fechaLimite).append("\n");
+        sbInfo.append("Pago Vía:     ").append(metodoPago).append("\n");
+        sbInfo.append("-------------------------------\n");
+
+        Paragraph info = new Paragraph(sbInfo.toString(), fNormal);
+        info.setAlignment(Element.ALIGN_LEFT);
+        documento.add(info);
+
+        // Detalles
+        StringBuilder sbDetalles = new StringBuilder();
+        sbDetalles.append(String.format("%-2s %-15s %6s\n", "C.", "DESCRIPCION", "TOTAL"));
+        sbDetalles.append("-------------------------------\n");
+        for (Object[] fila : detalles) {
+            String nom = fila[2].toString();
+            int cant = (int) fila[3];
+            double totalFila = (double) fila[5];
+            int maxLen = 15;
+            if (nom.length() <= maxLen) {
+                sbDetalles.append(String.format("%-2s %-15s %6.2f\n", cant, nom, totalFila));
+            } else {
+                sbDetalles.append(String.format("%-2s %-15s %6.2f\n", cant, nom.substring(0, maxLen), totalFila));
+                int index = maxLen;
+                while (index < nom.length()) {
+                    int end = Math.min(index + maxLen, nom.length());
+                    sbDetalles.append(String.format("   %-15s\n", nom.substring(index, end)));
+                    index += maxLen;
+                }
+            }
+        }
+        sbDetalles.append("-------------------------------\n");
+        Paragraph parrafoDetalles = new Paragraph(sbDetalles.toString(), fNormal);
+        documento.add(parrafoDetalles);
+
+        // Totales de Apartado
+        Paragraph totales = new Paragraph(
+            String.format("%-15s L %8.2f\n", "TOTAL DE COMPRA:", total) +
+            String.format("%-15s L %8.2f\n", "ABONO INICIAL:", abono) +
+            String.format("%-15s L %8.2f\n", "SALDO PENDIENTE:", saldo) +
+            "\n===============================\n", fBold);
+        totales.setAlignment(Element.ALIGN_RIGHT);
+        documento.add(totales);
+
+        String msjPie = emp != null && emp.getMensajeTicketPieRecibo() != null ? emp.getMensajeTicketPieRecibo() : "Conserve este ticket para reclamar su producto.";
+        Paragraph pie = new Paragraph(msjPie + "\n\n\n\n", fNormal);
+        pie.setAlignment(Element.ALIGN_CENTER);
+        documento.add(pie);
+
+        Paragraph pFirma = new Paragraph("________________________\nFirma del Cliente", fNormal);
+        pFirma.setAlignment(Element.ALIGN_CENTER);
+        documento.add(pFirma);
+
+        documento.close();
+    }
+
+    public static void generarTicketCierreCajaPDF(String rutaDestino, java.util.Map<String, Object> c) throws Exception {
+        Rectangle tamanoTicket = new Rectangle(226, 800);
+        Document documento = new Document(tamanoTicket, 10, 10, 10, 10);
+        PdfWriter writer = PdfWriter.getInstance(documento, new FileOutputStream(rutaDestino));
+        documento.open();
+
+        com.itextpdf.text.Font fNormal = FontFactory.getFont(FontFactory.COURIER, 9);
+        com.itextpdf.text.Font fBold = FontFactory.getFont(FontFactory.COURIER_BOLD, 9);
+        com.itextpdf.text.Font fTitulo = FontFactory.getFont(FontFactory.COURIER_BOLD, 12);
+
+        modelo.Empresa emp = utilidades.SesionGlobal.getEmpresaActual();
+        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORION STORE";
+        String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "";
+
+        Paragraph header = new Paragraph();
+        header.setAlignment(Element.ALIGN_CENTER);
+        header.add(new Chunk(empNombre + "\n", fTitulo));
+        if (!empRtn.isEmpty()) header.add(new Chunk(empRtn + "\n", fBold));
+        header.add(new Chunk("REPORTE DE ARQUEO DE CAJA\n", fBold));
+        header.add(new Chunk("===============================\n", fNormal));
+        documento.add(header);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Cajero: ").append(c.get("cajero_turno")).append("\n");
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm");
+        sb.append("Apertura: ").append(sdf.format((java.util.Date) c.get("fecha_apertura"))).append("\n");
+        if (c.get("fecha_cierre") != null) {
+            sb.append("Cierre:   ").append(sdf.format((java.util.Date) c.get("fecha_cierre"))).append("\n");
+        }
+        sb.append("-------------------------------\n");
+        sb.append(String.format("Ef. Inicial:   L %8.2f\n", (double) c.get("monto_apertura")));
+        sb.append(String.format("Ventas Turno:  L %8.2f\n", (double) c.get("total_ventas_general")));
+        sb.append(String.format("Abonos Recib:  L %8.2f\n", (double) c.get("total_abonos_general")));
+        sb.append(String.format("Ef. Esperado:  L %8.2f\n", (double) c.get("efectivo_esperado")));
+        
+        double real = c.get("monto_cierre_real") != null ? (double) c.get("monto_cierre_real") : 0.0;
+        double esperado = (double) c.get("efectivo_esperado");
+        sb.append(String.format("Ef. Real:      L %8.2f\n", real));
+        sb.append(String.format("Diferencia:    L %8.2f\n", real - esperado));
+        sb.append("-------------------------------\n");
+
+        Paragraph body = new Paragraph(sb.toString(), fNormal);
+        documento.add(body);
+
+        java.util.List<java.util.Map<String, Object>> prods = (java.util.List<java.util.Map<String, Object>>) c.get("productos_vendidos");
+        if (prods != null && !prods.isEmpty()) {
+            StringBuilder sbProds = new StringBuilder();
+            sbProds.append("PRODUCTOS VENDIDOS EN TURNO:\n");
+            for (java.util.Map<String, Object> p : prods) {
+                String nom = p.get("descripcion").toString();
+                int cant = (int) p.get("cantidad");
+                double tot = (double) p.get("total_valor");
+                if (nom.length() > 15) nom = nom.substring(0, 15);
+                sbProds.append(String.format("%-2dx %-15s %6.2f\n", cant, nom, tot));
+            }
+            sbProds.append("===============================\n");
+            Paragraph prodPar = new Paragraph(sbProds.toString(), fNormal);
+            documento.add(prodPar);
+        }
+
+        if (c.get("observaciones") != null && !c.get("observaciones").toString().trim().isEmpty()) {
+            Paragraph obs = new Paragraph("Obs: " + c.get("observaciones") + "\n\n", fNormal);
+            documento.add(obs);
+        }
+
+        Paragraph pFirma = new Paragraph("________________________\nFirma del Cajero\n\n", fNormal);
+        pFirma.setAlignment(Element.ALIGN_CENTER);
+        documento.add(pFirma);
+
+        documento.close();
+    }
 }

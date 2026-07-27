@@ -110,6 +110,35 @@ public class UsuarioDAO {
             return false;
         }
     }
+
+    // 5. AUTENTICAR USUARIO PARA SESIÓN
+    public Usuario autenticarUsuario(String nombreUsuario, String passwordPlana) {
+        String hash = utilidades.Seguridad.encriptarSHA256(passwordPlana);
+        String sql = "SELECT u.*, r.nombre_rol FROM USUARIOS u INNER JOIN ROLES_USUARIO r ON u.id_rol = r.id_rol WHERE LOWER(u.nombre_usuario) = LOWER(?) AND u.password_hash = ? AND u.estado_usuario = 1";
+        
+        try (Connection con = factory.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+             
+            ps.setString(1, nombreUsuario.trim());
+            ps.setString(2, hash);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Usuario u = new Usuario();
+                    u.setIdUsuario(rs.getInt("id_usuario"));
+                    u.setIdRol(rs.getInt("id_rol"));
+                    u.setNombreRol(rs.getString("nombre_rol"));
+                    u.setNombreUsuario(rs.getString("nombre_usuario"));
+                    u.setPasswordHash(rs.getString("password_hash"));
+                    u.setEstadoUsuario(rs.getBoolean("estado_usuario"));
+                    return u;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al autenticar usuario: " + e.getMessage());
+        }
+        return null;
+    }
     
     // =========================================================
     // GESTIÓN DINÁMICA DE ROLES

@@ -205,6 +205,47 @@ public class VentasDAO {
         return false;
     }
     
+    public java.util.List<Object[]> listarVentas() {
+        java.util.List<Object[]> ventas = new java.util.ArrayList<>();
+        String sql = "SELECT v.id_ventas, v.fecha_venta, v.subtotal_venta, v.impuesto_venta, v.total_venta, "
+                   + "v.referencia_pago, v.banco_pago, c.id_cliente, c.nombre_cliente, c.apellido_cliente, "
+                   + "u.nombre_usuario, m.nombre_metodo "
+                   + "FROM VENTAS v "
+                   + "LEFT JOIN CLIENTES c ON v.id_cliente_venta = c.id_cliente "
+                   + "LEFT JOIN USUARIOS u ON v.id_usuario = u.id_usuario "
+                   + "LEFT JOIN METODOS_PAGO m ON v.id_metodo_pago = m.id_metodo_pago "
+                   + "ORDER BY v.fecha_venta DESC";
+        try (Connection con = factory.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                int idCliente = rs.getInt("id_cliente");
+                String cliente = rs.getString("nombre_cliente");
+                if (rs.getString("apellido_cliente") != null) {
+                    cliente += " " + rs.getString("apellido_cliente");
+                }
+                if (idCliente == 1 || cliente == null || cliente.trim().isEmpty()) {
+                    cliente = "CONSUMIDOR FINAL";
+                }
+                ventas.add(new Object[]{
+                    rs.getInt("id_ventas"),
+                    rs.getTimestamp("fecha_venta"),
+                    cliente.trim(),
+                    rs.getString("nombre_metodo"),
+                    rs.getString("nombre_usuario"),
+                    rs.getDouble("subtotal_venta"),
+                    rs.getDouble("impuesto_venta"),
+                    rs.getDouble("total_venta"),
+                    rs.getString("referencia_pago"),
+                    rs.getString("banco_pago")
+                });
+            }
+        } catch (SQLException e) {
+            System.err.println("Error listing sales: " + e.getMessage());
+        }
+        return ventas;
+    }
+    
     public java.util.Map<String, Object> obtenerReciboPorId(int idVenta) {
         java.util.Map<String, Object> mapa = new java.util.HashMap<>();
 
