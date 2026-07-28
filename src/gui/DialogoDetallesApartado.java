@@ -16,7 +16,7 @@ public class DialogoDetallesApartado extends JDialog {
     private Apartado ap;
     private List<DetalleApartado> detalles;
     private List<AbonoApartado> abonos;
-    
+
     private JTable tablaProductos;
     private JTable tablaAbonos;
     private DefaultTableModel modeloAbonos;
@@ -25,7 +25,7 @@ public class DialogoDetallesApartado extends JDialog {
         super(parent, "Detalles del Apartado #" + idApartado, true);
         this.idApartado = idApartado;
         this.dao = new ApartadoDAO();
-        
+
         cargarDatos();
         iniciarDiseno();
     }
@@ -46,20 +46,23 @@ public class DialogoDetallesApartado extends JDialog {
         JPanel pnlInfo = new JPanel(new GridLayout(3, 2, 10, 10));
         pnlInfo.setBackground(Color.WHITE);
         pnlInfo.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 222, 225)),
-            BorderFactory.createEmptyBorder(15, 20, 15, 20)
-        ));
-        
+                BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 222, 225)),
+                BorderFactory.createEmptyBorder(15, 20, 15, 20)));
+
         Font fBold = new Font("Segoe UI", Font.BOLD, 14);
         Font fPlain = new Font("Segoe UI", Font.PLAIN, 14);
-        
+
         String cli = ap.getNombreCliente() + " " + (ap.getApellidoCliente() != null ? ap.getApellidoCliente() : "");
         pnlInfo.add(crearLabelInfo("Cliente:", cli, fBold, fPlain));
         pnlInfo.add(crearLabelInfo("Estado:", ap.getEstadoApartado(), fBold, fPlain));
-        pnlInfo.add(crearLabelInfo("Fecha Apartado:", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(ap.getFechaApartado()), fBold, fPlain));
-        pnlInfo.add(crearLabelInfo("Fecha Límite:", (ap.getFechaLimite() != null ? new SimpleDateFormat("dd/MM/yyyy").format(ap.getFechaLimite()) : "N/A"), fBold, fPlain));
+        pnlInfo.add(crearLabelInfo("Fecha Apartado:",
+                new SimpleDateFormat("dd/MM/yyyy HH:mm").format(ap.getFechaApartado()), fBold, fPlain));
+        pnlInfo.add(crearLabelInfo("Fecha Límite:",
+                (ap.getFechaLimite() != null ? new SimpleDateFormat("dd/MM/yyyy").format(ap.getFechaLimite()) : "N/A"),
+                fBold, fPlain));
         pnlInfo.add(crearLabelInfo("Total Apartado:", String.format("L %,.2f", ap.getTotalApartado()), fBold, fPlain));
-        pnlInfo.add(crearLabelInfo("Saldo Pendiente:", String.format("L %,.2f", ap.getSaldoPendiente()), fBold, fPlain));
+        pnlInfo.add(
+                crearLabelInfo("Saldo Pendiente:", String.format("L %,.2f", ap.getSaldoPendiente()), fBold, fPlain));
 
         add(pnlInfo, BorderLayout.NORTH);
 
@@ -67,24 +70,29 @@ public class DialogoDetallesApartado extends JDialog {
         JTabbedPane tabs = new JTabbedPane();
         tabs.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         tabs.setBackground(Color.WHITE);
-        
+
         // Tab Productos
-        String[] colP = {"Código", "Producto", "Cantidad", "Precio Unitario", "Subtotal"};
-        DefaultTableModel modP = new DefaultTableModel(null, colP) { @Override public boolean isCellEditable(int r, int c) { return false; } };
-        tablaProductos = new JTable(modP); 
+        String[] colP = { "Código", "Producto", "Cantidad", "Precio Unitario", "Subtotal" };
+        DefaultTableModel modP = new DefaultTableModel(null, colP) {
+            @Override
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
+        };
+        tablaProductos = new JTable(modP);
         tablaProductos.setRowHeight(25);
         tablaProductos.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         for (DetalleApartado d : detalles) {
             double sub = d.getCantidadApartado() * d.getPrecioUnitarioApartado();
-            modP.addRow(new Object[]{ 
-                d.getCodigoBarras(), 
-                d.getNombreProducto(), 
-                d.getCantidadApartado(), 
-                String.format("L %,.2f", d.getPrecioUnitarioApartado()),
-                String.format("L %,.2f", sub)
+            modP.addRow(new Object[] {
+                    d.getCodigoBarras(),
+                    d.getNombreProducto(),
+                    d.getCantidadApartado(),
+                    String.format("L %,.2f", d.getPrecioUnitarioApartado()),
+                    String.format("L %,.2f", sub)
             });
         }
-        
+
         JPanel pnlProd = new JPanel(new BorderLayout());
         pnlProd.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         pnlProd.setOpaque(false);
@@ -92,23 +100,28 @@ public class DialogoDetallesApartado extends JDialog {
         tabs.addTab("Productos", pnlProd);
 
         // Tab Abonos
-        String[] colA = {"ID Abono", "Fecha Abono", "Monto", "Método", "Cajero"};
-        modeloAbonos = new DefaultTableModel(null, colA) { @Override public boolean isCellEditable(int r, int c) { return false; } };
-        tablaAbonos = new JTable(modeloAbonos); 
+        String[] colA = { "ID Abono", "Fecha Abono", "Monto", "Método", "Cajero" };
+        modeloAbonos = new DefaultTableModel(null, colA) {
+            @Override
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
+        };
+        tablaAbonos = new JTable(modeloAbonos);
         tablaAbonos.setRowHeight(25);
         tablaAbonos.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        
+
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         for (AbonoApartado ab : abonos) {
-            modeloAbonos.addRow(new Object[]{ 
-                ab.getIdAbono(), 
-                sdf.format(ab.getFechaAbono()), 
-                String.format("L %,.2f", ab.getMontoAbono()), 
-                ab.getNombreMetodo(), 
-                ab.getNombreUsuario() 
+            modeloAbonos.addRow(new Object[] {
+                    ab.getIdAbono(),
+                    sdf.format(ab.getFechaAbono()),
+                    String.format("L %,.2f", ab.getMontoAbono()),
+                    ab.getNombreMetodo(),
+                    ab.getNombreUsuario()
             });
         }
-        
+
         JPanel pnlAbonos = new JPanel(new BorderLayout());
         pnlAbonos.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         pnlAbonos.setOpaque(false);
@@ -120,14 +133,14 @@ public class DialogoDetallesApartado extends JDialog {
         // Botonera Inferior
         JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 15));
         pnlBotones.setOpaque(false);
-        
+
         JButton btnPrintGeneral = new JButton("Imprimir Ticket General");
         btnPrintGeneral.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnPrintGeneral.setBackground(new Color(41, 128, 185));
         btnPrintGeneral.setForeground(Color.WHITE);
         btnPrintGeneral.setFocusPainted(false);
         btnPrintGeneral.addActionListener(e -> imprimirTicketGeneral());
-        
+
         JButton btnPrintAbono = new JButton("Reimprimir Abono Seleccionado");
         btnPrintAbono.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnPrintAbono.setBackground(new Color(39, 174, 96));
@@ -135,7 +148,7 @@ public class DialogoDetallesApartado extends JDialog {
         btnPrintAbono.setFocusPainted(false);
         btnPrintAbono.setEnabled(false);
         btnPrintAbono.addActionListener(e -> imprimirAbonoSeleccionado());
-        
+
         tablaAbonos.getSelectionModel().addListSelectionListener(e -> {
             btnPrintAbono.setEnabled(tablaAbonos.getSelectedRow() >= 0);
         });
@@ -147,65 +160,75 @@ public class DialogoDetallesApartado extends JDialog {
         pnlBotones.add(btnPrintGeneral);
         pnlBotones.add(btnPrintAbono);
         pnlBotones.add(btnCerrar);
-        
+
         add(pnlBotones, BorderLayout.SOUTH);
     }
-    
+
     private JPanel crearLabelInfo(String titulo, String valor, Font fTit, Font fVal) {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         p.setOpaque(false);
-        JLabel l1 = new JLabel(titulo); l1.setFont(fTit); l1.setForeground(Color.DARK_GRAY);
-        JLabel l2 = new JLabel(valor); l2.setFont(fVal); l2.setForeground(Color.BLACK);
-        p.add(l1); p.add(l2);
+        JLabel l1 = new JLabel(titulo);
+        l1.setFont(fTit);
+        l1.setForeground(Color.DARK_GRAY);
+        JLabel l2 = new JLabel(valor);
+        l2.setFont(fVal);
+        l2.setForeground(Color.BLACK);
+        p.add(l1);
+        p.add(l2);
         return p;
     }
-    
+
     private void imprimirTicketGeneral() {
         try {
-            String ruta = System.getProperty("user.home") + "/Ticket_Apartado_" + idApartado + "_" + System.currentTimeMillis() + ".pdf";
+            String ruta = System.getProperty("user.home") + "/Ticket_Apartado_" + idApartado + "_"
+                    + System.currentTimeMillis() + ".pdf";
             utilidades.GeneradorTickets.generarTicketApartadoPDF(
-                ruta,
-                ap.getNombreCliente() + " " + (ap.getApellidoCliente() != null ? ap.getApellidoCliente() : ""),
-                new SimpleDateFormat("dd/MM/yyyy HH:mm").format(ap.getFechaApartado()),
-                ap.getTotalApartado(),
-                ap.getSaldoPendiente(),
-                idApartado,
-                detalles
-            );
+                    ruta,
+                    ap.getNombreCliente() + " " + (ap.getApellidoCliente() != null ? ap.getApellidoCliente() : ""),
+                    new SimpleDateFormat("dd/MM/yyyy HH:mm").format(ap.getFechaApartado()),
+                    ap.getTotalApartado(),
+                    ap.getSaldoPendiente(),
+                    idApartado,
+                    detalles);
             Desktop.getDesktop().open(new java.io.File(ruta));
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error al generar ticket general: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error al generar ticket general: " + ex.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     private void imprimirAbonoSeleccionado() {
         int row = tablaAbonos.getSelectedRow();
-        if (row < 0) return;
-        
+        if (row < 0)
+            return;
+
         int idAbono = (int) tablaAbonos.getValueAt(row, 0);
         String fecha = (String) tablaAbonos.getValueAt(row, 1);
         String montoStr = (String) tablaAbonos.getValueAt(row, 2);
         double monto = Double.parseDouble(montoStr.replace("L ", "").replace(",", "").trim());
         String metodo = (String) tablaAbonos.getValueAt(row, 3);
-        
+
         try {
-            String ruta = System.getProperty("user.home") + "/Ticket_Reimpresion_Abono_" + idAbono + "_" + System.currentTimeMillis() + ".pdf";
-            // Nota: Aquí se asume saldo actual del apartado, idealmente se debería calcular el saldo histórico.
-            // Para reimpresión básica, pasaremos el saldo actual, pero lo ideal es guardarlo por historial.
+            String ruta = System.getProperty("user.home") + "/Ticket_Reimpresion_Abono_" + idAbono + "_"
+                    + System.currentTimeMillis() + ".pdf";
+            // Nota: Aquí se asume saldo actual del apartado, idealmente se debería calcular
+            // el saldo histórico.
+            // Para reimpresión básica, pasaremos el saldo actual, pero lo ideal es
+            // guardarlo por historial.
             utilidades.GeneradorTickets.generarTicketAbonoPDF(
-                ruta,
-                ap.getNombreCliente() + " " + (ap.getApellidoCliente() != null ? ap.getApellidoCliente() : ""),
-                fecha,
-                monto,
-                ap.getSaldoPendiente(), // Saldo actual de la cuenta
-                metodo,
-                null,
-                null,
-                idApartado
-            );
+                    ruta,
+                    ap.getNombreCliente() + " " + (ap.getApellidoCliente() != null ? ap.getApellidoCliente() : ""),
+                    fecha,
+                    monto,
+                    ap.getSaldoPendiente(), // Saldo actual de la cuenta
+                    metodo,
+                    null,
+                    null,
+                    idApartado);
             Desktop.getDesktop().open(new java.io.File(ruta));
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error al generar ticket de abono: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error al generar ticket de abono: " + ex.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }

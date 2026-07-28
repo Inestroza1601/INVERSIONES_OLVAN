@@ -12,8 +12,8 @@ public class PanelEstadisticas extends JPanel {
     private final Color COLOR_TARJETA = new Color(255, 255, 255); // Blanco puro
     private final Color COLOR_TEXTO = new Color(45, 45, 45); // Gris oscuro
     private final Color COLOR_ACENTO = new Color(39, 174, 96); // Verde Menta
-    private final Color COLOR_EXITO = new Color(39, 174, 96);   // Verde Menta
-    private final Color COLOR_ALERTA = new Color(227, 0, 15);  // Rojo Logo
+    private final Color COLOR_EXITO = new Color(39, 174, 96); // Verde Menta
+    private final Color COLOR_ALERTA = new Color(227, 0, 15); // Rojo Logo
 
     private JComboBox<String> cmbFiltro;
     private TacometroPanel tacometro;
@@ -45,8 +45,8 @@ public class PanelEstadisticas extends JPanel {
         // El toque corporativo minimalista
         JLabel lblMarca = new JLabel("O R I O N   S Y S T E M S");
         lblMarca.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        lblMarca.setForeground(COLOR_ACENTO); 
-        
+        lblMarca.setForeground(COLOR_ACENTO);
+
         JLabel lblTitulo = new JLabel("Dashboard de Estadísticas");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 28));
         lblTitulo.setForeground(COLOR_TEXTO);
@@ -55,7 +55,7 @@ public class PanelEstadisticas extends JPanel {
         panelTextos.add(Box.createVerticalStrut(2)); // Un mini respiro entre textos
         panelTextos.add(lblTitulo);
 
-        String[] opcionesFiltro = {"Día", "Semana", "Mes", "Año"};
+        String[] opcionesFiltro = { "Día", "Semana", "Mes", "Año" };
         cmbFiltro = new JComboBox<>(opcionesFiltro);
         cmbFiltro.setFont(new Font("Segoe UI", Font.BOLD, 14));
         cmbFiltro.setPreferredSize(new Dimension(150, 35));
@@ -81,12 +81,13 @@ public class PanelEstadisticas extends JPanel {
         // Tarjeta 2: Comparativa
         JPanel tarjetaComparativa = crearTarjeta("Rendimiento vs Período Anterior");
         tarjetaComparativa.setLayout(new BoxLayout(tarjetaComparativa, BoxLayout.Y_AXIS));
-        
+
         lblDiferenciaPorcentaje = new JLabel("+0.00%", SwingConstants.CENTER);
         lblDiferenciaPorcentaje.setFont(new Font("Segoe UI", Font.BOLD, 55)); // Fuente ampliada
         lblDiferenciaPorcentaje.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        lblMensajeComparacion = new JLabel("<html><div style='text-align: center;'>Orion Systems analizando datos...</div></html>");
+
+        lblMensajeComparacion = new JLabel(
+                "<html><div style='text-align: center;'>Orion Systems analizando datos...</div></html>");
         lblMensajeComparacion.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         lblMensajeComparacion.setForeground(new Color(140, 145, 150));
         lblMensajeComparacion.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -101,15 +102,17 @@ public class PanelEstadisticas extends JPanel {
         JPanel tarjetaTicket = crearTarjeta("Ticket Promedio");
         // Centramos el texto y hacemos la fuente mucho más imponente
         lblTicketPromedio = new JLabel("L. 0.00", SwingConstants.CENTER);
-        lblTicketPromedio.setFont(new Font("Segoe UI", Font.BOLD, 42)); 
+        lblTicketPromedio.setFont(new Font("Segoe UI", Font.BOLD, 42));
         lblTicketPromedio.setForeground(COLOR_TEXTO);
         tarjetaTicket.add(lblTicketPromedio, BorderLayout.CENTER);
 
         // Tarjeta 4: Top Producto
         JPanel tarjetaTop = crearTarjeta("Producto Más Vendido");
-        // Centramos el texto y usamos HTML para que se divida en 2 líneas si es muy largo
-        lblTopProducto = new JLabel("<html><div style='text-align: center;'>Cargando...</div></html>", SwingConstants.CENTER);
-        lblTopProducto.setFont(new Font("Segoe UI", Font.BOLD, 28)); 
+        // Centramos el texto y usamos HTML para que se divida en 2 líneas si es muy
+        // largo
+        lblTopProducto = new JLabel("<html><div style='text-align: center;'>Cargando...</div></html>",
+                SwingConstants.CENTER);
+        lblTopProducto.setFont(new Font("Segoe UI", Font.BOLD, 28));
         lblTopProducto.setForeground(COLOR_ACENTO);
         tarjetaTop.add(lblTopProducto, BorderLayout.CENTER);
 
@@ -158,13 +161,21 @@ public class PanelEstadisticas extends JPanel {
 
         // Definimos metas estimadas para que el tacómetro se vea proporcional
         double metaEstimada = 10000;
-        switch(filtro) {
-            case "Día": metaEstimada = 25000; break; // Ejemplo: Meta diaria de 25k
-            case "Semana": metaEstimada = 150000; break;
-            case "Mes": metaEstimada = 500000; break;
-            case "Año": metaEstimada = 2000000; break;
+        switch (filtro) {
+            case "Día":
+                metaEstimada = 25000;
+                break; // Ejemplo: Meta diaria de 25k
+            case "Semana":
+                metaEstimada = 150000;
+                break;
+            case "Mes":
+                metaEstimada = 500000;
+                break;
+            case "Año":
+                metaEstimada = 2000000;
+                break;
         }
-        
+
         if (ventasActual >= metaEstimada) {
             metaEstimada = ventasActual * 1.2; // Expandimos un 20% más
         }
@@ -172,14 +183,15 @@ public class PanelEstadisticas extends JPanel {
         actualizarUI(ventasActual, ventasAnterior, metaEstimada, topProducto, ticketProm, filtro);
     }
 
-    private void actualizarUI(double totalActual, double totalAnterior, double metaMax, String topProd, double ticket, String tipoFiltro) {
+    private void actualizarUI(double totalActual, double totalAnterior, double metaMax, String topProd, double ticket,
+            String tipoFiltro) {
         // 1. Animamos el Tacómetro
         tacometro.animarA(totalActual, metaMax);
 
         // 2. Preparamos el formato y textos
         DecimalFormat df = new DecimalFormat("#,##0.00");
-        String periodoText = tipoFiltro.toLowerCase().equals("día") ? "este día y el anterior" : 
-                             "est" + (tipoFiltro.equals("Semana") ? "a " : "e ") + tipoFiltro.toLowerCase() + " y el anterior";
+        String periodoText = tipoFiltro.toLowerCase().equals("día") ? "este día y el anterior"
+                : "est" + (tipoFiltro.equals("Semana") ? "a " : "e ") + tipoFiltro.toLowerCase() + " y el anterior";
 
         // Limpiamos el ícono por defecto
         lblMensajeComparacion.setIcon(null);
@@ -188,11 +200,12 @@ public class PanelEstadisticas extends JPanel {
         if (totalAnterior <= 0) {
             lblDiferenciaPorcentaje.setText("-- %");
             lblDiferenciaPorcentaje.setForeground(new Color(140, 145, 150)); // Gris neutro
-            
+
             // Inyectamos nuestro ícono vectorial y el mensaje
             lblMensajeComparacion.setIcon(new IconoFaltaDatos());
-            lblMensajeComparacion.setText("<html><div style='text-align: center; padding-left: 8px;'>No existen datos suficientes del período<br>anterior para calcular una diferencia.</div></html>");
-            
+            lblMensajeComparacion.setText(
+                    "<html><div style='text-align: center; padding-left: 8px;'>No existen datos suficientes del período<br>anterior para calcular una diferencia.</div></html>");
+
         } else {
             // Lógica normal de cálculo
             double porcentaje = ((totalActual - totalAnterior) / totalAnterior) * 100;
@@ -201,11 +214,15 @@ public class PanelEstadisticas extends JPanel {
             if (porcentaje >= 0) {
                 lblDiferenciaPorcentaje.setText("▲ " + percStr);
                 lblDiferenciaPorcentaje.setForeground(COLOR_EXITO);
-                lblMensajeComparacion.setText("<html><div style='text-align: center;'>Orion Systems detectó un <b>incremento</b> de ventas<br>del " + percStr + " entre " + periodoText + ".</div></html>");
+                lblMensajeComparacion.setText(
+                        "<html><div style='text-align: center;'>Orion Systems detectó un <b>incremento</b> de ventas<br>del "
+                                + percStr + " entre " + periodoText + ".</div></html>");
             } else {
                 lblDiferenciaPorcentaje.setText("▼ " + percStr);
                 lblDiferenciaPorcentaje.setForeground(COLOR_ALERTA);
-                lblMensajeComparacion.setText("<html><div style='text-align: center;'>Orion Systems detectó un <b>decremento</b> de ventas<br>del " + percStr + " entre " + periodoText + ".</div></html>");
+                lblMensajeComparacion.setText(
+                        "<html><div style='text-align: center;'>Orion Systems detectó un <b>decremento</b> de ventas<br>del "
+                                + percStr + " entre " + periodoText + ".</div></html>");
             }
         }
 
@@ -277,7 +294,7 @@ public class PanelEstadisticas extends JPanel {
             int tx = (width - fm.stringWidth(textoCentro)) / 2;
             int ty = y + (diameter / 2) - 20;
             g2.drawString(textoCentro, tx, ty);
-            
+
             // Texto de Meta
             String textoMeta = "Meta: L. " + df.format(maximo);
             g2.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -286,49 +303,55 @@ public class PanelEstadisticas extends JPanel {
             g2.drawString(textoMeta, (width - fmMeta.stringWidth(textoMeta)) / 2, ty + 25);
         }
     }
-    
+
     // =================================================================
     // CLASE INTERNA: ÍCONO VECTORIAL DE AVISO (FALTA DE DATOS)
     // =================================================================
     private class IconoFaltaDatos implements Icon {
-        @Override public int getIconWidth() { return 24; }
-        @Override public int getIconHeight() { return 24; }
-        
+        @Override
+        public int getIconWidth() {
+            return 24;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return 24;
+        }
+
         @Override
         public void paintIcon(Component c, Graphics g, int x, int y) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            
+
             // Color gris corporativo
-            g2.setColor(new Color(140, 145, 150)); 
+            g2.setColor(new Color(140, 145, 150));
             g2.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            
+
             // Dibujar el círculo exterior
             g2.drawOval(x + 2, y + 2, 20, 20);
-            
+
             // Dibujar el signo de exclamación (!)
             g2.drawLine(x + 12, y + 7, x + 12, y + 13); // Línea superior
-            g2.fillOval(x + 10, y + 16, 4, 4);          // Punto inferior
-            
+            g2.fillOval(x + 10, y + 16, 4, 4); // Punto inferior
+
             g2.dispose();
         }
-    }                 
+    }
+
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 400, Short.MAX_VALUE));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 300, Short.MAX_VALUE));
     }// </editor-fold>//GEN-END:initComponents
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables

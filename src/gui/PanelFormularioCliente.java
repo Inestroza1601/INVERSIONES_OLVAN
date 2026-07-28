@@ -14,19 +14,19 @@ import java.util.HashSet;
 public class PanelFormularioCliente extends JPanel {
 
     private JDialog dialogPadre;
-    private PanelGestionClientes panelPadre; 
-    private Cliente clienteAEditar; 
-    
+    private PanelGestionClientes panelPadre;
+    private Cliente clienteAEditar;
+
     // --- RAM CACHE ---
     private Set<String> identidadesEnRam;
-    
+
     private JFormattedTextField txtIdentidad; // Ahora es FormattedTextField
     private JLabel lblErrorIdentidad;
     private JTextField txtNombre;
     private JTextField txtApellido;
-    private JFormattedTextField txtTelefono;  // Ahora es FormattedTextField
+    private JFormattedTextField txtTelefono; // Ahora es FormattedTextField
     private JTextField txtCorreo;
-    
+
     private JButton btnGuardar;
     private JButton btnCancelar;
 
@@ -34,12 +34,13 @@ public class PanelFormularioCliente extends JPanel {
         this.dialogPadre = dialogPadre;
         this.panelPadre = panelPadre;
         this.clienteAEditar = cliente;
-        
+
         // 1. CARGAMOS LA RAM ANTES DE INICIAR EL DISEÑO
         ClienteDAO dao = new ClienteDAO();
         identidadesEnRam = dao.obtenerIdentidadesEnRam();
-        
-        // Si estamos editando, sacamos SU PROPIA identidad de la RAM para que no choque consigo mismo
+
+        // Si estamos editando, sacamos SU PROPIA identidad de la RAM para que no choque
+        // consigo mismo
         if (clienteAEditar != null) {
             identidadesEnRam.remove(clienteAEditar.getIdentidadCliente());
         }
@@ -51,11 +52,10 @@ public class PanelFormularioCliente extends JPanel {
 
     private void iniciarDiseno() {
         this.setLayout(new BorderLayout());
-        this.setBackground(new Color(240, 242, 245)); // Gris Nube 
+        this.setBackground(new Color(240, 242, 245)); // Gris Nube
         this.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 222, 225), 2), // Borde gris claro
-            BorderFactory.createEmptyBorder(25, 30, 25, 30)
-        ));
+                BorderFactory.createLineBorder(new Color(220, 222, 225), 2), // Borde gris claro
+                BorderFactory.createEmptyBorder(25, 30, 25, 30)));
 
         String textoTitulo = (clienteAEditar == null) ? "Registrar Nuevo Cliente" : "Editar Cliente";
         JLabel lblTitulo = new JLabel(textoTitulo);
@@ -67,7 +67,7 @@ public class PanelFormularioCliente extends JPanel {
         JPanel pnlForm = new JPanel(new GridBagLayout());
         pnlForm.setBackground(new Color(255, 255, 255)); // Blanco Puro
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 5, 5, 5); 
+        gbc.insets = new Insets(10, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // 2. CONFIGURACIÓN DE LAS MÁSCARAS
@@ -75,7 +75,7 @@ public class PanelFormularioCliente extends JPanel {
             MaskFormatter maskDNI = new MaskFormatter("####-####-#####");
             maskDNI.setPlaceholderCharacter('_');
             txtIdentidad = new JFormattedTextField(maskDNI);
-            
+
             MaskFormatter maskTel = new MaskFormatter("####-####");
             maskTel.setPlaceholderCharacter('_');
             txtTelefono = new JFormattedTextField(maskTel);
@@ -90,17 +90,17 @@ public class PanelFormularioCliente extends JPanel {
         txtCorreo = new JTextField(20);
 
         agregarFila(pnlForm, gbc, 0, "Identidad:", txtIdentidad);
-        
+
         gbc.gridy = 1;
         gbc.gridx = 1;
-        gbc.insets = new Insets(0, 5, 10, 5); 
+        gbc.insets = new Insets(0, 5, 10, 5);
         lblErrorIdentidad = new JLabel(" ");
         lblErrorIdentidad.setForeground(new Color(227, 0, 15)); // Rojo Logo
         lblErrorIdentidad.setFont(new Font("Segoe UI", Font.BOLD, 12));
         pnlForm.add(lblErrorIdentidad, gbc);
 
         gbc.insets = new Insets(10, 5, 10, 5);
-        
+
         agregarFila(pnlForm, gbc, 2, "Nombre:", txtNombre);
         agregarFila(pnlForm, gbc, 3, "Apellido:", txtApellido);
         agregarFila(pnlForm, gbc, 4, "Teléfono:", txtTelefono);
@@ -121,7 +121,7 @@ public class PanelFormularioCliente extends JPanel {
 
         String textoBoton = (clienteAEditar == null) ? "Guardar Cliente" : "Actualizar Cliente";
         Color colorBoton = new Color(39, 174, 96); // Verde Menta unificado
-        
+
         btnGuardar = new JButton(textoBoton);
         btnGuardar.setBackground(colorBoton);
         btnGuardar.setForeground(Color.WHITE);
@@ -147,16 +147,27 @@ public class PanelFormularioCliente extends JPanel {
 
     private void configurarValidacionEnVivo() {
         txtIdentidad.getDocument().addDocumentListener(new DocumentListener() {
-            @Override public void insertUpdate(DocumentEvent e) { validarIdentidad(); }
-            @Override public void removeUpdate(DocumentEvent e) { validarIdentidad(); }
-            @Override public void changedUpdate(DocumentEvent e) { validarIdentidad(); }
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                validarIdentidad();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                validarIdentidad();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                validarIdentidad();
+            }
         });
     }
 
     private void validarIdentidad() {
         // 3. LIMPIAMOS EL TEXTO PARA LA VALIDACIÓN (Quitamos guiones y guiones bajos)
         String identidadRaw = txtIdentidad.getText().replace("-", "").replace("_", "").trim();
-        
+
         // Si no ha escrito los 13 dígitos, restauramos visualmente
         if (identidadRaw.isEmpty() || identidadRaw.length() < 13) {
             restaurarEstiloIdentidad();
@@ -164,25 +175,23 @@ public class PanelFormularioCliente extends JPanel {
             return;
         }
 
-        //  VERIFICACIÓN EN RAM
+        // VERIFICACIÓN EN RAM
         if (identidadesEnRam.contains(identidadRaw)) {
             txtIdentidad.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(227, 0, 15), 2), // Rojo Logo
-                BorderFactory.createEmptyBorder(4, 7, 4, 7)
-            ));
+                    BorderFactory.createLineBorder(new Color(227, 0, 15), 2), // Rojo Logo
+                    BorderFactory.createEmptyBorder(4, 7, 4, 7)));
             lblErrorIdentidad.setText("Esta identidad ya está registrada.");
-            btnGuardar.setEnabled(false); 
+            btnGuardar.setEnabled(false);
         } else {
             restaurarEstiloIdentidad();
-            btnGuardar.setEnabled(true); 
+            btnGuardar.setEnabled(true);
         }
     }
 
     private void restaurarEstiloIdentidad() {
         txtIdentidad.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 222, 225)), // Gris claro
-            BorderFactory.createEmptyBorder(5, 8, 5, 8)
-        ));
+                BorderFactory.createLineBorder(new Color(220, 222, 225)), // Gris claro
+                BorderFactory.createEmptyBorder(5, 8, 5, 8)));
         lblErrorIdentidad.setText(" ");
     }
 
@@ -190,15 +199,17 @@ public class PanelFormularioCliente extends JPanel {
         // Obtenemos los valores "limpios" sin guiones
         String identidadLimpia = txtIdentidad.getText().replace("-", "").replace("_", "").trim();
         String telefonoLimpio = txtTelefono.getText().replace("-", "").replace("_", "").trim();
-        
+
         if (txtNombre.getText().trim().isEmpty() || identidadLimpia.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "El nombre y la identidad son obligatorios.", "Campos Incompletos", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "El nombre y la identidad son obligatorios.", "Campos Incompletos",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         // Validamos que haya escrito los 13 números completos
         if (identidadLimpia.length() != 13) {
-            JOptionPane.showMessageDialog(this, "La identidad debe tener exactamente 13 dígitos.", "Formato Inválido", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "La identidad debe tener exactamente 13 dígitos.", "Formato Inválido",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -222,8 +233,8 @@ public class PanelFormularioCliente extends JPanel {
 
         if (exito) {
             JOptionPane.showMessageDialog(this, "Cliente guardado exitosamente.");
-            panelPadre.cargarDatosDesdeBD(); 
-            dialogPadre.dispose(); 
+            panelPadre.cargarDatosDesdeBD();
+            dialogPadre.dispose();
         } else {
             JOptionPane.showMessageDialog(this, "Error al guardar en la base de datos.");
         }
@@ -244,29 +255,27 @@ public class PanelFormularioCliente extends JPanel {
         campo.setBackground(new Color(250, 250, 250)); // Fondo claro input
         campo.setForeground(new Color(45, 45, 45)); // Texto oscuro
         campo.setCaretColor(new Color(45, 45, 45));
-        
+
         campo.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 222, 225)), // Gris claro
-            BorderFactory.createEmptyBorder(5, 8, 5, 8)
-        ));
+                BorderFactory.createLineBorder(new Color(220, 222, 225)), // Gris claro
+                BorderFactory.createEmptyBorder(5, 8, 5, 8)));
         panel.add(campo, gbc);
-    }                  
+    }
+
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 400, Short.MAX_VALUE));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 300, Short.MAX_VALUE));
     }// </editor-fold>//GEN-END:initComponents
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables

@@ -13,7 +13,7 @@ public class DialogoVisorImagen extends JDialog {
         super(parent, titulo, true);
         iniciarDiseno(base64);
     }
-    
+
     public DialogoVisorImagen(JDialog parent, String titulo, String base64) {
         super(parent, titulo, true);
         iniciarDiseno(base64);
@@ -27,12 +27,12 @@ public class DialogoVisorImagen extends JDialog {
 
         lblImagen = new JLabel();
         lblImagen.setHorizontalAlignment(SwingConstants.CENTER);
-        
+
         ImageIcon icono = obtenerImagenDesdeBase64(base64);
         if (icono != null) {
             // Escalar para que quepa en la ventana sin deformarse
             Image img = icono.getImage();
-            
+
             // Calculo de aspecto
             int imgW = img.getWidth(null);
             int imgH = img.getHeight(null);
@@ -58,22 +58,23 @@ public class DialogoVisorImagen extends JDialog {
         });
 
         this.add(new JScrollPane(lblImagen), BorderLayout.CENTER);
-        
+
         // Instrucción
         JLabel lblCerrar = new JLabel("Haz clic en la imagen o presiona ESC para cerrar");
         lblCerrar.setForeground(Color.LIGHT_GRAY);
         lblCerrar.setHorizontalAlignment(SwingConstants.CENTER);
         lblCerrar.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         this.add(lblCerrar, BorderLayout.SOUTH);
-        
+
         // Atajo teclado ESC
         this.getRootPane().registerKeyboardAction(e -> dispose(),
-            KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0),
-            JComponent.WHEN_IN_FOCUSED_WINDOW);
+                KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
 
     private ImageIcon obtenerImagenDesdeBase64(String base64) {
-        if (base64 == null || base64.isEmpty()) return null;
+        if (base64 == null || base64.isEmpty())
+            return null;
         try {
             if (base64.contains(",")) {
                 base64 = base64.split(",")[1];

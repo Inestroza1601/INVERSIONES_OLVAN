@@ -59,19 +59,27 @@ public class PanelConfiguracionImpresion extends JPanel {
         txtMensajeRecibo = crearTextAreaEditable("Este es un comprobante de pago.");
         txtMensajeEntrega = crearTextAreaEditable("Revise su equipo antes de salir.");
         txtMensajeCotizacion = crearTextAreaEditable("Cotización válida por 15 días.");
-        txtMensajeGarantia = crearTextAreaEditable("Conserve este documento. La garantía no aplica por daños físicos, humedad, exposición a líquidos o manipulación por terceros.");
-        txtRutaLogo = new JTextField(); 
+        txtMensajeGarantia = crearTextAreaEditable(
+                "Conserve este documento. La garantía no aplica por daños físicos, humedad, exposición a líquidos o manipulación por terceros.");
+        txtRutaLogo = new JTextField();
 
         CardLayout cardLayout = new CardLayout();
         panelTarjetas = new JPanel(cardLayout);
         panelTarjetas.setBackground(new Color(255, 255, 255)); // Blanco Puro
         panelTarjetas.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225), 1, true)); // Gris muy claro
 
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: FACTURA", txtMensajeFactura), "Factura");
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: RECIBO", txtMensajeRecibo), "Recibo");
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: ENTREGA", txtMensajeEntrega), "Entrega");
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: COTIZACIÓN", txtMensajeCotizacion), "Cotizacion");
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("POLÍTICAS DE GARANTÍA", txtMensajeGarantia), "Garantia");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: FACTURA", txtMensajeFactura),
+                "Factura");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: RECIBO", txtMensajeRecibo),
+                "Recibo");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: ENTREGA", txtMensajeEntrega),
+                "Entrega");
+        panelTarjetas.add(
+                utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: COTIZACIÓN", txtMensajeCotizacion),
+                "Cotizacion");
+        panelTarjetas.add(
+                utilidades.GeneradorTickets.crearTicketVistaPrevia("POLÍTICAS DE GARANTÍA", txtMensajeGarantia),
+                "Garantia");
 
         // --- PANEL INFERIOR (Botones de Control) ---
         JPanel panelBotonesControl = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 15));
@@ -87,7 +95,7 @@ public class PanelConfiguracionImpresion extends JPanel {
         btnRecibo.addActionListener(e -> cardLayout.show(panelTarjetas, "Recibo"));
         btnEntrega.addActionListener(e -> cardLayout.show(panelTarjetas, "Entrega"));
         btnCotizacion.addActionListener(e -> cardLayout.show(panelTarjetas, "Cotizacion"));
-        btnGarantia.addActionListener(e -> cardLayout.show(panelTarjetas, "Garantia")); 
+        btnGarantia.addActionListener(e -> cardLayout.show(panelTarjetas, "Garantia"));
 
         JButton btnLogo = crearBotonEstiloPestana("Cargar Logo");
         btnLogo.setBackground(new Color(39, 174, 96)); // Verde Menta
@@ -96,11 +104,11 @@ public class PanelConfiguracionImpresion extends JPanel {
 
         // Separador visual
         JLabel lblSeparador = new JLabel(" | ");
-        lblSeparador.setForeground(new Color(140, 145, 150)); 
+        lblSeparador.setForeground(new Color(140, 145, 150));
         lblSeparador.setFont(new Font("Segoe UI", Font.BOLD, 16));
 
         JButton btnImpresoras = crearBotonEstiloPestana("Configurar Impresoras");
-        btnImpresoras.setBackground(new Color(108, 117, 125)); 
+        btnImpresoras.setBackground(new Color(108, 117, 125));
         btnImpresoras.setForeground(Color.WHITE);
         btnImpresoras.addActionListener(e -> abrirDialogoImpresoras());
 
@@ -108,11 +116,11 @@ public class PanelConfiguracionImpresion extends JPanel {
         panelBotonesControl.add(btnRecibo);
         panelBotonesControl.add(btnEntrega);
         panelBotonesControl.add(btnCotizacion);
-        panelBotonesControl.add(btnGarantia); 
+        panelBotonesControl.add(btnGarantia);
         panelBotonesControl.add(btnLogo);
         panelBotonesControl.add(lblSeparador);
         panelBotonesControl.add(btnImpresoras);
-        
+
         this.add(panelTarjetas, BorderLayout.CENTER);
         this.add(panelBotonesControl, BorderLayout.SOUTH);
     }
@@ -124,34 +132,43 @@ public class PanelConfiguracionImpresion extends JPanel {
     private void cargarDatosActuales() {
         Empresa emp = SesionGlobal.getEmpresaActual();
         if (emp != null) {
-            if (emp.getMensajeTicketPieFactura() != null) txtMensajeFactura.setText(emp.getMensajeTicketPieFactura());
-            if (emp.getMensajeTicketPieRecibo() != null) txtMensajeRecibo.setText(emp.getMensajeTicketPieRecibo());
-            if (emp.getMensajeTicketEntrega() != null) txtMensajeEntrega.setText(emp.getMensajeTicketEntrega());
-            if (emp.getMensajeTicketPieCotizacion() != null) txtMensajeCotizacion.setText(emp.getMensajeTicketPieCotizacion());
-            if (emp.getPoliticasGarantia() != null) txtMensajeGarantia.setText(emp.getPoliticasGarantia());
-            
-            if (emp.getLogoEmpresaRuta() != null) txtRutaLogo.setText(emp.getLogoEmpresaRuta());
+            if (emp.getMensajeTicketPieFactura() != null)
+                txtMensajeFactura.setText(emp.getMensajeTicketPieFactura());
+            if (emp.getMensajeTicketPieRecibo() != null)
+                txtMensajeRecibo.setText(emp.getMensajeTicketPieRecibo());
+            if (emp.getMensajeTicketEntrega() != null)
+                txtMensajeEntrega.setText(emp.getMensajeTicketEntrega());
+            if (emp.getMensajeTicketPieCotizacion() != null)
+                txtMensajeCotizacion.setText(emp.getMensajeTicketPieCotizacion());
+            if (emp.getPoliticasGarantia() != null)
+                txtMensajeGarantia.setText(emp.getPoliticasGarantia());
+
+            if (emp.getLogoEmpresaRuta() != null)
+                txtRutaLogo.setText(emp.getLogoEmpresaRuta());
         }
     }
 
     private void guardarDiseno() {
-        // Usamos la empresa que nos pasó el otro panel. Si es nula, intentamos con SesionGlobal.
+        // Usamos la empresa que nos pasó el otro panel. Si es nula, intentamos con
+        // SesionGlobal.
         Empresa emp = (this.empresaActiva != null) ? this.empresaActiva : SesionGlobal.getEmpresaActual();
-        
+
         if (emp == null) {
-            JOptionPane.showMessageDialog(this, "No se encontró una empresa activa.\nPor favor, guarde primero los Datos Generales.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "No se encontró una empresa activa.\nPor favor, guarde primero los Datos Generales.", "Advertencia",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         // ... EL RESTO DEL CÓDIGO QUEDA IGUAL (emp.setMensajeTicketPieFactura... etc)
 
-       // Actualizamos los campos en el objeto
+        // Actualizamos los campos en el objeto
         emp.setMensajeTicketPieFactura(txtMensajeFactura.getText().trim());
         emp.setMensajeTicketPieRecibo(txtMensajeRecibo.getText().trim());
         emp.setMensajeTicketEntrega(txtMensajeEntrega.getText().trim());
         emp.setMensajeTicketPieCotizacion(txtMensajeCotizacion.getText().trim());
         emp.setPoliticasGarantia(txtMensajeGarantia.getText().trim());
-        
+
         emp.setLogoEmpresaRuta(txtRutaLogo.getText().trim());
 
         EmpresaDAO dao = new EmpresaDAO();
@@ -167,27 +184,31 @@ public class PanelConfiguracionImpresion extends JPanel {
         chooser.setDialogTitle("Seleccionar Logo de la Empresa");
         FileNameExtensionFilter filtro = new FileNameExtensionFilter("Imágenes (PNG, JPG, JPEG)", "png", "jpg", "jpeg");
         chooser.setFileFilter(filtro);
-        
+
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File archivo = chooser.getSelectedFile();
             String ruta = archivo.getAbsolutePath();
             txtRutaLogo.setText(ruta);
-            
+
             // USAR LA NUEVA VARIABLE AQUÍ TAMBIÉN
             Empresa emp = (this.empresaActiva != null) ? this.empresaActiva : SesionGlobal.getEmpresaActual();
-            
+
             if (emp != null) {
                 emp.setLogoEmpresaRuta(ruta);
                 EmpresaDAO dao = new EmpresaDAO();
-                
+
                 if (dao.guardarOActualizar(emp)) {
-                    JOptionPane.showMessageDialog(this, "Logo cargado y guardado en la base de datos exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                    recargarVistaPrevia(); 
+                    JOptionPane.showMessageDialog(this, "Logo cargado y guardado en la base de datos exitosamente.",
+                            "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    recargarVistaPrevia();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Error al guardar el logo en la base de datos.", "Error de Base de Datos", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Error al guardar el logo en la base de datos.",
+                            "Error de Base de Datos", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "No se encontró una empresa activa.\nPor favor, guarde primero los Datos Generales.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        "No se encontró una empresa activa.\nPor favor, guarde primero los Datos Generales.", "Aviso",
+                        JOptionPane.WARNING_MESSAGE);
             }
         }
     }
@@ -200,8 +221,8 @@ public class PanelConfiguracionImpresion extends JPanel {
         Border bordeEditable = BorderFactory.createDashedBorder(Color.LIGHT_GRAY, 3, 2);
         JTextArea txt = new JTextArea(textoDefecto);
         txt.setFont(new Font("Courier New", Font.PLAIN, 12));
-        txt.setForeground(new Color(45, 45, 45)); 
-        txt.setBackground(new Color(250, 250, 250)); 
+        txt.setForeground(new Color(45, 45, 45));
+        txt.setBackground(new Color(250, 250, 250));
         txt.setBorder(BorderFactory.createCompoundBorder(bordeEditable, BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         txt.setLineWrap(true);
         txt.setWrapStyleWord(true);
@@ -212,13 +233,12 @@ public class PanelConfiguracionImpresion extends JPanel {
     private JButton crearBotonEstiloPestana(String texto) {
         JButton btn = new JButton(texto);
         btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        btn.setBackground(new Color(255, 255, 255)); 
-        btn.setForeground(new Color(45, 45, 45)); 
+        btn.setBackground(new Color(255, 255, 255));
+        btn.setForeground(new Color(45, 45, 45));
         btn.setFocusPainted(false);
         btn.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 222, 225)),
-            BorderFactory.createEmptyBorder(8, 16, 8, 16)
-        ));
+                BorderFactory.createLineBorder(new Color(220, 222, 225)),
+                BorderFactory.createEmptyBorder(8, 16, 8, 16)));
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btn.putClientProperty("JButton.buttonType", "roundRect");
         return btn;
@@ -236,14 +256,14 @@ public class PanelConfiguracionImpresion extends JPanel {
         dialog.setLayout(new BorderLayout());
 
         JPanel pnlContenido = new JPanel(new GridBagLayout());
-        pnlContenido.setBackground(new Color(255, 255, 255)); 
+        pnlContenido.setBackground(new Color(255, 255, 255));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         JComboBox<String> cmbImpresoraTickets = new JComboBox<>();
         JComboBox<String> cmbImpresoraFacturasA4 = new JComboBox<>();
-        
+
         PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
         cmbImpresoraTickets.addItem("Seleccione una impresora...");
         cmbImpresoraFacturasA4.addItem("Seleccione una impresora...");
@@ -254,15 +274,15 @@ public class PanelConfiguracionImpresion extends JPanel {
 
         gbc.gridy = 0;
         JLabel lblT = new JLabel("Impresora Térmica (Tickets):");
-        lblT.setForeground(new Color(45, 45, 45)); 
+        lblT.setForeground(new Color(45, 45, 45));
         pnlContenido.add(lblT, gbc);
-        
+
         gbc.gridy = 1;
         pnlContenido.add(cmbImpresoraTickets, gbc);
 
         gbc.gridy = 2;
         JLabel lblA4 = new JLabel("Impresora A4 (Documentos):");
-        lblA4.setForeground(new Color(45, 45, 45)); 
+        lblA4.setForeground(new Color(45, 45, 45));
         pnlContenido.add(lblA4, gbc);
 
         gbc.gridy = 3;
@@ -271,10 +291,10 @@ public class PanelConfiguracionImpresion extends JPanel {
         dialog.add(pnlContenido, BorderLayout.CENTER);
 
         JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        pnlBotones.setBackground(new Color(240, 242, 245)); 
-        
+        pnlBotones.setBackground(new Color(240, 242, 245));
+
         JButton btnGuardar = new JButton("Guardar Impresoras");
-        btnGuardar.setBackground(new Color(39, 174, 96)); 
+        btnGuardar.setBackground(new Color(39, 174, 96));
         btnGuardar.setForeground(Color.WHITE);
         btnGuardar.addActionListener(e -> {
             JOptionPane.showMessageDialog(dialog, "Impresoras seleccionadas guardadas localmente.");
@@ -286,24 +306,31 @@ public class PanelConfiguracionImpresion extends JPanel {
 
         dialog.setVisible(true);
     }
-    
+
     public void recargarVistaPrevia() {
-        panelTarjetas.removeAll(); 
-        
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: FACTURA", txtMensajeFactura), "Factura");
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: RECIBO", txtMensajeRecibo), "Recibo");
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: ENTREGA", txtMensajeEntrega), "Entrega");
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: COTIZACIÓN", txtMensajeCotizacion), "Cotizacion");
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("POLÍTICAS DE GARANTÍA", txtMensajeGarantia), "Garantia");
-        
-        panelTarjetas.revalidate(); 
-        panelTarjetas.repaint();    
+        panelTarjetas.removeAll();
+
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: FACTURA", txtMensajeFactura),
+                "Factura");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: RECIBO", txtMensajeRecibo),
+                "Recibo");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: ENTREGA", txtMensajeEntrega),
+                "Entrega");
+        panelTarjetas.add(
+                utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: COTIZACIÓN", txtMensajeCotizacion),
+                "Cotizacion");
+        panelTarjetas.add(
+                utilidades.GeneradorTickets.crearTicketVistaPrevia("POLÍTICAS DE GARANTÍA", txtMensajeGarantia),
+                "Garantia");
+
+        panelTarjetas.revalidate();
+        panelTarjetas.repaint();
     }
-    
+
     // =====================================================================
     // MÉTODO DE CONEXIÓN CON PANEL DATOS EMPRESA
     // =====================================================================
-    
+
     public void setEmpresaEnEdicion(Empresa emp) {
         this.empresaActiva = emp;
 
@@ -311,30 +338,30 @@ public class PanelConfiguracionImpresion extends JPanel {
             txtMensajeFactura.setText(emp.getMensajeTicketPieFactura() != null ? emp.getMensajeTicketPieFactura() : "");
             txtMensajeRecibo.setText(emp.getMensajeTicketPieRecibo() != null ? emp.getMensajeTicketPieRecibo() : "");
             txtMensajeEntrega.setText(emp.getMensajeTicketEntrega() != null ? emp.getMensajeTicketEntrega() : "");
-            txtMensajeCotizacion.setText(emp.getMensajeTicketPieCotizacion() != null ? emp.getMensajeTicketPieCotizacion() : "");
+            txtMensajeCotizacion
+                    .setText(emp.getMensajeTicketPieCotizacion() != null ? emp.getMensajeTicketPieCotizacion() : "");
             txtMensajeGarantia.setText(emp.getPoliticasGarantia() != null ? emp.getPoliticasGarantia() : "");
-            
+
             txtRutaLogo.setText(emp.getLogoEmpresaRuta() != null ? emp.getLogoEmpresaRuta() : "");
-            
+
             recargarVistaPrevia();
         }
     }
+
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 400, Short.MAX_VALUE));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 300, Short.MAX_VALUE));
     }// </editor-fold>//GEN-END:initComponents
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables

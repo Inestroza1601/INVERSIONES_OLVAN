@@ -282,11 +282,11 @@ public class PanelInventarioDefectuoso extends JPanel {
             Map<String, Object> d = detalles.get(0);
             String b64 = (String) d.get("foto");
             ImageIcon icon = obtenerImagenDesdeBase64(b64, 180, 180);
-            
+
             JPanel pnlCard = new JPanel(new BorderLayout(25, 25));
             pnlCard.setBackground(Color.WHITE);
             pnlCard.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
-            
+
             JLabel lblImg = new JLabel(icon);
             lblImg.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225), 1));
             lblImg.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -299,11 +299,11 @@ public class PanelInventarioDefectuoso extends JPanel {
                     }
                 }
             });
-            
+
             JPanel pnlInfo = new JPanel();
             pnlInfo.setLayout(new BoxLayout(pnlInfo, BoxLayout.Y_AXIS));
             pnlInfo.setBackground(Color.WHITE);
-            
+
             String cliente = (String) d.get("cliente");
             if (estado.contains("Rep. Cliente") && cliente != null && !cliente.isEmpty()) {
                 pnlInfo.add(crearEtiquetaDetalle("Cliente Propietario", "👤 " + cliente));
@@ -312,12 +312,12 @@ public class PanelInventarioDefectuoso extends JPanel {
                 pnlInfo.add(crearEtiquetaDetalle("Propietario", "🏢 Inversiones Olvan (Empresa)"));
                 pnlInfo.add(Box.createVerticalStrut(15));
             }
-            
+
             pnlInfo.add(crearEtiquetaDetalle("Motivo del Daño", d.get("motivo").toString()));
             pnlInfo.add(Box.createVerticalStrut(15));
             pnlInfo.add(crearEtiquetaDetalle("Resolución de Garantía", d.get("resolucion").toString()));
             pnlInfo.add(Box.createVerticalStrut(15));
-            
+
             StringBuilder timeline = new StringBuilder();
             timeline.append("• ").append(d.get("fecha")).append(" (Ingreso)<br>");
             if (d.get("fecha_envio") != null) {
@@ -327,14 +327,14 @@ public class PanelInventarioDefectuoso extends JPanel {
                 timeline.append("• ").append(d.get("fecha_recibido")).append(" (Recibido del Proveedor)<br>");
             }
             pnlInfo.add(crearEtiquetaDetalle("Historial de Movimientos", timeline.toString()));
-            
+
             pnlCard.add(lblImg, BorderLayout.WEST);
             pnlCard.add(pnlInfo, BorderLayout.CENTER);
-            
+
             JScrollPane scrollCard = new JScrollPane(pnlCard);
             scrollCard.setBorder(BorderFactory.createEmptyBorder());
             scrollCard.getVerticalScrollBar().setUnitIncrement(16);
-            
+
             dialog.add(scrollCard, BorderLayout.CENTER);
             dialog.setSize(550, 400); // Fixed size, scroll handles overflow
             dialog.setLocationRelativeTo(this);
@@ -410,7 +410,9 @@ public class PanelInventarioDefectuoso extends JPanel {
     }
 
     private JLabel crearEtiquetaDetalle(String titulo, String valor) {
-        JLabel lbl = new JLabel("<html><div style='width:320px;'><b style='color:#7f8c8d; font-size:12px'>" + titulo.toUpperCase() + "</b><br><span style='font-size:14px; color:#2c3e50; margin-top:4px'>" + valor + "</span></div></html>");
+        JLabel lbl = new JLabel("<html><div style='width:320px;'><b style='color:#7f8c8d; font-size:12px'>"
+                + titulo.toUpperCase() + "</b><br><span style='font-size:14px; color:#2c3e50; margin-top:4px'>" + valor
+                + "</span></div></html>");
         lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
         return lbl;
     }

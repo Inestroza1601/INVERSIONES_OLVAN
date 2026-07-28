@@ -56,7 +56,7 @@ public class PanelGestionClientes extends JPanel {
         btnNuevoCliente.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         btnNuevoCliente.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnNuevoCliente.putClientProperty("JButton.buttonType", "roundRect");
-        
+
         btnNuevoCliente.addActionListener(e -> abrirFormularioCliente(null));
 
         // Asignamos cada cosa a su esquina para que nunca choquen
@@ -67,13 +67,17 @@ public class PanelGestionClientes extends JPanel {
         this.add(panelSuperior, BorderLayout.NORTH);
         // --- 2. CONFIGURACIÓN DE LA TABLA ESTILO WEB ---
         // Eliminamos la columna "Acciones" y recorremos los ocultos
-        String[] columnas = {"ID", "", "Nombre Completo", "Identidad/RTN", "Teléfono", "Correo Electrónico", "NombreRaw", "ApellidoRaw"};
+        String[] columnas = { "ID", "", "Nombre Completo", "Identidad/RTN", "Teléfono", "Correo Electrónico",
+                "NombreRaw", "ApellidoRaw" };
         modeloTabla = new DefaultTableModel(null, columnas) {
-            @Override public boolean isCellEditable(int row, int column) { return false; } // Nada es editable directamente
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            } // Nada es editable directamente
         };
 
         tablaClientes = new JTable(modeloTabla);
-        
+
         tablaClientes.setShowGrid(false);
         tablaClientes.setIntercellSpacing(new Dimension(0, 0));
         tablaClientes.setRowHeight(55);
@@ -107,7 +111,8 @@ public class PanelGestionClientes extends JPanel {
                 if (fila >= 0) {
                     tablaClientes.setRowSelectionInterval(fila, fila); // Selecciona visualmente la fila
                     // Mostrar menú con doble clic o clic derecho
-                    if ((SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) || SwingUtilities.isRightMouseButton(e)) {
+                    if ((SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)
+                            || SwingUtilities.isRightMouseButton(e)) {
                         mostrarMenuOpciones(e.getComponent(), e.getX(), e.getY(), fila);
                     }
                 }
@@ -118,13 +123,27 @@ public class PanelGestionClientes extends JPanel {
         sorter = new TableRowSorter<>(modeloTabla);
         tablaClientes.setRowSorter(sorter);
         txtBusqueda.getDocument().addDocumentListener(new DocumentListener() {
-            @Override public void insertUpdate(DocumentEvent e) { filtrar(); }
-            @Override public void removeUpdate(DocumentEvent e) { filtrar(); }
-            @Override public void changedUpdate(DocumentEvent e) { filtrar(); }
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filtrar();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filtrar();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filtrar();
+            }
+
             private void filtrar() {
                 String texto = txtBusqueda.getText();
-                if (texto.trim().length() == 0) sorter.setRowFilter(null);
-                else sorter.setRowFilter(RowFilter.regexFilter("(?i)" + texto, 2, 3));
+                if (texto.trim().length() == 0)
+                    sorter.setRowFilter(null);
+                else
+                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + texto, 2, 3));
             }
         });
 
@@ -149,16 +168,16 @@ public class PanelGestionClientes extends JPanel {
         for (Cliente c : dao.listarClientesActivos()) {
             String apellido = c.getApellidoCliente() != null ? c.getApellidoCliente() : "";
             String nombreCompleto = c.getNombreCliente() + " " + apellido;
-            
-            modeloTabla.addRow(new Object[]{
-                c.getIdCliente(),           // 0: ID
-                nombreCompleto,             // 1: Avatar
-                nombreCompleto,             // 2: Nombre Completo
-                c.getIdentidadCliente(),    // 3: Identidad
-                c.getTelefonoCliente(),     // 4: Teléfono
-                c.getCorreoCliente(),       // 5: Correo
-                c.getNombreCliente(),       // 6: Nombre Real Oculto
-                apellido                    // 7: Apellido Real Oculto
+
+            modeloTabla.addRow(new Object[] {
+                    c.getIdCliente(), // 0: ID
+                    nombreCompleto, // 1: Avatar
+                    nombreCompleto, // 2: Nombre Completo
+                    c.getIdentidadCliente(), // 3: Identidad
+                    c.getTelefonoCliente(), // 4: Teléfono
+                    c.getCorreoCliente(), // 5: Correo
+                    c.getNombreCliente(), // 6: Nombre Real Oculto
+                    apellido // 7: Apellido Real Oculto
             });
         }
     }
@@ -167,10 +186,10 @@ public class PanelGestionClientes extends JPanel {
         Window ventanaPadre = SwingUtilities.getWindowAncestor(this);
         JDialog dialog = new JDialog((Frame) ventanaPadre, "Cliente", true);
         dialog.setUndecorated(true);
-        dialog.setBackground(new Color(0, 0, 0, 0)); 
-        
+        dialog.setBackground(new Color(0, 0, 0, 0));
+
         PanelFormularioCliente panelFormulario = new PanelFormularioCliente(dialog, this, cliente);
-        
+
         dialog.add(panelFormulario);
         dialog.pack();
         dialog.setLocationRelativeTo(ventanaPadre);
@@ -183,7 +202,8 @@ public class PanelGestionClientes extends JPanel {
 
     private class AvatarRenderer extends DefaultTableCellRenderer {
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                int row, int column) {
             JPanel panel = new JPanel() {
                 @Override
                 protected void paintComponent(Graphics g) {
@@ -195,9 +215,10 @@ public class PanelGestionClientes extends JPanel {
                     String inicial = nombre.isEmpty() ? "?" : nombre.substring(0, 1).toUpperCase();
 
                     int hash = Math.abs(inicial.hashCode());
-                    Color[] paleta = {new Color(227, 0, 15), new Color(39, 174, 96), new Color(13, 110, 253), new Color(253, 126, 20), new Color(111, 66, 193)};
+                    Color[] paleta = { new Color(227, 0, 15), new Color(39, 174, 96), new Color(13, 110, 253),
+                            new Color(253, 126, 20), new Color(111, 66, 193) };
                     g2.setColor(paleta[hash % paleta.length]);
-                    
+
                     int size = 36;
                     int x = (getWidth() - size) / 2;
                     int y = (getHeight() - size) / 2;
@@ -225,15 +246,16 @@ public class PanelGestionClientes extends JPanel {
         menu.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225), 1));
 
         JMenuItem itemEditar = crearMenuItem("Editar Cliente", new Color(39, 174, 96), new IconoLapiz()); // Verde Menta
-        JMenuItem itemEliminar = crearMenuItem("Eliminar Cliente", new Color(227, 0, 15), new IconoBasurero()); // Rojo Logo
+        JMenuItem itemEliminar = crearMenuItem("Eliminar Cliente", new Color(227, 0, 15), new IconoBasurero()); // Rojo
+                                                                                                                // Logo
 
         itemEditar.addActionListener(e -> editarClienteSeleccionado(filaVista));
         itemEliminar.addActionListener(e -> eliminarClienteSeleccionado(filaVista));
 
         menu.add(itemEditar);
-        menu.addSeparator(); 
+        menu.addSeparator();
         menu.add(itemEliminar);
-        
+
         menu.show(componente, x, y);
     }
 
@@ -242,11 +264,13 @@ public class PanelGestionClientes extends JPanel {
         Cliente c = new Cliente();
         c.setIdCliente((int) modeloTabla.getValueAt(filaModelo, 0));
         c.setIdentidadCliente(modeloTabla.getValueAt(filaModelo, 3).toString());
-        c.setTelefonoCliente(modeloTabla.getValueAt(filaModelo, 4) != null ? modeloTabla.getValueAt(filaModelo, 4).toString() : "");
-        c.setCorreoCliente(modeloTabla.getValueAt(filaModelo, 5) != null ? modeloTabla.getValueAt(filaModelo, 5).toString() : "");
+        c.setTelefonoCliente(
+                modeloTabla.getValueAt(filaModelo, 4) != null ? modeloTabla.getValueAt(filaModelo, 4).toString() : "");
+        c.setCorreoCliente(
+                modeloTabla.getValueAt(filaModelo, 5) != null ? modeloTabla.getValueAt(filaModelo, 5).toString() : "");
         c.setNombreCliente(modeloTabla.getValueAt(filaModelo, 6).toString());
         c.setApellidoCliente(modeloTabla.getValueAt(filaModelo, 7).toString());
-        
+
         abrirFormularioCliente(c);
     }
 
@@ -254,11 +278,11 @@ public class PanelGestionClientes extends JPanel {
         int filaModelo = tablaClientes.convertRowIndexToModel(filaVista);
         int idCliente = (int) modeloTabla.getValueAt(filaModelo, 0);
         String nombre = modeloTabla.getValueAt(filaModelo, 2).toString();
-        
-        int confirmacion = JOptionPane.showConfirmDialog(this, 
-            "¿Está seguro de desactivar al cliente: " + nombre + "?", 
-            "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-            
+
+        int confirmacion = JOptionPane.showConfirmDialog(this,
+                "¿Está seguro de desactivar al cliente: " + nombre + "?",
+                "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
         if (confirmacion == JOptionPane.YES_OPTION) {
             ClienteDAO dao = new ClienteDAO();
             if (dao.desactivarCliente(idCliente)) {
@@ -294,30 +318,49 @@ public class PanelGestionClientes extends JPanel {
     // ÍCONOS VECTORIALES (JAVA 2D)
     // =========================================================
     private class IconoLapiz implements Icon {
-        @Override public int getIconWidth() { return 20; }
-        @Override public int getIconHeight() { return 20; }
-        @Override public void paintIcon(Component c, Graphics g, int x, int y) {
+        @Override
+        public int getIconWidth() {
+            return 20;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return 20;
+        }
+
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             // Hereda el color del texto del item (gris oscuro o blanco si tiene hover)
-            g2.setColor(c.getForeground()); 
+            g2.setColor(c.getForeground());
             g2.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             // Lápiz de edición diagonal
-            g2.drawPolygon(new int[]{x+14, x+17, x+6, x+3, x+3}, new int[]{y+3, y+6, y+17, y+17, y+14}, 5);
-            g2.drawLine(x+11, y+6, x+14, y+9); 
-            g2.drawLine(x+3, y+17, x+6, y+14); 
+            g2.drawPolygon(new int[] { x + 14, x + 17, x + 6, x + 3, x + 3 },
+                    new int[] { y + 3, y + 6, y + 17, y + 17, y + 14 }, 5);
+            g2.drawLine(x + 11, y + 6, x + 14, y + 9);
+            g2.drawLine(x + 3, y + 17, x + 6, y + 14);
             g2.dispose();
         }
     }
 
     private class IconoBasurero implements Icon {
-        @Override public int getIconWidth() { return 20; }
-        @Override public int getIconHeight() { return 20; }
-        @Override public void paintIcon(Component c, Graphics g, int x, int y) {
+        @Override
+        public int getIconWidth() {
+            return 20;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return 20;
+        }
+
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             // Hereda el color del texto del item para integrarse bien con el hover
-            g2.setColor(c.getForeground()); 
+            g2.setColor(c.getForeground());
             g2.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             g2.drawRoundRect(x + 8, y + 2, 4, 3, 2, 2);
             g2.drawLine(x + 4, y + 5, x + 16, y + 5);
@@ -328,22 +371,21 @@ public class PanelGestionClientes extends JPanel {
             g2.dispose();
         }
     }
-  @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 400, Short.MAX_VALUE));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 300, Short.MAX_VALUE));
     }// </editor-fold>//GEN-END:initComponents
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables

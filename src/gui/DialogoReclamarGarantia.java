@@ -9,7 +9,7 @@ public class DialogoReclamarGarantia extends JDialog {
 
     private boolean exito = false;
     private int idDetalle;
-    
+
     private JTextArea txtObservacion;
     private JComboBox<String> cmbResolucion;
     private JCheckBox chkReintegro;
@@ -24,14 +24,15 @@ public class DialogoReclamarGarantia extends JDialog {
     private JButton btnTomarFotoQR;
     private String fotoBase64 = null;
 
-    public DialogoReclamarGarantia(Window parent, String cliente, String producto, String serie, String fechaCompra, int idDetalle) {
+    public DialogoReclamarGarantia(Window parent, String cliente, String producto, String serie, String fechaCompra,
+            int idDetalle) {
         super(parent, "Procesar Reclamo de Garantía", Dialog.ModalityType.APPLICATION_MODAL);
         this.idDetalle = idDetalle;
-        
+
         setSize(700, 550);
         setLocationRelativeTo(parent);
         setResizable(false);
-        
+
         iniciarDiseno(cliente, producto, serie, fechaCompra);
     }
 
@@ -44,11 +45,10 @@ public class DialogoReclamarGarantia extends JDialog {
         JPanel pnlInfo = new JPanel(new GridLayout(2, 2, 15, 10));
         pnlInfo.setOpaque(false);
         pnlInfo.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(new Color(200, 200, 200)), 
-            "Información del Producto", 
-            TitledBorder.LEFT, TitledBorder.TOP, 
-            new Font("Segoe UI", Font.BOLD, 14), new Color(45, 45, 45)
-        ));
+                BorderFactory.createLineBorder(new Color(200, 200, 200)),
+                "Información del Producto",
+                TitledBorder.LEFT, TitledBorder.TOP,
+                new Font("Segoe UI", Font.BOLD, 14), new Color(45, 45, 45)));
 
         pnlInfo.add(crearInfoLabel("Cliente:", cliente));
         pnlInfo.add(crearInfoLabel("Producto:", producto));
@@ -66,36 +66,37 @@ public class DialogoReclamarGarantia extends JDialog {
         pnlObs.setOpaque(false);
         JLabel lblObs = new JLabel("Observaciones / Motivo del Daño:");
         lblObs.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        
+
         txtObservacion = new JTextArea();
         txtObservacion.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         txtObservacion.setLineWrap(true);
         txtObservacion.setWrapStyleWord(true);
         JScrollPane scrollObs = new JScrollPane(txtObservacion);
         scrollObs.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
-        
+
         // Novedades: Combo y Checkbox
         // Novedades: Combo y Checkbox y Diferencia
         JPanel pnlResolucion = new JPanel();
         pnlResolucion.setLayout(new BoxLayout(pnlResolucion, BoxLayout.Y_AXIS));
         pnlResolucion.setOpaque(false);
         pnlResolucion.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-        
+
         JLabel lblRes = new JLabel("Resolución del Reclamo:");
         lblRes.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblRes.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
-        cmbResolucion = new JComboBox<>(new String[]{"Reparación Técnica con Proveedor", "Cambio por Producto Nuevo", "Cambio por Otro Producto Diferente", "Sin Solución"});
+
+        cmbResolucion = new JComboBox<>(new String[] { "Reparación Técnica con Proveedor", "Cambio por Producto Nuevo",
+                "Cambio por Otro Producto Diferente", "Sin Solución" });
         cmbResolucion.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         cmbResolucion.setAlignmentX(Component.LEFT_ALIGNMENT);
         cmbResolucion.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
-        
+
         chkReintegro = new JCheckBox("<html>Descontar reemplazo del inv.<br>y enviar producto a bodega</html>");
         chkReintegro.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         chkReintegro.setForeground(new Color(100, 100, 100));
         chkReintegro.setOpaque(false);
         chkReintegro.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
+
         // --- Panel Dinámico de Diferencia ---
         pnlDiferencia = new JPanel();
         pnlDiferencia.setLayout(new BoxLayout(pnlDiferencia, BoxLayout.Y_AXIS));
@@ -103,7 +104,7 @@ public class DialogoReclamarGarantia extends JDialog {
         pnlDiferencia.setVisible(false); // Oculto por defecto
         pnlDiferencia.setAlignmentX(Component.LEFT_ALIGNMENT);
         pnlDiferencia.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
-        
+
         btnElegirSustituto = new JButton("Buscar Producto Sustituto...");
         btnElegirSustituto.setAlignmentX(Component.LEFT_ALIGNMENT);
         lblProductoNuevo = new JLabel("Producto: Ninguno");
@@ -113,13 +114,13 @@ public class DialogoReclamarGarantia extends JDialog {
         lblDiferencia.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblDiferencia.setForeground(new Color(13, 110, 253));
         lblDiferencia.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
+
         pnlDiferencia.add(btnElegirSustituto);
         pnlDiferencia.add(Box.createVerticalStrut(3));
         pnlDiferencia.add(lblProductoNuevo);
         pnlDiferencia.add(Box.createVerticalStrut(3));
         pnlDiferencia.add(lblDiferencia);
-        
+
         cmbResolucion.addActionListener(e -> {
             boolean esSustituto = cmbResolucion.getSelectedIndex() == 2;
             pnlDiferencia.setVisible(esSustituto);
@@ -127,7 +128,7 @@ public class DialogoReclamarGarantia extends JDialog {
             revalidate();
             repaint();
         });
-        
+
         btnElegirSustituto.addActionListener(e -> {
             Window parentWindow = SwingUtilities.getWindowAncestor(this);
             DialogoBuscarProductoSustituto dialog = new DialogoBuscarProductoSustituto(parentWindow);
@@ -137,7 +138,7 @@ public class DialogoReclamarGarantia extends JDialog {
                 lblProductoNuevo.setText("Producto: " + productoSustituto.getNombreProducto());
                 double precioOriginal = new dao.GarantiaDAO().obtenerPrecioOriginal(idDetalle);
                 double diferencia = productoSustituto.getPrecioVenta() - precioOriginal;
-                
+
                 if (diferencia > 0) {
                     lblDiferencia.setText(String.format("Diferencia a Cobrar: L %,.2f", diferencia));
                     lblDiferencia.setForeground(new Color(227, 0, 15)); // Rojo (Debe dinero)
@@ -150,7 +151,7 @@ public class DialogoReclamarGarantia extends JDialog {
                 }
             }
         });
-        
+
         pnlResolucion.add(lblRes);
         pnlResolucion.add(Box.createVerticalStrut(5));
         pnlResolucion.add(cmbResolucion);
@@ -168,10 +169,10 @@ public class DialogoReclamarGarantia extends JDialog {
         JPanel pnlFoto = new JPanel(new BorderLayout(0, 10));
         pnlFoto.setOpaque(false);
         pnlFoto.setPreferredSize(new Dimension(280, 0));
-        
+
         JLabel lblTituloFoto = new JLabel("Fotografía de Evidencia:");
         lblTituloFoto.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        
+
         lblFotoPlaceholder = new JLabel("Sin Imagen", SwingConstants.CENTER);
         lblFotoPlaceholder.setFont(new Font("Segoe UI", Font.ITALIC, 14));
         lblFotoPlaceholder.setForeground(new Color(150, 150, 150));
@@ -180,12 +181,13 @@ public class DialogoReclamarGarantia extends JDialog {
         lblFotoPlaceholder.setBackground(new Color(250, 250, 250));
         lblFotoPlaceholder.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblFotoPlaceholder.setToolTipText("Clic para ver imagen en grande");
-        
+
         lblFotoPlaceholder.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 if (fotoBase64 != null) {
-                    new DialogoVisorImagen((Frame) SwingUtilities.getWindowAncestor(DialogoReclamarGarantia.this), "Visor de Fotografía", fotoBase64).setVisible(true);
+                    new DialogoVisorImagen((Frame) SwingUtilities.getWindowAncestor(DialogoReclamarGarantia.this),
+                            "Visor de Fotografía", fotoBase64).setVisible(true);
                 }
             }
         });
@@ -197,47 +199,51 @@ public class DialogoReclamarGarantia extends JDialog {
         btnSeleccionarFoto.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
             chooser.setDialogTitle("Seleccionar Evidencia del Daño");
-            javax.swing.filechooser.FileNameExtensionFilter filtro = new javax.swing.filechooser.FileNameExtensionFilter("Imágenes (PNG, JPG, JPEG)", "png", "jpg", "jpeg");
+            javax.swing.filechooser.FileNameExtensionFilter filtro = new javax.swing.filechooser.FileNameExtensionFilter(
+                    "Imágenes (PNG, JPG, JPEG)", "png", "jpg", "jpeg");
             chooser.setFileFilter(filtro);
-            
+
             if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 java.io.File archivo = chooser.getSelectedFile();
                 try {
                     // Cargar imagen original
                     java.awt.image.BufferedImage imgOriginal = javax.imageio.ImageIO.read(archivo);
                     if (imgOriginal == null) {
-                        JOptionPane.showMessageDialog(this, "El archivo seleccionado no es una imagen válida.", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "El archivo seleccionado no es una imagen válida.", "Error",
+                                JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    
+
                     // Redimensionar para no saturar la BD (ej. max 800x600)
                     int maxW = 800, maxH = 600;
                     int orgW = imgOriginal.getWidth(), orgH = imgOriginal.getHeight();
                     double scale = Math.min((double) maxW / orgW, (double) maxH / orgH);
-                    
+
                     int newW = (int) (orgW * scale);
                     int newH = (int) (orgH * scale);
-                    
-                    java.awt.image.BufferedImage imgRedimensionada = new java.awt.image.BufferedImage(newW, newH, java.awt.image.BufferedImage.TYPE_INT_RGB);
+
+                    java.awt.image.BufferedImage imgRedimensionada = new java.awt.image.BufferedImage(newW, newH,
+                            java.awt.image.BufferedImage.TYPE_INT_RGB);
                     Graphics2D g2d = imgRedimensionada.createGraphics();
                     g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
                     g2d.drawImage(imgOriginal, 0, 0, newW, newH, null);
                     g2d.dispose();
-                    
+
                     // Convertir a Base64
                     java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
                     javax.imageio.ImageIO.write(imgRedimensionada, "jpg", baos);
                     byte[] imageBytes = baos.toByteArray();
                     fotoBase64 = "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(imageBytes);
-                    
+
                     // Mostrar preview (150x150)
                     Image imgPreview = imgRedimensionada.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
                     lblFotoPlaceholder.setIcon(new ImageIcon(imgPreview));
                     lblFotoPlaceholder.setText("");
-                    
+
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Error al procesar la imagen.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Error al procesar la imagen.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -276,11 +282,11 @@ public class DialogoReclamarGarantia extends JDialog {
         JLabel lblT = new JLabel(titulo);
         lblT.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblT.setForeground(new Color(100, 100, 100));
-        
+
         JLabel lblV = new JLabel(valor);
         lblV.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         lblV.setForeground(new Color(45, 45, 45));
-        
+
         p.add(lblT);
         p.add(lblV);
         return p;
@@ -288,44 +294,55 @@ public class DialogoReclamarGarantia extends JDialog {
 
     private void procesarReclamo(ActionEvent evt) {
         if (txtObservacion.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                "Por favor, ingrese un motivo u observación sobre el daño del producto.", 
-                "Faltan Datos", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Por favor, ingrese un motivo u observación sobre el daño del producto.",
+                    "Faltan Datos", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        int confirmacion = JOptionPane.showConfirmDialog(this, 
-            "¿Está seguro de procesar el reclamo de garantía para este producto?", 
-            "Confirmar Reclamo", 
-            JOptionPane.YES_NO_OPTION, 
-            JOptionPane.QUESTION_MESSAGE);
+        int confirmacion = JOptionPane.showConfirmDialog(this,
+                "¿Está seguro de procesar el reclamo de garantía para este producto?",
+                "Confirmar Reclamo",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
 
         if (confirmacion == JOptionPane.YES_OPTION) {
             dao.GarantiaDAO dao = new dao.GarantiaDAO();
             if (cmbResolucion.getSelectedIndex() == 2) {
                 // Cambio por Otro Producto Diferente
                 if (productoSustituto == null) {
-                    JOptionPane.showMessageDialog(this, "Debe seleccionar un producto sustituto.", "Faltan Datos", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Debe seleccionar un producto sustituto.", "Faltan Datos",
+                            JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-                int idUsuario = utilidades.SesionGlobal.getUsuarioActual() != null ? utilidades.SesionGlobal.getUsuarioActual().getIdUsuario() : 1;
-                
-                if (dao.procesarCambioGarantia(idDetalle, productoSustituto.getIdProducto(), productoSustituto.getPrecioVenta(), idUsuario, txtObservacion.getText(), fotoBase64, cmbResolucion.getSelectedItem().toString(), chkReintegro.isSelected())) {
+                int idUsuario = utilidades.SesionGlobal.getUsuarioActual() != null
+                        ? utilidades.SesionGlobal.getUsuarioActual().getIdUsuario()
+                        : 1;
+
+                if (dao.procesarCambioGarantia(idDetalle, productoSustituto.getIdProducto(),
+                        productoSustituto.getPrecioVenta(), idUsuario, txtObservacion.getText(), fotoBase64,
+                        cmbResolucion.getSelectedItem().toString(), chkReintegro.isSelected())) {
                     this.exito = true;
                     // Generar Ticket
-                    new utilidades.GeneradorTickets().imprimirTicketCambio(idDetalle, productoSustituto, dao.obtenerPrecioOriginal(idDetalle));
+                    new utilidades.GeneradorTickets().imprimirTicketCambio(idDetalle, productoSustituto,
+                            dao.obtenerPrecioOriginal(idDetalle));
                     this.dispose();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Hubo un error al aplicar el reclamo.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Hubo un error al aplicar el reclamo.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             } else {
                 // Resolución Normal
-                int idUsuario = utilidades.SesionGlobal.getUsuarioActual() != null ? utilidades.SesionGlobal.getUsuarioActual().getIdUsuario() : 1;
-                if (dao.aplicarReclamo(idDetalle, txtObservacion.getText(), fotoBase64, cmbResolucion.getSelectedItem().toString(), chkReintegro.isSelected(), idUsuario)) {
+                int idUsuario = utilidades.SesionGlobal.getUsuarioActual() != null
+                        ? utilidades.SesionGlobal.getUsuarioActual().getIdUsuario()
+                        : 1;
+                if (dao.aplicarReclamo(idDetalle, txtObservacion.getText(), fotoBase64,
+                        cmbResolucion.getSelectedItem().toString(), chkReintegro.isSelected(), idUsuario)) {
                     this.exito = true;
                     this.dispose();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Hubo un error al aplicar el reclamo.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Hubo un error al aplicar el reclamo.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
@@ -339,7 +356,8 @@ public class DialogoReclamarGarantia extends JDialog {
         this.fotoBase64 = base64String;
         try {
             String b64 = base64String;
-            if (b64.contains(",")) b64 = b64.split(",")[1];
+            if (b64.contains(","))
+                b64 = b64.split(",")[1];
             byte[] bytes = java.util.Base64.getDecoder().decode(b64);
             java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(bytes);
             Image img = javax.imageio.ImageIO.read(bais);
@@ -348,7 +366,7 @@ public class DialogoReclamarGarantia extends JDialog {
                 lblFotoPlaceholder.setIcon(new ImageIcon(imgPreview));
                 lblFotoPlaceholder.setText("");
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -363,7 +381,8 @@ public class DialogoReclamarGarantia extends JDialog {
         btnTomarFotoQR.addActionListener(e -> {
             new DialogoEscanearQR((Frame) SwingUtilities.getWindowAncestor(this), false, b64 -> {
                 setPreviewBase64(b64);
-                JOptionPane.showMessageDialog(this, "Foto capturada y adjuntada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Foto capturada y adjuntada exitosamente.", "Éxito",
+                        JOptionPane.INFORMATION_MESSAGE);
             }).setVisible(true);
         });
 
@@ -396,8 +415,16 @@ public class DialogoReclamarGarantia extends JDialog {
             g2.drawOval(x + 6, y + 7, 8, 8);
             g2.dispose();
         }
-        @Override public int getIconWidth() { return 20; }
-        @Override public int getIconHeight() { return 20; }
+
+        @Override
+        public int getIconWidth() {
+            return 20;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return 20;
+        }
     }
 
     private class IconoCarpeta implements Icon {
@@ -414,7 +441,15 @@ public class DialogoReclamarGarantia extends JDialog {
             g2.fillRoundRect(x + 2, y + 8, 16, 8, 2, 2);
             g2.dispose();
         }
-        @Override public int getIconWidth() { return 20; }
-        @Override public int getIconHeight() { return 20; }
+
+        @Override
+        public int getIconWidth() {
+            return 20;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return 20;
+        }
     }
 }

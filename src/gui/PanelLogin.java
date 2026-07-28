@@ -36,7 +36,7 @@ public class PanelLogin extends JPanel {
                 g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 35, 35));
                 super.paint(g2);
                 g2.dispose();
-                
+
                 // Dibujar borde
                 Graphics2D g2Border = (Graphics2D) g.create();
                 g2Border.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -50,8 +50,8 @@ public class PanelLogin extends JPanel {
 
         // --- MITAD IZQUIERDA (BRANDING) ---
         JPanel pnlIzquierda = new JPanel(new GridBagLayout());
-        pnlIzquierda.setBackground(new Color(39, 174, 96)); 
-        
+        pnlIzquierda.setBackground(new Color(39, 174, 96));
+
         JLabel lblBranding = new JLabel("", SwingConstants.CENTER);
         try {
             java.net.URL imgURL = getClass().getResource("/image/logo_inversionesOlvan_sinFondo.png");
@@ -60,14 +60,18 @@ public class PanelLogin extends JPanel {
                 Image img = icon.getImage().getScaledInstance(260, -1, Image.SCALE_SMOOTH);
                 lblBranding.setIcon(new ImageIcon(img));
             }
-        } catch (Exception e) {}
-        
-        JLabel lblBienvenida = new JLabel("<html><center>Bienvenido al Sistema<br>Integral de Ventas e Inventario</center></html>", SwingConstants.CENTER);
+        } catch (Exception e) {
+        }
+
+        JLabel lblBienvenida = new JLabel(
+                "<html><center>Bienvenido al Sistema<br>Integral de Ventas e Inventario</center></html>",
+                SwingConstants.CENTER);
         lblBienvenida.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         lblBienvenida.setForeground(new Color(255, 255, 255, 230));
 
         GridBagConstraints gbcIzq = new GridBagConstraints();
-        gbcIzq.gridx = 0; gbcIzq.gridy = 0;
+        gbcIzq.gridx = 0;
+        gbcIzq.gridy = 0;
         gbcIzq.insets = new Insets(0, 0, 25, 0);
         pnlIzquierda.add(lblBranding, gbcIzq);
         gbcIzq.gridy = 1;
@@ -78,38 +82,46 @@ public class PanelLogin extends JPanel {
         pnlDerecha.setBackground(Color.WHITE);
 
         GridBagConstraints gbcDer = new GridBagConstraints();
-        gbcDer.insets = new Insets(5, 45, 5, 45); 
+        gbcDer.insets = new Insets(5, 45, 5, 45);
         gbcDer.fill = GridBagConstraints.HORIZONTAL;
         gbcDer.gridx = 0;
         gbcDer.weightx = 1.0;
 
         JLabel lblTitulo = new JLabel("Iniciar Sesión", SwingConstants.CENTER);
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 28)); 
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 28));
         lblTitulo.setForeground(new Color(45, 45, 45));
-        
+
         JLabel lblSub = new JLabel("Ingresa tus credenciales para continuar", SwingConstants.CENTER);
         lblSub.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         lblSub.setForeground(new Color(140, 145, 150));
 
-        gbcDer.gridy = 0; gbcDer.insets = new Insets(20, 45, 5, 45); pnlDerecha.add(lblTitulo, gbcDer);
-        gbcDer.gridy = 1; gbcDer.insets = new Insets(0, 45, 35, 45); pnlDerecha.add(lblSub, gbcDer);
+        gbcDer.gridy = 0;
+        gbcDer.insets = new Insets(20, 45, 5, 45);
+        pnlDerecha.add(lblTitulo, gbcDer);
+        gbcDer.gridy = 1;
+        gbcDer.insets = new Insets(0, 45, 35, 45);
+        pnlDerecha.add(lblSub, gbcDer);
 
         // --- CAMPOS ---
         gbcDer.insets = new Insets(5, 45, 5, 45);
-        
+
         JLabel lblUsr = new JLabel("Usuario");
         lblUsr.setFont(new Font("Segoe UI", Font.BOLD, 13));
         lblUsr.setForeground(new Color(100, 100, 100));
-        
+
         txtUsuario = new JTextField();
         txtUsuario.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        txtUsuario.setPreferredSize(new Dimension(0, 45)); 
+        txtUsuario.setPreferredSize(new Dimension(0, 45));
         txtUsuario.putClientProperty("JTextField.placeholderText", "Ingresa tu usuario");
         txtUsuario.putClientProperty("JTextField.showClearButton", true);
         txtUsuario.putClientProperty("JComponent.roundRect", true);
-        
-        gbcDer.gridy = 2; gbcDer.insets = new Insets(5, 45, 4, 45); pnlDerecha.add(lblUsr, gbcDer);
-        gbcDer.gridy = 3; gbcDer.insets = new Insets(0, 45, 15, 45); pnlDerecha.add(txtUsuario, gbcDer);
+
+        gbcDer.gridy = 2;
+        gbcDer.insets = new Insets(5, 45, 4, 45);
+        pnlDerecha.add(lblUsr, gbcDer);
+        gbcDer.gridy = 3;
+        gbcDer.insets = new Insets(0, 45, 15, 45);
+        pnlDerecha.add(txtUsuario, gbcDer);
 
         JLabel lblPass = new JLabel("Contraseña");
         lblPass.setFont(new Font("Segoe UI", Font.BOLD, 13));
@@ -117,7 +129,7 @@ public class PanelLogin extends JPanel {
 
         txtPassword = new JPasswordField();
         txtPassword.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        txtPassword.setPreferredSize(new Dimension(0, 45)); 
+        txtPassword.setPreferredSize(new Dimension(0, 45));
         txtPassword.putClientProperty("JTextField.placeholderText", "Ingresa tu contraseña");
         txtPassword.putClientProperty("JTextField.showClearButton", true);
         txtPassword.putClientProperty("JTextField.showRevealButton", true);
@@ -131,14 +143,31 @@ public class PanelLogin extends JPanel {
             }
         });
 
-        gbcDer.gridy = 4; gbcDer.insets = new Insets(5, 45, 4, 45); pnlDerecha.add(lblPass, gbcDer);
-        gbcDer.gridy = 5; gbcDer.insets = new Insets(0, 45, 35, 45); pnlDerecha.add(txtPassword, gbcDer);
+        gbcDer.gridy = 4;
+        gbcDer.insets = new Insets(5, 45, 4, 45);
+        pnlDerecha.add(lblPass, gbcDer);
+        gbcDer.gridy = 5;
+        gbcDer.insets = new Insets(0, 45, 35, 45);
+        pnlDerecha.add(txtPassword, gbcDer);
 
-        // Listener para limpiar el borde rojo cuando el usuario empiece a escribir de nuevo
+        // Listener para limpiar el borde rojo cuando el usuario empiece a escribir de
+        // nuevo
         DocumentListener resetErrorListener = new DocumentListener() {
-            @Override public void insertUpdate(DocumentEvent e) { resetError(); }
-            @Override public void removeUpdate(DocumentEvent e) { resetError(); }
-            @Override public void changedUpdate(DocumentEvent e) { resetError(); }
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                resetError();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                resetError();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                resetError();
+            }
+
             private void resetError() {
                 txtUsuario.putClientProperty("JComponent.outline", null);
                 txtPassword.putClientProperty("JComponent.outline", null);
@@ -159,20 +188,24 @@ public class PanelLogin extends JPanel {
                 dialog.setVisible(true);
             }
         });
-        
-        gbcDer.gridy = 6; gbcDer.insets = new Insets(0, 45, 15, 45); pnlDerecha.add(lblRecuperar, gbcDer);
+
+        gbcDer.gridy = 6;
+        gbcDer.insets = new Insets(0, 45, 15, 45);
+        pnlDerecha.add(lblRecuperar, gbcDer);
 
         btnEntrar = new JButton("Ingresar al Sistema");
         btnEntrar.setBackground(new Color(39, 174, 96));
         btnEntrar.setForeground(Color.WHITE);
         btnEntrar.setFont(new Font("Segoe UI", Font.BOLD, 15));
         btnEntrar.setFocusPainted(false);
-        btnEntrar.setPreferredSize(new Dimension(0, 48)); 
+        btnEntrar.setPreferredSize(new Dimension(0, 48));
         btnEntrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnEntrar.putClientProperty("JButton.buttonType", "roundRect");
         btnEntrar.addActionListener(e -> procesarLogin());
-        
-        gbcDer.gridy = 7; gbcDer.insets = new Insets(0, 45, 15, 45); pnlDerecha.add(btnEntrar, gbcDer);
+
+        gbcDer.gridy = 7;
+        gbcDer.insets = new Insets(0, 45, 15, 45);
+        pnlDerecha.add(btnEntrar, gbcDer);
 
         // Ensamblar tarjeta
         pnlTarjeta.add(pnlIzquierda);
@@ -187,9 +220,12 @@ public class PanelLogin extends JPanel {
         String pass = new String(txtPassword.getPassword());
 
         if (usr.isEmpty() || pass.isEmpty()) {
-            if (usr.isEmpty()) txtUsuario.putClientProperty("JComponent.outline", "error");
-            if (pass.isEmpty()) txtPassword.putClientProperty("JComponent.outline", "error");
-            JOptionPane.showMessageDialog(this, "Debe ingresar usuario y contraseña.", "Campos Incompletos", JOptionPane.WARNING_MESSAGE);
+            if (usr.isEmpty())
+                txtUsuario.putClientProperty("JComponent.outline", "error");
+            if (pass.isEmpty())
+                txtPassword.putClientProperty("JComponent.outline", "error");
+            JOptionPane.showMessageDialog(this, "Debe ingresar usuario y contraseña.", "Campos Incompletos",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -198,17 +234,19 @@ public class PanelLogin extends JPanel {
 
         if (logged != null) {
             // Mostrar mensaje de bienvenida exitoso
-            JOptionPane.showMessageDialog(this, "¡Bienvenido al sistema, " + logged.getNombreUsuario() + "!", "Inicio de Sesión Exitoso", JOptionPane.INFORMATION_MESSAGE);
-            
+            JOptionPane.showMessageDialog(this, "¡Bienvenido al sistema, " + logged.getNombreUsuario() + "!",
+                    "Inicio de Sesión Exitoso", JOptionPane.INFORMATION_MESSAGE);
+
             SesionGlobal.setUsuarioActual(logged);
-            
+
             if (SesionGlobal.getEmpresaActual() == null) {
                 try {
                     modelo.Empresa emp = new dao.EmpresaDAO().obtenerDatos();
                     if (emp != null) {
                         SesionGlobal.setEmpresaActual(emp);
                     }
-                } catch(Exception ex) {}
+                } catch (Exception ex) {
+                }
             }
 
             menuPrincipal.iniciarEntornoApp();
@@ -216,10 +254,11 @@ public class PanelLogin extends JPanel {
             // Pintar los campos de rojo si las credenciales son incorrectas
             txtUsuario.putClientProperty("JComponent.outline", "error");
             txtPassword.putClientProperty("JComponent.outline", "error");
-            JOptionPane.showMessageDialog(this, "El nombre de usuario o la contraseña son incorrectos.", "Credenciales Inválidas", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "El nombre de usuario o la contraseña son incorrectos.",
+                    "Credenciales Inválidas", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     public void limpiarCampos() {
         txtUsuario.setText("");
         txtPassword.setText("");

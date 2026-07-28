@@ -65,7 +65,8 @@ public class ImagenHelper {
     public static String comprimirYConvertirABase64(File file) {
         try {
             BufferedImage original = ImageIO.read(file);
-            if (original == null) return null;
+            if (original == null)
+                return null;
 
             int originalWidth = original.getWidth();
             int originalHeight = original.getHeight();
@@ -86,7 +87,8 @@ public class ImagenHelper {
             // Comprimir JPEG 70%
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
-            if (!writers.hasNext()) throw new IllegalStateException("No se encontró compresor JPEG");
+            if (!writers.hasNext())
+                throw new IllegalStateException("No se encontró compresor JPEG");
             ImageWriter writer = writers.next();
 
             try (ImageOutputStream ios = ImageIO.createImageOutputStream(baos)) {

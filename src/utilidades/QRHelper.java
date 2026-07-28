@@ -28,7 +28,7 @@ public class QRHelper {
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
             Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
             hints.put(EncodeHintType.MARGIN, 1);
-            
+
             BitMatrix bitMatrix = qrCodeWriter.encode(texto, BarcodeFormat.QR_CODE, ancho, alto, hints);
             return MatrixToImageWriter.toBufferedImage(bitMatrix);
         } catch (WriterException e) {
