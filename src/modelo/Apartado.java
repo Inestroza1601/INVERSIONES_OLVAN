@@ -13,71 +13,151 @@ public class Apartado {
     private int idUsuario;
     private String estadoApartado; // 'VIGENTE', 'PAGADO', 'ENTREGADO', 'CANCELADO'
     private Timestamp fechaEntrega;
-    private int idMetodoPago;     // For abono inicial
+    private int idMetodoPago; // For abono inicial
     private String referenciaPago; // For abono inicial
-    private String bancoPago;      // For abono inicial
-    private String nombreCliente;  // For joins
+    private String bancoPago; // For abono inicial
+    private String nombreCliente; // For joins
     private String apellidoCliente;
-<<<<<<< HEAD
-=======
     private String identidadCliente;
->>>>>>> origin/parte-muoz
     private String nombreUsuario;
 
-    public Apartado() {}
+    public Apartado() {
+    }
 
     // Getters and Setters
-    public int getIdApartado() { return idApartado; }
-    public void setIdApartado(int idApartado) { this.idApartado = idApartado; }
+    public int getIdApartado() {
+        return idApartado;
+    }
 
-    public Timestamp getFechaApartado() { return fechaApartado; }
-    public void setFechaApartado(Timestamp fechaApartado) { this.fechaApartado = fechaApartado; }
+    public void setIdApartado(int idApartado) {
+        this.idApartado = idApartado;
+    }
 
-    public Timestamp getFechaLimite() { return fechaLimite; }
-    public void setFechaLimite(Timestamp fechaLimite) { this.fechaLimite = fechaLimite; }
+    public Timestamp getFechaApartado() {
+        return fechaApartado;
+    }
 
-    public double getTotalApartado() { return totalApartado; }
-    public void setTotalApartado(double totalApartado) { this.totalApartado = totalApartado; }
+    public void setFechaApartado(Timestamp fechaApartado) {
+        this.fechaApartado = fechaApartado;
+    }
 
-    public double getAbonoInicial() { return abonoInicial; }
-    public void setAbonoInicial(double abonoInicial) { this.abonoInicial = abonoInicial; }
+    public Timestamp getFechaLimite() {
+        return fechaLimite;
+    }
 
-    public double getSaldoPendiente() { return saldoPendiente; }
-    public void setSaldoPendiente(double saldoPendiente) { this.saldoPendiente = saldoPendiente; }
+    public void setFechaLimite(Timestamp fechaLimite) {
+        this.fechaLimite = fechaLimite;
+    }
 
-    public int getIdClienteApartado() { return idClienteApartado; }
-    public void setIdClienteApartado(int idClienteApartado) { this.idClienteApartado = idClienteApartado; }
+    public double getTotalApartado() {
+        return totalApartado;
+    }
 
-    public int getIdUsuario() { return idUsuario; }
-    public void setIdUsuario(int idUsuario) { this.idUsuario = idUsuario; }
+    public void setTotalApartado(double totalApartado) {
+        this.totalApartado = totalApartado;
+    }
 
-    public String getEstadoApartado() { return estadoApartado; }
-    public void setEstadoApartado(String estadoApartado) { this.estadoApartado = estadoApartado; }
+    public double getAbonoInicial() {
+        return abonoInicial;
+    }
 
-    public Timestamp getFechaEntrega() { return fechaEntrega; }
-    public void setFechaEntrega(Timestamp fechaEntrega) { this.fechaEntrega = fechaEntrega; }
+    public void setAbonoInicial(double abonoInicial) {
+        this.abonoInicial = abonoInicial;
+    }
 
-    public int getIdMetodoPago() { return idMetodoPago; }
-    public void setIdMetodoPago(int idMetodoPago) { this.idMetodoPago = idMetodoPago; }
+    public double getSaldoPendiente() {
+        return saldoPendiente;
+    }
 
-    public String getReferenciaPago() { return referenciaPago; }
-    public void setReferenciaPago(String referenciaPago) { this.referenciaPago = referenciaPago; }
+    public void setSaldoPendiente(double saldoPendiente) {
+        this.saldoPendiente = saldoPendiente;
+    }
 
-    public String getBancoPago() { return bancoPago; }
-    public void setBancoPago(String bancoPago) { this.bancoPago = bancoPago; }
+    public int getIdClienteApartado() {
+        return idClienteApartado;
+    }
 
-    public String getNombreCliente() { return nombreCliente; }
-    public void setNombreCliente(String nombreCliente) { this.nombreCliente = nombreCliente; }
+    public void setIdClienteApartado(int idClienteApartado) {
+        this.idClienteApartado = idClienteApartado;
+    }
 
-    public String getApellidoCliente() { return apellidoCliente; }
-    public void setApellidoCliente(String apellidoCliente) { this.apellidoCliente = apellidoCliente; }
+    public int getIdUsuario() {
+        return idUsuario;
+    }
 
-<<<<<<< HEAD
-=======
-    public String getIdentidadCliente() { return identidadCliente; }
-    public void setIdentidadCliente(String identidadCliente) { this.identidadCliente = identidadCliente; }
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
 
->>>>>>> origin/parte-muoz
-    public String getNombreUsuario() { return nombreUsuario; }
-    public void setNombreUsuario(String nombreUsuario) { this.nombreUsuario = nombreUsuario; }
+    public String getEstadoApartado() {
+        return estadoApartado;
+    }
+
+    public void setEstadoApartado(String estadoApartado) {
+        this.estadoApartado = estadoApartado;
+    }
+
+    public Timestamp getFechaEntrega() {
+        return fechaEntrega;
+    }
+
+    public void setFechaEntrega(Timestamp fechaEntrega) {
+        this.fechaEntrega = fechaEntrega;
+    }
+
+    public int getIdMetodoPago() {
+        return idMetodoPago;
+    }
+
+    public void setIdMetodoPago(int idMetodoPago) {
+        this.idMetodoPago = idMetodoPago;
+    }
+
+    public String getReferenciaPago() {
+        return referenciaPago;
+    }
+
+    public void setReferenciaPago(String referenciaPago) {
+        this.referenciaPago = referenciaPago;
+    }
+
+    public String getBancoPago() {
+        return bancoPago;
+    }
+
+    public void setBancoPago(String bancoPago) {
+        this.bancoPago = bancoPago;
+    }
+
+    public String getNombreCliente() {
+        return nombreCliente;
+    }
+
+    public void setNombreCliente(String nombreCliente) {
+        this.nombreCliente = nombreCliente;
+    }
+
+    public String getApellidoCliente() {
+        return apellidoCliente;
+    }
+
+    public void setApellidoCliente(String apellidoCliente) {
+        this.apellidoCliente = apellidoCliente;
+    }
+
+    public String getIdentidadCliente() {
+        return identidadCliente;
+    }
+
+    public void setIdentidadCliente(String identidadCliente) {
+        this.identidadCliente = identidadCliente;
+    }
+
+    public String getNombreUsuario() {
+        return nombreUsuario;
+    }
+
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
+    }
 }

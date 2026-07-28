@@ -17,55 +17,127 @@ public class Producto {
     private int diasGarantia;
     private boolean requiereSerie;
 
-    public Producto() {}
+    public Producto() {
+    }
 
     // --- GETTERS Y SETTERS ---
-    public int getIdProducto() { return idProducto; }
-    public void setIdProducto(int idProducto) { this.idProducto = idProducto; }
+    public int getIdProducto() {
+        return idProducto;
+    }
 
-    public String getCodigoBarras() { return codigoBarras; }
-    public void setCodigoBarras(String codigoBarras) { this.codigoBarras = codigoBarras; }
+    public void setIdProducto(int idProducto) {
+        this.idProducto = idProducto;
+    }
 
-    public String getNombreProducto() { return nombreProducto; }
-    public void setNombreProducto(String nombreProducto) { this.nombreProducto = nombreProducto; }
+    public String getCodigoBarras() {
+        return codigoBarras;
+    }
 
-    public int getIdCategoria() { return idCategoria; }
-    public void setIdCategoria(int idCategoria) { this.idCategoria = idCategoria; }
+    public void setCodigoBarras(String codigoBarras) {
+        this.codigoBarras = codigoBarras;
+    }
 
-    public int getIdProveedor() { return idProveedor; }
-    public void setIdProveedor(int idProveedor) { this.idProveedor = idProveedor; }
+    public String getNombreProducto() {
+        return nombreProducto;
+    }
 
-    public int getIdUbicacion() { return idUbicacion; }
-    public void setIdUbicacion(int idUbicacion) { this.idUbicacion = idUbicacion; }
+    public void setNombreProducto(String nombreProducto) {
+        this.nombreProducto = nombreProducto;
+    }
 
-    public double getPrecioCompra() { return precioCompra; }
-    public void setPrecioCompra(double precioCompra) { this.precioCompra = precioCompra; }
+    public int getIdCategoria() {
+        return idCategoria;
+    }
 
-    public double getPrecioVenta() { return precioVenta; }
-    public void setPrecioVenta(double precioVenta) { this.precioVenta = precioVenta; }
+    public void setIdCategoria(int idCategoria) {
+        this.idCategoria = idCategoria;
+    }
 
-    public double getPrecioMayorista() { return precioMayorista; }
-    public void setPrecioMayorista(double precioMayorista) { this.precioMayorista = precioMayorista; }
+    public int getIdProveedor() {
+        return idProveedor;
+    }
 
-    public int getStockMinimo() { return stockMinimo; }
-    public void setStockMinimo(int stockMinimo) { this.stockMinimo = stockMinimo; }
+    public void setIdProveedor(int idProveedor) {
+        this.idProveedor = idProveedor;
+    }
 
-    public int getStockProducto() { return stockProducto; }
-    public void setStockProducto(int stockProducto) { this.stockProducto = stockProducto; }
+    public int getIdUbicacion() {
+        return idUbicacion;
+    }
 
-    public String getRutaImagen() { return rutaImagen; }
-    public void setRutaImagen(String rutaImagen) { this.rutaImagen = rutaImagen; }
+    public void setIdUbicacion(int idUbicacion) {
+        this.idUbicacion = idUbicacion;
+    }
 
-    public boolean isEliminado() { return eliminado; }
-    public void setEliminado(boolean eliminado) { this.eliminado = eliminado; }
-    
-    public int getDiasGarantia() { return diasGarantia; }
-    public void setDiasGarantia(int diasGarantia) { this.diasGarantia = diasGarantia; }
+    public double getPrecioCompra() {
+        return precioCompra;
+    }
 
-    public boolean isRequiereSerie() { return requiereSerie; }
-    public void setRequiereSerie(boolean requiereSerie) { this.requiereSerie = requiereSerie; }
-<<<<<<< HEAD
+    public void setPrecioCompra(double precioCompra) {
+        this.precioCompra = precioCompra;
+    }
+
+    public double getPrecioVenta() {
+        return precioVenta;
+    }
+
+    public void setPrecioVenta(double precioVenta) {
+        this.precioVenta = precioVenta;
+    }
+
+    public double getPrecioMayorista() {
+        return precioMayorista;
+    }
+
+    public void setPrecioMayorista(double precioMayorista) {
+        this.precioMayorista = precioMayorista;
+    }
+
+    public int getStockMinimo() {
+        return stockMinimo;
+    }
+
+    public void setStockMinimo(int stockMinimo) {
+        this.stockMinimo = stockMinimo;
+    }
+
+    public int getStockProducto() {
+        return stockProducto;
+    }
+
+    public void setStockProducto(int stockProducto) {
+        this.stockProducto = stockProducto;
+    }
+
+    public String getRutaImagen() {
+        return rutaImagen;
+    }
+
+    public void setRutaImagen(String rutaImagen) {
+        this.rutaImagen = rutaImagen;
+    }
+
+    public boolean isEliminado() {
+        return eliminado;
+    }
+
+    public void setEliminado(boolean eliminado) {
+        this.eliminado = eliminado;
+    }
+
+    public int getDiasGarantia() {
+        return diasGarantia;
+    }
+
+    public void setDiasGarantia(int diasGarantia) {
+        this.diasGarantia = diasGarantia;
+    }
+
+    public boolean isRequiereSerie() {
+        return requiereSerie;
+    }
+
+    public void setRequiereSerie(boolean requiereSerie) {
+        this.requiereSerie = requiereSerie;
+    }
 }
-=======
-}
->>>>>>> origin/parte-muoz

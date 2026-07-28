@@ -19,20 +19,21 @@ public class InventarioDAO {
     }
 
     /**
-     * Carga todos los códigos de barras activos a la RAM para la validación instantánea del panel.
+     * Carga todos los códigos de barras activos a la RAM para la validación
+     * instantánea del panel.
      */
     public Set<String> obtenerCodigosEnRam() {
         Set<String> codigos = new HashSet<>();
         String sql = "SELECT codigo_barras_producto FROM INVENTARIO WHERE eliminado_producto = 0 AND codigo_barras_producto IS NOT NULL";
-        
+
         try (Connection con = factory.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-             
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) {
                 codigos.add(rs.getString("codigo_barras_producto"));
             }
-            
+
         } catch (SQLException e) {
             System.err.println("Error al cargar códigos de barras a RAM: " + e.getMessage());
         }
@@ -40,17 +41,18 @@ public class InventarioDAO {
     }
 
     /**
-     * Registra un nuevo producto. Si el código de barras viene vacío, utiliza el ID autogenerado.
+     * Registra un nuevo producto. Si el código de barras viene vacío, utiliza el ID
+     * autogenerado.
      */
     public boolean registrarProducto(Producto p) {
         String sql = "INSERT INTO INVENTARIO (codigo_barras_producto, nombre_producto, id_categoria, id_proveedor, "
-                   + "id_ubicacion, precio_compra_producto, precio_venta_producto, precio_mayorista_producto, "
-                   + "stock_minimo_producto, stock_producto, ruta_imagen_producto, dias_garantia, requiere_serie, eliminado_producto) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
+                + "id_ubicacion, precio_compra_producto, precio_venta_producto, precio_mayorista_producto, "
+                + "stock_minimo_producto, stock_producto, ruta_imagen_producto, dias_garantia, requiere_serie, eliminado_producto) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
 
         try (Connection con = factory.getConexion();
-             // Le decimos a Java que recupere el ID que SQL Server generará automáticamente
-             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                // Le decimos a Java que recupere el ID que SQL Server generará automáticamente
+                PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             // 1. Validar si trae código de barras o viene nulo
             if (p.getCodigoBarras() == null || p.getCodigoBarras().trim().isEmpty()) {
@@ -66,7 +68,8 @@ public class InventarioDAO {
             ps.setDouble(6, p.getPrecioCompra());
             ps.setDouble(7, p.getPrecioVenta());
 
-            // 8. Precio mayorista (Si es mayor a 0 lo guarda, si no, lo deja como nulo en la BD)
+            // 8. Precio mayorista (Si es mayor a 0 lo guarda, si no, lo deja como nulo en
+            // la BD)
             if (p.getPrecioMayorista() > 0) {
                 ps.setDouble(8, p.getPrecioMayorista());
             } else {
@@ -82,21 +85,22 @@ public class InventarioDAO {
             } else {
                 ps.setString(11, p.getRutaImagen());
             }
-            
+
             ps.setInt(12, p.getDiasGarantia());
             ps.setBoolean(13, p.isRequiereSerie());
 
             int filasAfectadas = ps.executeUpdate();
 
-            // Si se guardó correctamente, revisamos si necesitamos actualizar el código de barras
+            // Si se guardó correctamente, revisamos si necesitamos actualizar el código de
+            // barras
             if (filasAfectadas > 0) {
                 if (p.getCodigoBarras() == null || p.getCodigoBarras().trim().isEmpty()) {
-                    
+
                     // Recuperamos el ID autogenerado
                     try (ResultSet rs = ps.getGeneratedKeys()) {
                         if (rs.next()) {
                             int idGenerado = rs.getInt(1); // Este es el id_producto
-                            
+
                             // Actualizamos el producto recién creado para que su código de barras sea su ID
                             String sqlUpdate = "UPDATE INVENTARIO SET codigo_barras_producto = ? WHERE id_producto = ?";
                             try (PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
@@ -116,7 +120,7 @@ public class InventarioDAO {
             return false;
         }
     }
-    
+
     // ==========================================
     // MÉTODOS DE BÚSQUEDA Y ELIMINACIÓN
     // ==========================================
@@ -126,8 +130,8 @@ public class InventarioDAO {
         String sql = "SELECT * FROM INVENTARIO WHERE eliminado_producto = 0 ORDER BY nombre_producto ASC";
 
         try (Connection con = factory.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Producto p = new Producto();
@@ -139,12 +143,12 @@ public class InventarioDAO {
                 p.setPrecioMayorista(rs.getDouble("precio_mayorista_producto"));
                 p.setStockProducto(rs.getInt("stock_producto"));
                 p.setRutaImagen(rs.getString("ruta_imagen_producto"));
-                
+
                 // --- LAS DOS LÍNEAS QUE FALTABAN AQUÍ ---
                 p.setDiasGarantia(rs.getInt("dias_garantia"));
                 p.setRequiereSerie(rs.getBoolean("requiere_serie"));
                 // ---------------------------------------
-                
+
                 lista.add(p);
             }
         } catch (SQLException e) {
@@ -156,7 +160,7 @@ public class InventarioDAO {
     public boolean eliminarProductoLogico(int idProducto) {
         String sql = "UPDATE INVENTARIO SET eliminado_producto = 1 WHERE id_producto = ?";
         try (Connection con = factory.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idProducto);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -164,7 +168,7 @@ public class InventarioDAO {
             return false;
         }
     }
-    
+
     // ==========================================
     // MÉTODOS PARA EDICIÓN DE PRODUCTO
     // ==========================================
@@ -192,38 +196,48 @@ public class InventarioDAO {
                     return p;
                 }
             }
-        } catch (SQLException e) { System.err.println("Error al obtener producto: " + e.getMessage()); }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener producto: " + e.getMessage());
+        }
         return null;
     }
 
     public boolean actualizarProducto(Producto p) {
         String sql = "UPDATE INVENTARIO SET codigo_barras_producto = ?, nombre_producto = ?, id_categoria = ?, id_proveedor = ?, id_ubicacion = ?, precio_compra_producto = ?, precio_venta_producto = ?, precio_mayorista_producto = ?, stock_minimo_producto = ?, ruta_imagen_producto = ?, dias_garantia = ?, requiere_serie = ? WHERE id_producto = ?";
         try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
-            if (p.getCodigoBarras() == null || p.getCodigoBarras().trim().isEmpty()) ps.setNull(1, java.sql.Types.VARCHAR);
-            else ps.setString(1, p.getCodigoBarras().trim());
-            
+            if (p.getCodigoBarras() == null || p.getCodigoBarras().trim().isEmpty())
+                ps.setNull(1, java.sql.Types.VARCHAR);
+            else
+                ps.setString(1, p.getCodigoBarras().trim());
+
             ps.setString(2, p.getNombreProducto().trim());
-            ps.setInt(3, p.getIdCategoria()); ps.setInt(4, p.getIdProveedor()); ps.setInt(5, p.getIdUbicacion());
-            ps.setDouble(6, p.getPrecioCompra()); ps.setDouble(7, p.getPrecioVenta());
-            
-            if (p.getPrecioMayorista() > 0) ps.setDouble(8, p.getPrecioMayorista());
-            else ps.setNull(8, java.sql.Types.DECIMAL);
-            
+            ps.setInt(3, p.getIdCategoria());
+            ps.setInt(4, p.getIdProveedor());
+            ps.setInt(5, p.getIdUbicacion());
+            ps.setDouble(6, p.getPrecioCompra());
+            ps.setDouble(7, p.getPrecioVenta());
+
+            if (p.getPrecioMayorista() > 0)
+                ps.setDouble(8, p.getPrecioMayorista());
+            else
+                ps.setNull(8, java.sql.Types.DECIMAL);
+
             ps.setInt(9, p.getStockMinimo());
-            
-            if (p.getRutaImagen() == null || p.getRutaImagen().trim().isEmpty()) ps.setNull(10, java.sql.Types.VARCHAR);
-            else ps.setString(10, p.getRutaImagen());
-            
+
+            if (p.getRutaImagen() == null || p.getRutaImagen().trim().isEmpty())
+                ps.setNull(10, java.sql.Types.VARCHAR);
+            else
+                ps.setString(10, p.getRutaImagen());
+
             ps.setInt(11, p.getDiasGarantia());
             ps.setBoolean(12, p.isRequiereSerie());
             ps.setInt(13, p.getIdProducto());
-            
+
             ps.setInt(11, p.getIdProducto());
             return ps.executeUpdate() > 0;
-        } catch (SQLException e) { System.err.println("Error al actualizar producto: " + e.getMessage()); return false; }
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar producto: " + e.getMessage());
+            return false;
+        }
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/parte-muoz

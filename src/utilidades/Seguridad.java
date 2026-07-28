@@ -12,7 +12,7 @@ public class Seguridad {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(password.getBytes());
-            
+
             // Convertir los bytes a formato Hexadecimal (String)
             StringBuilder hexString = new StringBuilder();
             for (byte b : hash) {
@@ -23,13 +23,9 @@ public class Seguridad {
                 hexString.append(hex);
             }
             return hexString.toString();
-            
+
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Error en el algoritmo de encriptación", e);
         }
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/parte-muoz

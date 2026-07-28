@@ -65,9 +65,8 @@ public class PanelControlCaja extends JPanel {
         JPanel pnlDetalleActivo = new JPanel(new GridBagLayout());
         pnlDetalleActivo.setBackground(Color.WHITE);
         pnlDetalleActivo.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 222, 225), 1, true),
-            BorderFactory.createEmptyBorder(20, 20, 20, 20)
-        ));
+                BorderFactory.createLineBorder(new Color(220, 222, 225), 1, true),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -97,29 +96,38 @@ public class PanelControlCaja extends JPanel {
         pnlCalculosAdmin.add(lblEsperadoValor);
 
         // Column Right: Blind notification (Cashier only)
-        lblEsperadoLabel = new JLabel("<html><body style='width: 250px;'><i style='color:#e67e22;'>Arqueo a ciegas habilitado.</i><br>Por políticas de auditoría, los montos de ventas y el saldo esperado no son visibles para el cajero durante el turno.</body></html>");
+        lblEsperadoLabel = new JLabel(
+                "<html><body style='width: 250px;'><i style='color:#e67e22;'>Arqueo a ciegas habilitado.</i><br>Por políticas de auditoría, los montos de ventas y el saldo esperado no son visibles para el cajero durante el turno.</body></html>");
         lblEsperadoLabel.setFont(new Font("Segoe UI", Font.ITALIC, 13));
         lblEsperadoLabel.setForeground(new Color(127, 135, 143));
 
-        gbc.gridx = 0; gbc.gridy = 0; pnlDetalleActivo.add(pnlDataIzq, gbc);
-        gbc.gridx = 1; gbc.gridy = 0; pnlDetalleActivo.add(pnlCalculosAdmin, gbc);
-        gbc.gridy = 1; pnlDetalleActivo.add(lblEsperadoLabel, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        pnlDetalleActivo.add(pnlDataIzq, gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        pnlDetalleActivo.add(pnlCalculosAdmin, gbc);
+        gbc.gridy = 1;
+        pnlDetalleActivo.add(lblEsperadoLabel, gbc);
 
         // Cierre Form (Efectivo real)
         JPanel pnlFormCierre = new JPanel(new GridBagLayout());
         pnlFormCierre.setBackground(Color.WHITE);
         pnlFormCierre.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 222, 225), 1, true),
-            BorderFactory.createEmptyBorder(20, 20, 20, 20)
-        ));
+                BorderFactory.createLineBorder(new Color(220, 222, 225), 1, true),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
         GridBagConstraints gbcC = new GridBagConstraints();
-        gbcC.insets = new Insets(8, 0, 8, 0); gbcC.fill = GridBagConstraints.HORIZONTAL; gbcC.gridx = 0; gbcC.weightx = 1.0;
+        gbcC.insets = new Insets(8, 0, 8, 0);
+        gbcC.fill = GridBagConstraints.HORIZONTAL;
+        gbcC.gridx = 0;
+        gbcC.weightx = 1.0;
 
         JLabel lblMontoReal = new JLabel("Efectivo Contado Real en Gaveta (L):");
         lblMontoReal.setFont(new Font("Segoe UI", Font.BOLD, 12));
         txtMontoReal = new JTextField();
         txtMontoReal.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        txtMontoReal.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(5, 8, 5, 8)));
+        txtMontoReal.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(5, 8, 5, 8)));
 
         JLabel lblObs = new JLabel("Observaciones / Comentarios:");
         lblObs.setFont(new Font("Segoe UI", Font.BOLD, 12));
@@ -136,10 +144,14 @@ public class PanelControlCaja extends JPanel {
         btnCerrarCaja.setPreferredSize(new Dimension(0, 42));
         btnCerrarCaja.addActionListener(e -> realizarCierreCaja());
 
-        pnlFormCierre.add(lblMontoReal, gbcC); gbcC.gridy = 1;
-        pnlFormCierre.add(txtMontoReal, gbcC); gbcC.gridy = 2;
-        pnlFormCierre.add(lblObs, gbcC); gbcC.gridy = 3;
-        pnlFormCierre.add(new JScrollPane(txtObservaciones), gbcC); gbcC.gridy = 4;
+        pnlFormCierre.add(lblMontoReal, gbcC);
+        gbcC.gridy = 1;
+        pnlFormCierre.add(txtMontoReal, gbcC);
+        gbcC.gridy = 2;
+        pnlFormCierre.add(lblObs, gbcC);
+        gbcC.gridy = 3;
+        pnlFormCierre.add(new JScrollPane(txtObservaciones), gbcC);
+        gbcC.gridy = 4;
         pnlFormCierre.add(btnCerrarCaja, gbcC);
 
         JPanel pnlActCentral = new JPanel(new GridLayout(1, 2, 20, 0));
@@ -158,12 +170,13 @@ public class PanelControlCaja extends JPanel {
 
         JLabel lblIconWarn = new JLabel("⚠️");
         lblIconWarn.setFont(new Font("Segoe UI", Font.PLAIN, 48));
-        
+
         JLabel lblInactMsg = new JLabel("No hay ningún turno de caja abierto actualmente.");
         lblInactMsg.setFont(new Font("Segoe UI", Font.BOLD, 16));
         lblInactMsg.setForeground(new Color(45, 45, 45));
 
-        JLabel lblInactDesc = new JLabel("Debe realizar la apertura de caja para registrar el dinero en efectivo inicial e iniciar operaciones.");
+        JLabel lblInactDesc = new JLabel(
+                "Debe realizar la apertura de caja para registrar el dinero en efectivo inicial e iniciar operaciones.");
         lblInactDesc.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         lblInactDesc.setForeground(new Color(140, 145, 150));
 
@@ -175,10 +188,14 @@ public class PanelControlCaja extends JPanel {
         btnAbrirCaja.setPreferredSize(new Dimension(180, 40));
         btnAbrirCaja.addActionListener(e -> mostrarAperturaModal());
 
-        pnlInactivo.add(lblIconWarn, gbcI); gbcI.gridy = 1;
-        pnlInactivo.add(lblInactMsg, gbcI); gbcI.gridy = 2;
-        pnlInactivo.add(lblInactDesc, gbcI); gbcI.gridy = 3;
-        pnlInactivo.add(Box.createVerticalStrut(15), gbcI); gbcI.gridy = 4;
+        pnlInactivo.add(lblIconWarn, gbcI);
+        gbcI.gridy = 1;
+        pnlInactivo.add(lblInactMsg, gbcI);
+        gbcI.gridy = 2;
+        pnlInactivo.add(lblInactDesc, gbcI);
+        gbcI.gridy = 3;
+        pnlInactivo.add(Box.createVerticalStrut(15), gbcI);
+        gbcI.gridy = 4;
         pnlInactivo.add(btnAbrirCaja, gbcI);
 
         pnlCentro.add(pnlActivo, "ACTIVO");
@@ -206,7 +223,8 @@ public class PanelControlCaja extends JPanel {
         btnReimprimirCierre.addActionListener(e -> {
             int row = tablaHistorial.getSelectedRow();
             if (row < 0) {
-                JOptionPane.showMessageDialog(this, "Seleccione un turno de caja del historial.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Seleccione un turno de caja del historial.", "Aviso",
+                        JOptionPane.WARNING_MESSAGE);
                 return;
             }
             int idCaja = (int) tablaHistorial.getValueAt(row, 0);
@@ -214,7 +232,8 @@ public class PanelControlCaja extends JPanel {
             if (calcs != null) {
                 JFileChooser chooser = new JFileChooser();
                 chooser.setDialogTitle("Reimprimir Ticket de Cierre #" + idCaja);
-                chooser.setSelectedFile(new java.io.File("Reimpresion_Cierre_Caja_" + idCaja + "_" + System.currentTimeMillis() + ".pdf"));
+                chooser.setSelectedFile(new java.io.File(
+                        "Reimpresion_Cierre_Caja_" + idCaja + "_" + System.currentTimeMillis() + ".pdf"));
 
                 if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
                     java.io.File archivoDestino = chooser.getSelectedFile();
@@ -227,7 +246,8 @@ public class PanelControlCaja extends JPanel {
                             java.awt.Desktop.getDesktop().open(archivoDestino);
                         }
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(this, "Error al generar el PDF del cierre:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Error al generar el PDF del cierre:\n" + ex.getMessage(),
+                                "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -235,8 +255,14 @@ public class PanelControlCaja extends JPanel {
         pnlHistHeader.add(btnReimprimirCierre, BorderLayout.EAST);
         pnlHistorial.add(pnlHistHeader, BorderLayout.NORTH);
 
-        String[] cols = {"ID Turno", "Apertura", "Cierre", "Cajero", "Ef. Inicial", "Ef. Esperado", "Ef. Real", "Diferencia", "Estado"};
-        modeloHistorial = new DefaultTableModel(null, cols) { @Override public boolean isCellEditable(int r, int c) { return false; } };
+        String[] cols = { "ID Turno", "Apertura", "Cierre", "Cajero", "Ef. Inicial", "Ef. Esperado", "Ef. Real",
+                "Diferencia", "Estado" };
+        modeloHistorial = new DefaultTableModel(null, cols) {
+            @Override
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
+        };
         tablaHistorial = new JTable(modeloHistorial);
         tablaHistorial.setRowHeight(30);
         tablaHistorial.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -251,20 +277,20 @@ public class PanelControlCaja extends JPanel {
     private void verificarSesion() {
         activa = dao.obtenerSesionActiva();
         CardLayout cl = (CardLayout) pnlActivo.getParent().getLayout();
-        
+
         int rolId = SesionGlobal.getUsuarioActual() != null ? SesionGlobal.getUsuarioActual().getIdRol() : 3;
 
         if (activa != null) {
             cl.show(pnlActivo.getParent(), "ACTIVO");
-            lblCajero.setText("<html><strong>Cajero de Turno:</strong> " + (activa.getCajeroTurno() != null && !activa.getCajeroTurno().isEmpty() ? activa.getCajeroTurno() : activa.getNombreUsuarioApertura()) + "</html>");
-            
+            lblCajero.setText("<html><strong>Cajero de Turno:</strong> "
+                    + (activa.getCajeroTurno() != null && !activa.getCajeroTurno().isEmpty() ? activa.getCajeroTurno()
+                            : activa.getNombreUsuarioApertura())
+                    + "</html>");
+
             String fechaA = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(activa.getFechaApertura());
             lblFechaApertura.setText("<html><strong>Fecha Apertura:</strong> " + fechaA + "</html>");
-<<<<<<< HEAD
-            lblMontoApertura.setText("<html><strong>Efectivo Inicial:</strong> L " + String.format("%.2f", activa.getMontoApertura()) + "</html>");
-=======
-            lblMontoApertura.setText("<html><strong>Efectivo Inicial:</strong> L " + String.format("%,.2f", activa.getMontoApertura()) + "</html>");
->>>>>>> origin/parte-muoz
+            lblMontoApertura.setText("<html><strong>Efectivo Inicial:</strong> L "
+                    + String.format("%,.2f", activa.getMontoApertura()) + "</html>");
 
             // Configurar visibilidad según el rol
             if (rolId == 3) {
@@ -291,22 +317,17 @@ public class PanelControlCaja extends JPanel {
     }
 
     private void cargarCalculosEnVivo() {
-        if (activa == null) return;
+        if (activa == null)
+            return;
         Map<String, Object> c = dao.obtenerCalculosTurno(activa.getIdCaja());
         if (c != null) {
             double vTot = (double) c.get("total_ventas_general");
             double aTot = (double) c.get("total_abonos_general");
             double esp = (double) c.get("efectivo_esperado");
 
-<<<<<<< HEAD
-            lblVentasValor.setText("Ventas del Turno: L " + String.format("%.2f", vTot));
-            lblAbonosValor.setText("Abonos del Turno: L " + String.format("%.2f", aTot));
-            lblEsperadoValor.setText("Efectivo Esperado: L " + String.format("%.2f", esp));
-=======
             lblVentasValor.setText("Ventas del Turno: L " + String.format("%,.2f", vTot));
             lblAbonosValor.setText("Abonos del Turno: L " + String.format("%,.2f", aTot));
             lblEsperadoValor.setText("Efectivo Esperado: L " + String.format("%,.2f", esp));
->>>>>>> origin/parte-muoz
         }
     }
 
@@ -317,61 +338,65 @@ public class PanelControlCaja extends JPanel {
         for (ControlCaja c : lista) {
             String fApe = sdf.format(c.getFechaApertura());
             String fCie = c.getFechaCierre() != null ? sdf.format(c.getFechaCierre()) : "-";
-            modeloHistorial.addRow(new Object[]{
-                c.getIdCaja(),
-                fApe,
-                fCie,
-                c.getCajeroTurno() != null && !c.getCajeroTurno().isEmpty() ? c.getCajeroTurno() : c.getNombreUsuarioApertura(),
-<<<<<<< HEAD
-                "L " + String.format("%.2f", c.getMontoApertura()),
-                c.getFechaCierre() != null ? ("L " + String.format("%.2f", c.getMontoCierreEsperado())) : "-",
-                c.getFechaCierre() != null ? ("L " + String.format("%.2f", c.getMontoCierreReal())) : "-",
-                c.getFechaCierre() != null ? ("L " + String.format("%.2f", c.getDiferenciaCierre())) : "-",
-=======
-                "L " + String.format("%,.2f", c.getMontoApertura()),
-                c.getFechaCierre() != null ? ("L " + String.format("%,.2f", c.getMontoCierreEsperado())) : "-",
-                c.getFechaCierre() != null ? ("L " + String.format("%,.2f", c.getMontoCierreReal())) : "-",
-                c.getFechaCierre() != null ? ("L " + String.format("%,.2f", c.getDiferenciaCierre())) : "-",
->>>>>>> origin/parte-muoz
-                c.getEstadoCaja() == 1 ? "ABIERTA" : "CERRADA"
+            modeloHistorial.addRow(new Object[] {
+                    c.getIdCaja(),
+                    fApe,
+                    fCie,
+                    c.getCajeroTurno() != null && !c.getCajeroTurno().isEmpty() ? c.getCajeroTurno()
+                            : c.getNombreUsuarioApertura(),
+                    "L " + String.format("%,.2f", c.getMontoApertura()),
+                    c.getFechaCierre() != null ? ("L " + String.format("%,.2f", c.getMontoCierreEsperado())) : "-",
+                    c.getFechaCierre() != null ? ("L " + String.format("%,.2f", c.getMontoCierreReal())) : "-",
+                    c.getFechaCierre() != null ? ("L " + String.format("%,.2f", c.getDiferenciaCierre())) : "-",
+                    c.getEstadoCaja() == 1 ? "ABIERTA" : "CERRADA"
             });
         }
     }
 
     private void mostrarAperturaModal() {
         int rolId = SesionGlobal.getUsuarioActual() != null ? SesionGlobal.getUsuarioActual().getIdRol() : 3;
-        String userActual = SesionGlobal.getUsuarioActual() != null ? SesionGlobal.getUsuarioActual().getNombreUsuario() : "";
+        String userActual = SesionGlobal.getUsuarioActual() != null ? SesionGlobal.getUsuarioActual().getNombreUsuario()
+                : "";
         int idUserActual = SesionGlobal.getUsuarioActual() != null ? SesionGlobal.getUsuarioActual().getIdUsuario() : 1;
 
         JTextField txtMonto = new JTextField("0.00");
         JTextField txtCajero = new JTextField(userActual);
-        
+
         Object[] msgElements;
         if (rolId == 1) {
-            msgElements = new Object[]{
-                "Monto de Apertura (Efectivo Inicial L):", txtMonto,
-                "Nombre del Cajero de Turno:", txtCajero
+            msgElements = new Object[] {
+                    "Monto de Apertura (Efectivo Inicial L):", txtMonto,
+                    "Nombre del Cajero de Turno:", txtCajero
             };
         } else {
-            msgElements = new Object[]{
-                "Monto de Apertura (Efectivo Inicial L):", txtMonto
+            msgElements = new Object[] {
+                    "Monto de Apertura (Efectivo Inicial L):", txtMonto
             };
         }
 
-        int opt = JOptionPane.showConfirmDialog(this, msgElements, "Apertura de Caja", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        int opt = JOptionPane.showConfirmDialog(this, msgElements, "Apertura de Caja", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
         if (opt == JOptionPane.OK_OPTION) {
             try {
                 double monto = Double.parseDouble(txtMonto.getText().trim());
-                if (monto < 0) { JOptionPane.showMessageDialog(this, "El monto no puede ser negativo.", "Error", JOptionPane.ERROR_MESSAGE); return; }
-                
+                if (monto < 0) {
+                    JOptionPane.showMessageDialog(this, "El monto no puede ser negativo.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 String cajero = txtCajero.getText().trim();
-                if (cajero.isEmpty()) { cajero = userActual; }
+                if (cajero.isEmpty()) {
+                    cajero = userActual;
+                }
 
                 if (dao.abrirCaja(idUserActual, monto, cajero)) {
-                    JOptionPane.showMessageDialog(this, "Turno de caja abierto exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Turno de caja abierto exitosamente.", "Éxito",
+                            JOptionPane.INFORMATION_MESSAGE);
                     verificarSesion();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Error al abrir la sesión en la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Error al abrir la sesión en la base de datos.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Monto inválido.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -380,35 +405,46 @@ public class PanelControlCaja extends JPanel {
     }
 
     private void realizarCierreCaja() {
-        if (activa == null) return;
+        if (activa == null)
+            return;
         try {
             double montoReal = Double.parseDouble(txtMontoReal.getText().trim());
-            if (montoReal < 0) { JOptionPane.showMessageDialog(this, "El monto no puede ser negativo.", "Error", JOptionPane.ERROR_MESSAGE); return; }
+            if (montoReal < 0) {
+                JOptionPane.showMessageDialog(this, "El monto no puede ser negativo.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
             String obs = txtObservaciones.getText().trim();
 
             // Solicitar firma electrónica del cajero
             JPasswordField pfPass = new JPasswordField();
-            int op = JOptionPane.showConfirmDialog(this, new Object[]{"Ingrese su contraseña para firmar y cerrar el turno:", pfPass}, "Firma de Cierre", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-            if (op != JOptionPane.OK_OPTION) return;
+            int op = JOptionPane.showConfirmDialog(this,
+                    new Object[] { "Ingrese su contraseña para firmar y cerrar el turno:", pfPass }, "Firma de Cierre",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (op != JOptionPane.OK_OPTION)
+                return;
 
             String pass = new String(pfPass.getPassword());
             int idUsuarioFirma = new dao.KardexDAO().validarFirmaUsuario(pass);
 
             if (idUsuarioFirma <= 0) {
-                JOptionPane.showMessageDialog(this, "Contraseña incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Contraseña incorrecta o usuario inactivo.", "Acceso Denegado",
+                        JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             if (dao.cerrarCaja(activa.getIdCaja(), montoReal, obs, idUsuarioFirma)) {
-                JOptionPane.showMessageDialog(this, "Caja cerrada y arqueo finalizado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                
+                JOptionPane.showMessageDialog(this, "Caja cerrada y arqueo finalizado correctamente.", "Éxito",
+                        JOptionPane.INFORMATION_MESSAGE);
+
                 // Generar e Imprimir Ticket de Cierre
                 Map<String, Object> calcs = dao.obtenerCalculosTurno(activa.getIdCaja());
                 if (calcs != null) {
                     JFileChooser chooser = new JFileChooser();
                     chooser.setDialogTitle("Guardar Ticket de Cierre de Caja");
-                    chooser.setSelectedFile(new java.io.File("Cierre_Caja_" + activa.getIdCaja() + "_" + System.currentTimeMillis() + ".pdf"));
+                    chooser.setSelectedFile(new java.io.File(
+                            "Cierre_Caja_" + activa.getIdCaja() + "_" + System.currentTimeMillis() + ".pdf"));
 
                     if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
                         java.io.File archivoDestino = chooser.getSelectedFile();
@@ -416,15 +452,18 @@ public class PanelControlCaja extends JPanel {
                             archivoDestino = new java.io.File(archivoDestino.getAbsolutePath() + ".pdf");
                         }
                         try {
-                            utilidades.GeneradorTickets.generarTicketCierreCajaPDF(archivoDestino.getAbsolutePath(), calcs);
+                            utilidades.GeneradorTickets.generarTicketCierreCajaPDF(archivoDestino.getAbsolutePath(),
+                                    calcs);
                             if (java.awt.Desktop.isDesktopSupported()) {
                                 java.awt.Desktop.getDesktop().open(archivoDestino);
                             }
                         } catch (Exception ex) {
-                            JOptionPane.showMessageDialog(this, "Error al generar el PDF del cierre:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(this,
+                                    "Error al generar el PDF del cierre:\n" + ex.getMessage(), "Error",
+                                    JOptionPane.ERROR_MESSAGE);
                         }
                     }
-                    
+
                     mostrarReporteResumen(calcs);
                 }
 
@@ -432,7 +471,8 @@ public class PanelControlCaja extends JPanel {
                 txtObservaciones.setText("");
                 verificarSesion();
             } else {
-                JOptionPane.showMessageDialog(this, "Error al guardar el cierre de caja.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error al guardar el cierre de caja.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
 
         } catch (NumberFormatException ex) {
@@ -446,55 +486,43 @@ public class PanelControlCaja extends JPanel {
         sb.append("         REPORTE DE ARQUEO DE CAJA       \n");
         sb.append("=========================================\n");
         sb.append("Cajero Asignado: ").append(c.get("cajero_turno")).append("\n");
-        
+
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         sb.append("Apertura: ").append(sdf.format((Timestamp) c.get("fecha_apertura"))).append("\n");
         if (c.get("fecha_cierre") != null) {
             sb.append("Cierre: ").append(sdf.format((Timestamp) c.get("fecha_cierre"))).append("\n");
         }
         sb.append("-----------------------------------------\n");
-<<<<<<< HEAD
-        sb.append("Efectivo Inicial: L ").append(String.format("%.2f", c.get("monto_apertura"))).append("\n");
-        sb.append("Ventas Totales: L ").append(String.format("%.2f", c.get("total_ventas_general"))).append("\n");
-        sb.append("Abonos Recibidos: L ").append(String.format("%.2f", c.get("total_abonos_general"))).append("\n");
-        sb.append("Efectivo Esperado: L ").append(String.format("%.2f", c.get("efectivo_esperado"))).append("\n");
-=======
         sb.append("Efectivo Inicial: L ").append(String.format("%,.2f", c.get("monto_apertura"))).append("\n");
         sb.append("Ventas Totales: L ").append(String.format("%,.2f", c.get("total_ventas_general"))).append("\n");
         sb.append("Abonos Recibidos: L ").append(String.format("%,.2f", c.get("total_abonos_general"))).append("\n");
         sb.append("Efectivo Esperado: L ").append(String.format("%,.2f", c.get("efectivo_esperado"))).append("\n");
->>>>>>> origin/parte-muoz
-        
+
         double real = 0;
         if (activa != null) {
-            try { real = Double.parseDouble(txtMontoReal.getText().trim()); } catch(Exception e) {}
+            try {
+                real = Double.parseDouble(txtMontoReal.getText().trim());
+            } catch (Exception e) {
+            }
         }
-<<<<<<< HEAD
-        sb.append("Efectivo Real Contado: L ").append(String.format("%.2f", real)).append("\n");
-        double esperado = (double) c.get("efectivo_esperado");
-        sb.append("Diferencia (Sobrante/Faltante): L ").append(String.format("%.2f", real - esperado)).append("\n");
-=======
         sb.append("Efectivo Real Contado: L ").append(String.format("%,.2f", real)).append("\n");
         double esperado = (double) c.get("efectivo_esperado");
         sb.append("Diferencia (Sobrante/Faltante): L ").append(String.format("%,.2f", real - esperado)).append("\n");
->>>>>>> origin/parte-muoz
         sb.append("=========================================\n");
-        
+
         List<Map<String, Object>> prods = (List<Map<String, Object>>) c.get("productos_vendidos");
         if (prods != null && !prods.isEmpty()) {
             sb.append("\nPRODUCTOS VENDIDOS EN EL TURNO:\n");
             for (Map<String, Object> p : prods) {
-<<<<<<< HEAD
-                sb.append(p.get("cantidad")).append("x ").append(p.get("descripcion")).append(" (L ").append(String.format("%.2f", p.get("total_valor"))).append(")\n");
-=======
-                sb.append(p.get("cantidad")).append("x ").append(p.get("descripcion")).append(" (L ").append(String.format("%,.2f", p.get("total_valor"))).append(")\n");
->>>>>>> origin/parte-muoz
+                sb.append(p.get("cantidad")).append("x ").append(p.get("descripcion")).append(" (L ")
+                        .append(String.format("%,.2f", p.get("total_valor"))).append(")\n");
             }
         }
-        
+
         JTextArea area = new JTextArea(sb.toString());
         area.setFont(new Font("Monospaced", Font.PLAIN, 12));
         area.setEditable(false);
-        JOptionPane.showMessageDialog(this, new JScrollPane(area), "Resumen Cierre de Caja", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, new JScrollPane(area), "Resumen Cierre de Caja",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 }

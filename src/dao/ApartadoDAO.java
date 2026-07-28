@@ -17,17 +17,17 @@ public class ApartadoDAO {
 
     public boolean registrarApartado(Apartado a, List<DetalleApartado> detalles) {
         String sqlApartado = "INSERT INTO APARTADOS (id_cliente_apartado, id_usuario, fecha_apartado, total_apartado, saldo_pendiente, estado_apartado, fecha_entrega) "
-                           + "VALUES (?, ?, GETDATE(), ?, ?, ?, NULL)";
-        
+                + "VALUES (?, ?, GETDATE(), ?, ?, ?, NULL)";
+
         String sqlDetalle = "INSERT INTO DETALLES_APARTADO (id_apartado, id_producto, descripcion_apartado, cantidad_apartado, precio_unitario_apartado, subtotal_apartado, identificador_serie) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        
+
         String sqlAbono = "INSERT INTO ABONOS_APARTADO (id_apartado, id_usuario, id_metodo_pago, fecha_abono, monto_abono, referencia_pago, banco_pago) "
-                        + "VALUES (?, ?, ?, GETDATE(), ?, ?, ?)";
-        
+                + "VALUES (?, ?, ?, GETDATE(), ?, ?, ?)";
+
         String sqlStockActual = "SELECT stock_producto FROM INVENTARIO WHERE id_producto = ?";
         String sqlStockUpdate = "UPDATE INVENTARIO SET stock_producto = ? WHERE id_producto = ?";
         String sqlKardex = "INSERT INTO KARDEX (id_producto, id_usuario, fecha_movimiento_producto, tipo_movimiento_producto, cantidad_producto, stock_restante_producto, referencia_producto) "
-                         + "VALUES (?, ?, GETDATE(), 'Salida', ?, ?, ?)";
+                + "VALUES (?, ?, GETDATE(), 'Salida', ?, ?, ?)";
 
         Connection con = null;
         try {
@@ -36,7 +36,8 @@ public class ApartadoDAO {
 
             int idApartado = 0;
             double saldoPendiente = a.getTotalApartado() - a.getAbonoInicial();
-            if (saldoPendiente < 0) saldoPendiente = 0;
+            if (saldoPendiente < 0)
+                saldoPendiente = 0;
             String estado = (saldoPendiente <= 0) ? "PAGADO" : "VIGENTE";
 
             try (PreparedStatement psApartado = con.prepareStatement(sqlApartado, Statement.RETURN_GENERATED_KEYS)) {
@@ -73,9 +74,9 @@ public class ApartadoDAO {
             }
 
             try (PreparedStatement psDetalle = con.prepareStatement(sqlDetalle);
-                 PreparedStatement psStockActual = con.prepareStatement(sqlStockActual);
-                 PreparedStatement psStockUpdate = con.prepareStatement(sqlStockUpdate);
-                 PreparedStatement psKardex = con.prepareStatement(sqlKardex)) {
+                    PreparedStatement psStockActual = con.prepareStatement(sqlStockActual);
+                    PreparedStatement psStockUpdate = con.prepareStatement(sqlStockUpdate);
+                    PreparedStatement psKardex = con.prepareStatement(sqlKardex)) {
 
                 for (DetalleApartado d : detalles) {
                     psDetalle.setInt(1, idApartado);
@@ -97,13 +98,10 @@ public class ApartadoDAO {
                     }
 
                     int stockRestante = stock - d.getCantidadApartado();
-<<<<<<< HEAD
-=======
                     if (stockRestante < 0) {
                         con.rollback();
                         throw new SQLException("Stock negativo no permitido para: " + d.getNombreProducto());
                     }
->>>>>>> origin/parte-muoz
                     psStockUpdate.setInt(1, stockRestante);
                     psStockUpdate.setInt(2, d.getIdProducto());
                     psStockUpdate.executeUpdate();
@@ -120,28 +118,33 @@ public class ApartadoDAO {
             con.commit();
             return true;
         } catch (SQLException e) {
-            if (con != null) try { con.rollback(); } catch (SQLException ex) {}
+            if (con != null)
+                try {
+                    con.rollback();
+                } catch (SQLException ex) {
+                }
             System.err.println("Error al registrar apartado: " + e.getMessage());
             return false;
         } finally {
-            if (con != null) try { con.setAutoCommit(true); con.close(); } catch (SQLException e) {}
+            if (con != null)
+                try {
+                    con.setAutoCommit(true);
+                    con.close();
+                } catch (SQLException e) {
+                }
         }
     }
 
     public List<Apartado> listarApartados() {
         List<Apartado> lista = new ArrayList<>();
-<<<<<<< HEAD
-        String sql = "SELECT a.*, c.nombre_cliente, c.apellido_cliente, u.nombre_usuario "
-=======
         String sql = "SELECT a.*, c.nombre_cliente, c.apellido_cliente, c.identidad_cliente, u.nombre_usuario "
->>>>>>> origin/parte-muoz
-                   + "FROM APARTADOS a "
-                   + "LEFT JOIN CLIENTES c ON a.id_cliente_apartado = c.id_cliente "
-                   + "LEFT JOIN USUARIOS u ON a.id_usuario = u.id_usuario "
-                   + "ORDER BY a.fecha_apartado DESC";
+                + "FROM APARTADOS a "
+                + "LEFT JOIN CLIENTES c ON a.id_cliente_apartado = c.id_cliente "
+                + "LEFT JOIN USUARIOS u ON a.id_usuario = u.id_usuario "
+                + "ORDER BY a.fecha_apartado DESC";
         try (Connection con = factory.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Apartado a = new Apartado();
@@ -159,10 +162,7 @@ public class ApartadoDAO {
                 a.setFechaEntrega(rs.getTimestamp("fecha_entrega"));
                 a.setNombreCliente(rs.getString("nombre_cliente"));
                 a.setApellidoCliente(rs.getString("apellido_cliente"));
-<<<<<<< HEAD
-=======
                 a.setIdentidadCliente(rs.getString("identidad_cliente"));
->>>>>>> origin/parte-muoz
                 a.setNombreUsuario(rs.getString("nombre_usuario"));
                 lista.add(a);
             }
@@ -174,12 +174,12 @@ public class ApartadoDAO {
 
     public Apartado obtenerPorId(int idApartado) {
         String sql = "SELECT a.*, c.nombre_cliente, c.apellido_cliente, u.nombre_usuario "
-                   + "FROM APARTADOS a "
-                   + "LEFT JOIN CLIENTES c ON a.id_cliente_apartado = c.id_cliente "
-                   + "LEFT JOIN USUARIOS u ON a.id_usuario = u.id_usuario "
-                   + "WHERE a.id_apartado = ?";
+                + "FROM APARTADOS a "
+                + "LEFT JOIN CLIENTES c ON a.id_cliente_apartado = c.id_cliente "
+                + "LEFT JOIN USUARIOS u ON a.id_usuario = u.id_usuario "
+                + "WHERE a.id_apartado = ?";
         try (Connection con = factory.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idApartado);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -211,11 +211,11 @@ public class ApartadoDAO {
     public List<DetalleApartado> listarDetalles(int idApartado) {
         List<DetalleApartado> lista = new ArrayList<>();
         String sql = "SELECT d.*, p.codigo_barras_producto, p.nombre_producto "
-                   + "FROM DETALLES_APARTADO d "
-                   + "LEFT JOIN INVENTARIO p ON d.id_producto = p.id_producto "
-                   + "WHERE d.id_apartado = ?";
+                + "FROM DETALLES_APARTADO d "
+                + "LEFT JOIN INVENTARIO p ON d.id_producto = p.id_producto "
+                + "WHERE d.id_apartado = ?";
         try (Connection con = factory.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idApartado);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -242,13 +242,13 @@ public class ApartadoDAO {
     public List<AbonoApartado> listarAbonos(int idApartado) {
         List<AbonoApartado> lista = new ArrayList<>();
         String sql = "SELECT ab.*, m.nombre_metodo, u.nombre_usuario "
-                   + "FROM ABONOS_APARTADO ab "
-                   + "LEFT JOIN METODOS_PAGO m ON ab.id_metodo_pago = m.id_metodo_pago "
-                   + "LEFT JOIN USUARIOS u ON ab.id_usuario = u.id_usuario "
-                   + "WHERE ab.id_apartado = ? "
-                   + "ORDER BY ab.fecha_abono ASC";
+                + "FROM ABONOS_APARTADO ab "
+                + "LEFT JOIN METODOS_PAGO m ON ab.id_metodo_pago = m.id_metodo_pago "
+                + "LEFT JOIN USUARIOS u ON ab.id_usuario = u.id_usuario "
+                + "WHERE ab.id_apartado = ? "
+                + "ORDER BY ab.fecha_abono ASC";
         try (Connection con = factory.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idApartado);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -272,9 +272,10 @@ public class ApartadoDAO {
         return lista;
     }
 
-    public boolean registrarAbono(int idApartado, double monto, int idMetodo, int idUsuario, String referencia, String banco) {
+    public boolean registrarAbono(int idApartado, double monto, int idMetodo, int idUsuario, String referencia,
+            String banco) {
         String sqlAbono = "INSERT INTO ABONOS_APARTADO (id_apartado, id_usuario, id_metodo_pago, fecha_abono, monto_abono, referencia_pago, banco_pago) "
-                        + "VALUES (?, ?, ?, GETDATE(), ?, ?, ?)";
+                + "VALUES (?, ?, ?, GETDATE(), ?, ?, ?)";
         String sqlApartado = "SELECT saldo_pendiente, total_apartado FROM APARTADOS WHERE id_apartado = ?";
         String sqlUpdate = "UPDATE APARTADOS SET saldo_pendiente = ?, estado_apartado = ? WHERE id_apartado = ?";
 
@@ -294,7 +295,8 @@ public class ApartadoDAO {
             }
 
             double nuevoSaldo = saldo - monto;
-            if (nuevoSaldo < 0) nuevoSaldo = 0;
+            if (nuevoSaldo < 0)
+                nuevoSaldo = 0;
             String nuevoEstado = (nuevoSaldo <= 0.05) ? "PAGADO" : "VIGENTE";
 
             // Insertar abono
@@ -319,11 +321,20 @@ public class ApartadoDAO {
             con.commit();
             return true;
         } catch (SQLException e) {
-            if (con != null) try { con.rollback(); } catch (SQLException ex) {}
+            if (con != null)
+                try {
+                    con.rollback();
+                } catch (SQLException ex) {
+                }
             System.err.println("Error al registrar abono: " + e.getMessage());
             return false;
         } finally {
-            if (con != null) try { con.setAutoCommit(true); con.close(); } catch (SQLException e) {}
+            if (con != null)
+                try {
+                    con.setAutoCommit(true);
+                    con.close();
+                } catch (SQLException e) {
+                }
         }
     }
 
@@ -334,7 +345,7 @@ public class ApartadoDAO {
         String sqlStock = "SELECT stock_producto FROM INVENTARIO WHERE id_producto = ?";
         String sqlStockUpdate = "UPDATE INVENTARIO SET stock_producto = ? WHERE id_producto = ?";
         String sqlKardex = "INSERT INTO KARDEX (id_producto, id_usuario, fecha_movimiento_producto, tipo_movimiento_producto, cantidad_producto, stock_restante_producto, referencia_producto) "
-                         + "VALUES (?, ?, GETDATE(), 'Entrada', ?, ?, ?)";
+                + "VALUES (?, ?, GETDATE(), 'Entrada', ?, ?, ?)";
 
         Connection con = null;
         try {
@@ -345,7 +356,8 @@ public class ApartadoDAO {
             try (PreparedStatement psEs = con.prepareStatement(sqlEstado)) {
                 psEs.setInt(1, idApartado);
                 try (ResultSet rs = psEs.executeQuery()) {
-                    if (rs.next()) estado = rs.getString("estado_apartado");
+                    if (rs.next())
+                        estado = rs.getString("estado_apartado");
                 }
             }
 
@@ -362,9 +374,9 @@ public class ApartadoDAO {
 
             // Devolver mercancías a inventario
             try (PreparedStatement psItems = con.prepareStatement(sqlItems);
-                 PreparedStatement psStock = con.prepareStatement(sqlStock);
-                 PreparedStatement psStockUp = con.prepareStatement(sqlStockUpdate);
-                 PreparedStatement psKardex = con.prepareStatement(sqlKardex)) {
+                    PreparedStatement psStock = con.prepareStatement(sqlStock);
+                    PreparedStatement psStockUp = con.prepareStatement(sqlStockUpdate);
+                    PreparedStatement psKardex = con.prepareStatement(sqlKardex)) {
 
                 psItems.setInt(1, idApartado);
                 try (ResultSet rsItems = psItems.executeQuery()) {
@@ -375,7 +387,8 @@ public class ApartadoDAO {
                         psStock.setInt(1, idProd);
                         int stock = 0;
                         try (ResultSet rsStock = psStock.executeQuery()) {
-                            if (rsStock.next()) stock = rsStock.getInt("stock_producto");
+                            if (rsStock.next())
+                                stock = rsStock.getInt("stock_producto");
                         }
 
                         int nuevoStock = stock + qty;
@@ -396,41 +409,40 @@ public class ApartadoDAO {
             con.commit();
             return true;
         } catch (SQLException e) {
-            if (con != null) try { con.rollback(); } catch (SQLException ex) {}
+            if (con != null)
+                try {
+                    con.rollback();
+                } catch (SQLException ex) {
+                }
             System.err.println("Error al cancelar apartado: " + e.getMessage());
             return false;
         } finally {
-            if (con != null) try { con.setAutoCommit(true); con.close(); } catch (SQLException e) {}
+            if (con != null)
+                try {
+                    con.setAutoCommit(true);
+                    con.close();
+                } catch (SQLException e) {
+                }
         }
     }
 
-<<<<<<< HEAD
-    public boolean entregarApartado(int idApartado) {
-        String sql = "UPDATE APARTADOS SET estado_apartado = 'ENTREGADO', fecha_entrega = GETDATE() WHERE id_apartado = ? AND estado_apartado = 'PAGADO'";
-        try (Connection con = factory.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, idApartado);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.println("Error al entregar apartado: " + e.getMessage());
-            return false;
-=======
     public boolean entregarApartadoYGenerarVenta(int idApartado, int idUsuarioCaja, boolean aplicarISV) {
         String sqlApartadoUpdate = "UPDATE APARTADOS SET estado_apartado = 'ENTREGADO', fecha_entrega = GETDATE() WHERE id_apartado = ? AND estado_apartado = 'PAGADO'";
         String sqlVenta = "INSERT INTO VENTAS (fecha_venta, id_cliente_venta, id_usuario, id_metodo_pago, subtotal_venta, impuesto_venta, total_venta, referencia_pago, banco_pago) VALUES (GETDATE(), ?, ?, ?, ?, ?, ?, ?, ?)";
         String sqlDetalleVenta = "INSERT INTO DETALLES_VENTA (id_ventas, id_producto, descripcion_venta, cantidad_venta, precio_unitario_venta, subtotal_venta, identificador_serie, dias_garantia) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        
+
         Connection con = null;
         try {
             con = factory.getConexion();
             con.setAutoCommit(false);
-            
+
             // 1. Get Apartado details
             Apartado ap = obtenerPorId(idApartado);
             if (ap == null || !ap.getEstadoApartado().equalsIgnoreCase("PAGADO")) {
-                con.rollback(); return false;
+                con.rollback();
+                return false;
             }
-            
+
             // Get last payment method used for this layaway, default to 1 (Cash)
             int idMetodoPago = 1;
             String banco = null;
@@ -444,12 +456,12 @@ public class ApartadoDAO {
                     }
                 }
             }
-            
+
             // Calculate totals
             double total = ap.getTotalApartado();
             double subtotal = aplicarISV ? (total / 1.15) : total;
             double impuesto = aplicarISV ? (total - subtotal) : 0.0;
-            
+
             // 2. Insert into VENTAS
             int idVentaGenerado = 0;
             try (PreparedStatement psVenta = con.prepareStatement(sqlVenta, Statement.RETURN_GENERATED_KEYS)) {
@@ -460,23 +472,31 @@ public class ApartadoDAO {
                 psVenta.setDouble(5, impuesto);
                 psVenta.setDouble(6, total);
                 psVenta.setString(7, "Pago de Apartado #" + idApartado);
-                if (banco == null) psVenta.setNull(8, Types.VARCHAR); else psVenta.setString(8, banco);
-                
+                if (banco == null)
+                    psVenta.setNull(8, Types.VARCHAR);
+                else
+                    psVenta.setString(8, banco);
+
                 psVenta.executeUpdate();
-                try (ResultSet rsKeys = psVenta.getGeneratedKeys()) { 
-                    if (rsKeys.next()) idVentaGenerado = rsKeys.getInt(1); 
+                try (ResultSet rsKeys = psVenta.getGeneratedKeys()) {
+                    if (rsKeys.next())
+                        idVentaGenerado = rsKeys.getInt(1);
                 }
             }
-            if (idVentaGenerado == 0) { con.rollback(); return false; }
-            
+            if (idVentaGenerado == 0) {
+                con.rollback();
+                return false;
+            }
+
             // 3. Insert into DETALLES_VENTA
             List<DetalleApartado> detalles = listarDetalles(idApartado);
             try (PreparedStatement psDetalle = con.prepareStatement(sqlDetalleVenta)) {
                 for (DetalleApartado d : detalles) {
                     double precioUnitario = d.getPrecioUnitarioApartado();
-                    if (aplicarISV) precioUnitario = precioUnitario / 1.15;
+                    if (aplicarISV)
+                        precioUnitario = precioUnitario / 1.15;
                     double subtotalFila = precioUnitario * d.getCantidadApartado();
-                    
+
                     psDetalle.setInt(1, idVentaGenerado);
                     psDetalle.setInt(2, d.getIdProducto());
                     psDetalle.setString(3, d.getNombreProducto());
@@ -488,36 +508,46 @@ public class ApartadoDAO {
                     } else {
                         psDetalle.setString(7, d.getIdentificadorSerie());
                     }
-                    
+
                     int diasGarantia = 0;
-                    try (PreparedStatement psGar = con.prepareStatement("SELECT dias_garantia FROM INVENTARIO WHERE id_producto = ?")) {
+                    try (PreparedStatement psGar = con
+                            .prepareStatement("SELECT dias_garantia FROM INVENTARIO WHERE id_producto = ?")) {
                         psGar.setInt(1, d.getIdProducto());
                         try (ResultSet rsGar = psGar.executeQuery()) {
-                            if (rsGar.next()) diasGarantia = rsGar.getInt("dias_garantia");
+                            if (rsGar.next())
+                                diasGarantia = rsGar.getInt("dias_garantia");
                         }
                     }
-                    
+
                     psDetalle.setInt(8, diasGarantia);
                     psDetalle.executeUpdate();
                 }
             }
-            
+
             // 4. Update APARTADOS status
             try (PreparedStatement psUpdate = con.prepareStatement(sqlApartadoUpdate)) {
                 psUpdate.setInt(1, idApartado);
                 psUpdate.executeUpdate();
             }
-            
+
             con.commit();
             return true;
-            
+
         } catch (SQLException e) {
-            if (con != null) try { con.rollback(); } catch (SQLException ex) {}
+            if (con != null)
+                try {
+                    con.rollback();
+                } catch (SQLException ex) {
+                }
             System.err.println("Error al entregar apartado y generar venta: " + e.getMessage());
             return false;
         } finally {
-            if (con != null) try { con.setAutoCommit(true); con.close(); } catch (SQLException e) {}
->>>>>>> origin/parte-muoz
+            if (con != null)
+                try {
+                    con.setAutoCommit(true);
+                    con.close();
+                } catch (SQLException e) {
+                }
         }
     }
 }

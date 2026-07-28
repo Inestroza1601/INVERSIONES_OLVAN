@@ -13,11 +13,8 @@ public class PanelGestionGarantias extends JPanel {
     private JTable tablaGarantias;
     private DefaultTableModel modeloTabla;
     private JTextField txtBusqueda;
-<<<<<<< HEAD
-=======
     private JCheckBox chkMostrarVencidas;
     private JCheckBox chkMostrarReclamadas;
->>>>>>> origin/parte-muoz
     private TableRowSorter<DefaultTableModel> sorter;
 
     public PanelGestionGarantias() {
@@ -27,7 +24,7 @@ public class PanelGestionGarantias extends JPanel {
     private void iniciarDiseno() {
         this.removeAll();
         this.setLayout(new BorderLayout(20, 20));
-        this.setBackground(new Color(240, 242, 245)); // Gris Nube 
+        this.setBackground(new Color(240, 242, 245)); // Gris Nube
         this.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
         // --- 1. PANEL SUPERIOR ---
@@ -51,11 +48,6 @@ public class PanelGestionGarantias extends JPanel {
         lblEmpresa.setFont(new Font("Segoe UI", Font.BOLD, 16));
         lblEmpresa.setForeground(new Color(140, 145, 150)); // Gris suave
 
-<<<<<<< HEAD
-        panelSuperior.add(lblTitulo, BorderLayout.WEST);
-        panelSuperior.add(panelCentro, BorderLayout.CENTER);
-        panelSuperior.add(lblEmpresa, BorderLayout.EAST);
-=======
         JPanel panelFiltros = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         panelFiltros.setOpaque(false);
         chkMostrarVencidas = new JCheckBox("Mostrar Vencidas");
@@ -75,14 +67,17 @@ public class PanelGestionGarantias extends JPanel {
         panelSuperior.add(lblTitulo, BorderLayout.WEST);
         panelSuperior.add(panelCentro, BorderLayout.CENTER);
         panelSuperior.add(panelTopRight, BorderLayout.EAST);
->>>>>>> origin/parte-muoz
 
         this.add(panelSuperior, BorderLayout.NORTH);
 
         // --- 2. CONFIGURACIÓN DE LA TABLA ---
-        String[] columnas = {"Venta #", "Cliente", "Producto", "Serie / IMEI", "Fecha Compra", "Vencimiento", "Estado", "ID Venta Oculto", "ID Detalle Oculto"};
+        String[] columnas = { "Venta #", "Cliente", "Producto", "Serie / IMEI", "Fecha Compra", "Vencimiento", "Estado",
+                "ID Venta Oculto", "ID Detalle Oculto" };
         modeloTabla = new DefaultTableModel(null, columnas) {
-            @Override public boolean isCellEditable(int row, int column) { return false; }
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
         };
 
         tablaGarantias = new JTable(modeloTabla);
@@ -92,13 +87,14 @@ public class PanelGestionGarantias extends JPanel {
         tablaGarantias.setBackground(new Color(255, 255, 255)); // Blanco puro
         tablaGarantias.setForeground(new Color(45, 45, 45)); // Gris oscuro
         tablaGarantias.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        tablaGarantias.setSelectionBackground(new Color(230, 235, 240)); // Gris/Azul suave 
+        tablaGarantias.setSelectionBackground(new Color(230, 235, 240)); // Gris/Azul suave
         tablaGarantias.setSelectionForeground(new Color(45, 45, 45));
 
         tablaGarantias.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         tablaGarantias.getTableHeader().setBackground(new Color(240, 242, 245)); // Gris Nube
         tablaGarantias.getTableHeader().setForeground(new Color(100, 100, 100)); // Gris intermedio
-        tablaGarantias.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 222, 225)));
+        tablaGarantias.getTableHeader()
+                .setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 222, 225)));
         tablaGarantias.getTableHeader().setPreferredSize(new Dimension(0, 40));
 
         // Ocultar IDs
@@ -115,7 +111,8 @@ public class PanelGestionGarantias extends JPanel {
                 int fila = tablaGarantias.rowAtPoint(e.getPoint());
                 if (fila >= 0) {
                     tablaGarantias.setRowSelectionInterval(fila, fila);
-                    if ((SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) || SwingUtilities.isRightMouseButton(e)) {
+                    if ((SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)
+                            || SwingUtilities.isRightMouseButton(e)) {
                         mostrarMenuOpciones(e.getComponent(), e.getX(), e.getY(), fila);
                     }
                 }
@@ -125,29 +122,27 @@ public class PanelGestionGarantias extends JPanel {
         // --- BUSCADOR EN TIEMPO REAL ---
         sorter = new TableRowSorter<>(modeloTabla);
         tablaGarantias.setRowSorter(sorter);
-<<<<<<< HEAD
-=======
-        
+
         java.awt.event.ActionListener filtroListener = e -> filtrar();
         chkMostrarVencidas.addActionListener(filtroListener);
         chkMostrarReclamadas.addActionListener(filtroListener);
-        
->>>>>>> origin/parte-muoz
+
         txtBusqueda.getDocument().addDocumentListener(new DocumentListener() {
-            @Override public void insertUpdate(DocumentEvent e) { filtrar(); }
-            @Override public void removeUpdate(DocumentEvent e) { filtrar(); }
-            @Override public void changedUpdate(DocumentEvent e) { filtrar(); }
-<<<<<<< HEAD
-            private void filtrar() {
-                String texto = txtBusqueda.getText();
-                if (texto.trim().length() == 0) sorter.setRowFilter(null);
-                else sorter.setRowFilter(RowFilter.regexFilter("(?i)" + texto, 1, 2, 3)); // Busca en Cliente, Producto o Serie
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filtrar();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filtrar();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filtrar();
             }
         });
-
-=======
-        });
->>>>>>> origin/parte-muoz
         JScrollPane scrollPane = new JScrollPane(tablaGarantias);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225), 1, true));
         scrollPane.getViewport().setBackground(new Color(255, 255, 255)); // Fondo blanco
@@ -157,8 +152,6 @@ public class PanelGestionGarantias extends JPanel {
         cargarDatosDesdeBD();
     }
 
-<<<<<<< HEAD
-=======
     private void filtrar() {
         String texto = txtBusqueda.getText().trim().toLowerCase();
         boolean mostrarVencidas = chkMostrarVencidas.isSelected();
@@ -168,10 +161,13 @@ public class PanelGestionGarantias extends JPanel {
             @Override
             public boolean include(Entry<? extends DefaultTableModel, ? extends Integer> entry) {
                 String estado = entry.getStringValue(6);
-                if (!mostrarVencidas && estado.equals("VENCIDA")) return false;
-                if (!mostrarReclamadas && estado.equals("RECLAMADA")) return false;
+                if (!mostrarVencidas && estado.equals("VENCIDA"))
+                    return false;
+                if (!mostrarReclamadas && estado.equals("RECLAMADA"))
+                    return false;
 
-                if (texto.isEmpty()) return true;
+                if (texto.isEmpty())
+                    return true;
 
                 String cliente = entry.getStringValue(1).toLowerCase();
                 String producto = entry.getStringValue(2).toLowerCase();
@@ -182,7 +178,6 @@ public class PanelGestionGarantias extends JPanel {
         });
     }
 
->>>>>>> origin/parte-muoz
     private void ocultarColumna(int index) {
         tablaGarantias.getColumnModel().getColumn(index).setMinWidth(0);
         tablaGarantias.getColumnModel().getColumn(index).setMaxWidth(0);
@@ -192,18 +187,16 @@ public class PanelGestionGarantias extends JPanel {
     // =========================================================
     // MENÚ CONTEXTUAL Y ACCIONES
     // =========================================================
-    
+
     public void cargarDatosDesdeBD() {
         modeloTabla.setRowCount(0);
         dao.GarantiaDAO dao = new dao.GarantiaDAO();
         for (Object[] fila : dao.listarGarantias()) {
             modeloTabla.addRow(fila);
         }
-<<<<<<< HEAD
-=======
         filtrar(); // Aplicar filtros por defecto (ocultar vencidas/reclamadas)
->>>>>>> origin/parte-muoz
     }
+
     private void mostrarMenuOpciones(Component componente, int x, int y, int filaVista) {
         JPopupMenu menu = new JPopupMenu();
         menu.setBackground(new Color(255, 255, 255)); // Blanco puro
@@ -213,12 +206,14 @@ public class PanelGestionGarantias extends JPanel {
         String estado = modeloTabla.getValueAt(filaModelo, 6).toString();
 
         JMenuItem itemRecibo = crearMenuItem("Ver Recibo Original", new Color(13, 110, 253), new IconoRecibo());
-        JMenuItem itemCertificado = crearMenuItem("Imprimir Certificado", new Color(39, 174, 96), new IconoCertificado()); // Verde Menta
-        JMenuItem itemReclamar = crearMenuItem("Aplicar / Reclamar", new Color(227, 0, 15), new IconoHerramienta()); // Rojo Logo
+        JMenuItem itemCertificado = crearMenuItem("Imprimir Certificado", new Color(39, 174, 96),
+                new IconoCertificado()); // Verde Menta
+        JMenuItem itemReclamar = crearMenuItem("Aplicar / Reclamar", new Color(227, 0, 15), new IconoHerramienta()); // Rojo
+                                                                                                                     // Logo
 
         itemRecibo.addActionListener(e -> verReciboOriginal(filaModelo));
         itemCertificado.addActionListener(e -> imprimirCertificado(filaModelo));
-        
+
         // Solo habilitamos el botón de reclamar si la garantía está VIGENTE
         if (estado.equals("VIGENTE")) {
             itemReclamar.addActionListener(e -> reclamarGarantia(filaModelo));
@@ -228,7 +223,7 @@ public class PanelGestionGarantias extends JPanel {
 
         menu.add(itemRecibo);
         menu.add(itemCertificado);
-        
+
         menu.show(componente, x, y);
     }
 
@@ -270,40 +265,21 @@ public class PanelGestionGarantias extends JPanel {
     }
 
     private void reclamarGarantia(int filaModelo) {
-<<<<<<< HEAD
-        String producto = modeloTabla.getValueAt(filaModelo, 2).toString();
-        // Extraemos el ID oculto que ahora sí tiene valor
-        int idDetalle = Integer.parseInt(modeloTabla.getValueAt(filaModelo, 8).toString()); 
-
-        int confirmacion = JOptionPane.showConfirmDialog(this, 
-            "¿Estás seguro de procesar el reclamo de garantía para:\n" + producto + "?", 
-            "Confirmar Reclamo", 
-            JOptionPane.YES_NO_OPTION, 
-            JOptionPane.WARNING_MESSAGE);
-
-        if (confirmacion == JOptionPane.YES_OPTION) {
-            dao.GarantiaDAO dao = new dao.GarantiaDAO();
-            if (dao.aplicarReclamo(idDetalle)) {
-                JOptionPane.showMessageDialog(this, "Garantía reclamada exitosamente.", "Orion Systems", JOptionPane.INFORMATION_MESSAGE);
-                cargarDatosDesdeBD(); // Recargamos la tabla para ver el cambio
-            } else {
-                JOptionPane.showMessageDialog(this, "Error al procesar el reclamo en la BD.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-=======
         String cliente = modeloTabla.getValueAt(filaModelo, 1).toString();
         String producto = modeloTabla.getValueAt(filaModelo, 2).toString();
         String serie = modeloTabla.getValueAt(filaModelo, 3).toString();
         String fechaCompra = modeloTabla.getValueAt(filaModelo, 4).toString();
-        int idDetalle = Integer.parseInt(modeloTabla.getValueAt(filaModelo, 8).toString()); 
+        int idDetalle = Integer.parseInt(modeloTabla.getValueAt(filaModelo, 8).toString());
 
         Window parentWindow = SwingUtilities.getWindowAncestor(this);
-        DialogoReclamarGarantia dialogo = new DialogoReclamarGarantia(parentWindow, cliente, producto, serie, fechaCompra, idDetalle);
+        DialogoReclamarGarantia dialogo = new DialogoReclamarGarantia(parentWindow, cliente, producto, serie,
+                fechaCompra, idDetalle);
         dialogo.setVisible(true);
 
         if (dialogo.isExito()) {
-            JOptionPane.showMessageDialog(this, "Garantía reclamada exitosamente.", "Orion Systems", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Garantía reclamada exitosamente.", "Orion Systems",
+                    JOptionPane.INFORMATION_MESSAGE);
             cargarDatosDesdeBD(); // Recargamos la tabla para ver el cambio
->>>>>>> origin/parte-muoz
         }
     }
 
@@ -334,11 +310,13 @@ public class PanelGestionGarantias extends JPanel {
     // =========================================================
     private class EstadoGarantiaRenderer extends DefaultTableCellRenderer {
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                int row, int column) {
+            JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+                    column);
             label.setFont(new Font("Segoe UI", Font.BOLD, 13));
             label.setHorizontalAlignment(SwingConstants.CENTER);
-            
+
             if (value != null) {
                 String estado = value.toString();
                 if (estado.equals("VIGENTE")) {
@@ -357,9 +335,18 @@ public class PanelGestionGarantias extends JPanel {
     // ÍCONOS VECTORIALES (JAVA 2D)
     // =========================================================
     private class IconoRecibo implements Icon {
-        @Override public int getIconWidth() { return 20; }
-        @Override public int getIconHeight() { return 20; }
-        @Override public void paintIcon(Component c, Graphics g, int x, int y) {
+        @Override
+        public int getIconWidth() {
+            return 20;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return 20;
+        }
+
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setColor(c.getForeground()); // Dinámico
@@ -372,9 +359,18 @@ public class PanelGestionGarantias extends JPanel {
     }
 
     private class IconoCertificado implements Icon {
-        @Override public int getIconWidth() { return 20; }
-        @Override public int getIconHeight() { return 20; }
-        @Override public void paintIcon(Component c, Graphics g, int x, int y) {
+        @Override
+        public int getIconWidth() {
+            return 20;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return 20;
+        }
+
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setColor(c.getForeground()); // Dinámico
@@ -387,9 +383,18 @@ public class PanelGestionGarantias extends JPanel {
     }
 
     private class IconoHerramienta implements Icon {
-        @Override public int getIconWidth() { return 20; }
-        @Override public int getIconHeight() { return 20; }
-        @Override public void paintIcon(Component c, Graphics g, int x, int y) {
+        @Override
+        public int getIconWidth() {
+            return 20;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return 20;
+        }
+
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setColor(c.getForeground()); // Dinámico
@@ -399,22 +404,21 @@ public class PanelGestionGarantias extends JPanel {
             g2.dispose();
         }
     }
+
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 400, Short.MAX_VALUE));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 300, Short.MAX_VALUE));
     }// </editor-fold>//GEN-END:initComponents
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables

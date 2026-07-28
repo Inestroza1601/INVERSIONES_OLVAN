@@ -33,23 +33,22 @@ public class DialogoKardex extends JDialog {
         JPanel pnlTop = new JPanel(new BorderLayout());
         pnlTop.setBackground(new Color(255, 255, 255)); // Blanco puro
         pnlTop.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 222, 225)), // Borde gris claro inferior
-            BorderFactory.createEmptyBorder(15, 20, 15, 20)
-        ));
+                BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 222, 225)), // Borde gris claro inferior
+                BorderFactory.createEmptyBorder(15, 20, 15, 20)));
 
         JPanel pnlInfo = new JPanel(new GridLayout(2, 1));
         pnlInfo.setOpaque(false);
         JLabel lblNombre = new JLabel("Producto: " + productoActual.getNombreProducto());
         lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 18));
         lblNombre.setForeground(new Color(45, 45, 45)); // Gris oscuro
-        
+
         lblStockDinamico = new JLabel("Stock Actual: " + productoActual.getStockProducto() + " unidades");
         lblStockDinamico.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         lblStockDinamico.setForeground(new Color(140, 145, 150)); // Gris suave
 
         pnlInfo.add(lblNombre);
         pnlInfo.add(lblStockDinamico);
-        
+
         JButton btnNuevoMov = new JButton("+ Nuevo Movimiento");
         btnNuevoMov.setBackground(new Color(39, 174, 96)); // Verde Menta
         btnNuevoMov.setForeground(Color.WHITE);
@@ -61,10 +60,13 @@ public class DialogoKardex extends JDialog {
         pnlTop.add(btnNuevoMov, BorderLayout.EAST);
         this.add(pnlTop, BorderLayout.NORTH);
 
-        // --- TABLA DE HISTORIAL 
-        String[] columnas = {"Fecha", "Tipo", "Cant.", "Stock Rest.", "Observación", "Usuario/Firma"};
+        // --- TABLA DE HISTORIAL
+        String[] columnas = { "Fecha", "Tipo", "Cant.", "Stock Rest.", "Observación", "Usuario/Firma" };
         modeloTabla = new DefaultTableModel(null, columnas) {
-            @Override public boolean isCellEditable(int row, int column) { return false; }
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
         };
         tablaHistorial = new JTable(modeloTabla);
         tablaHistorial.setBackground(new Color(255, 255, 255)); // Blanco puro
@@ -75,7 +77,7 @@ public class DialogoKardex extends JDialog {
         tablaHistorial.getTableHeader().setForeground(new Color(100, 100, 100)); // Gris intermedio
         tablaHistorial.setSelectionBackground(new Color(230, 235, 240)); // Selección gris/azul suave
         tablaHistorial.setSelectionForeground(new Color(45, 45, 45));
-        
+
         // --- LÓGICA DE CURSORES (MANITA) SOBRE REFERENCIA DE VENTA ---
         tablaHistorial.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             @Override
@@ -108,17 +110,18 @@ public class DialogoKardex extends JDialog {
                             String textoObs = obs.toString();
                             int idVenta = Integer.parseInt(textoObs.substring(textoObs.indexOf("#") + 1));
                             mostrarVistaPreviaRecibo(idVenta); // Nuevo método que agregaremos abajo
-                        } catch (Exception ex) {}
+                        } catch (Exception ex) {
+                        }
                     }
                 }
             }
         });
-        
+
         JScrollPane scroll = new JScrollPane(tablaHistorial);
         scroll.getViewport().setBackground(new Color(255, 255, 255)); // Fondo blanco
         scroll.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225))); // Borde gris suave
         this.add(scroll, BorderLayout.CENTER);
-        
+
     }
 
     // --- MÉTODOS QUE FALTABAN ---
@@ -130,7 +133,7 @@ public class DialogoKardex extends JDialog {
             modeloTabla.addRow(fila);
         }
     }
-    
+
     public void actualizarStockVisual(int nuevoStock) {
         productoActual.setStockProducto(nuevoStock);
         lblStockDinamico.setText("Stock Actual: " + nuevoStock + " unidades");
@@ -140,16 +143,17 @@ public class DialogoKardex extends JDialog {
         DialogoMovimientoKardex dialog = new DialogoMovimientoKardex(this, productoActual);
         dialog.setVisible(true);
     }
-    
+
     // =========================================================
     // VENTANA DE PREVISUALIZACIÓN DE RECIBO (MODO AUDITORÍA)
     // =========================================================
     private void mostrarVistaPreviaRecibo(int idVenta) {
         dao.VentasDAO vDao = new dao.VentasDAO();
         java.util.Map<String, Object> datos = vDao.obtenerReciboPorId(idVenta);
-        
+
         if (datos.isEmpty() || !datos.containsKey("detalles")) {
-            JOptionPane.showMessageDialog(this, "No se encontraron los datos de la Venta #" + idVenta, "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "No se encontraron los datos de la Venta #" + idVenta, "Error",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -170,9 +174,11 @@ public class DialogoKardex extends JDialog {
         previewDialog.setLayout(new BorderLayout(10, 10));
         previewDialog.getContentPane().setBackground(new Color(240, 242, 245)); // Gris Nube
 
-        // Pasamos la fecha histórica exacta a la previsualización del ticket en pantalla
-        JPanel pnlTicket = utilidades.GeneradorTickets.crearTicketVistaPrevia("Venta #" + idVenta, cliente, fechaHistorica, detalles, subtotal, isv, total, metodo, ref, banco);
-        
+        // Pasamos la fecha histórica exacta a la previsualización del ticket en
+        // pantalla
+        JPanel pnlTicket = utilidades.GeneradorTickets.crearTicketVistaPrevia("Venta #" + idVenta, cliente,
+                fechaHistorica, detalles, subtotal, isv, total, metodo, ref, banco);
+
         JScrollPane scrollPreview = new JScrollPane(pnlTicket);
         scrollPreview.setBorder(null);
         previewDialog.add(scrollPreview, BorderLayout.CENTER);
@@ -192,39 +198,43 @@ public class DialogoKardex extends JDialog {
         btnImprimir.addActionListener(ex -> {
             try {
                 String rutaTemp = System.getProperty("java.io.tmpdir") + "Copia_Venta_" + idVenta + ".pdf";
-                
+
                 // Pasamos la fecha histórica exacta al regenerador de PDF físico
-                utilidades.GeneradorTickets.generarTicketVentaPDF(rutaTemp, cliente, fechaHistorica, detalles, subtotal, isv, total, true, metodo, ref, banco);
-                
-                JOptionPane.showMessageDialog(previewDialog, "Copia de recibo generada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                if (Desktop.isDesktopSupported()) Desktop.getDesktop().open(new File(rutaTemp));
-                
+                utilidades.GeneradorTickets.generarTicketVentaPDF(rutaTemp, cliente, fechaHistorica, detalles, subtotal,
+                        isv, total, true, metodo, ref, banco);
+
+                JOptionPane.showMessageDialog(previewDialog, "Copia de recibo generada exitosamente.", "Éxito",
+                        JOptionPane.INFORMATION_MESSAGE);
+                if (Desktop.isDesktopSupported())
+                    Desktop.getDesktop().open(new File(rutaTemp));
+
             } catch (Exception err) {
-                JOptionPane.showMessageDialog(previewDialog, "Error al generar PDF: " + err.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(previewDialog, "Error al generar PDF: " + err.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        pnlBotones.add(btnImprimir); pnlBotones.add(btnCerrar);
+        pnlBotones.add(btnImprimir);
+        pnlBotones.add(btnCerrar);
         previewDialog.add(pnlBotones, BorderLayout.SOUTH);
 
         previewDialog.setVisible(true);
     }
+
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 400, Short.MAX_VALUE));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 300, Short.MAX_VALUE));
     }// </editor-fold>//GEN-END:initComponents
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables

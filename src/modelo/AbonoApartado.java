@@ -14,36 +14,87 @@ public class AbonoApartado {
     private String nombreMetodo; // For joins
     private String nombreUsuario;
 
-    public AbonoApartado() {}
+    public AbonoApartado() {
+    }
 
     // Getters and Setters
-    public int getIdAbono() { return idAbono; }
-    public void setIdAbono(int idAbono) { this.idAbono = idAbono; }
+    public int getIdAbono() {
+        return idAbono;
+    }
 
-    public int getIdApartado() { return idApartado; }
-    public void setIdApartado(int idApartado) { this.idApartado = idApartado; }
+    public void setIdAbono(int idAbono) {
+        this.idAbono = idAbono;
+    }
 
-    public Timestamp getFechaAbono() { return fechaAbono; }
-    public void setFechaAbono(Timestamp fechaAbono) { this.fechaAbono = fechaAbono; }
+    public int getIdApartado() {
+        return idApartado;
+    }
 
-    public double getMontoAbono() { return montoAbono; }
-    public void setMontoAbono(double montoAbono) { this.montoAbono = montoAbono; }
+    public void setIdApartado(int idApartado) {
+        this.idApartado = idApartado;
+    }
 
-    public int getIdMetodoPago() { return idMetodoPago; }
-    public void setIdMetodoPago(int idMetodoPago) { this.idMetodoPago = idMetodoPago; }
+    public Timestamp getFechaAbono() {
+        return fechaAbono;
+    }
 
-    public int getIdUsuario() { return idUsuario; }
-    public void setIdUsuario(int idUsuario) { this.idUsuario = idUsuario; }
+    public void setFechaAbono(Timestamp fechaAbono) {
+        this.fechaAbono = fechaAbono;
+    }
 
-    public String getReferenciaPago() { return referenciaPago; }
-    public void setReferenciaPago(String referenciaPago) { this.referenciaPago = referenciaPago; }
+    public double getMontoAbono() {
+        return montoAbono;
+    }
 
-    public String getBancoPago() { return bancoPago; }
-    public void setBancoPago(String bancoPago) { this.bancoPago = bancoPago; }
+    public void setMontoAbono(double montoAbono) {
+        this.montoAbono = montoAbono;
+    }
 
-    public String getNombreMetodo() { return nombreMetodo; }
-    public void setNombreMetodo(String nombreMetodo) { this.nombreMetodo = nombreMetodo; }
+    public int getIdMetodoPago() {
+        return idMetodoPago;
+    }
 
-    public String getNombreUsuario() { return nombreUsuario; }
-    public void setNombreUsuario(String nombreUsuario) { this.nombreUsuario = nombreUsuario; }
+    public void setIdMetodoPago(int idMetodoPago) {
+        this.idMetodoPago = idMetodoPago;
+    }
+
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
+    public String getReferenciaPago() {
+        return referenciaPago;
+    }
+
+    public void setReferenciaPago(String referenciaPago) {
+        this.referenciaPago = referenciaPago;
+    }
+
+    public String getBancoPago() {
+        return bancoPago;
+    }
+
+    public void setBancoPago(String bancoPago) {
+        this.bancoPago = bancoPago;
+    }
+
+    public String getNombreMetodo() {
+        return nombreMetodo;
+    }
+
+    public void setNombreMetodo(String nombreMetodo) {
+        this.nombreMetodo = nombreMetodo;
+    }
+
+    public String getNombreUsuario() {
+        return nombreUsuario;
+    }
+
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
+    }
 }

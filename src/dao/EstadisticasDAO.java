@@ -43,7 +43,8 @@ public class EstadisticasDAO {
 
         try (Connection con = factory.getConexion()) {
             // 1. Extraer Total Actual y Ticket Promedio (Misma tabla)
-            String sqlActual = "SELECT SUM(total_venta) as total, AVG(total_venta) as promedio FROM VENTAS WHERE " + condicionActual;
+            String sqlActual = "SELECT SUM(total_venta) as total, AVG(total_venta) as promedio FROM VENTAS WHERE "
+                    + condicionActual;
             try (PreparedStatement ps = con.prepareStatement(sqlActual); ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     totalActual = rs.getDouble("total");
@@ -61,10 +62,10 @@ public class EstadisticasDAO {
 
             // 3. Extraer Top Producto cruzando Detalles y Ventas
             String sqlTop = "SELECT TOP 1 d.descripcion_venta FROM DETALLES_VENTA d " +
-                            "INNER JOIN VENTAS v ON d.id_ventas = v.id_ventas " +
-                            "WHERE " + condicionActual + " " +
-                            "GROUP BY d.descripcion_venta " +
-                            "ORDER BY COUNT(*) DESC";
+                    "INNER JOIN VENTAS v ON d.id_ventas = v.id_ventas " +
+                    "WHERE " + condicionActual + " " +
+                    "GROUP BY d.descripcion_venta " +
+                    "ORDER BY COUNT(*) DESC";
             try (PreparedStatement ps = con.prepareStatement(sqlTop); ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     topProducto = rs.getString("descripcion_venta");
@@ -76,10 +77,6 @@ public class EstadisticasDAO {
         }
 
         // Empaquetamos todo en un arreglo para mandarlo al panel visual
-        return new Object[]{totalActual, totalAnterior, ticketProm, topProducto};
+        return new Object[] { totalActual, totalAnterior, ticketProm, topProducto };
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/parte-muoz

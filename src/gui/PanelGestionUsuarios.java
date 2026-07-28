@@ -10,24 +10,21 @@ import java.awt.*;
 public class PanelGestionUsuarios extends JPanel {
 
     // --- Componentes del Formulario ---
-    private JPanel panelForm; 
+    private JPanel panelForm;
     private JTextField txtIdentidad;
     private JTextField txtNombre;
-<<<<<<< HEAD
-=======
     private JTextField txtEmail;
->>>>>>> origin/parte-muoz
     private JComboBox<String> cmbRol;
     private JCheckBox chkAccesoSistema;
     private JPasswordField txtPassword;
-    private JLabel lblPassword; 
-    
+    private JLabel lblPassword;
+
     // --- Botones ---
     private JButton btnGuardar;
     private JButton btnEliminar;
     private JButton btnLimpiar;
     private JButton btnNuevoRol;
-    
+
     // --- Tabla ---
     private JTable tablaUsuarios;
     private DefaultTableModel modeloTabla;
@@ -51,7 +48,7 @@ public class PanelGestionUsuarios extends JPanel {
 
         this.add(crearPanelFormulario(), BorderLayout.WEST);
         this.add(crearPanelTabla(), BorderLayout.CENTER);
-        
+
         // --- EVENTOS DE BOTONES ---
         btnGuardar.addActionListener(e -> guardarOActualizarUsuario());
         btnLimpiar.addActionListener(e -> limpiarFormulario());
@@ -62,7 +59,7 @@ public class PanelGestionUsuarios extends JPanel {
                 cargarDatosEnFormulario();
             }
         });
-        
+
         cargarRolesEnCombo();
         cargarTabla();
         limpiarFormulario();
@@ -72,10 +69,9 @@ public class PanelGestionUsuarios extends JPanel {
         panelForm = new JPanel(new GridBagLayout());
         panelForm.setBackground(new Color(255, 255, 255)); // Blanco puro
         panelForm.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 222, 225)), // Gris muy claro para borde
-            BorderFactory.createEmptyBorder(15, 15, 15, 15)
-        ));
-        
+                BorderFactory.createLineBorder(new Color(220, 222, 225)), // Gris muy claro para borde
+                BorderFactory.createEmptyBorder(15, 15, 15, 15)));
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -83,22 +79,19 @@ public class PanelGestionUsuarios extends JPanel {
 
         // Inicializar campos básicos
         txtIdentidad = new JTextField(15);
-        txtIdentidad.setEditable(false); 
+        txtIdentidad.setEditable(false);
         txtIdentidad.setBackground(new Color(240, 242, 245)); // Gris Nube para campo inactivo
         txtIdentidad.setForeground(new Color(140, 145, 150)); // Gris suave
         txtIdentidad.setFont(new Font("Segoe UI", Font.BOLD, 12));
         txtIdentidad.setHorizontalAlignment(JTextField.CENTER);
-        
+
         txtNombre = new JTextField(20);
-        
-<<<<<<< HEAD
-=======
+
         txtEmail = new JTextField(20);
-        
->>>>>>> origin/parte-muoz
+
         // --- 🚀 COMBOBOX Y BOTÓN NUEVO ROL (UNIFICADO) ---
         cmbRol = new JComboBox<>();
-        cmbRol.setEditable(true); 
+        cmbRol.setEditable(true);
 
         JPanel panelContenedorRol = new JPanel(new BorderLayout(5, 0));
         panelContenedorRol.setOpaque(false);
@@ -118,7 +111,7 @@ public class PanelGestionUsuarios extends JPanel {
         chkAccesoSistema = new JCheckBox("Usuario con acceso al sistema");
         chkAccesoSistema.setBackground(new Color(255, 255, 255)); // Blanco puro
         chkAccesoSistema.setForeground(new Color(45, 45, 45)); // Gris oscuro
-        chkAccesoSistema.setSelected(true); 
+        chkAccesoSistema.setSelected(true);
 
         txtPassword = new JPasswordField(20);
         lblPassword = new JLabel("Contraseña:");
@@ -150,9 +143,9 @@ public class PanelGestionUsuarios extends JPanel {
             lblPassword.setVisible(tieneAcceso);
             txtPassword.setVisible(tieneAcceso);
             if (!tieneAcceso) {
-                txtPassword.setText(""); 
+                txtPassword.setText("");
             }
-            panelForm.revalidate(); 
+            panelForm.revalidate();
             panelForm.repaint();
         });
 
@@ -160,15 +153,14 @@ public class PanelGestionUsuarios extends JPanel {
         int fila = 0;
         agregarFilaFormulario(panelForm, gbc, fila++, "ID Usuario:", txtIdentidad);
         agregarFilaFormulario(panelForm, gbc, fila++, "Nombre Completo:", txtNombre);
-<<<<<<< HEAD
-=======
         agregarFilaFormulario(panelForm, gbc, fila++, "Correo Electrónico:", txtEmail);
->>>>>>> origin/parte-muoz
         agregarFilaFormulario(panelForm, gbc, fila++, "Rol del Usuario:", panelContenedorRol);
-        
-        gbc.gridy = fila++; gbc.gridx = 0; gbc.gridwidth = 2;
+
+        gbc.gridy = fila++;
+        gbc.gridx = 0;
+        gbc.gridwidth = 2;
         panelForm.add(chkAccesoSistema, gbc);
-        
+
         gbc.gridwidth = 1;
         gbc.gridy = fila++;
         gbc.gridx = 0;
@@ -179,20 +171,23 @@ public class PanelGestionUsuarios extends JPanel {
         // Panel de botones internos
         JPanel pnlBotones = new JPanel(new GridLayout(1, 3, 10, 0));
         pnlBotones.setBackground(new Color(255, 255, 255)); // Blanco puro
-        
+
         btnGuardar = crearBotonFormulario("Guardar", new Color(39, 174, 96)); // Verde Menta
         btnLimpiar = crearBotonFormulario("Limpiar", new Color(140, 145, 150)); // Gris suave
         btnEliminar = crearBotonFormulario("Desactivar", new Color(227, 0, 15)); // Rojo Logo
-        
+
         pnlBotones.add(btnGuardar);
         pnlBotones.add(btnLimpiar);
         pnlBotones.add(btnEliminar);
 
-        gbc.gridy = fila++; gbc.gridx = 0; gbc.gridwidth = 2;
+        gbc.gridy = fila++;
+        gbc.gridx = 0;
+        gbc.gridwidth = 2;
         gbc.insets = new Insets(20, 10, 10, 10);
         panelForm.add(pnlBotones, gbc);
-        
-        gbc.gridy = fila++; gbc.weighty = 1.0;
+
+        gbc.gridy = fila++;
+        gbc.weighty = 1.0;
         panelForm.add(new JLabel(""), gbc);
 
         return panelForm;
@@ -202,28 +197,27 @@ public class PanelGestionUsuarios extends JPanel {
         JPanel panelTabla = new JPanel(new BorderLayout());
         panelTabla.setBackground(new Color(240, 242, 245)); // Gris Nube
 
-<<<<<<< HEAD
-        String[] columnas = {"ID", "Nombre", "Rol", "Acceso", "Estado"};
-=======
-        String[] columnas = {"ID", "Nombre", "Rol", "Correo", "Acceso", "Estado"};
->>>>>>> origin/parte-muoz
+        String[] columnas = { "ID", "Nombre", "Rol", "Correo", "Acceso", "Estado" };
         modeloTabla = new DefaultTableModel(null, columnas) {
             @Override
-            public boolean isCellEditable(int row, int column) { return false; } 
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
         };
-        
+
         tablaUsuarios = new JTable(modeloTabla);
         tablaUsuarios.setRowHeight(30);
         tablaUsuarios.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         tablaUsuarios.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+
         JScrollPane scrollPane = new JScrollPane(tablaUsuarios);
         panelTabla.add(scrollPane, BorderLayout.CENTER);
 
         return panelTabla;
     }
 
-    private void agregarFilaFormulario(JPanel panel, GridBagConstraints gbc, int fila, String etiqueta, JComponent campo) {
+    private void agregarFilaFormulario(JPanel panel, GridBagConstraints gbc, int fila, String etiqueta,
+            JComponent campo) {
         gbc.gridy = fila;
         gbc.gridx = 0;
         if (!etiqueta.equals("Contraseña:")) {
@@ -245,7 +239,7 @@ public class PanelGestionUsuarios extends JPanel {
         btn.putClientProperty("JButton.buttonType", "roundRect");
         return btn;
     }
-    
+
     // =========================================================
     // LÓGICA DE NEGOCIO Y BASE DE DATOS
     // =========================================================
@@ -254,34 +248,17 @@ public class PanelGestionUsuarios extends JPanel {
         modeloTabla.setRowCount(0);
         UsuarioDAO dao = new UsuarioDAO();
         for (Usuario u : dao.listarUsuarios()) {
-<<<<<<< HEAD
-            Object[] fila = new Object[5];
-            fila[0] = u.getIdUsuario();
-            fila[1] = u.getNombreUsuario();
-            fila[2] = u.getNombreRol() != null ? u.getNombreRol().toUpperCase() : "DESCONOCIDO"; 
-=======
             Object[] fila = new Object[6];
             fila[0] = u.getIdUsuario();
             fila[1] = u.getNombreUsuario();
-            fila[2] = u.getNombreRol() != null ? u.getNombreRol().toUpperCase() : "DESCONOCIDO"; 
+            fila[2] = u.getNombreRol() != null ? u.getNombreRol().toUpperCase() : "DESCONOCIDO";
             fila[3] = u.getEmailUsuario() != null ? u.getEmailUsuario() : "";
->>>>>>> origin/parte-muoz
-            
+
             String hashRespaldo = Seguridad.encriptarSHA256(u.getNombreUsuario());
-            
+
             if (u.getPasswordHash() != null && u.getPasswordHash().equals(hashRespaldo)) {
-                // Si el hash coincide con el de su nombre, es la clave de respaldo (NO tiene acceso)
-<<<<<<< HEAD
-                fila[3] = "No";
-            } else if (u.getPasswordHash() != null && !u.getPasswordHash().isEmpty()) {
-                // Si tiene otra clave distinta, SÍ tiene acceso
-                fila[3] = "Sí";
-            } else {
-                fila[3] = "No";
-            }
-            
-            fila[4] = u.isEstadoUsuario() ? "Activo" : "Inactivo";
-=======
+                // Si el hash coincide con el de su nombre, es la clave de respaldo (NO tiene
+                // acceso)
                 fila[4] = "No";
             } else if (u.getPasswordHash() != null && !u.getPasswordHash().isEmpty()) {
                 // Si tiene otra clave distinta, SÍ tiene acceso
@@ -289,31 +266,27 @@ public class PanelGestionUsuarios extends JPanel {
             } else {
                 fila[4] = "No";
             }
-            
+
             fila[5] = u.isEstadoUsuario() ? "Activo" : "Inactivo";
->>>>>>> origin/parte-muoz
             modeloTabla.addRow(fila);
         }
     }
+
     private void cargarDatosEnFormulario() {
         int fila = tablaUsuarios.getSelectedRow();
-        
+
         txtIdentidad.setText(tablaUsuarios.getValueAt(fila, 0).toString());
         txtNombre.setText(tablaUsuarios.getValueAt(fila, 1).toString());
-        
+
         String rolT = tablaUsuarios.getValueAt(fila, 2).toString().toLowerCase();
         cmbRol.setSelectedItem(rolT);
-        
-<<<<<<< HEAD
-        boolean tieneAcceso = tablaUsuarios.getValueAt(fila, 3).toString().equals("Sí");
-=======
+
         txtEmail.setText(tablaUsuarios.getValueAt(fila, 3).toString());
-        
+
         boolean tieneAcceso = tablaUsuarios.getValueAt(fila, 4).toString().equals("Sí");
->>>>>>> origin/parte-muoz
-        
+
         // Reforzamos la regla al cargar datos
-        if(rolT.contains("admin")){
+        if (rolT.contains("admin")) {
             chkAccesoSistema.setSelected(true);
             chkAccesoSistema.setEnabled(false);
             lblPassword.setVisible(true);
@@ -324,13 +297,13 @@ public class PanelGestionUsuarios extends JPanel {
             lblPassword.setVisible(tieneAcceso);
             txtPassword.setVisible(tieneAcceso);
         }
-        
+
         txtPassword.setText(""); // Dejamos en blanco por seguridad
-        
+
         btnGuardar.setText("Actualizar");
-        btnGuardar.setBackground(new Color(39, 174, 96)); // Verde Menta 
-        btnEliminar.setVisible(true); 
-        
+        btnGuardar.setBackground(new Color(39, 174, 96)); // Verde Menta
+        btnEliminar.setVisible(true);
+
         panelForm.revalidate();
         panelForm.repaint();
     }
@@ -339,37 +312,35 @@ public class PanelGestionUsuarios extends JPanel {
         tablaUsuarios.clearSelection();
         txtIdentidad.setText("AUTOGENERADO");
         txtNombre.setText("");
-<<<<<<< HEAD
-=======
         txtEmail.setText("");
->>>>>>> origin/parte-muoz
-        
+
         if (cmbRol.getItemCount() > 0) {
             cmbRol.setSelectedIndex(0);
         }
-        
+
         txtPassword.setText("");
-        
+
         btnGuardar.setText("Guardar");
         btnGuardar.setBackground(new Color(39, 174, 96)); // Verde Menta
-        btnEliminar.setVisible(false); 
-        
+        btnEliminar.setVisible(false);
+
         panelForm.revalidate();
         panelForm.repaint();
     }
 
     private void guardarOActualizarUsuario() {
         if (txtNombre.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "El nombre del usuario es obligatorio.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "El nombre del usuario es obligatorio.", "Advertencia",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         Usuario u = new Usuario();
-        
+
         if (btnGuardar.getText().equals("Actualizar")) {
             try {
                 String idTexto = txtIdentidad.getText().trim();
-                u.setIdUsuario(Integer.parseInt(idTexto)); 
+                u.setIdUsuario(Integer.parseInt(idTexto));
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, "El ID del usuario no es válido.");
                 return;
@@ -377,10 +348,7 @@ public class PanelGestionUsuarios extends JPanel {
         }
 
         u.setNombreUsuario(txtNombre.getText().trim());
-<<<<<<< HEAD
-=======
         u.setEmailUsuario(txtEmail.getText().trim());
->>>>>>> origin/parte-muoz
 
         UsuarioDAO dao = new UsuarioDAO();
         String rolSeleccionado = cmbRol.getSelectedItem().toString();
@@ -388,30 +356,28 @@ public class PanelGestionUsuarios extends JPanel {
         u.setIdRol(idRol);
 
         String passEscrita = new String(txtPassword.getPassword());
-        
+
         // --- 🚀 CORRECCIÓN: VALIDACIÓN MEJORADA AL ACTUALIZAR ACCESOS ---
         if (chkAccesoSistema.isSelected()) {
-            
+
             boolean teniaAccesoAntes = false;
             if (btnGuardar.getText().equals("Actualizar")) {
                 int filaSelec = tablaUsuarios.getSelectedRow();
                 if (filaSelec != -1) {
-<<<<<<< HEAD
-                    teniaAccesoAntes = tablaUsuarios.getValueAt(filaSelec, 3).toString().equals("Sí");
-=======
                     teniaAccesoAntes = tablaUsuarios.getValueAt(filaSelec, 4).toString().equals("Sí");
->>>>>>> origin/parte-muoz
                 }
             }
 
             if (passEscrita.isEmpty()) {
                 // Si lo estamos creando nuevo, O si antes NO tenía acceso y ahora se lo dimos:
                 if (btnGuardar.getText().equals("Guardar") || !teniaAccesoAntes) {
-                    JOptionPane.showMessageDialog(this, "Debe ingresar una contraseña para habilitar el acceso al sistema.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(this,
+                            "Debe ingresar una contraseña para habilitar el acceso al sistema.", "Advertencia",
+                            JOptionPane.WARNING_MESSAGE);
                     return;
-                } 
+                }
                 // Si ya tenía acceso y deja la caja vacía, el DAO conserva la clave anterior
-                u.setPasswordHash(""); 
+                u.setPasswordHash("");
             } else {
                 // Si escribió una clave nueva, la encriptamos
                 u.setPasswordHash(Seguridad.encriptarSHA256(passEscrita));
@@ -420,7 +386,7 @@ public class PanelGestionUsuarios extends JPanel {
             // Si NO tiene acceso, guardamos su nombre encriptado como respaldo
             u.setPasswordHash(Seguridad.encriptarSHA256(u.getNombreUsuario()));
         }
-        
+
         boolean exito;
         if (btnGuardar.getText().equals("Guardar")) {
             exito = dao.registrarUsuario(u);
@@ -431,41 +397,45 @@ public class PanelGestionUsuarios extends JPanel {
         if (exito) {
             JOptionPane.showMessageDialog(this, "Operación realizada con éxito.");
             limpiarFormulario();
-            cargarTabla(); 
+            cargarTabla();
         } else {
-            JOptionPane.showMessageDialog(this, "Error al guardar en la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error al guardar en la base de datos.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void desactivarUsuarioSeleccionado() {
         int filaSelec = tablaUsuarios.getSelectedRow();
-        if (filaSelec == -1) return;
+        if (filaSelec == -1)
+            return;
 
         String idString = tablaUsuarios.getValueAt(filaSelec, 0).toString();
-        
-        if (idString.equals("AUTOGENERADO")) return; 
+
+        if (idString.equals("AUTOGENERADO"))
+            return;
 
         try {
             int id = Integer.parseInt(idString);
-            
-            if (JOptionPane.showConfirmDialog(this, "¿Está seguro de desactivar ID " + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+
+            if (JOptionPane.showConfirmDialog(this, "¿Está seguro de desactivar ID " + id + "?", "Confirmar",
+                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 UsuarioDAO dao = new UsuarioDAO();
                 if (dao.desactivarUsuario(id)) {
                     JOptionPane.showMessageDialog(this, "Usuario desactivado.");
                     limpiarFormulario();
-                    cargarTabla(); 
+                    cargarTabla();
                 }
             }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Error de formato de ID.");
         }
     }
-    
+
     private void cargarRolesEnCombo() {
         cmbRol.removeAllItems();
         UsuarioDAO dao = new UsuarioDAO();
         java.util.List<String> rolesBD = dao.listarNombresDeRoles();
-        
+
         if (rolesBD.isEmpty()) {
             cmbRol.addItem("administrador");
         } else {
@@ -474,40 +444,39 @@ public class PanelGestionUsuarios extends JPanel {
             }
         }
     }
-    
+
     private void crearNuevoRol() {
-        String nuevoRol = JOptionPane.showInputDialog(this, "Ingrese el nombre del nuevo rol:", "Nuevo Rol", JOptionPane.QUESTION_MESSAGE);
-        
+        String nuevoRol = JOptionPane.showInputDialog(this, "Ingrese el nombre del nuevo rol:", "Nuevo Rol",
+                JOptionPane.QUESTION_MESSAGE);
+
         if (nuevoRol != null && !nuevoRol.trim().isEmpty()) {
             UsuarioDAO dao = new UsuarioDAO();
-            int idCreado = dao.obtenerOCrearRol(nuevoRol); 
-            
+            int idCreado = dao.obtenerOCrearRol(nuevoRol);
+
             if (idCreado != -1) {
-                cargarRolesEnCombo(); 
-                cmbRol.setSelectedItem(nuevoRol.trim().toLowerCase()); 
+                cargarRolesEnCombo();
+                cmbRol.setSelectedItem(nuevoRol.trim().toLowerCase());
                 JOptionPane.showMessageDialog(this, "Rol creado y seleccionado.");
             } else {
                 JOptionPane.showMessageDialog(this, "Error al crear el rol.");
             }
         }
-    }                  
-    
+    }
+
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 400, Short.MAX_VALUE));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 300, Short.MAX_VALUE));
     }// </editor-fold>//GEN-END:initComponents
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables

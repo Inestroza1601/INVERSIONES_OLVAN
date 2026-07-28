@@ -24,10 +24,10 @@ public class EmpresaDAO {
         String sql = "SELECT * FROM EMPRESA WHERE id_empresa = ?";
 
         try (Connection con = factory.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            
+                PreparedStatement ps = con.prepareStatement(sql)) {
+
             ps.setInt(1, idEmpresa);
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     emp = mapearEmpresa(rs);
@@ -36,14 +36,16 @@ public class EmpresaDAO {
         } catch (SQLException e) {
             System.err.println("Error al obtener datos de empresa por ID: " + e.getMessage());
         }
-        return emp; 
+        return emp;
     }
 
     /**
-     * Método inteligente: Prioriza la sesión actual, si no hay, busca el TOP 1 como respaldo.
+     * Método inteligente: Prioriza la sesión actual, si no hay, busca el TOP 1 como
+     * respaldo.
      */
     public Empresa obtenerDatos() {
-        // 1. Si hay una empresa cargada en memoria, buscamos esa misma para refrescar datos
+        // 1. Si hay una empresa cargada en memoria, buscamos esa misma para refrescar
+        // datos
         if (SesionGlobal.getEmpresaActual() != null && SesionGlobal.getEmpresaActual().getIdEmpresa() > 0) {
             return obtenerDatos(SesionGlobal.getEmpresaActual().getIdEmpresa());
         }
@@ -53,8 +55,8 @@ public class EmpresaDAO {
         String sql = "SELECT TOP 1 * FROM EMPRESA ORDER BY id_empresa ASC";
 
         try (Connection con = factory.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             if (rs.next()) {
                 emp = mapearEmpresa(rs);
@@ -62,7 +64,7 @@ public class EmpresaDAO {
         } catch (SQLException e) {
             System.err.println("Error al obtener datos de empresa (Fallback): " + e.getMessage());
         }
-        return emp; 
+        return emp;
     }
 
     /**
@@ -73,7 +75,7 @@ public class EmpresaDAO {
         emp.setIdEmpresa(rs.getInt("id_empresa"));
         emp.setNombreEmpresa(rs.getString("nombre_empresa"));
         emp.setRtnEmpresa(rs.getString("rtn_empresa"));
-        emp.setDuenoEmpresa(rs.getString("dueño_empresa")); 
+        emp.setDuenoEmpresa(rs.getString("dueño_empresa"));
         emp.setDireccionEmpresa(rs.getString("direccion_empresa"));
         emp.setEstadoEmpresa(rs.getBoolean("estado_empresa"));
         emp.setHabilitarFacturacion(rs.getBoolean("habilitar_facturacion_empresa"));
@@ -83,13 +85,13 @@ public class EmpresaDAO {
         emp.setEmail(rs.getString("email_empresa"));
         emp.setWeb(rs.getString("web_empresa"));
         emp.setFacebook(rs.getString("facebook_empresa"));
-        
+
         emp.setMensajeTicketPieFactura(rs.getString("mensaje_ticket_pie_factura"));
         emp.setMensajeTicketPieRecibo(rs.getString("mensaje_ticket_pie_recibo"));
         emp.setMensajeTicketEntrega(rs.getString("mensaje_ticket_entrega"));
         emp.setMensajeTicketPieCotizacion(rs.getString("mensaje_ticket_pie_cotizacion"));
         emp.setLogoEmpresaRuta(rs.getString("logo_empresa_ruta"));
-        
+
         return emp;
     }
 
@@ -104,21 +106,21 @@ public class EmpresaDAO {
         if (!esUpdate) {
             // INSERT (Para una empresa totalmente nueva - 17 parámetros)
             sql = "INSERT INTO EMPRESA (nombre_empresa, rtn_empresa, dueño_empresa, direccion_empresa, estado_empresa, "
-                + "habilitar_facturacion_empresa, numero_telefono, telefono_secundario, whatsapp_empresa, "
-                + "email_empresa, web_empresa, facebook_empresa, mensaje_ticket_pie_factura, "
-                + "mensaje_ticket_pie_recibo, mensaje_ticket_entrega, mensaje_ticket_pie_cotizacion, logo_empresa_ruta) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "habilitar_facturacion_empresa, numero_telefono, telefono_secundario, whatsapp_empresa, "
+                    + "email_empresa, web_empresa, facebook_empresa, mensaje_ticket_pie_factura, "
+                    + "mensaje_ticket_pie_recibo, mensaje_ticket_entrega, mensaje_ticket_pie_cotizacion, logo_empresa_ruta) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         } else {
             // UPDATE (Para la empresa actual - 17 parámetros + 1 para el WHERE)
             sql = "UPDATE EMPRESA SET nombre_empresa=?, rtn_empresa=?, dueño_empresa=?, direccion_empresa=?, "
-                + "estado_empresa=?, habilitar_facturacion_empresa=?, numero_telefono=?, telefono_secundario=?, "
-                + "whatsapp_empresa=?, email_empresa=?, web_empresa=?, facebook_empresa=?, "
-                + "mensaje_ticket_pie_factura=?, mensaje_ticket_pie_recibo=?, mensaje_ticket_entrega=?, "
-                + "mensaje_ticket_pie_cotizacion=?, logo_empresa_ruta=? WHERE id_empresa=?";
+                    + "estado_empresa=?, habilitar_facturacion_empresa=?, numero_telefono=?, telefono_secundario=?, "
+                    + "whatsapp_empresa=?, email_empresa=?, web_empresa=?, facebook_empresa=?, "
+                    + "mensaje_ticket_pie_factura=?, mensaje_ticket_pie_recibo=?, mensaje_ticket_entrega=?, "
+                    + "mensaje_ticket_pie_cotizacion=?, logo_empresa_ruta=? WHERE id_empresa=?";
         }
 
         try (Connection con = factory.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+                PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, emp.getNombreEmpresa());
             ps.setString(2, emp.getRtnEmpresa());
@@ -149,25 +151,21 @@ public class EmpresaDAO {
             return false;
         }
     }
-    
+
     public java.util.List<Empresa> listarTodas() {
         java.util.List<Empresa> lista = new java.util.ArrayList<>();
         String sql = "SELECT * FROM EMPRESA ORDER BY id_empresa ASC";
-        
+
         try (Connection con = factory.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) {
                 lista.add(mapearEmpresa(rs)); // Reutiliza el método mapearEmpresa que te dejé en la respuesta anterior
             }
         } catch (SQLException e) {
             System.err.println("Error al listar empresas: " + e.getMessage());
         }
-        return lista; 
+        return lista;
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/parte-muoz

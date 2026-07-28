@@ -29,16 +29,19 @@ public class DialogoBuscarProductoSustituto extends JDialog {
         txtB.setBackground(new Color(255, 255, 255));
         txtB.setForeground(new Color(45, 45, 45));
         txtB.setCaretColor(new Color(45, 45, 45));
-        txtB.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(0, 5, 0, 5)));
+        txtB.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)),
+                BorderFactory.createEmptyBorder(0, 5, 0, 5)));
         txtB.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         txtB.putClientProperty("JTextField.placeholderText", "Buscar por Nombre o Código...");
         pnlTop.add(txtB, BorderLayout.CENTER);
         add(pnlTop, BorderLayout.NORTH);
 
-        String[] cols = {"ID", "Foto", "Código", "Producto", "Precio", "Stock"};
+        String[] cols = { "ID", "Foto", "Código", "Producto", "Precio", "Stock" };
         DefaultTableModel mod = new DefaultTableModel(null, cols) {
             @Override
-            public boolean isCellEditable(int r, int c) { return false; }
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
         };
 
         JTable tab = new JTable(mod) {
@@ -49,10 +52,15 @@ public class DialogoBuscarProductoSustituto extends JDialog {
                     Object valorStock = getValueAt(row, 5);
                     int stock = 1;
                     if (valorStock != null) {
-                        try { stock = Integer.parseInt(valorStock.toString()); } catch (NumberFormatException e) {}
+                        try {
+                            stock = Integer.parseInt(valorStock.toString());
+                        } catch (NumberFormatException e) {
+                        }
                     }
-                    if (stock <= 0) c.setForeground(new Color(227, 0, 15));
-                    else c.setForeground(new Color(45, 45, 45));
+                    if (stock <= 0)
+                        c.setForeground(new Color(227, 0, 15));
+                    else
+                        c.setForeground(new Color(45, 45, 45));
                     c.setBackground(new Color(255, 255, 255));
                 }
                 return c;
@@ -79,15 +87,30 @@ public class DialogoBuscarProductoSustituto extends JDialog {
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(mod);
         tab.setRowSorter(sorter);
         txtB.getDocument().addDocumentListener(new DocumentListener() {
-            @Override public void insertUpdate(DocumentEvent e) { s(); }
-            @Override public void removeUpdate(DocumentEvent e) { s(); }
-            @Override public void changedUpdate(DocumentEvent e) { s(); }
-            private void s() { sorter.setRowFilter(RowFilter.regexFilter("(?i)" + txtB.getText(), 2, 3)); }
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                s();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                s();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                s();
+            }
+
+            private void s() {
+                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + txtB.getText(), 2, 3));
+            }
         });
 
         List<Producto> lista = new InventarioDAO().listarProductosActivos();
         for (Producto p : lista) {
-            mod.addRow(new Object[]{p.getIdProducto(), p.getRutaImagen(), p.getCodigoBarras(), p.getNombreProducto(), String.format("L %,.2f", p.getPrecioVenta()), p.getStockProducto()});
+            mod.addRow(new Object[] { p.getIdProducto(), p.getRutaImagen(), p.getCodigoBarras(), p.getNombreProducto(),
+                    String.format("L %,.2f", p.getPrecioVenta()), p.getStockProducto() });
         }
 
         tab.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -96,11 +119,14 @@ public class DialogoBuscarProductoSustituto extends JDialog {
                     int filaModelo = tab.convertRowIndexToModel(tab.getSelectedRow());
                     int stockActual = (int) mod.getValueAt(filaModelo, 5);
                     if (stockActual <= 0) {
-                        JOptionPane.showMessageDialog(DialogoBuscarProductoSustituto.this, "No puede seleccionar este artículo porque no cuenta con existencias en el inventario.", "Falta de Stock", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(DialogoBuscarProductoSustituto.this,
+                                "No puede seleccionar este artículo porque no cuenta con existencias en el inventario.",
+                                "Falta de Stock", JOptionPane.WARNING_MESSAGE);
                         return;
                     }
                     int idSelec = (int) mod.getValueAt(filaModelo, 0);
-                    productoSeleccionado = lista.stream().filter(p -> p.getIdProducto() == idSelec).findFirst().orElse(null);
+                    productoSeleccionado = lista.stream().filter(p -> p.getIdProducto() == idSelec).findFirst()
+                            .orElse(null);
                     dispose();
                 }
             }
@@ -118,26 +144,28 @@ public class DialogoBuscarProductoSustituto extends JDialog {
 
     private class ImagenMiniaturaRenderer extends DefaultTableCellRenderer {
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                int row, int column) {
             JLabel label = new JLabel();
             label.setHorizontalAlignment(SwingConstants.CENTER);
             label.setOpaque(true);
             label.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
-            
+
             String imgVal = (value != null) ? value.toString() : null;
-            
+
             if (imgVal == null || imgVal.trim().isEmpty()) {
-                if (utilidades.SesionGlobal.getEmpresaActual() != null && utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
+                if (utilidades.SesionGlobal.getEmpresaActual() != null
+                        && utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
                     imgVal = utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
                 }
             }
-            
+
             ImageIcon icon = utilidades.ImagenHelper.obtenerIcono(imgVal, 50, 50);
             if (icon != null) {
                 label.setIcon(icon);
-            } else { 
-                label.setText("No Img"); 
-                label.setForeground(new Color(140, 145, 150)); 
+            } else {
+                label.setText("No Img");
+                label.setForeground(new Color(140, 145, 150));
             }
             return label;
         }

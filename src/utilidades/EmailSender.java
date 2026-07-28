@@ -13,9 +13,11 @@ public class EmailSender {
 
     // Configuración del correo emisor
     private static final String EMAIL_FROM = "miguel.ineztroda@gmail.com";
-    // IMPORTANTE: Para Gmail, debes usar una "Contraseña de aplicación" (App Password)
-    // No uses tu contraseña personal. Ve a Seguridad en tu cuenta de Google para generarla.
-    private static final String PASSWORD = "jdxt dlgl avdt hapq"; 
+    // IMPORTANTE: Para Gmail, debes usar una "Contraseña de aplicación" (App
+    // Password)
+    // No uses tu contraseña personal. Ve a Seguridad en tu cuenta de Google para
+    // generarla.
+    private static final String PASSWORD = "jdxt dlgl avdt hapq";
 
     public static boolean enviarCorreoRecuperacion(String emailDestino, String token) {
         Properties props = new Properties();
@@ -26,18 +28,18 @@ public class EmailSender {
         props.put("mail.smtp.ssl.protocols", "TLSv1.2");
 
         Session session = Session.getInstance(props,
-            new javax.mail.Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(EMAIL_FROM, PASSWORD);
-                }
-            });
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(EMAIL_FROM, PASSWORD);
+                    }
+                });
 
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(EMAIL_FROM));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(emailDestino));
             message.setSubject("Recuperación de Contraseña - Inversiones Olvan");
-            
+
             String htmlContent = "<h2>Solicitud de Recuperación de Contraseña</h2>"
                     + "<p>Has solicitado recuperar tu contraseña en el Sistema de Inversiones Olvan.</p>"
                     + "<p>Tu código de recuperación es: <strong>" + token + "</strong></p>"

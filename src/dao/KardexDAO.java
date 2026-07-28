@@ -18,7 +18,7 @@ public class KardexDAO {
     // ==========================================
     // 1. LÓGICA DE FIRMA Y SEGURIDAD (SHA-256)
     // ==========================================
-    
+
     private String encriptarSHA256(String password) {
         try {
             java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
@@ -26,7 +26,8 @@ public class KardexDAO {
             StringBuilder hexString = new StringBuilder();
             for (byte b : hash) {
                 String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) hexString.append('0');
+                if (hex.length() == 1)
+                    hexString.append('0');
                 hexString.append(hex);
             }
             return hexString.toString();
@@ -36,13 +37,13 @@ public class KardexDAO {
     }
 
     /**
-     * Valida la firma SOLO con la contraseña. 
+     * Valida la firma SOLO con la contraseña.
      * Encripta lo que el usuario escribe y busca ese Hash en la BD.
      */
     public int validarFirmaUsuario(String passwordPlana) {
         String hashIngresado = encriptarSHA256(passwordPlana);
         String sql = "SELECT id_usuario FROM USUARIOS WHERE password_hash = ? AND estado_usuario = 1";
-        
+
         try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, hashIngresado);
             try (ResultSet rs = ps.executeQuery()) {
@@ -50,7 +51,9 @@ public class KardexDAO {
                     return rs.getInt("id_usuario");
                 }
             }
-        } catch (SQLException e) { System.err.println("Error validando firma: " + e.getMessage()); }
+        } catch (SQLException e) {
+            System.err.println("Error validando firma: " + e.getMessage());
+        }
         return -1;
     }
 
@@ -58,7 +61,8 @@ public class KardexDAO {
     // 2. MOVIMIENTOS Y CONSULTAS
     // ==========================================
 
-    public boolean registrarMovimiento(int idProducto, String tipoMovimiento, int cantidad, String observacion, int idUsuario) {
+    public boolean registrarMovimiento(int idProducto, String tipoMovimiento, int cantidad, String observacion,
+            int idUsuario) {
         // Consultas ajustadas estrictamente a tu imagen
         String sqlStockActual = "SELECT stock_producto FROM INVENTARIO WHERE id_producto = ?";
         String sqlKardex = "INSERT INTO KARDEX (id_producto, fecha_movimiento_producto, tipo_movimiento_producto, cantidad_producto, stock_restante_producto, referencia_producto, id_usuario) VALUES (?, GETDATE(), ?, ?, ?, ?, ?)";
@@ -67,7 +71,7 @@ public class KardexDAO {
         Connection con = null;
         try {
             con = factory.getConexion();
-            con.setAutoCommit(false); 
+            con.setAutoCommit(false);
 
             // 1. Obtener el stock actual para calcular el restante
             int stockActual = 0;
@@ -81,14 +85,11 @@ public class KardexDAO {
             }
 
             int nuevoStock = tipoMovimiento.equals("Salida") ? (stockActual - cantidad) : (stockActual + cantidad);
-<<<<<<< HEAD
-=======
-            
+
             if (nuevoStock < 0) {
                 con.rollback();
                 throw new SQLException("Stock negativo no permitido");
             }
->>>>>>> origin/parte-muoz
 
             // 2. Guardar en KARDEX
             try (PreparedStatement psK = con.prepareStatement(sqlKardex)) {
@@ -108,45 +109,53 @@ public class KardexDAO {
                 psI.executeUpdate();
             }
 
-            con.commit(); 
+            con.commit();
             return true;
 
         } catch (SQLException e) {
-            if (con != null) try { con.rollback(); } catch (SQLException ex) { }
+            if (con != null)
+                try {
+                    con.rollback();
+                } catch (SQLException ex) {
+                }
             System.err.println("Error en transacción de Kardex: " + e.getMessage());
             return false;
         } finally {
-            if (con != null) try { con.setAutoCommit(true); con.close(); } catch (SQLException e) { }
+            if (con != null)
+                try {
+                    con.setAutoCommit(true);
+                    con.close();
+                } catch (SQLException e) {
+                }
         }
     }
 
     public java.util.List<Object[]> obtenerHistorialKardex(int idProducto) {
         java.util.List<Object[]> historial = new java.util.ArrayList<>();
-        
-        String sql = "SELECT k.fecha_movimiento_producto, k.tipo_movimiento_producto, k.cantidad_producto, k.stock_restante_producto, k.referencia_producto, u.nombre_usuario " +
-                     "FROM KARDEX k INNER JOIN USUARIOS u ON k.id_usuario = u.id_usuario " +
-                     "WHERE k.id_producto = ? ORDER BY k.fecha_movimiento_producto DESC";
-                     
+
+        String sql = "SELECT k.fecha_movimiento_producto, k.tipo_movimiento_producto, k.cantidad_producto, k.stock_restante_producto, k.referencia_producto, u.nombre_usuario "
+                +
+                "FROM KARDEX k INNER JOIN USUARIOS u ON k.id_usuario = u.id_usuario " +
+                "WHERE k.id_producto = ? ORDER BY k.fecha_movimiento_producto DESC";
+
         try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idProducto);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     // Ahora el arreglo manda exactamente los 6 datos en el orden correcto
-                    historial.add(new Object[]{
-                        rs.getTimestamp("fecha_movimiento_producto"),
-                        rs.getString("tipo_movimiento_producto"),
-                        rs.getInt("cantidad_producto"),
-                        rs.getInt("stock_restante_producto"), // <-- EL DATO NUEVO
-                        rs.getString("referencia_producto"), 
-                        rs.getString("nombre_usuario")
+                    historial.add(new Object[] {
+                            rs.getTimestamp("fecha_movimiento_producto"),
+                            rs.getString("tipo_movimiento_producto"),
+                            rs.getInt("cantidad_producto"),
+                            rs.getInt("stock_restante_producto"), // <-- EL DATO NUEVO
+                            rs.getString("referencia_producto"),
+                            rs.getString("nombre_usuario")
                     });
                 }
             }
-        } catch (SQLException e) { System.err.println("Error obteniendo historial: " + e.getMessage()); }
+        } catch (SQLException e) {
+            System.err.println("Error obteniendo historial: " + e.getMessage());
+        }
         return historial;
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/parte-muoz
