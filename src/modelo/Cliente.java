@@ -10,31 +10,63 @@ public class Cliente {
     private boolean estadoCliente;
 
     // Constructor vacío
-    public Cliente() {}
+    public Cliente() {
+    }
 
     // Getters y Setters
-    public int getIdCliente() { return idCliente; }
-    public void setIdCliente(int idCliente) { this.idCliente = idCliente; }
+    public int getIdCliente() {
+        return idCliente;
+    }
 
-    public String getIdentidadCliente() { return identidadCliente; }
-    public void setIdentidadCliente(String identidadCliente) { this.identidadCliente = identidadCliente; }
+    public void setIdCliente(int idCliente) {
+        this.idCliente = idCliente;
+    }
 
-    public String getNombreCliente() { return nombreCliente; }
-    public void setNombreCliente(String nombreCliente) { this.nombreCliente = nombreCliente; }
+    public String getIdentidadCliente() {
+        return identidadCliente;
+    }
 
-    public String getApellidoCliente() { return apellidoCliente; }
-    public void setApellidoCliente(String apellidoCliente) { this.apellidoCliente = apellidoCliente; }
+    public void setIdentidadCliente(String identidadCliente) {
+        this.identidadCliente = identidadCliente;
+    }
 
-    public String getTelefonoCliente() { return telefonoCliente; }
-    public void setTelefonoCliente(String telefonoCliente) { this.telefonoCliente = telefonoCliente; }
+    public String getNombreCliente() {
+        return nombreCliente;
+    }
 
-    public String getCorreoCliente() { return correoCliente; }
-    public void setCorreoCliente(String correoCliente) { this.correoCliente = correoCliente; }
+    public void setNombreCliente(String nombreCliente) {
+        this.nombreCliente = nombreCliente;
+    }
 
-    public boolean isEstadoCliente() { return estadoCliente; }
-    public void setEstadoCliente(boolean estadoCliente) { this.estadoCliente = estadoCliente; }
-<<<<<<< HEAD
+    public String getApellidoCliente() {
+        return apellidoCliente;
+    }
+
+    public void setApellidoCliente(String apellidoCliente) {
+        this.apellidoCliente = apellidoCliente;
+    }
+
+    public String getTelefonoCliente() {
+        return telefonoCliente;
+    }
+
+    public void setTelefonoCliente(String telefonoCliente) {
+        this.telefonoCliente = telefonoCliente;
+    }
+
+    public String getCorreoCliente() {
+        return correoCliente;
+    }
+
+    public void setCorreoCliente(String correoCliente) {
+        this.correoCliente = correoCliente;
+    }
+
+    public boolean isEstadoCliente() {
+        return estadoCliente;
+    }
+
+    public void setEstadoCliente(boolean estadoCliente) {
+        this.estadoCliente = estadoCliente;
+    }
 }
-=======
-}
->>>>>>> origin/parte-muoz

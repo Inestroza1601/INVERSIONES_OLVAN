@@ -19,32 +19,32 @@ import java.util.Map;
 public class PanelCrearProducto extends JPanel {
 
     private JTextField txtCodigoBarras;
-    private JLabel lblErrorCodigo; 
+    private JLabel lblErrorCodigo;
     private JTextField txtNombre;
-    
+
     private JComboBox<ItemCatalogo> cmbCategoria;
     private JComboBox<ItemCatalogo> cmbProveedor;
     private JComboBox<ItemCatalogo> cmbUbicacion;
-    
+
     private JTextField txtPrecioCompra;
     private JTextField txtPrecioVenta;
     private JCheckBox chkPrecioMayorista;
     private JTextField txtPrecioMayorista;
-    
+
     private JTextField txtStockInicial;
     private JTextField txtStockMinimo;
-    
+
     private JLabel lblVistaPreviaImagen;
-    private String rutaImagenSeleccionada = null; 
+    private String rutaImagenSeleccionada = null;
     private JButton btnGuardar;
-    
+
     private JComboBox<String> cmbDiasGarantia;
-    private final int[] valoresGarantia = {0, 3, 7, 15, 30, 60, 90,365}; // Array interno para guardar en BD
+    private final int[] valoresGarantia = { 0, 3, 7, 15, 30, 60, 90, 365 }; // Array interno para guardar en BD
     private JCheckBox chkRequiereSerie;
-    
+
     private Producto productoAEditar = null;
     private JButton btnKardex;
-    
+
     private Set<String> codigosEnRam;
 
     public PanelCrearProducto() {
@@ -55,18 +55,19 @@ public class PanelCrearProducto extends JPanel {
         this.productoAEditar = p;
         InventarioDAO dao = new InventarioDAO();
         codigosEnRam = dao.obtenerCodigosEnRam();
-        if (codigosEnRam == null) codigosEnRam = new HashSet<>();
-        
-        if(productoAEditar != null) {
+        if (codigosEnRam == null)
+            codigosEnRam = new HashSet<>();
+
+        if (productoAEditar != null) {
             codigosEnRam.remove(productoAEditar.getCodigoBarras()); // Evita que su propio código marque error
         }
-        
+
         iniciarDiseno();
         configurarValidacionEnVivo();
         aplicarRestriccionesNumericas();
-        cargarDatosCombos(); 
-        
-        if(productoAEditar != null) {
+        cargarDatosCombos();
+
+        if (productoAEditar != null) {
             cargarDatosEdicion();
         }
     }
@@ -94,46 +95,50 @@ public class PanelCrearProducto extends JPanel {
 
         txtCodigoBarras = new JTextField(20);
         txtCodigoBarras.putClientProperty("JTextField.placeholderText", "Dejar vacío para usar ID autogenerado");
-        
+
         lblErrorCodigo = new JLabel(" ");
         lblErrorCodigo.setForeground(new Color(227, 0, 15)); // Rojo Logo
         lblErrorCodigo.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        
+
         txtNombre = new JTextField(20);
-        
+
         cmbCategoria = new JComboBox<>();
         cmbProveedor = new JComboBox<>();
         cmbUbicacion = new JComboBox<>();
-        
+
         txtPrecioCompra = new JTextField(10);
         txtPrecioVenta = new JTextField(10);
-        
+
         chkPrecioMayorista = new JCheckBox("Habilitar Precio Mayorista");
         chkPrecioMayorista.setBackground(new Color(255, 255, 255)); // Blanco Puro
         chkPrecioMayorista.setForeground(new Color(45, 45, 45)); // Gris Oscuro
         chkPrecioMayorista.setFocusPainted(false);
-        
+
         txtPrecioMayorista = new JTextField(10);
-        txtPrecioMayorista.setEnabled(false); 
-        
+        txtPrecioMayorista.setEnabled(false);
+
         chkPrecioMayorista.addActionListener(e -> {
             txtPrecioMayorista.setEnabled(chkPrecioMayorista.isSelected());
-            if (!chkPrecioMayorista.isSelected()) txtPrecioMayorista.setText(""); 
+            if (!chkPrecioMayorista.isSelected())
+                txtPrecioMayorista.setText("");
         });
 
         txtStockInicial = new JTextField(10);
-        txtStockMinimo = new JTextField("0", 10); 
+        txtStockMinimo = new JTextField("0", 10);
         agregarFilaCorta(pnlForm, gbc, 0, "Código de Barras:", txtCodigoBarras);
-        gbc.gridy = 1; gbc.gridx = 1; gbc.insets = new Insets(0, 10, 10, 10);
+        gbc.gridy = 1;
+        gbc.gridx = 1;
+        gbc.insets = new Insets(0, 10, 10, 10);
         pnlForm.add(lblErrorCodigo, gbc);
-        gbc.insets = new Insets(10, 10, 10, 10); 
-        
+        gbc.insets = new Insets(10, 10, 10, 10);
+
         agregarFila(pnlForm, gbc, 2, "Nombre del Producto:", txtNombre);
         agregarFila(pnlForm, gbc, 3, "Categoría:", crearPanelCatalogo(cmbCategoria, "Categoría"));
         agregarFila(pnlForm, gbc, 4, "Proveedor:", crearPanelCatalogo(cmbProveedor, "Proveedor"));
         agregarFila(pnlForm, gbc, 5, "Ubicación:", crearPanelCatalogo(cmbUbicacion, "Ubicación"));
 
-        cmbDiasGarantia = new JComboBox<>(new String[]{"Sin garantía", "3 días", "7 días", "15 días", "30 días", "60 días", "90 días", "1 año"});
+        cmbDiasGarantia = new JComboBox<>(new String[] { "Sin garantía", "3 días", "7 días", "15 días", "30 días",
+                "60 días", "90 días", "1 año" });
         cmbDiasGarantia.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         agregarFilaCorta(pnlForm, gbc, 6, "Garantía (Días):", cmbDiasGarantia);
 
@@ -142,40 +147,49 @@ public class PanelCrearProducto extends JPanel {
         chkRequiereSerie.setForeground(new Color(39, 174, 96)); // Verde Menta en vez del azul original
         chkRequiereSerie.setFont(new Font("Segoe UI", Font.BOLD, 13));
         chkRequiereSerie.setFocusPainted(false);
-        gbc.gridy = 7; gbc.gridx = 1; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridy = 7;
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
         pnlForm.add(chkRequiereSerie, gbc);
         agregarFilaCorta(pnlForm, gbc, 8, "Precio Compra (L):", txtPrecioCompra);
         agregarFilaCorta(pnlForm, gbc, 9, "Precio Venta (L):", txtPrecioVenta);
-        
-        gbc.gridy = 10; gbc.gridx = 0; gbc.weightx = 0.0; gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.EAST;
+
+        gbc.gridy = 10;
+        gbc.gridx = 0;
+        gbc.weightx = 0.0;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.EAST;
         pnlForm.add(chkPrecioMayorista, gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
-        txtPrecioMayorista.setPreferredSize(new Dimension(150, 32)); 
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        txtPrecioMayorista.setPreferredSize(new Dimension(150, 32));
         txtPrecioMayorista.setBackground(new Color(250, 250, 250)); // Fondo claro input
         txtPrecioMayorista.setForeground(new Color(45, 45, 45)); // Texto Oscuro
-        txtPrecioMayorista.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(5, 8, 5, 8)));
+        txtPrecioMayorista.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(5, 8, 5, 8)));
         pnlForm.add(txtPrecioMayorista, gbc);
         agregarFilaCorta(pnlForm, gbc, 11, "Stock Inicial:", txtStockInicial);
         agregarFilaCorta(pnlForm, gbc, 12, "Stock Mínimo:", txtStockMinimo);
 
-        gbc.gridy = 13; gbc.weighty = 1.0;
+        gbc.gridy = 13;
+        gbc.weighty = 1.0;
         pnlForm.add(new JLabel(""), gbc);
         JScrollPane scrollForm = new JScrollPane(pnlForm);
         scrollForm.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 222, 225), 1),
-            BorderFactory.createEmptyBorder(10, 10, 10, 10)
-        ));
+                BorderFactory.createLineBorder(new Color(220, 222, 225), 1),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
         scrollForm.getVerticalScrollBar().setUnitIncrement(16);
 
         // --- DERECHA: PANEL DE IMAGEN ---
-        JPanel pnlImagen = new JPanel(); 
+        JPanel pnlImagen = new JPanel();
         pnlImagen.setLayout(new BoxLayout(pnlImagen, BoxLayout.Y_AXIS));
         pnlImagen.setBackground(new Color(255, 255, 255)); // Blanco Puro
         pnlImagen.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 222, 225), 1),
-            BorderFactory.createEmptyBorder(20, 20, 20, 20)
-        ));
-        pnlImagen.setPreferredSize(new Dimension(250, 0)); 
+                BorderFactory.createLineBorder(new Color(220, 222, 225), 1),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+        pnlImagen.setPreferredSize(new Dimension(250, 0));
 
         JLabel lblTituloImg = new JLabel("Fotografía");
         lblTituloImg.setForeground(new Color(45, 45, 45)); // Gris Oscuro
@@ -189,13 +203,6 @@ public class PanelCrearProducto extends JPanel {
         lblVistaPreviaImagen.setForeground(Color.GRAY);
         lblVistaPreviaImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-<<<<<<< HEAD
-        JButton btnCargarImagen = new JButton("Examinar...");
-        btnCargarImagen.setBackground(new Color(240, 242, 245)); // Gris Nube
-        btnCargarImagen.setForeground(new Color(45, 45, 45)); // Gris Oscuro
-        btnCargarImagen.setFocusPainted(false);
-        btnCargarImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
-=======
         lblVistaPreviaImagen.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblVistaPreviaImagen.setToolTipText("Clic para ver imagen en grande");
         lblVistaPreviaImagen.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -204,9 +211,11 @@ public class PanelCrearProducto extends JPanel {
                 if (rutaImagenSeleccionada != null && !rutaImagenSeleccionada.isEmpty()) {
                     Window window = SwingUtilities.getWindowAncestor(PanelCrearProducto.this);
                     if (window instanceof Frame) {
-                        new DialogoVisorImagen((Frame) window, "Visor de Fotografía", rutaImagenSeleccionada).setVisible(true);
+                        new DialogoVisorImagen((Frame) window, "Visor de Fotografía", rutaImagenSeleccionada)
+                                .setVisible(true);
                     } else if (window instanceof JDialog) {
-                        new DialogoVisorImagen((JDialog) window, "Visor de Fotografía", rutaImagenSeleccionada).setVisible(true);
+                        new DialogoVisorImagen((JDialog) window, "Visor de Fotografía", rutaImagenSeleccionada)
+                                .setVisible(true);
                     }
                 }
             }
@@ -230,7 +239,8 @@ public class PanelCrearProducto extends JPanel {
                     lblVistaPreviaImagen.setText("");
                     lblVistaPreviaImagen.setIcon(icon);
                 }
-                JOptionPane.showMessageDialog(this, "Foto capturada y adjuntada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Foto capturada y adjuntada exitosamente.", "Éxito",
+                        JOptionPane.INFORMATION_MESSAGE);
             }).setVisible(true);
         });
 
@@ -242,19 +252,14 @@ public class PanelCrearProducto extends JPanel {
         btnCargarImagen.setFocusPainted(false);
         btnCargarImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnCargarImagen.setMaximumSize(new Dimension(150, 35));
->>>>>>> origin/parte-muoz
         btnCargarImagen.addActionListener(e -> seleccionarImagen());
 
         pnlImagen.add(lblTituloImg);
         pnlImagen.add(Box.createVerticalStrut(20));
         pnlImagen.add(lblVistaPreviaImagen);
-<<<<<<< HEAD
-        pnlImagen.add(Box.createVerticalStrut(20));
-=======
         pnlImagen.add(Box.createVerticalStrut(15));
         pnlImagen.add(btnTomarFoto);
         pnlImagen.add(Box.createVerticalStrut(5));
->>>>>>> origin/parte-muoz
         pnlImagen.add(btnCargarImagen);
 
         panelCentral.add(scrollForm, BorderLayout.CENTER);
@@ -264,7 +269,7 @@ public class PanelCrearProducto extends JPanel {
         // --- PANEL INFERIOR: BOTONES ---
         JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         pnlBotones.setOpaque(false);
-        
+
         btnKardex = new JButton("Ver Kardex");
         btnKardex.setBackground(new Color(39, 174, 96)); // Verde Menta
         btnKardex.setForeground(Color.WHITE);
@@ -288,7 +293,7 @@ public class PanelCrearProducto extends JPanel {
         btnGuardar.setPreferredSize(new Dimension(180, 40));
         btnGuardar.setFocusPainted(false);
         btnGuardar.addActionListener(e -> guardarProducto());
-        
+
         pnlBotones.add(btnKardex);
         pnlBotones.add(btnGuardar);
         this.add(pnlBotones, BorderLayout.SOUTH);
@@ -311,10 +316,13 @@ public class PanelCrearProducto extends JPanel {
             public void keyTyped(KeyEvent e) {
                 char c = e.getKeyChar();
                 if (permiteDecimales) {
-                    if (!Character.isDigit(c) && c != '.') e.consume();
-                    if (c == '.' && campo.getText().contains(".")) e.consume();
+                    if (!Character.isDigit(c) && c != '.')
+                        e.consume();
+                    if (c == '.' && campo.getText().contains("."))
+                        e.consume();
                 } else {
-                    if (!Character.isDigit(c)) e.consume();
+                    if (!Character.isDigit(c))
+                        e.consume();
                 }
             }
         });
@@ -325,38 +333,41 @@ public class PanelCrearProducto extends JPanel {
     // =========================================================
     private void cargarDatosCombos() {
         CatalogosDAO dao = new CatalogosDAO();
-        
+
         cmbCategoria.removeAllItems();
         cmbCategoria.addItem(new ItemCatalogo(0, "Seleccione Categoría..."));
         for (Map.Entry<Integer, String> entry : dao.listarCategorias().entrySet()) {
             cmbCategoria.addItem(new ItemCatalogo(entry.getKey(), entry.getValue()));
         }
-        
+
         cmbProveedor.removeAllItems();
         cmbProveedor.addItem(new ItemCatalogo(0, "Seleccione Proveedor..."));
         for (Map.Entry<Integer, String> entry : dao.listarProveedores().entrySet()) {
             cmbProveedor.addItem(new ItemCatalogo(entry.getKey(), entry.getValue()));
         }
-        
+
         cmbUbicacion.removeAllItems();
         cmbUbicacion.addItem(new ItemCatalogo(0, "Seleccione Ubicación..."));
         for (Map.Entry<Integer, String> entry : dao.listarUbicaciones().entrySet()) {
             cmbUbicacion.addItem(new ItemCatalogo(entry.getKey(), entry.getValue()));
         }
     }
-    
+
     private void guardarProducto() {
-        if (txtNombre.getText().trim().isEmpty() || txtPrecioCompra.getText().trim().isEmpty() || txtPrecioVenta.getText().trim().isEmpty() || txtStockInicial.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Complete los campos obligatorios (Nombre, Precios y Stock).", "Error", JOptionPane.WARNING_MESSAGE);
+        if (txtNombre.getText().trim().isEmpty() || txtPrecioCompra.getText().trim().isEmpty()
+                || txtPrecioVenta.getText().trim().isEmpty() || txtStockInicial.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Complete los campos obligatorios (Nombre, Precios y Stock).", "Error",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         ItemCatalogo cat = (ItemCatalogo) cmbCategoria.getSelectedItem();
         ItemCatalogo prov = (ItemCatalogo) cmbProveedor.getSelectedItem();
         ItemCatalogo ubi = (ItemCatalogo) cmbUbicacion.getSelectedItem();
-        
+
         if (cat == null || cat.id == 0 || prov == null || prov.id == 0 || ubi == null || ubi.id == 0) {
-            JOptionPane.showMessageDialog(this, "Debe seleccionar Categoría, Proveedor y Ubicación.", "Error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Debe seleccionar Categoría, Proveedor y Ubicación.", "Error",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -369,7 +380,9 @@ public class PanelCrearProducto extends JPanel {
             p.setIdUbicacion(ubi.id);
             p.setPrecioCompra(Double.parseDouble(txtPrecioCompra.getText().trim()));
             p.setPrecioVenta(Double.parseDouble(txtPrecioVenta.getText().trim()));
-            p.setPrecioMayorista(chkPrecioMayorista.isSelected() && !txtPrecioMayorista.getText().trim().isEmpty() ? Double.parseDouble(txtPrecioMayorista.getText().trim()) : 0.0);
+            p.setPrecioMayorista(chkPrecioMayorista.isSelected() && !txtPrecioMayorista.getText().trim().isEmpty()
+                    ? Double.parseDouble(txtPrecioMayorista.getText().trim())
+                    : 0.0);
             p.setStockProducto(Integer.parseInt(txtStockInicial.getText().trim()));
             p.setStockMinimo(Integer.parseInt(txtStockMinimo.getText().trim()));
             p.setRutaImagen(rutaImagenSeleccionada);
@@ -386,56 +399,75 @@ public class PanelCrearProducto extends JPanel {
             }
 
             if (exito) {
-                JOptionPane.showMessageDialog(this, "¡Producto " + ((productoAEditar == null)? "guardado" : "actualizado") + " exitosamente!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                if (productoAEditar == null) limpiarFormulario();
+                JOptionPane.showMessageDialog(this,
+                        "¡Producto " + ((productoAEditar == null) ? "guardado" : "actualizado") + " exitosamente!",
+                        "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                if (productoAEditar == null)
+                    limpiarFormulario();
             } else {
                 // AQUÍ FALTABA ESTE BLOQUE
-                JOptionPane.showMessageDialog(this, "Error al guardar el producto en la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error al guardar el producto en la base de datos.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Verifique que los valores numéricos sean válidos.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Verifique que los valores numéricos sean válidos.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void limpiarFormulario() {
-        txtCodigoBarras.setText(""); txtNombre.setText(""); txtPrecioCompra.setText("");
-        txtPrecioVenta.setText(""); txtPrecioMayorista.setText(""); chkPrecioMayorista.setSelected(false);
-        txtPrecioMayorista.setEnabled(false); txtStockInicial.setText(""); txtStockMinimo.setText("0");
-        lblVistaPreviaImagen.setIcon(null); lblVistaPreviaImagen.setText("Sin Imagen"); rutaImagenSeleccionada = null;
-        cmbCategoria.setSelectedIndex(0); cmbProveedor.setSelectedIndex(0); cmbUbicacion.setSelectedIndex(0);
+        txtCodigoBarras.setText("");
+        txtNombre.setText("");
+        txtPrecioCompra.setText("");
+        txtPrecioVenta.setText("");
+        txtPrecioMayorista.setText("");
+        chkPrecioMayorista.setSelected(false);
+        txtPrecioMayorista.setEnabled(false);
+        txtStockInicial.setText("");
+        txtStockMinimo.setText("0");
+        lblVistaPreviaImagen.setIcon(null);
+        lblVistaPreviaImagen.setText("Sin Imagen");
+        rutaImagenSeleccionada = null;
+        cmbCategoria.setSelectedIndex(0);
+        cmbProveedor.setSelectedIndex(0);
+        cmbUbicacion.setSelectedIndex(0);
         codigosEnRam = new InventarioDAO().obtenerCodigosEnRam();
-        cmbDiasGarantia.setSelectedIndex(0); chkRequiereSerie.setSelected(false);
+        cmbDiasGarantia.setSelectedIndex(0);
+        chkRequiereSerie.setSelected(false);
     }
-    
+
     private void cargarDatosEdicion() {
         txtCodigoBarras.setText(productoAEditar.getCodigoBarras());
         txtNombre.setText(productoAEditar.getNombreProducto());
         txtPrecioCompra.setText(String.valueOf(productoAEditar.getPrecioCompra()));
         txtPrecioVenta.setText(String.valueOf(productoAEditar.getPrecioVenta()));
-        
-        if(productoAEditar.getPrecioMayorista() > 0) {
+
+        if (productoAEditar.getPrecioMayorista() > 0) {
             chkPrecioMayorista.setSelected(true);
             txtPrecioMayorista.setEnabled(true);
             txtPrecioMayorista.setText(String.valueOf(productoAEditar.getPrecioMayorista()));
         }
-        
+
         txtStockInicial.setText(String.valueOf(productoAEditar.getStockProducto()));
         txtStockInicial.setEnabled(false);
         txtStockInicial.setToolTipText("El stock solo puede modificarse a través del Kardex.");
-        
+
         txtStockMinimo.setText(String.valueOf(productoAEditar.getStockMinimo()));
-        
+
         seleccionarComboPorId(cmbCategoria, productoAEditar.getIdCategoria());
         seleccionarComboPorId(cmbProveedor, productoAEditar.getIdProveedor());
         seleccionarComboPorId(cmbUbicacion, productoAEditar.getIdUbicacion());
-        
+
         chkRequiereSerie.setSelected(productoAEditar.isRequiereSerie());
         int dias = productoAEditar.getDiasGarantia();
         int index = 0;
-        for (int i = 0; i < valoresGarantia.length; i++) { if (valoresGarantia[i] == dias) index = i; }
+        for (int i = 0; i < valoresGarantia.length; i++) {
+            if (valoresGarantia[i] == dias)
+                index = i;
+        }
         cmbDiasGarantia.setSelectedIndex(index);
-        
-        if(productoAEditar.getRutaImagen() != null && !productoAEditar.getRutaImagen().trim().isEmpty()) {
+
+        if (productoAEditar.getRutaImagen() != null && !productoAEditar.getRutaImagen().trim().isEmpty()) {
             rutaImagenSeleccionada = productoAEditar.getRutaImagen();
             ImageIcon icono = utilidades.ImagenHelper.obtenerIcono(rutaImagenSeleccionada, 150, 150);
             if (icono != null) {
@@ -444,11 +476,14 @@ public class PanelCrearProducto extends JPanel {
             }
         }
     }
-    
+
     private void seleccionarComboPorId(JComboBox<ItemCatalogo> combo, int id) {
-        for(int i = 0; i < combo.getItemCount(); i++) {
+        for (int i = 0; i < combo.getItemCount(); i++) {
             ItemCatalogo item = combo.getItemAt(i);
-            if(item.id == id) { combo.setSelectedIndex(i); break; }
+            if (item.id == id) {
+                combo.setSelectedIndex(i);
+                break;
+            }
         }
     }
 
@@ -459,29 +494,43 @@ public class PanelCrearProducto extends JPanel {
     private void abrirDialogoMantenimiento(String tipoCatalogo) {
         Window ventanaPadre = SwingUtilities.getWindowAncestor(this);
         JDialog dialog = new JDialog((Frame) ventanaPadre, "Nuevo/a " + tipoCatalogo, true);
-        dialog.setSize(400, 450); dialog.setLocationRelativeTo(this);
-        dialog.setLayout(new BorderLayout()); dialog.getContentPane().setBackground(new Color(240, 242, 245)); // Gris Nube
+        dialog.setSize(400, 450);
+        dialog.setLocationRelativeTo(this);
+        dialog.setLayout(new BorderLayout());
+        dialog.getContentPane().setBackground(new Color(240, 242, 245)); // Gris Nube
 
-        JPanel pnlTop = new JPanel(new FlowLayout(FlowLayout.CENTER)); pnlTop.setBackground(new Color(240, 242, 245)); // Gris Nube
-        JLabel lblTop = new JLabel("Registrar " + tipoCatalogo); lblTop.setFont(new Font("Segoe UI", Font.BOLD, 18)); lblTop.setForeground(new Color(45, 45, 45)); // Gris Oscuro
-        pnlTop.add(lblTop); dialog.add(pnlTop, BorderLayout.NORTH);
+        JPanel pnlTop = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        pnlTop.setBackground(new Color(240, 242, 245)); // Gris Nube
+        JLabel lblTop = new JLabel("Registrar " + tipoCatalogo);
+        lblTop.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        lblTop.setForeground(new Color(45, 45, 45)); // Gris Oscuro
+        pnlTop.add(lblTop);
+        dialog.add(pnlTop, BorderLayout.NORTH);
 
-        JPanel pnlForm = new JPanel(new GridBagLayout()); pnlForm.setBackground(new Color(255, 255, 255)); // Blanco Puro
+        JPanel pnlForm = new JPanel(new GridBagLayout());
+        pnlForm.setBackground(new Color(255, 255, 255)); // Blanco Puro
         pnlForm.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        GridBagConstraints gbc = new GridBagConstraints(); gbc.insets = new Insets(10, 5, 10, 5); gbc.fill = GridBagConstraints.HORIZONTAL; gbc.gridx = 0; gbc.weightx = 1.0;
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 5, 10, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.weightx = 1.0;
 
         JTextField txtNombreCat = crearInputOscuro();
         agregarFilaDialog(pnlForm, gbc, 0, "Nombre:", txtNombreCat);
-        
-        JTextField txtDesc = null, txtGarantia = null, txtEncargado = null, txtTel = null, txtDir = null, txtRepuestos = null;
+
+        JTextField txtDesc = null, txtGarantia = null, txtEncargado = null, txtTel = null, txtDir = null,
+                txtRepuestos = null;
 
         if (tipoCatalogo.equals("Categoría")) {
             txtGarantia = crearInputOscuro();
             permitirSoloNumeros(txtGarantia, false); // Solo números para los días
             agregarFilaDialog(pnlForm, gbc, 2, "Días de Garantía:", txtGarantia);
         } else if (tipoCatalogo.equals("Proveedor")) {
-            txtEncargado = crearInputOscuro(); txtTel = crearInputOscuro();
-            txtDir = crearInputOscuro(); txtRepuestos = crearInputOscuro();
+            txtEncargado = crearInputOscuro();
+            txtTel = crearInputOscuro();
+            txtDir = crearInputOscuro();
+            txtRepuestos = crearInputOscuro();
             permitirSoloNumeros(txtTel, false); // Solo números para teléfono
             agregarFilaDialog(pnlForm, gbc, 1, "Encargado:", txtEncargado);
             agregarFilaDialog(pnlForm, gbc, 2, "Teléfono:", txtTel);
@@ -489,26 +538,41 @@ public class PanelCrearProducto extends JPanel {
             agregarFilaDialog(pnlForm, gbc, 4, "Tipo Repuestos:", txtRepuestos);
         }
 
-        gbc.gridy = 10; gbc.weighty = 1.0; pnlForm.add(new JLabel(""), gbc);
+        gbc.gridy = 10;
+        gbc.weighty = 1.0;
+        pnlForm.add(new JLabel(""), gbc);
         dialog.add(pnlForm, BorderLayout.CENTER);
 
-        JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT)); pnlBotones.setBackground(new Color(240, 242, 245)); // Gris Nube
-        JButton btnCancelar = new JButton("Cancelar"); btnCancelar.setBackground(new Color(140, 145, 150)); btnCancelar.setForeground(Color.WHITE); btnCancelar.addActionListener(e -> dialog.dispose());
-        JButton btnGuardarCat = new JButton("Guardar"); btnGuardarCat.setBackground(new Color(39, 174, 96)); btnGuardarCat.setForeground(Color.WHITE); // Verde Menta
-        
+        JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        pnlBotones.setBackground(new Color(240, 242, 245)); // Gris Nube
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.setBackground(new Color(140, 145, 150));
+        btnCancelar.setForeground(Color.WHITE);
+        btnCancelar.addActionListener(e -> dialog.dispose());
+        JButton btnGuardarCat = new JButton("Guardar");
+        btnGuardarCat.setBackground(new Color(39, 174, 96));
+        btnGuardarCat.setForeground(Color.WHITE); // Verde Menta
+
         // Variables finales para usar dentro del listener
-        final JTextField fTxtDesc = txtDesc, fTxtGarantia = txtGarantia, fTxtEncargado = txtEncargado, fTxtTel = txtTel, fTxtDir = txtDir, fTxtRepuestos = txtRepuestos;
-        
+        final JTextField fTxtDesc = txtDesc, fTxtGarantia = txtGarantia, fTxtEncargado = txtEncargado, fTxtTel = txtTel,
+                fTxtDir = txtDir, fTxtRepuestos = txtRepuestos;
+
         btnGuardarCat.addActionListener(e -> {
-            if (txtNombreCat.getText().trim().isEmpty()) { JOptionPane.showMessageDialog(dialog, "El nombre es obligatorio."); return; }
+            if (txtNombreCat.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(dialog, "El nombre es obligatorio.");
+                return;
+            }
             CatalogosDAO dao = new CatalogosDAO();
             boolean exito = false;
-            
+
             if (tipoCatalogo.equals("Categoría")) {
-                int garantias = fTxtGarantia.getText().trim().isEmpty() ? 0 : Integer.parseInt(fTxtGarantia.getText().trim());
-                exito = dao.registrarCategoria(txtNombreCat.getText().trim(), fTxtDesc != null ? fTxtDesc.getText().trim() : "", garantias);
+                int garantias = fTxtGarantia.getText().trim().isEmpty() ? 0
+                        : Integer.parseInt(fTxtGarantia.getText().trim());
+                exito = dao.registrarCategoria(txtNombreCat.getText().trim(),
+                        fTxtDesc != null ? fTxtDesc.getText().trim() : "", garantias);
             } else if (tipoCatalogo.equals("Proveedor")) {
-                exito = dao.registrarProveedor(txtNombreCat.getText().trim(), fTxtEncargado.getText().trim(), fTxtTel.getText().trim(), fTxtDir.getText().trim(), fTxtRepuestos.getText().trim());
+                exito = dao.registrarProveedor(txtNombreCat.getText().trim(), fTxtEncargado.getText().trim(),
+                        fTxtTel.getText().trim(), fTxtDir.getText().trim(), fTxtRepuestos.getText().trim());
             } else {
                 exito = dao.registrarUbicacion(txtNombreCat.getText().trim());
             }
@@ -521,8 +585,9 @@ public class PanelCrearProducto extends JPanel {
                 JOptionPane.showMessageDialog(dialog, "Error al guardar en la base de datos.");
             }
         });
-        
-        pnlBotones.add(btnCancelar); pnlBotones.add(btnGuardarCat);
+
+        pnlBotones.add(btnCancelar);
+        pnlBotones.add(btnGuardarCat);
         dialog.add(pnlBotones, BorderLayout.SOUTH);
         dialog.setVisible(true);
     }
@@ -531,97 +596,162 @@ public class PanelCrearProducto extends JPanel {
     // UTILIDADES RESTANTES (Sin cambios estructurales)
     // =========================================================
     private JTextField crearInputOscuro() {
-        JTextField txt = new JTextField(20); txt.setFont(new Font("Segoe UI", Font.PLAIN, 14)); txt.setBackground(new Color(250, 250, 250)); // Fondo claro input
+        JTextField txt = new JTextField(20);
+        txt.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txt.setBackground(new Color(250, 250, 250)); // Fondo claro input
         txt.setForeground(new Color(45, 45, 45)); // Texto oscuro
-        txt.setCaretColor(new Color(45, 45, 45)); txt.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(5, 8, 5, 8)));
+        txt.setCaretColor(new Color(45, 45, 45));
+        txt.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)),
+                BorderFactory.createEmptyBorder(5, 8, 5, 8)));
         return txt;
     }
 
     private void agregarFilaDialog(JPanel panel, GridBagConstraints gbc, int fila, String etiqueta, JTextField campo) {
-        gbc.gridy = fila * 2; JLabel lbl = new JLabel(etiqueta); lbl.setForeground(new Color(45, 45, 45)); lbl.setFont(new Font("Segoe UI", Font.BOLD, 12)); // Texto Oscuro
-        panel.add(lbl, gbc); gbc.gridy = (fila * 2) + 1; panel.add(campo, gbc);
+        gbc.gridy = fila * 2;
+        JLabel lbl = new JLabel(etiqueta);
+        lbl.setForeground(new Color(45, 45, 45));
+        lbl.setFont(new Font("Segoe UI", Font.BOLD, 12)); // Texto Oscuro
+        panel.add(lbl, gbc);
+        gbc.gridy = (fila * 2) + 1;
+        panel.add(campo, gbc);
     }
 
     private void configurarValidacionEnVivo() {
         txtCodigoBarras.getDocument().addDocumentListener(new DocumentListener() {
-            @Override public void insertUpdate(DocumentEvent e) { validarCodigo(); }
-            @Override public void removeUpdate(DocumentEvent e) { validarCodigo(); }
-            @Override public void changedUpdate(DocumentEvent e) { validarCodigo(); }
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                validarCodigo();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                validarCodigo();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                validarCodigo();
+            }
         });
     }
 
     private void validarCodigo() {
         String codigoStr = txtCodigoBarras.getText().trim();
-        if (codigoStr.isEmpty()) { restaurarEstiloCodigo(); btnGuardar.setEnabled(true); return; }
+        if (codigoStr.isEmpty()) {
+            restaurarEstiloCodigo();
+            btnGuardar.setEnabled(true);
+            return;
+        }
         if (codigosEnRam.contains(codigoStr)) {
-            txtCodigoBarras.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(227, 0, 15), 2), BorderFactory.createEmptyBorder(4, 7, 4, 7))); // Rojo Logo
-            lblErrorCodigo.setText("Este código ya está registrado en el inventario."); btnGuardar.setEnabled(false); 
-        } else { restaurarEstiloCodigo(); btnGuardar.setEnabled(true); }
+            txtCodigoBarras.setBorder(
+                    BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(227, 0, 15), 2),
+                            BorderFactory.createEmptyBorder(4, 7, 4, 7))); // Rojo Logo
+            lblErrorCodigo.setText("Este código ya está registrado en el inventario.");
+            btnGuardar.setEnabled(false);
+        } else {
+            restaurarEstiloCodigo();
+            btnGuardar.setEnabled(true);
+        }
     }
 
     private void restaurarEstiloCodigo() {
-        txtCodigoBarras.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(5, 8, 5, 8))); lblErrorCodigo.setText(" ");
+        txtCodigoBarras.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(5, 8, 5, 8)));
+        lblErrorCodigo.setText(" ");
     }
 
     private void agregarFila(JPanel panel, GridBagConstraints gbc, int fila, String etiqueta, JComponent campo) {
-        gbc.gridy = fila; gbc.gridx = 0; gbc.weightx = 0.0; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.anchor = GridBagConstraints.EAST;
-        JLabel label = new JLabel(etiqueta); label.setForeground(new Color(45, 45, 45)); label.setFont(new Font("Segoe UI", Font.BOLD, 13)); panel.add(label, gbc); // Gris Oscuro
-        gbc.gridx = 1; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridy = fila;
+        gbc.gridx = 0;
+        gbc.weightx = 0.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.EAST;
+        JLabel label = new JLabel(etiqueta);
+        label.setForeground(new Color(45, 45, 45));
+        label.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        panel.add(label, gbc); // Gris Oscuro
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
         if (campo instanceof JTextField) {
-            campo.setFont(new Font("Segoe UI", Font.PLAIN, 14)); campo.setBackground(new Color(250, 250, 250)); campo.setForeground(new Color(45, 45, 45)); // Fondo claro, texto oscuro
-            ((JTextField)campo).setCaretColor(new Color(45, 45, 45)); campo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(5, 8, 5, 8)));
-        } panel.add(campo, gbc);
+            campo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            campo.setBackground(new Color(250, 250, 250));
+            campo.setForeground(new Color(45, 45, 45)); // Fondo claro, texto oscuro
+            ((JTextField) campo).setCaretColor(new Color(45, 45, 45));
+            campo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)),
+                    BorderFactory.createEmptyBorder(5, 8, 5, 8)));
+        }
+        panel.add(campo, gbc);
     }
 
     private void agregarFilaCorta(JPanel panel, GridBagConstraints gbc, int fila, String etiqueta, JComponent campo) {
-        gbc.gridy = fila; gbc.gridx = 0; gbc.weightx = 0.0; gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.EAST;
-        JLabel label = new JLabel(etiqueta); label.setForeground(new Color(45, 45, 45)); label.setFont(new Font("Segoe UI", Font.BOLD, 13)); panel.add(label, gbc); // Gris Oscuro
-        gbc.gridx = 1; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridy = fila;
+        gbc.gridx = 0;
+        gbc.weightx = 0.0;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.EAST;
+        JLabel label = new JLabel(etiqueta);
+        label.setForeground(new Color(45, 45, 45));
+        label.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        panel.add(label, gbc); // Gris Oscuro
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
         if (campo instanceof JTextField) {
-            campo.setPreferredSize(new Dimension(200, 32)); campo.setFont(new Font("Segoe UI", Font.PLAIN, 14)); campo.setBackground(new Color(250, 250, 250)); // Fondo claro input
-            campo.setForeground(new Color(45, 45, 45)); ((JTextField)campo).setCaretColor(new Color(45, 45, 45)); campo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(5, 8, 5, 8))); // Texto oscuro
-        } panel.add(campo, gbc); gbc.fill = GridBagConstraints.HORIZONTAL; 
+            campo.setPreferredSize(new Dimension(200, 32));
+            campo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            campo.setBackground(new Color(250, 250, 250)); // Fondo claro input
+            campo.setForeground(new Color(45, 45, 45));
+            ((JTextField) campo).setCaretColor(new Color(45, 45, 45));
+            campo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)),
+                    BorderFactory.createEmptyBorder(5, 8, 5, 8))); // Texto oscuro
+        }
+        panel.add(campo, gbc);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
     }
 
     private JPanel crearPanelCatalogo(JComboBox<ItemCatalogo> combo, String tipoCatalogo) {
-        JPanel pnl = new JPanel(new BorderLayout(5, 0)); 
-        pnl.setOpaque(false); 
-        combo.setFont(new Font("Segoe UI", Font.PLAIN, 14)); 
+        JPanel pnl = new JPanel(new BorderLayout(5, 0));
+        pnl.setOpaque(false);
+        combo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         pnl.add(combo, BorderLayout.CENTER);
-        
-        JPanel pnlBotones = new JPanel(new GridLayout(1, 2, 5, 0)); 
+
+        JPanel pnlBotones = new JPanel(new GridLayout(1, 2, 5, 0));
         pnlBotones.setOpaque(false);
-        
-        JButton btnNuevo = new JButton("+"); 
+
+        JButton btnNuevo = new JButton("+");
         btnNuevo.setBackground(new Color(39, 174, 96)); // Verde Menta
-        btnNuevo.setForeground(Color.WHITE); 
-        btnNuevo.setFocusPainted(false); 
+        btnNuevo.setForeground(Color.WHITE);
+        btnNuevo.setFocusPainted(false);
         btnNuevo.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnNuevo.addActionListener(e -> abrirDialogoMantenimiento(tipoCatalogo));
-        
-        JButton btnEditar = new JButton("✎"); 
+
+        JButton btnEditar = new JButton("✎");
         btnEditar.setBackground(new Color(140, 145, 150)); // Gris suave en vez del azul para editar catálogos
-        btnEditar.setForeground(Color.WHITE); 
-        btnEditar.setFocusPainted(false); 
+        btnEditar.setForeground(Color.WHITE);
+        btnEditar.setFocusPainted(false);
         btnEditar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnEditar.addActionListener(e -> {
             ItemCatalogo item = (ItemCatalogo) combo.getSelectedItem();
             if (item == null || item.id == 0) {
-                JOptionPane.showMessageDialog(this, "Seleccione un(a) " + tipoCatalogo + " válido de la lista para editar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        "Seleccione un(a) " + tipoCatalogo + " válido de la lista para editar.", "Aviso",
+                        JOptionPane.WARNING_MESSAGE);
             } else {
                 abrirDialogoEdicion(tipoCatalogo, item);
             }
         });
-        
+
         // --- ESTO ERA LO QUE FALTABA ---
-        pnlBotones.add(btnNuevo); 
-        pnlBotones.add(btnEditar); 
-        pnl.add(pnlBotones, BorderLayout.EAST); 
+        pnlBotones.add(btnNuevo);
+        pnlBotones.add(btnEditar);
+        pnl.add(pnlBotones, BorderLayout.EAST);
         return pnl; // Devolvemos el panel construido en lugar de null
     }
 
     private void seleccionarImagen() {
-        JFileChooser fileChooser = new JFileChooser(); fileChooser.setFileFilter(new FileNameExtensionFilter("Imágenes (JPG, PNG)", "jpg", "jpeg", "png"));
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Imágenes (JPG, PNG)", "jpg", "jpeg", "png"));
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File archivo = fileChooser.getSelectedFile();
             String b64 = utilidades.ImagenHelper.comprimirYConvertirABase64(archivo);
@@ -633,51 +763,79 @@ public class PanelCrearProducto extends JPanel {
                     lblVistaPreviaImagen.setIcon(icon);
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Error al procesar y comprimir la imagen.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error al procesar y comprimir la imagen.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
     private class ItemCatalogo {
-        int id; String nombre;
-        public ItemCatalogo(int id, String nombre) { this.id = id; this.nombre = nombre; }
-        @Override public String toString() { return nombre; }
+        int id;
+        String nombre;
+
+        public ItemCatalogo(int id, String nombre) {
+            this.id = id;
+            this.nombre = nombre;
+        }
+
+        @Override
+        public String toString() {
+            return nombre;
+        }
     }
-    
+
     private void abrirDialogoEdicion(String tipoCatalogo, ItemCatalogo item) {
         Window ventanaPadre = SwingUtilities.getWindowAncestor(this);
         JDialog dialog = new JDialog((Frame) ventanaPadre, "Editar " + tipoCatalogo, true);
-        dialog.setSize(400, 450); dialog.setLocationRelativeTo(this);
-        dialog.setLayout(new BorderLayout()); dialog.getContentPane().setBackground(new Color(240, 242, 245)); // Gris Nube
+        dialog.setSize(400, 450);
+        dialog.setLocationRelativeTo(this);
+        dialog.setLayout(new BorderLayout());
+        dialog.getContentPane().setBackground(new Color(240, 242, 245)); // Gris Nube
 
-        JPanel pnlTop = new JPanel(new FlowLayout(FlowLayout.CENTER)); pnlTop.setBackground(new Color(240, 242, 245)); // Gris Nube
-        JLabel lblTop = new JLabel("Editar " + tipoCatalogo); lblTop.setFont(new Font("Segoe UI", Font.BOLD, 18)); lblTop.setForeground(new Color(45, 45, 45)); // Gris Oscuro
-        pnlTop.add(lblTop); dialog.add(pnlTop, BorderLayout.NORTH);
+        JPanel pnlTop = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        pnlTop.setBackground(new Color(240, 242, 245)); // Gris Nube
+        JLabel lblTop = new JLabel("Editar " + tipoCatalogo);
+        lblTop.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        lblTop.setForeground(new Color(45, 45, 45)); // Gris Oscuro
+        pnlTop.add(lblTop);
+        dialog.add(pnlTop, BorderLayout.NORTH);
 
-        JPanel pnlForm = new JPanel(new GridBagLayout()); pnlForm.setBackground(new Color(255, 255, 255)); // Blanco Puro
+        JPanel pnlForm = new JPanel(new GridBagLayout());
+        pnlForm.setBackground(new Color(255, 255, 255)); // Blanco Puro
         pnlForm.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        GridBagConstraints gbc = new GridBagConstraints(); gbc.insets = new Insets(10, 5, 10, 5); gbc.fill = GridBagConstraints.HORIZONTAL; gbc.gridx = 0; gbc.weightx = 1.0;
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 5, 10, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.weightx = 1.0;
 
         JTextField txtNombreCat = crearInputOscuro();
         txtNombreCat.setText(item.nombre); // Precargar nombre
         agregarFilaDialog(pnlForm, gbc, 0, "Nombre:", txtNombreCat);
-        
-        JTextField txtDesc = null, txtGarantia = null, txtEncargado = null, txtTel = null, txtDir = null, txtRepuestos = null;
+
+        JTextField txtDesc = null, txtGarantia = null, txtEncargado = null, txtTel = null, txtDir = null,
+                txtRepuestos = null;
         CatalogosDAO dao = new CatalogosDAO();
 
         if (tipoCatalogo.equals("Categoría")) {
             String[] datos = dao.obtenerDatosCategoria(item.id);
-            txtDesc = crearInputOscuro(); txtDesc.setText(datos[0]);
-            txtGarantia = crearInputOscuro(); txtGarantia.setText(datos[1]);
+            txtDesc = crearInputOscuro();
+            txtDesc.setText(datos[0]);
+            txtGarantia = crearInputOscuro();
+            txtGarantia.setText(datos[1]);
             permitirSoloNumeros(txtGarantia, false);
             agregarFilaDialog(pnlForm, gbc, 1, "Descripción:", txtDesc);
             agregarFilaDialog(pnlForm, gbc, 2, "Días de Garantía:", txtGarantia);
         } else if (tipoCatalogo.equals("Proveedor")) {
             String[] datos = dao.obtenerDatosProveedor(item.id);
-            txtEncargado = crearInputOscuro(); txtEncargado.setText(datos[0]);
-            txtTel = crearInputOscuro(); txtTel.setText(datos[1]);
-            txtDir = crearInputOscuro(); txtDir.setText(datos[2]);
-            txtRepuestos = crearInputOscuro(); txtRepuestos.setText(datos[3]);
+            txtEncargado = crearInputOscuro();
+            txtEncargado.setText(datos[0]);
+            txtTel = crearInputOscuro();
+            txtTel.setText(datos[1]);
+            txtDir = crearInputOscuro();
+            txtDir.setText(datos[2]);
+            txtRepuestos = crearInputOscuro();
+            txtRepuestos.setText(datos[3]);
             permitirSoloNumeros(txtTel, false);
             agregarFilaDialog(pnlForm, gbc, 1, "Encargado:", txtEncargado);
             agregarFilaDialog(pnlForm, gbc, 2, "Teléfono:", txtTel);
@@ -685,24 +843,39 @@ public class PanelCrearProducto extends JPanel {
             agregarFilaDialog(pnlForm, gbc, 4, "Tipo Repuestos:", txtRepuestos);
         }
 
-        gbc.gridy = 10; gbc.weighty = 1.0; pnlForm.add(new JLabel(""), gbc);
+        gbc.gridy = 10;
+        gbc.weighty = 1.0;
+        pnlForm.add(new JLabel(""), gbc);
         dialog.add(pnlForm, BorderLayout.CENTER);
 
-        JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT)); pnlBotones.setBackground(new Color(240, 242, 245)); // Gris Nube
-        JButton btnCancelar = new JButton("Cancelar"); btnCancelar.setBackground(new Color(140, 145, 150)); btnCancelar.setForeground(Color.WHITE); btnCancelar.addActionListener(e -> dialog.dispose()); // Gris Suave
-        JButton btnGuardarCat = new JButton("Actualizar"); btnGuardarCat.setBackground(new Color(39, 174, 96)); btnGuardarCat.setForeground(Color.WHITE); // Verde Menta
-        
-        final JTextField fTxtDesc = txtDesc, fTxtGarantia = txtGarantia, fTxtEncargado = txtEncargado, fTxtTel = txtTel, fTxtDir = txtDir, fTxtRepuestos = txtRepuestos;
-        
+        JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        pnlBotones.setBackground(new Color(240, 242, 245)); // Gris Nube
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.setBackground(new Color(140, 145, 150));
+        btnCancelar.setForeground(Color.WHITE);
+        btnCancelar.addActionListener(e -> dialog.dispose()); // Gris Suave
+        JButton btnGuardarCat = new JButton("Actualizar");
+        btnGuardarCat.setBackground(new Color(39, 174, 96));
+        btnGuardarCat.setForeground(Color.WHITE); // Verde Menta
+
+        final JTextField fTxtDesc = txtDesc, fTxtGarantia = txtGarantia, fTxtEncargado = txtEncargado, fTxtTel = txtTel,
+                fTxtDir = txtDir, fTxtRepuestos = txtRepuestos;
+
         btnGuardarCat.addActionListener(e -> {
-            if (txtNombreCat.getText().trim().isEmpty()) { JOptionPane.showMessageDialog(dialog, "El nombre es obligatorio."); return; }
+            if (txtNombreCat.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(dialog, "El nombre es obligatorio.");
+                return;
+            }
             boolean exito = false;
-            
+
             if (tipoCatalogo.equals("Categoría")) {
-                int garantias = fTxtGarantia.getText().trim().isEmpty() ? 0 : Integer.parseInt(fTxtGarantia.getText().trim());
-                exito = dao.actualizarCategoria(item.id, txtNombreCat.getText().trim(), fTxtDesc != null ? fTxtDesc.getText().trim() : "", garantias);
+                int garantias = fTxtGarantia.getText().trim().isEmpty() ? 0
+                        : Integer.parseInt(fTxtGarantia.getText().trim());
+                exito = dao.actualizarCategoria(item.id, txtNombreCat.getText().trim(),
+                        fTxtDesc != null ? fTxtDesc.getText().trim() : "", garantias);
             } else if (tipoCatalogo.equals("Proveedor")) {
-                exito = dao.actualizarProveedor(item.id, txtNombreCat.getText().trim(), fTxtEncargado.getText().trim(), fTxtTel.getText().trim(), fTxtDir.getText().trim(), fTxtRepuestos.getText().trim());
+                exito = dao.actualizarProveedor(item.id, txtNombreCat.getText().trim(), fTxtEncargado.getText().trim(),
+                        fTxtTel.getText().trim(), fTxtDir.getText().trim(), fTxtRepuestos.getText().trim());
             } else {
                 exito = dao.actualizarUbicacion(item.id, txtNombreCat.getText().trim());
             }
@@ -715,32 +888,30 @@ public class PanelCrearProducto extends JPanel {
                 JOptionPane.showMessageDialog(dialog, "Error al actualizar en la base de datos.");
             }
         });
-        
-        pnlBotones.add(btnCancelar); pnlBotones.add(btnGuardarCat);
+
+        pnlBotones.add(btnCancelar);
+        pnlBotones.add(btnGuardarCat);
         dialog.add(pnlBotones, BorderLayout.SOUTH);
         dialog.setVisible(true);
     }
-     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 400, Short.MAX_VALUE));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 300, Short.MAX_VALUE));
     }// </editor-fold>//GEN-END:initComponents
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-<<<<<<< HEAD
-=======
 
     private class IconoCamara implements Icon {
         @Override
@@ -756,8 +927,16 @@ public class PanelCrearProducto extends JPanel {
             g2.drawOval(x + 6, y + 7, 8, 8);
             g2.dispose();
         }
-        @Override public int getIconWidth() { return 20; }
-        @Override public int getIconHeight() { return 20; }
+
+        @Override
+        public int getIconWidth() {
+            return 20;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return 20;
+        }
     }
 
     private class IconoCarpeta implements Icon {
@@ -772,8 +951,15 @@ public class PanelCrearProducto extends JPanel {
             g2.fillRoundRect(x + 2, y + 8, 16, 8, 2, 2);
             g2.dispose();
         }
-        @Override public int getIconWidth() { return 20; }
-        @Override public int getIconHeight() { return 20; }
+
+        @Override
+        public int getIconWidth() {
+            return 20;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return 20;
+        }
     }
->>>>>>> origin/parte-muoz
 }
