@@ -64,4 +64,8 @@ public class Producto {
 
     public boolean isRequiereSerie() { return requiereSerie; }
     public void setRequiereSerie(boolean requiereSerie) { this.requiereSerie = requiereSerie; }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/parte-muoz

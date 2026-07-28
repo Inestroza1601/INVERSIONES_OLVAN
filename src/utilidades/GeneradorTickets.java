@@ -190,7 +190,11 @@ public class GeneradorTickets {
             
             // Nombre abreviado a 15 caracteres para que cuadre en la vista
             String nomCorto = nom.length() > 15 ? nom.substring(0, 15) : String.format("%-15s", nom);
+<<<<<<< HEAD
             pnlTicket.add(crearLabelCentrado(String.format("%-2s %s %6.2f", cant, nomCorto, totalFila), fNormal, Color.BLACK));
+=======
+            pnlTicket.add(crearLabelCentrado(String.format("%-2s %s %,6.2f", cant, nomCorto, totalFila), fNormal, Color.BLACK));
+>>>>>>> origin/parte-muoz
             
             if (!imei.isEmpty()) pnlTicket.add(crearLabelCentrado("   S/N: " + imei, fNormal, Color.DARK_GRAY));
             if (diasGarantia > 0) {
@@ -202,9 +206,15 @@ public class GeneradorTickets {
         
         JPanel pnlTotales = new JPanel(new GridLayout(3, 1));
         pnlTotales.setOpaque(false);
+<<<<<<< HEAD
         pnlTotales.add(crearLabelAlineadoDer(String.format("SUBTOTAL: L %8.2f", subtotal), fBold));
         pnlTotales.add(crearLabelAlineadoDer(String.format("I.S.V (15%%): L %8.2f", isv), fBold));
         pnlTotales.add(crearLabelAlineadoDer(String.format("TOTAL: L %8.2f", total), fBold));
+=======
+        pnlTotales.add(crearLabelAlineadoDer(String.format("SUBTOTAL: L %,8.2f", subtotal), fBold));
+        pnlTotales.add(crearLabelAlineadoDer(String.format("I.S.V (15%%): L %,8.2f", isv), fBold));
+        pnlTotales.add(crearLabelAlineadoDer(String.format("TOTAL: L %,8.2f", total), fBold));
+>>>>>>> origin/parte-muoz
         
         pnlTotales.setMaximumSize(new Dimension(250, 60));
         pnlTicket.add(pnlTotales);
@@ -327,9 +337,15 @@ public class GeneradorTickets {
             
             // 1. Imprimir Nombre, Cantidad y Precio
             if (nom.length() <= maxLen) {
+<<<<<<< HEAD
                 sbDetalles.append(String.format("%-2s %-15s %6.2f\n", cant, nom, totalFila));
             } else {
                 sbDetalles.append(String.format("%-2s %-15s %6.2f\n", cant, nom.substring(0, maxLen), totalFila));
+=======
+                sbDetalles.append(String.format("%-2s %-15s %,6.2f\n", cant, nom, totalFila));
+            } else {
+                sbDetalles.append(String.format("%-2s %-15s %,6.2f\n", cant, nom.substring(0, maxLen), totalFila));
+>>>>>>> origin/parte-muoz
                 int index = maxLen;
                 while (index < nom.length()) {
                     int end = Math.min(index + maxLen, nom.length());
@@ -372,9 +388,15 @@ public class GeneradorTickets {
 
         // --- TOTALES FINALES ---
         Paragraph totales = new Paragraph(
+<<<<<<< HEAD
             String.format("%-15s L %8.2f\n", "SUBTOTAL:", subtotal) +
             String.format("%-15s L %8.2f\n", "I.S.V (15%):", isv) +
             String.format("%-15s L %8.2f\n", "TOTAL A PAGAR:", total) +
+=======
+            String.format("%-15s L %,8.2f\n", "SUBTOTAL:", subtotal) +
+            String.format("%-15s L %,8.2f\n", "I.S.V (15%):", isv) +
+            String.format("%-15s L %,8.2f\n", "TOTAL A PAGAR:", total) +
+>>>>>>> origin/parte-muoz
             "\n===============================\n", fBold);
         totales.setAlignment(Element.ALIGN_RIGHT);
         documento.add(totales);
@@ -804,9 +826,15 @@ public class GeneradorTickets {
             double totalFila = (double) fila[5];
             int maxLen = 15;
             if (nom.length() <= maxLen) {
+<<<<<<< HEAD
                 sbDetalles.append(String.format("%-2s %-15s %6.2f\n", cant, nom, totalFila));
             } else {
                 sbDetalles.append(String.format("%-2s %-15s %6.2f\n", cant, nom.substring(0, maxLen), totalFila));
+=======
+                sbDetalles.append(String.format("%-2s %-15s %,6.2f\n", cant, nom, totalFila));
+            } else {
+                sbDetalles.append(String.format("%-2s %-15s %,6.2f\n", cant, nom.substring(0, maxLen), totalFila));
+>>>>>>> origin/parte-muoz
                 int index = maxLen;
                 while (index < nom.length()) {
                     int end = Math.min(index + maxLen, nom.length());
@@ -821,9 +849,15 @@ public class GeneradorTickets {
 
         // Totales de Apartado
         Paragraph totales = new Paragraph(
+<<<<<<< HEAD
             String.format("%-15s L %8.2f\n", "TOTAL DE COMPRA:", total) +
             String.format("%-15s L %8.2f\n", "ABONO INICIAL:", abono) +
             String.format("%-15s L %8.2f\n", "SALDO PENDIENTE:", saldo) +
+=======
+            String.format("%-15s L %,8.2f\n", "TOTAL DE COMPRA:", total) +
+            String.format("%-15s L %,8.2f\n", "ABONO INICIAL:", abono) +
+            String.format("%-15s L %,8.2f\n", "SALDO PENDIENTE:", saldo) +
+>>>>>>> origin/parte-muoz
             "\n===============================\n", fBold);
         totales.setAlignment(Element.ALIGN_RIGHT);
         documento.add(totales);
@@ -870,6 +904,7 @@ public class GeneradorTickets {
             sb.append("Cierre:   ").append(sdf.format((java.util.Date) c.get("fecha_cierre"))).append("\n");
         }
         sb.append("-------------------------------\n");
+<<<<<<< HEAD
         sb.append(String.format("Ef. Inicial:   L %8.2f\n", (double) c.get("monto_apertura")));
         sb.append(String.format("Ventas Turno:  L %8.2f\n", (double) c.get("total_ventas_general")));
         sb.append(String.format("Abonos Recib:  L %8.2f\n", (double) c.get("total_abonos_general")));
@@ -879,6 +914,17 @@ public class GeneradorTickets {
         double esperado = (double) c.get("efectivo_esperado");
         sb.append(String.format("Ef. Real:      L %8.2f\n", real));
         sb.append(String.format("Diferencia:    L %8.2f\n", real - esperado));
+=======
+        sb.append(String.format("Ef. Inicial:   L %,8.2f\n", (double) c.get("monto_apertura")));
+        sb.append(String.format("Ventas Turno:  L %,8.2f\n", (double) c.get("total_ventas_general")));
+        sb.append(String.format("Abonos Recib:  L %,8.2f\n", (double) c.get("total_abonos_general")));
+        sb.append(String.format("Ef. Esperado:  L %,8.2f\n", (double) c.get("efectivo_esperado")));
+        
+        double real = c.get("monto_cierre_real") != null ? (double) c.get("monto_cierre_real") : 0.0;
+        double esperado = (double) c.get("efectivo_esperado");
+        sb.append(String.format("Ef. Real:      L %,8.2f\n", real));
+        sb.append(String.format("Diferencia:    L %,8.2f\n", real - esperado));
+>>>>>>> origin/parte-muoz
         sb.append("-------------------------------\n");
 
         Paragraph body = new Paragraph(sb.toString(), fNormal);
@@ -893,7 +939,11 @@ public class GeneradorTickets {
                 int cant = (int) p.get("cantidad");
                 double tot = (double) p.get("total_valor");
                 if (nom.length() > 15) nom = nom.substring(0, 15);
+<<<<<<< HEAD
                 sbProds.append(String.format("%-2dx %-15s %6.2f\n", cant, nom, tot));
+=======
+                sbProds.append(String.format("%-2dx %-15s %,6.2f\n", cant, nom, tot));
+>>>>>>> origin/parte-muoz
             }
             sbProds.append("===============================\n");
             Paragraph prodPar = new Paragraph(sbProds.toString(), fNormal);
@@ -911,4 +961,160 @@ public class GeneradorTickets {
 
         documento.close();
     }
+<<<<<<< HEAD
 }
+=======
+
+    public static void generarTicketApartadoPDF(String rutaDestino, String cliente, String fecha, double total, double saldoPendiente, int idApartado, java.util.List<modelo.DetalleApartado> detalles) throws Exception {
+        com.itextpdf.text.Rectangle tamanoTicket = new com.itextpdf.text.Rectangle(226, 800);
+        com.itextpdf.text.Document documento = new com.itextpdf.text.Document(tamanoTicket, 10, 10, 10, 10);
+        com.itextpdf.text.pdf.PdfWriter writer = com.itextpdf.text.pdf.PdfWriter.getInstance(documento, new java.io.FileOutputStream(rutaDestino));
+        documento.open();
+
+        com.itextpdf.text.Font fNormal = com.itextpdf.text.FontFactory.getFont(com.itextpdf.text.FontFactory.COURIER, 9);
+        com.itextpdf.text.Font fBold = com.itextpdf.text.FontFactory.getFont(com.itextpdf.text.FontFactory.COURIER_BOLD, 9);
+        com.itextpdf.text.Font fTitulo = com.itextpdf.text.FontFactory.getFont(com.itextpdf.text.FontFactory.COURIER_BOLD, 12);
+
+        modelo.Empresa emp = SesionGlobal.getEmpresaActual();
+        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORION STORE";
+        
+        com.itextpdf.text.Paragraph titulo = new com.itextpdf.text.Paragraph(empNombre + "\n", fTitulo);
+        titulo.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+        documento.add(titulo);
+
+        StringBuilder header = new StringBuilder();
+        header.append("TICKET DE APARTADO #").append(idApartado).append("\n");
+        header.append("Fecha: ").append(fecha).append("\n");
+        header.append("Cliente: ").append(cliente).append("\n");
+        header.append("-------------------------------\n");
+        header.append("C. DESCRIPCION        TOTAL\n");
+        header.append("-------------------------------\n");
+
+        com.itextpdf.text.Paragraph headerPar = new com.itextpdf.text.Paragraph(header.toString(), fNormal);
+        headerPar.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+        documento.add(headerPar);
+
+        StringBuilder prods = new StringBuilder();
+        for (modelo.DetalleApartado d : detalles) {
+            String nom = d.getNombreProducto();
+            if (nom.length() > 15) nom = nom.substring(0, 15);
+            double sub = d.getCantidadApartado() * d.getPrecioUnitarioApartado();
+            prods.append(String.format("%-2d %-15s %,6.2f\n", d.getCantidadApartado(), nom, sub));
+        }
+        prods.append("-------------------------------\n");
+        prods.append(String.format("TOTAL APARTADO: L %,8.2f\n", total));
+        prods.append(String.format("SALDO PENDIENTE:L %,8.2f\n", saldoPendiente));
+        prods.append("===============================\n\n");
+        
+        com.itextpdf.text.Paragraph body = new com.itextpdf.text.Paragraph(prods.toString(), fNormal);
+        documento.add(body);
+
+        com.itextpdf.text.Paragraph footer = new com.itextpdf.text.Paragraph("Gracias por su preferencia.\nConservar este ticket para reclamos.", fNormal);
+        footer.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+        documento.add(footer);
+
+        documento.close();
+    }
+
+    public static void generarTicketAbonoPDF(String rutaDestino, String cliente, String fecha, double abonado, double saldoPendiente, String metodo, String ref, String banco, int idApartado) throws Exception {
+        com.itextpdf.text.Rectangle tamanoTicket = new com.itextpdf.text.Rectangle(226, 600);
+        com.itextpdf.text.Document documento = new com.itextpdf.text.Document(tamanoTicket, 10, 10, 10, 10);
+        com.itextpdf.text.pdf.PdfWriter writer = com.itextpdf.text.pdf.PdfWriter.getInstance(documento, new java.io.FileOutputStream(rutaDestino));
+        documento.open();
+
+        com.itextpdf.text.Font fNormal = com.itextpdf.text.FontFactory.getFont(com.itextpdf.text.FontFactory.COURIER, 9);
+        com.itextpdf.text.Font fBold = com.itextpdf.text.FontFactory.getFont(com.itextpdf.text.FontFactory.COURIER_BOLD, 9);
+        com.itextpdf.text.Font fTitulo = com.itextpdf.text.FontFactory.getFont(com.itextpdf.text.FontFactory.COURIER_BOLD, 12);
+
+        modelo.Empresa emp = SesionGlobal.getEmpresaActual();
+        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORION STORE";
+        
+        com.itextpdf.text.Paragraph titulo = new com.itextpdf.text.Paragraph(empNombre + "\n\n", fTitulo);
+        titulo.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+        documento.add(titulo);
+
+        StringBuilder body = new StringBuilder();
+        body.append("COMPROBANTE DE ABONO\n");
+        body.append("APARTADO #").append(idApartado).append("\n");
+        body.append("-------------------------------\n");
+        body.append("Fecha: ").append(fecha).append("\n");
+        body.append("Cliente: ").append(cliente).append("\n");
+        body.append("Pago via: ").append(metodo).append("\n");
+        if (banco != null) body.append("Banco: ").append(banco).append("\n");
+        if (ref != null) body.append("Ref: ").append(ref).append("\n");
+        body.append("-------------------------------\n");
+        body.append(String.format("MONTO ABONADO:  L %,8.2f\n", abonado));
+        body.append(String.format("NUEVO SALDO:    L %,8.2f\n", saldoPendiente));
+        body.append("===============================\n\n");
+        
+        com.itextpdf.text.Paragraph pBody = new com.itextpdf.text.Paragraph(body.toString(), fNormal);
+        documento.add(pBody);
+
+        com.itextpdf.text.Paragraph footer = new com.itextpdf.text.Paragraph("Comprobante oficial de pago.", fNormal);
+        footer.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+        documento.add(footer);
+
+        documento.close();
+    }
+    
+    public void imprimirTicketCambio(int idDetalleOriginal, modelo.Producto productoSustituto, double precioOriginal) {
+        try {
+            java.io.File dir = new java.io.File("reportes");
+            if (!dir.exists()) dir.mkdirs();
+            String ruta = "reportes/Comprobante_Cambio_" + idDetalleOriginal + "_" + System.currentTimeMillis() + ".pdf";
+            
+            Rectangle tamanoTicket = new Rectangle(226, 800);
+            Document documento = new Document(tamanoTicket, 10, 10, 15, 15);
+            PdfWriter.getInstance(documento, new java.io.FileOutputStream(ruta));
+            documento.open();
+            
+            com.itextpdf.text.Font fuenteTitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
+            com.itextpdf.text.Font fuenteNormal = FontFactory.getFont(FontFactory.HELVETICA, 8);
+            com.itextpdf.text.Font fuenteBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 8);
+            
+            Paragraph titulo = new Paragraph("COMPROBANTE DE CAMBIO\nPOR GARANTÍA", fuenteTitulo);
+            titulo.setAlignment(Element.ALIGN_CENTER);
+            documento.add(titulo);
+            documento.add(new Paragraph("----------------------------------------", fuenteNormal));
+            
+            documento.add(new Paragraph("Fecha: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date()), fuenteNormal));
+            documento.add(new Paragraph("Detalle Venta Orig: #" + idDetalleOriginal, fuenteNormal));
+            documento.add(new Paragraph("----------------------------------------", fuenteNormal));
+            
+            double dif = productoSustituto.getPrecioVenta() - precioOriginal;
+            
+            documento.add(new Paragraph("PRODUCTO DEVUELTO:", fuenteBold));
+            documento.add(new Paragraph("Crédito a Favor: L " + String.format("%,.2f", precioOriginal), fuenteNormal));
+            documento.add(new Paragraph(" ", fuenteNormal));
+            
+            documento.add(new Paragraph("NUEVO PRODUCTO ENTREGADO:", fuenteBold));
+            documento.add(new Paragraph(productoSustituto.getNombreProducto(), fuenteNormal));
+            documento.add(new Paragraph("Valor: L " + String.format("%,.2f", productoSustituto.getPrecioVenta()), fuenteNormal));
+            
+            documento.add(new Paragraph("----------------------------------------", fuenteNormal));
+            
+            if (dif > 0) {
+                documento.add(new Paragraph("SALDO A COBRAR: L " + String.format("%,.2f", dif), fuenteBold));
+            } else if (dif < 0) {
+                documento.add(new Paragraph("SALDO A DEVOLVER: L " + String.format("%,.2f", Math.abs(dif)), fuenteBold));
+            } else {
+                documento.add(new Paragraph("SALDO A COBRAR: L 0.00 (Cambio Directo)", fuenteBold));
+            }
+            
+            documento.add(new Paragraph("----------------------------------------", fuenteNormal));
+            Paragraph footer = new Paragraph("Firma Cliente: _________________\n\nFirma Cajero: _________________\n\nGracias por su preferencia.", fuenteNormal);
+            footer.setAlignment(Element.ALIGN_CENTER);
+            documento.add(footer);
+            
+            documento.close();
+            
+            if (java.awt.Desktop.isDesktopSupported()) {
+                java.awt.Desktop.getDesktop().open(new java.io.File(ruta));
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+>>>>>>> origin/parte-muoz

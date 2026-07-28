@@ -13,6 +13,11 @@ public class PanelGestionGarantias extends JPanel {
     private JTable tablaGarantias;
     private DefaultTableModel modeloTabla;
     private JTextField txtBusqueda;
+<<<<<<< HEAD
+=======
+    private JCheckBox chkMostrarVencidas;
+    private JCheckBox chkMostrarReclamadas;
+>>>>>>> origin/parte-muoz
     private TableRowSorter<DefaultTableModel> sorter;
 
     public PanelGestionGarantias() {
@@ -46,9 +51,31 @@ public class PanelGestionGarantias extends JPanel {
         lblEmpresa.setFont(new Font("Segoe UI", Font.BOLD, 16));
         lblEmpresa.setForeground(new Color(140, 145, 150)); // Gris suave
 
+<<<<<<< HEAD
         panelSuperior.add(lblTitulo, BorderLayout.WEST);
         panelSuperior.add(panelCentro, BorderLayout.CENTER);
         panelSuperior.add(lblEmpresa, BorderLayout.EAST);
+=======
+        JPanel panelFiltros = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
+        panelFiltros.setOpaque(false);
+        chkMostrarVencidas = new JCheckBox("Mostrar Vencidas");
+        chkMostrarVencidas.setOpaque(false);
+        chkMostrarVencidas.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        chkMostrarReclamadas = new JCheckBox("Mostrar Reclamadas");
+        chkMostrarReclamadas.setOpaque(false);
+        chkMostrarReclamadas.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        panelFiltros.add(chkMostrarVencidas);
+        panelFiltros.add(chkMostrarReclamadas);
+
+        JPanel panelTopRight = new JPanel(new BorderLayout());
+        panelTopRight.setOpaque(false);
+        panelTopRight.add(lblEmpresa, BorderLayout.NORTH);
+        panelTopRight.add(panelFiltros, BorderLayout.SOUTH);
+
+        panelSuperior.add(lblTitulo, BorderLayout.WEST);
+        panelSuperior.add(panelCentro, BorderLayout.CENTER);
+        panelSuperior.add(panelTopRight, BorderLayout.EAST);
+>>>>>>> origin/parte-muoz
 
         this.add(panelSuperior, BorderLayout.NORTH);
 
@@ -98,10 +125,19 @@ public class PanelGestionGarantias extends JPanel {
         // --- BUSCADOR EN TIEMPO REAL ---
         sorter = new TableRowSorter<>(modeloTabla);
         tablaGarantias.setRowSorter(sorter);
+<<<<<<< HEAD
+=======
+        
+        java.awt.event.ActionListener filtroListener = e -> filtrar();
+        chkMostrarVencidas.addActionListener(filtroListener);
+        chkMostrarReclamadas.addActionListener(filtroListener);
+        
+>>>>>>> origin/parte-muoz
         txtBusqueda.getDocument().addDocumentListener(new DocumentListener() {
             @Override public void insertUpdate(DocumentEvent e) { filtrar(); }
             @Override public void removeUpdate(DocumentEvent e) { filtrar(); }
             @Override public void changedUpdate(DocumentEvent e) { filtrar(); }
+<<<<<<< HEAD
             private void filtrar() {
                 String texto = txtBusqueda.getText();
                 if (texto.trim().length() == 0) sorter.setRowFilter(null);
@@ -109,6 +145,9 @@ public class PanelGestionGarantias extends JPanel {
             }
         });
 
+=======
+        });
+>>>>>>> origin/parte-muoz
         JScrollPane scrollPane = new JScrollPane(tablaGarantias);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225), 1, true));
         scrollPane.getViewport().setBackground(new Color(255, 255, 255)); // Fondo blanco
@@ -118,6 +157,32 @@ public class PanelGestionGarantias extends JPanel {
         cargarDatosDesdeBD();
     }
 
+<<<<<<< HEAD
+=======
+    private void filtrar() {
+        String texto = txtBusqueda.getText().trim().toLowerCase();
+        boolean mostrarVencidas = chkMostrarVencidas.isSelected();
+        boolean mostrarReclamadas = chkMostrarReclamadas.isSelected();
+
+        sorter.setRowFilter(new RowFilter<DefaultTableModel, Integer>() {
+            @Override
+            public boolean include(Entry<? extends DefaultTableModel, ? extends Integer> entry) {
+                String estado = entry.getStringValue(6);
+                if (!mostrarVencidas && estado.equals("VENCIDA")) return false;
+                if (!mostrarReclamadas && estado.equals("RECLAMADA")) return false;
+
+                if (texto.isEmpty()) return true;
+
+                String cliente = entry.getStringValue(1).toLowerCase();
+                String producto = entry.getStringValue(2).toLowerCase();
+                String serie = entry.getStringValue(3).toLowerCase();
+
+                return cliente.contains(texto) || producto.contains(texto) || serie.contains(texto);
+            }
+        });
+    }
+
+>>>>>>> origin/parte-muoz
     private void ocultarColumna(int index) {
         tablaGarantias.getColumnModel().getColumn(index).setMinWidth(0);
         tablaGarantias.getColumnModel().getColumn(index).setMaxWidth(0);
@@ -134,6 +199,10 @@ public class PanelGestionGarantias extends JPanel {
         for (Object[] fila : dao.listarGarantias()) {
             modeloTabla.addRow(fila);
         }
+<<<<<<< HEAD
+=======
+        filtrar(); // Aplicar filtros por defecto (ocultar vencidas/reclamadas)
+>>>>>>> origin/parte-muoz
     }
     private void mostrarMenuOpciones(Component componente, int x, int y, int filaVista) {
         JPopupMenu menu = new JPopupMenu();
@@ -201,6 +270,7 @@ public class PanelGestionGarantias extends JPanel {
     }
 
     private void reclamarGarantia(int filaModelo) {
+<<<<<<< HEAD
         String producto = modeloTabla.getValueAt(filaModelo, 2).toString();
         // Extraemos el ID oculto que ahora sí tiene valor
         int idDetalle = Integer.parseInt(modeloTabla.getValueAt(filaModelo, 8).toString()); 
@@ -219,6 +289,21 @@ public class PanelGestionGarantias extends JPanel {
             } else {
                 JOptionPane.showMessageDialog(this, "Error al procesar el reclamo en la BD.", "Error", JOptionPane.ERROR_MESSAGE);
             }
+=======
+        String cliente = modeloTabla.getValueAt(filaModelo, 1).toString();
+        String producto = modeloTabla.getValueAt(filaModelo, 2).toString();
+        String serie = modeloTabla.getValueAt(filaModelo, 3).toString();
+        String fechaCompra = modeloTabla.getValueAt(filaModelo, 4).toString();
+        int idDetalle = Integer.parseInt(modeloTabla.getValueAt(filaModelo, 8).toString()); 
+
+        Window parentWindow = SwingUtilities.getWindowAncestor(this);
+        DialogoReclamarGarantia dialogo = new DialogoReclamarGarantia(parentWindow, cliente, producto, serie, fechaCompra, idDetalle);
+        dialogo.setVisible(true);
+
+        if (dialogo.isExito()) {
+            JOptionPane.showMessageDialog(this, "Garantía reclamada exitosamente.", "Orion Systems", JOptionPane.INFORMATION_MESSAGE);
+            cargarDatosDesdeBD(); // Recargamos la tabla para ver el cambio
+>>>>>>> origin/parte-muoz
         }
     }
 

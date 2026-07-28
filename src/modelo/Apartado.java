@@ -18,6 +18,10 @@ public class Apartado {
     private String bancoPago;      // For abono inicial
     private String nombreCliente;  // For joins
     private String apellidoCliente;
+<<<<<<< HEAD
+=======
+    private String identidadCliente;
+>>>>>>> origin/parte-muoz
     private String nombreUsuario;
 
     public Apartado() {}
@@ -68,6 +72,12 @@ public class Apartado {
     public String getApellidoCliente() { return apellidoCliente; }
     public void setApellidoCliente(String apellidoCliente) { this.apellidoCliente = apellidoCliente; }
 
+<<<<<<< HEAD
+=======
+    public String getIdentidadCliente() { return identidadCliente; }
+    public void setIdentidadCliente(String identidadCliente) { this.identidadCliente = identidadCliente; }
+
+>>>>>>> origin/parte-muoz
     public String getNombreUsuario() { return nombreUsuario; }
     public void setNombreUsuario(String nombreUsuario) { this.nombreUsuario = nombreUsuario; }
 }

@@ -113,4 +113,8 @@ public class CatalogosDAO {
             ps.setString(1, nombre); ps.setInt(2, id); return ps.executeUpdate() > 0;
         } catch (SQLException e) { return false; }
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/parte-muoz

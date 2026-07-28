@@ -238,9 +238,15 @@ public class PanelPuntoVenta extends JPanel {
             sumImpuesto = 0.0;
         }
 
+<<<<<<< HEAD
         lblSubtotal.setText(String.format("Subtotal: L %.2f", sumSubtotal));
         lblImpuesto.setText(String.format("ISV (15%%): L %.2f", sumImpuesto));
         lblTotal.setText(String.format("L %.2f", granTotal));
+=======
+        lblSubtotal.setText(String.format("Subtotal: L %,.2f", sumSubtotal));
+        lblImpuesto.setText(String.format("ISV (15%%): L %,.2f", sumImpuesto));
+        lblTotal.setText(String.format("L %,.2f", granTotal));
+>>>>>>> origin/parte-muoz
     }
 
    // --- RESTRICCIÓN DE STOCK Y VALIDACIÓN DE SERIE ---
@@ -277,8 +283,13 @@ public class PanelPuntoVenta extends JPanel {
             }
         }
 
+<<<<<<< HEAD
         // Si NO requiere serie, agrupamos las cantidades si ya está en la tabla
         if (!p.isRequiereSerie()) {
+=======
+        // Si NO requiere serie Y NO TIENE GARANTÍA, agrupamos las cantidades si ya está en la tabla
+        if (!p.isRequiereSerie() && p.getDiasGarantia() == 0) {
+>>>>>>> origin/parte-muoz
             for (int i = 0; i < modeloTablaVentas.getRowCount(); i++) {
                 if ((int) modeloTablaVentas.getValueAt(i, 0) == p.getIdProducto()) {
                     int cantActual = (int) modeloTablaVentas.getValueAt(i, 3);
@@ -351,9 +362,15 @@ public class PanelPuntoVenta extends JPanel {
     private void modificarCantidad() {
         int f = tablaVentas.getSelectedRow(); if(f < 0) return;
         
+<<<<<<< HEAD
         // --- BLOQUEO DE SEGURIDAD PARA GARANTÍAS ---
         if (modeloTablaVentas.getValueAt(f, 8) != null) {
             JOptionPane.showMessageDialog(this, "No puede modificar la cantidad de un equipo que requiere Identificador.\nSi el cliente lleva varios, escanee el producto nuevamente para registrar el otro identificador.", "Acción Bloqueada", JOptionPane.WARNING_MESSAGE);
+=======
+        // --- BLOQUEO DE SEGURIDAD PARA GARANTÍAS Y SERIES ---
+        if (modeloTablaVentas.getValueAt(f, 9) != null || (int)modeloTablaVentas.getValueAt(f, 8) > 0) {
+            JOptionPane.showMessageDialog(this, "No puede modificar la cantidad de un equipo que requiere Identificador o posee Garantía.\nSi el cliente lleva varios, escanee el producto nuevamente.", "Acción Bloqueada", JOptionPane.WARNING_MESSAGE);
+>>>>>>> origin/parte-muoz
             return;
         }
         
@@ -427,9 +444,27 @@ public class PanelPuntoVenta extends JPanel {
 
         if (esApartado) {
             JTextField txtAbonoInicial = new JTextField("0.00");
+<<<<<<< HEAD
             JTextField txtDiasPlazo = new JTextField("30");
             Object[] fields = {
                 "Total de la Compra: L " + String.format("%.2f", granTotal),
+=======
+            txtAbonoInicial.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyTyped(java.awt.event.KeyEvent evt) {
+                    char c = evt.getKeyChar();
+                    if (!Character.isDigit(c) && c != '.') evt.consume();
+                    if (c == '.' && txtAbonoInicial.getText().contains(".")) evt.consume();
+                }
+            });
+            JTextField txtDiasPlazo = new JTextField("30");
+            txtDiasPlazo.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyTyped(java.awt.event.KeyEvent evt) {
+                    if (!Character.isDigit(evt.getKeyChar())) evt.consume();
+                }
+            });
+            Object[] fields = {
+                "Total de la Compra: L " + String.format("%,.2f", granTotal),
+>>>>>>> origin/parte-muoz
                 "Abono Inicial (L):", txtAbonoInicial,
                 "Plazo de Pago (Días):", txtDiasPlazo
             };
@@ -741,7 +776,11 @@ public class PanelPuntoVenta extends JPanel {
             for (Producto p : lista) { 
                 // FILTRO ESTRICTO: Si está eliminado lógicamente (eliminado_producto == 1), NO se añade a la lista
                 // Nota: Si tu método en el modelo se llama diferente (ej: isEliminadoProducto()), adáptalo aquí
+<<<<<<< HEAD
                 mod.addRow(new Object[]{p.getIdProducto(), p.getRutaImagen(), p.getCodigoBarras(), p.getNombreProducto(), String.format("L %.2f", p.getPrecioVenta()), p.getStockProducto()}); 
+=======
+                mod.addRow(new Object[]{p.getIdProducto(), p.getRutaImagen(), p.getCodigoBarras(), p.getNombreProducto(), String.format("L %,.2f", p.getPrecioVenta()), p.getStockProducto()}); 
+>>>>>>> origin/parte-muoz
             }
             
             tab.addMouseListener(new java.awt.event.MouseAdapter() {

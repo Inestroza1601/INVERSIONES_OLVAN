@@ -166,6 +166,13 @@ public class VentasDAO {
                     try (ResultSet rsStock = psStockActual.executeQuery()) { if (rsStock.next()) stockActual = rsStock.getInt("stock_producto"); }
                     
                     int stockRestante = stockActual - cantidad;
+<<<<<<< HEAD
+=======
+                    if (stockRestante < 0) {
+                        con.rollback();
+                        throw new SQLException("Stock negativo no permitido. Producto: " + nombre);
+                    }
+>>>>>>> origin/parte-muoz
 
                     psStockUpdate.setInt(1, stockRestante); psStockUpdate.setInt(2, idProd);
                     psStockUpdate.executeUpdate();
@@ -208,7 +215,11 @@ public class VentasDAO {
     public java.util.List<Object[]> listarVentas() {
         java.util.List<Object[]> ventas = new java.util.ArrayList<>();
         String sql = "SELECT v.id_ventas, v.fecha_venta, v.subtotal_venta, v.impuesto_venta, v.total_venta, "
+<<<<<<< HEAD
                    + "v.referencia_pago, v.banco_pago, c.id_cliente, c.nombre_cliente, c.apellido_cliente, "
+=======
+                   + "v.referencia_pago, v.banco_pago, c.id_cliente, c.nombre_cliente, c.apellido_cliente, c.identidad_cliente, "
+>>>>>>> origin/parte-muoz
                    + "u.nombre_usuario, m.nombre_metodo "
                    + "FROM VENTAS v "
                    + "LEFT JOIN CLIENTES c ON v.id_cliente_venta = c.id_cliente "
@@ -237,6 +248,10 @@ public class VentasDAO {
                     rs.getDouble("impuesto_venta"),
                     rs.getDouble("total_venta"),
                     rs.getString("referencia_pago"),
+<<<<<<< HEAD
+=======
+                    rs.getString("identidad_cliente"),
+>>>>>>> origin/parte-muoz
                     rs.getString("banco_pago")
                 });
             }
@@ -316,4 +331,8 @@ public class VentasDAO {
         } catch (SQLException e) { System.err.println("Error al obtener recibo: " + e.getMessage()); }
         return mapa;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/parte-muoz

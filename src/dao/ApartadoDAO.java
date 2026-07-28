@@ -97,6 +97,13 @@ public class ApartadoDAO {
                     }
 
                     int stockRestante = stock - d.getCantidadApartado();
+<<<<<<< HEAD
+=======
+                    if (stockRestante < 0) {
+                        con.rollback();
+                        throw new SQLException("Stock negativo no permitido para: " + d.getNombreProducto());
+                    }
+>>>>>>> origin/parte-muoz
                     psStockUpdate.setInt(1, stockRestante);
                     psStockUpdate.setInt(2, d.getIdProducto());
                     psStockUpdate.executeUpdate();
@@ -123,7 +130,11 @@ public class ApartadoDAO {
 
     public List<Apartado> listarApartados() {
         List<Apartado> lista = new ArrayList<>();
+<<<<<<< HEAD
         String sql = "SELECT a.*, c.nombre_cliente, c.apellido_cliente, u.nombre_usuario "
+=======
+        String sql = "SELECT a.*, c.nombre_cliente, c.apellido_cliente, c.identidad_cliente, u.nombre_usuario "
+>>>>>>> origin/parte-muoz
                    + "FROM APARTADOS a "
                    + "LEFT JOIN CLIENTES c ON a.id_cliente_apartado = c.id_cliente "
                    + "LEFT JOIN USUARIOS u ON a.id_usuario = u.id_usuario "
@@ -148,6 +159,10 @@ public class ApartadoDAO {
                 a.setFechaEntrega(rs.getTimestamp("fecha_entrega"));
                 a.setNombreCliente(rs.getString("nombre_cliente"));
                 a.setApellidoCliente(rs.getString("apellido_cliente"));
+<<<<<<< HEAD
+=======
+                a.setIdentidadCliente(rs.getString("identidad_cliente"));
+>>>>>>> origin/parte-muoz
                 a.setNombreUsuario(rs.getString("nombre_usuario"));
                 lista.add(a);
             }
@@ -389,6 +404,7 @@ public class ApartadoDAO {
         }
     }
 
+<<<<<<< HEAD
     public boolean entregarApartado(int idApartado) {
         String sql = "UPDATE APARTADOS SET estado_apartado = 'ENTREGADO', fecha_entrega = GETDATE() WHERE id_apartado = ? AND estado_apartado = 'PAGADO'";
         try (Connection con = factory.getConexion();
@@ -398,6 +414,110 @@ public class ApartadoDAO {
         } catch (SQLException e) {
             System.err.println("Error al entregar apartado: " + e.getMessage());
             return false;
+=======
+    public boolean entregarApartadoYGenerarVenta(int idApartado, int idUsuarioCaja, boolean aplicarISV) {
+        String sqlApartadoUpdate = "UPDATE APARTADOS SET estado_apartado = 'ENTREGADO', fecha_entrega = GETDATE() WHERE id_apartado = ? AND estado_apartado = 'PAGADO'";
+        String sqlVenta = "INSERT INTO VENTAS (fecha_venta, id_cliente_venta, id_usuario, id_metodo_pago, subtotal_venta, impuesto_venta, total_venta, referencia_pago, banco_pago) VALUES (GETDATE(), ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlDetalleVenta = "INSERT INTO DETALLES_VENTA (id_ventas, id_producto, descripcion_venta, cantidad_venta, precio_unitario_venta, subtotal_venta, identificador_serie, dias_garantia) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        Connection con = null;
+        try {
+            con = factory.getConexion();
+            con.setAutoCommit(false);
+            
+            // 1. Get Apartado details
+            Apartado ap = obtenerPorId(idApartado);
+            if (ap == null || !ap.getEstadoApartado().equalsIgnoreCase("PAGADO")) {
+                con.rollback(); return false;
+            }
+            
+            // Get last payment method used for this layaway, default to 1 (Cash)
+            int idMetodoPago = 1;
+            String banco = null;
+            String sqlMetodo = "SELECT TOP 1 id_metodo_pago, banco_pago FROM ABONOS_APARTADO WHERE id_apartado = ? ORDER BY id_abono DESC";
+            try (PreparedStatement psMetodo = con.prepareStatement(sqlMetodo)) {
+                psMetodo.setInt(1, idApartado);
+                try (ResultSet rs = psMetodo.executeQuery()) {
+                    if (rs.next()) {
+                        idMetodoPago = rs.getInt("id_metodo_pago");
+                        banco = rs.getString("banco_pago");
+                    }
+                }
+            }
+            
+            // Calculate totals
+            double total = ap.getTotalApartado();
+            double subtotal = aplicarISV ? (total / 1.15) : total;
+            double impuesto = aplicarISV ? (total - subtotal) : 0.0;
+            
+            // 2. Insert into VENTAS
+            int idVentaGenerado = 0;
+            try (PreparedStatement psVenta = con.prepareStatement(sqlVenta, Statement.RETURN_GENERATED_KEYS)) {
+                psVenta.setInt(1, ap.getIdClienteApartado());
+                psVenta.setInt(2, idUsuarioCaja);
+                psVenta.setInt(3, idMetodoPago);
+                psVenta.setDouble(4, subtotal);
+                psVenta.setDouble(5, impuesto);
+                psVenta.setDouble(6, total);
+                psVenta.setString(7, "Pago de Apartado #" + idApartado);
+                if (banco == null) psVenta.setNull(8, Types.VARCHAR); else psVenta.setString(8, banco);
+                
+                psVenta.executeUpdate();
+                try (ResultSet rsKeys = psVenta.getGeneratedKeys()) { 
+                    if (rsKeys.next()) idVentaGenerado = rsKeys.getInt(1); 
+                }
+            }
+            if (idVentaGenerado == 0) { con.rollback(); return false; }
+            
+            // 3. Insert into DETALLES_VENTA
+            List<DetalleApartado> detalles = listarDetalles(idApartado);
+            try (PreparedStatement psDetalle = con.prepareStatement(sqlDetalleVenta)) {
+                for (DetalleApartado d : detalles) {
+                    double precioUnitario = d.getPrecioUnitarioApartado();
+                    if (aplicarISV) precioUnitario = precioUnitario / 1.15;
+                    double subtotalFila = precioUnitario * d.getCantidadApartado();
+                    
+                    psDetalle.setInt(1, idVentaGenerado);
+                    psDetalle.setInt(2, d.getIdProducto());
+                    psDetalle.setString(3, d.getNombreProducto());
+                    psDetalle.setInt(4, d.getCantidadApartado());
+                    psDetalle.setDouble(5, precioUnitario);
+                    psDetalle.setDouble(6, subtotalFila);
+                    if (d.getIdentificadorSerie() == null || d.getIdentificadorSerie().isEmpty()) {
+                        psDetalle.setNull(7, Types.VARCHAR);
+                    } else {
+                        psDetalle.setString(7, d.getIdentificadorSerie());
+                    }
+                    
+                    int diasGarantia = 0;
+                    try (PreparedStatement psGar = con.prepareStatement("SELECT dias_garantia FROM INVENTARIO WHERE id_producto = ?")) {
+                        psGar.setInt(1, d.getIdProducto());
+                        try (ResultSet rsGar = psGar.executeQuery()) {
+                            if (rsGar.next()) diasGarantia = rsGar.getInt("dias_garantia");
+                        }
+                    }
+                    
+                    psDetalle.setInt(8, diasGarantia);
+                    psDetalle.executeUpdate();
+                }
+            }
+            
+            // 4. Update APARTADOS status
+            try (PreparedStatement psUpdate = con.prepareStatement(sqlApartadoUpdate)) {
+                psUpdate.setInt(1, idApartado);
+                psUpdate.executeUpdate();
+            }
+            
+            con.commit();
+            return true;
+            
+        } catch (SQLException e) {
+            if (con != null) try { con.rollback(); } catch (SQLException ex) {}
+            System.err.println("Error al entregar apartado y generar venta: " + e.getMessage());
+            return false;
+        } finally {
+            if (con != null) try { con.setAutoCommit(true); con.close(); } catch (SQLException e) {}
+>>>>>>> origin/parte-muoz
         }
     }
 }

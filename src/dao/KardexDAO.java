@@ -81,6 +81,14 @@ public class KardexDAO {
             }
 
             int nuevoStock = tipoMovimiento.equals("Salida") ? (stockActual - cantidad) : (stockActual + cantidad);
+<<<<<<< HEAD
+=======
+            
+            if (nuevoStock < 0) {
+                con.rollback();
+                throw new SQLException("Stock negativo no permitido");
+            }
+>>>>>>> origin/parte-muoz
 
             // 2. Guardar en KARDEX
             try (PreparedStatement psK = con.prepareStatement(sqlKardex)) {
@@ -137,4 +145,8 @@ public class KardexDAO {
         } catch (SQLException e) { System.err.println("Error obteniendo historial: " + e.getMessage()); }
         return historial;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/parte-muoz

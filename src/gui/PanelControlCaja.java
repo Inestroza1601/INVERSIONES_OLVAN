@@ -260,7 +260,11 @@ public class PanelControlCaja extends JPanel {
             
             String fechaA = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(activa.getFechaApertura());
             lblFechaApertura.setText("<html><strong>Fecha Apertura:</strong> " + fechaA + "</html>");
+<<<<<<< HEAD
             lblMontoApertura.setText("<html><strong>Efectivo Inicial:</strong> L " + String.format("%.2f", activa.getMontoApertura()) + "</html>");
+=======
+            lblMontoApertura.setText("<html><strong>Efectivo Inicial:</strong> L " + String.format("%,.2f", activa.getMontoApertura()) + "</html>");
+>>>>>>> origin/parte-muoz
 
             // Configurar visibilidad según el rol
             if (rolId == 3) {
@@ -294,9 +298,15 @@ public class PanelControlCaja extends JPanel {
             double aTot = (double) c.get("total_abonos_general");
             double esp = (double) c.get("efectivo_esperado");
 
+<<<<<<< HEAD
             lblVentasValor.setText("Ventas del Turno: L " + String.format("%.2f", vTot));
             lblAbonosValor.setText("Abonos del Turno: L " + String.format("%.2f", aTot));
             lblEsperadoValor.setText("Efectivo Esperado: L " + String.format("%.2f", esp));
+=======
+            lblVentasValor.setText("Ventas del Turno: L " + String.format("%,.2f", vTot));
+            lblAbonosValor.setText("Abonos del Turno: L " + String.format("%,.2f", aTot));
+            lblEsperadoValor.setText("Efectivo Esperado: L " + String.format("%,.2f", esp));
+>>>>>>> origin/parte-muoz
         }
     }
 
@@ -312,10 +322,17 @@ public class PanelControlCaja extends JPanel {
                 fApe,
                 fCie,
                 c.getCajeroTurno() != null && !c.getCajeroTurno().isEmpty() ? c.getCajeroTurno() : c.getNombreUsuarioApertura(),
+<<<<<<< HEAD
                 "L " + String.format("%.2f", c.getMontoApertura()),
                 c.getFechaCierre() != null ? ("L " + String.format("%.2f", c.getMontoCierreEsperado())) : "-",
                 c.getFechaCierre() != null ? ("L " + String.format("%.2f", c.getMontoCierreReal())) : "-",
                 c.getFechaCierre() != null ? ("L " + String.format("%.2f", c.getDiferenciaCierre())) : "-",
+=======
+                "L " + String.format("%,.2f", c.getMontoApertura()),
+                c.getFechaCierre() != null ? ("L " + String.format("%,.2f", c.getMontoCierreEsperado())) : "-",
+                c.getFechaCierre() != null ? ("L " + String.format("%,.2f", c.getMontoCierreReal())) : "-",
+                c.getFechaCierre() != null ? ("L " + String.format("%,.2f", c.getDiferenciaCierre())) : "-",
+>>>>>>> origin/parte-muoz
                 c.getEstadoCaja() == 1 ? "ABIERTA" : "CERRADA"
             });
         }
@@ -436,25 +453,42 @@ public class PanelControlCaja extends JPanel {
             sb.append("Cierre: ").append(sdf.format((Timestamp) c.get("fecha_cierre"))).append("\n");
         }
         sb.append("-----------------------------------------\n");
+<<<<<<< HEAD
         sb.append("Efectivo Inicial: L ").append(String.format("%.2f", c.get("monto_apertura"))).append("\n");
         sb.append("Ventas Totales: L ").append(String.format("%.2f", c.get("total_ventas_general"))).append("\n");
         sb.append("Abonos Recibidos: L ").append(String.format("%.2f", c.get("total_abonos_general"))).append("\n");
         sb.append("Efectivo Esperado: L ").append(String.format("%.2f", c.get("efectivo_esperado"))).append("\n");
+=======
+        sb.append("Efectivo Inicial: L ").append(String.format("%,.2f", c.get("monto_apertura"))).append("\n");
+        sb.append("Ventas Totales: L ").append(String.format("%,.2f", c.get("total_ventas_general"))).append("\n");
+        sb.append("Abonos Recibidos: L ").append(String.format("%,.2f", c.get("total_abonos_general"))).append("\n");
+        sb.append("Efectivo Esperado: L ").append(String.format("%,.2f", c.get("efectivo_esperado"))).append("\n");
+>>>>>>> origin/parte-muoz
         
         double real = 0;
         if (activa != null) {
             try { real = Double.parseDouble(txtMontoReal.getText().trim()); } catch(Exception e) {}
         }
+<<<<<<< HEAD
         sb.append("Efectivo Real Contado: L ").append(String.format("%.2f", real)).append("\n");
         double esperado = (double) c.get("efectivo_esperado");
         sb.append("Diferencia (Sobrante/Faltante): L ").append(String.format("%.2f", real - esperado)).append("\n");
+=======
+        sb.append("Efectivo Real Contado: L ").append(String.format("%,.2f", real)).append("\n");
+        double esperado = (double) c.get("efectivo_esperado");
+        sb.append("Diferencia (Sobrante/Faltante): L ").append(String.format("%,.2f", real - esperado)).append("\n");
+>>>>>>> origin/parte-muoz
         sb.append("=========================================\n");
         
         List<Map<String, Object>> prods = (List<Map<String, Object>>) c.get("productos_vendidos");
         if (prods != null && !prods.isEmpty()) {
             sb.append("\nPRODUCTOS VENDIDOS EN EL TURNO:\n");
             for (Map<String, Object> p : prods) {
+<<<<<<< HEAD
                 sb.append(p.get("cantidad")).append("x ").append(p.get("descripcion")).append(" (L ").append(String.format("%.2f", p.get("total_valor"))).append(")\n");
+=======
+                sb.append(p.get("cantidad")).append("x ").append(p.get("descripcion")).append(" (L ").append(String.format("%,.2f", p.get("total_valor"))).append(")\n");
+>>>>>>> origin/parte-muoz
             }
         }
         

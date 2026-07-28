@@ -33,4 +33,8 @@ public class Cliente {
 
     public boolean isEstadoCliente() { return estadoCliente; }
     public void setEstadoCliente(boolean estadoCliente) { this.estadoCliente = estadoCliente; }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/parte-muoz
