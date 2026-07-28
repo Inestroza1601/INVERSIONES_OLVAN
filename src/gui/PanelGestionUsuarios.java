@@ -13,6 +13,7 @@ public class PanelGestionUsuarios extends JPanel {
     private JPanel panelForm; 
     private JTextField txtIdentidad;
     private JTextField txtNombre;
+    private JTextField txtEmail;
     private JComboBox<String> cmbRol;
     private JCheckBox chkAccesoSistema;
     private JPasswordField txtPassword;
@@ -87,6 +88,8 @@ public class PanelGestionUsuarios extends JPanel {
         
         txtNombre = new JTextField(20);
         
+        txtEmail = new JTextField(20);
+        
         // --- 🚀 COMBOBOX Y BOTÓN NUEVO ROL (UNIFICADO) ---
         cmbRol = new JComboBox<>();
         cmbRol.setEditable(true); 
@@ -151,6 +154,7 @@ public class PanelGestionUsuarios extends JPanel {
         int fila = 0;
         agregarFilaFormulario(panelForm, gbc, fila++, "ID Usuario:", txtIdentidad);
         agregarFilaFormulario(panelForm, gbc, fila++, "Nombre Completo:", txtNombre);
+        agregarFilaFormulario(panelForm, gbc, fila++, "Correo Electrónico:", txtEmail);
         agregarFilaFormulario(panelForm, gbc, fila++, "Rol del Usuario:", panelContenedorRol);
         
         gbc.gridy = fila++; gbc.gridx = 0; gbc.gridwidth = 2;
@@ -189,7 +193,7 @@ public class PanelGestionUsuarios extends JPanel {
         JPanel panelTabla = new JPanel(new BorderLayout());
         panelTabla.setBackground(new Color(240, 242, 245)); // Gris Nube
 
-        String[] columnas = {"ID", "Nombre", "Rol", "Acceso", "Estado"};
+        String[] columnas = {"ID", "Nombre", "Rol", "Correo", "Acceso", "Estado"};
         modeloTabla = new DefaultTableModel(null, columnas) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; } 
@@ -237,24 +241,25 @@ public class PanelGestionUsuarios extends JPanel {
         modeloTabla.setRowCount(0);
         UsuarioDAO dao = new UsuarioDAO();
         for (Usuario u : dao.listarUsuarios()) {
-            Object[] fila = new Object[5];
+            Object[] fila = new Object[6];
             fila[0] = u.getIdUsuario();
             fila[1] = u.getNombreUsuario();
             fila[2] = u.getNombreRol() != null ? u.getNombreRol().toUpperCase() : "DESCONOCIDO"; 
+            fila[3] = u.getEmailUsuario() != null ? u.getEmailUsuario() : "";
             
             String hashRespaldo = Seguridad.encriptarSHA256(u.getNombreUsuario());
             
             if (u.getPasswordHash() != null && u.getPasswordHash().equals(hashRespaldo)) {
                 // Si el hash coincide con el de su nombre, es la clave de respaldo (NO tiene acceso)
-                fila[3] = "No";
+                fila[4] = "No";
             } else if (u.getPasswordHash() != null && !u.getPasswordHash().isEmpty()) {
                 // Si tiene otra clave distinta, SÍ tiene acceso
-                fila[3] = "Sí";
+                fila[4] = "Sí";
             } else {
-                fila[3] = "No";
+                fila[4] = "No";
             }
             
-            fila[4] = u.isEstadoUsuario() ? "Activo" : "Inactivo";
+            fila[5] = u.isEstadoUsuario() ? "Activo" : "Inactivo";
             modeloTabla.addRow(fila);
         }
     }
@@ -267,7 +272,9 @@ public class PanelGestionUsuarios extends JPanel {
         String rolT = tablaUsuarios.getValueAt(fila, 2).toString().toLowerCase();
         cmbRol.setSelectedItem(rolT);
         
-        boolean tieneAcceso = tablaUsuarios.getValueAt(fila, 3).toString().equals("Sí");
+        txtEmail.setText(tablaUsuarios.getValueAt(fila, 3).toString());
+        
+        boolean tieneAcceso = tablaUsuarios.getValueAt(fila, 4).toString().equals("Sí");
         
         // Reforzamos la regla al cargar datos
         if(rolT.contains("admin")){
@@ -296,6 +303,7 @@ public class PanelGestionUsuarios extends JPanel {
         tablaUsuarios.clearSelection();
         txtIdentidad.setText("AUTOGENERADO");
         txtNombre.setText("");
+        txtEmail.setText("");
         
         if (cmbRol.getItemCount() > 0) {
             cmbRol.setSelectedIndex(0);
@@ -330,6 +338,7 @@ public class PanelGestionUsuarios extends JPanel {
         }
 
         u.setNombreUsuario(txtNombre.getText().trim());
+        u.setEmailUsuario(txtEmail.getText().trim());
 
         UsuarioDAO dao = new UsuarioDAO();
         String rolSeleccionado = cmbRol.getSelectedItem().toString();
@@ -345,7 +354,7 @@ public class PanelGestionUsuarios extends JPanel {
             if (btnGuardar.getText().equals("Actualizar")) {
                 int filaSelec = tablaUsuarios.getSelectedRow();
                 if (filaSelec != -1) {
-                    teniaAccesoAntes = tablaUsuarios.getValueAt(filaSelec, 3).toString().equals("Sí");
+                    teniaAccesoAntes = tablaUsuarios.getValueAt(filaSelec, 4).toString().equals("Sí");
                 }
             }
 

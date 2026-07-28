@@ -7,6 +7,7 @@ public class Usuario {
     private String nombreUsuario;
     private String passwordHash;
     private boolean estadoUsuario;
+    private String emailUsuario;
 
     public Usuario() {}
 
@@ -23,4 +24,6 @@ public class Usuario {
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
     public boolean isEstadoUsuario() { return estadoUsuario; }
     public void setEstadoUsuario(boolean estadoUsuario) { this.estadoUsuario = estadoUsuario; }
+    public String getEmailUsuario() { return emailUsuario; }
+    public void setEmailUsuario(String emailUsuario) { this.emailUsuario = emailUsuario; }
 }

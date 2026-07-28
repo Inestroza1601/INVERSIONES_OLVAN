@@ -1,22 +1,8 @@
-﻿feat: Refactorización masiva de fotos, UI, y control de transacciones SQL
+﻿feat: Implementación de sistema de recuperación de contraseña por correo electrónico
 
-1. SISTEMA DE FOTOS POR QR Y CELULAR:
-- Se implementó un servidor web local (NanoHTTPD) en ServidorFotos para enlazar el teléfono móvil con el sistema de escritorio vía código QR.
-- Se añadió un procesador en JavaScript en el lado del cliente (móvil) que detecta la orientación EXIF (vertical/horizontal) de la cámara y redimensiona la imagen vía un <canvas> antes de convertirla a Base64 y enviarla al servidor.
-- La interfaz HTML generada ahora es dinámica: en el control de Garantías solo permite usar la Cámara, mientras que en la creación de Productos nuevos se habilitó un botón verde adicional para elegir fotos desde la Galería.
-- Se añadió soporte para Preview instantáneo de imágenes grandes dentro del sistema.
-
-2. BLINDAJE DE BASE DE DATOS (PREVENCIÓN DE STOCK NEGATIVO):
-- Se reprogramaron las clases VentasDAO, ApartadoDAO, GarantiaDAO y KardexDAO.
-- Se introdujo lógica estricta transaccional (con.setAutoCommit(false)) que valida aritméticamente si una resta dejará el inventario físico por debajo de cero.
-- Si se detecta un intento de sobreventa o cambio físico sin stock, el sistema ejecuta un con.rollback(), cancela la operación y notifica al usuario, evitando quiebres de inventario.
-
-3. MEJORAS DE UI/UX E ICONOGRAFÍA 2D:
-- Se eliminó la dependencia de archivos de imagen externos para íconos. Se programaron íconos vectoriales a mano usando Graphics2D (IconoCamara, IconoCarpeta, IconoOjo, IconoEnvio, etc.).
-- Se rediseñó la ventana de 'Detalles de Daños' en Mermas (PanelInventarioDefectuoso). Ahora posee lógica condicional: si hay múltiples productos, muestra una tabla; si es uno solo, levanta un diseño moderno en Tarjeta (Card).
-- Se implementó JScrollPane en las tarjetas de detalle para que los textos largos nunca se corten visualmente, adaptando la ventana dinámicamente.
-
-4. SEGUIMIENTO E HISTORIAL DE MERMAS:
-- Nivel BD: Se integraron 3 nuevas columnas (echa_envio_proveedor, echa_recibido_proveedor, echa_entregado_cliente) en INVENTARIO_DEFECTUOSO para estampar marcas de tiempo reales en cada cambio de estado.
-- Nivel DAO/UI: Se construyó un poderoso JOIN a las tablas VENTAS y CLIENTES para identificar automáticamente si un producto en bodega pertenece a un Cliente particular o si pertenece a la Empresa (Inversiones Olvan).
-- El sistema ahora genera y muestra una Línea de Tiempo (Timeline) automática en la vista de Detalles de Mermas indicando cada paso histórico por el que ha pasado el producto.
+- Se integraron las librerías JavaMail (javax.mail.jar y ctivation.jar) para el envío de correos.
+- Se creó la clase utilitaria EmailSender.java encargada de gestionar el SMTP y despachar los códigos/enlaces de recuperación.
+- Se implementaron las interfaces DialogoRecuperarPassword.java y DialogoCambiarPassword.java para guiar al usuario en el proceso de reseteo.
+- Se modificó PanelLogin.java para incorporar el acceso a la recuperación de credenciales.
+- Se actualizaron UsuarioDAO.java y el modelo Usuario.java para manejar la validación y actualización de contraseñas de manera segura en la base de datos.
+- Se actualizó el archivo de configuración del proyecto y el script de base de datos (ctualizaciones_db.sql) con los esquemas pertinentes.

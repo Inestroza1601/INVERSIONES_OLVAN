@@ -147,6 +147,21 @@ public class PanelLogin extends JPanel {
         txtUsuario.getDocument().addDocumentListener(resetErrorListener);
         txtPassword.getDocument().addDocumentListener(resetErrorListener);
 
+        // --- ENLACE OLVIDE MI CONTRASEÑA ---
+        JLabel lblRecuperar = new JLabel("¿Olvidaste tu contraseña?");
+        lblRecuperar.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        lblRecuperar.setForeground(new Color(41, 128, 185)); // Azul tipo enlace
+        lblRecuperar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblRecuperar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                Frame parent = (Frame) SwingUtilities.getWindowAncestor(PanelLogin.this);
+                DialogoRecuperarPassword dialog = new DialogoRecuperarPassword(parent);
+                dialog.setVisible(true);
+            }
+        });
+        
+        gbcDer.gridy = 6; gbcDer.insets = new Insets(0, 45, 15, 45); pnlDerecha.add(lblRecuperar, gbcDer);
+
         btnEntrar = new JButton("Ingresar al Sistema");
         btnEntrar.setBackground(new Color(39, 174, 96));
         btnEntrar.setForeground(Color.WHITE);
@@ -157,7 +172,7 @@ public class PanelLogin extends JPanel {
         btnEntrar.putClientProperty("JButton.buttonType", "roundRect");
         btnEntrar.addActionListener(e -> procesarLogin());
         
-        gbcDer.gridy = 6; gbcDer.insets = new Insets(0, 45, 15, 45); pnlDerecha.add(btnEntrar, gbcDer);
+        gbcDer.gridy = 7; gbcDer.insets = new Insets(0, 45, 15, 45); pnlDerecha.add(btnEntrar, gbcDer);
 
         // Ensamblar tarjeta
         pnlTarjeta.add(pnlIzquierda);

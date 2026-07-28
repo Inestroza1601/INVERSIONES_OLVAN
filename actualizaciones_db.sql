@@ -80,3 +80,22 @@ GO
 -- Nota: Asegurarse de que el campo de ruta_imagen_producto pueda almacenar cadenas Base64 inmensas
 ALTER TABLE INVENTARIO ALTER COLUMN ruta_imagen_producto VARCHAR(MAX) NULL;
 GO
+
+-- 5. ACTUALIZACIÓN A LA TABLA USUARIOS (RECUPERACIÓN DE CONTRASEÑA)
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'email_usuario' AND Object_ID = Object_ID(N'USUARIOS'))
+BEGIN
+    ALTER TABLE USUARIOS ADD email_usuario VARCHAR(100) NULL;
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'token_recuperacion' AND Object_ID = Object_ID(N'USUARIOS'))
+BEGIN
+    ALTER TABLE USUARIOS ADD token_recuperacion VARCHAR(10) NULL;
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'expiracion_token' AND Object_ID = Object_ID(N'USUARIOS'))
+BEGIN
+    ALTER TABLE USUARIOS ADD expiracion_token DATETIME NULL;
+END
+GO
