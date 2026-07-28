@@ -121,6 +121,10 @@ public class ControlCajaDAO {
                 String sqlSales = "SELECT id_metodo_pago, SUM(total_venta) as total_metodo, COUNT(id_ventas) as transacciones "
                                 + "FROM VENTAS "
                                 + "WHERE fecha_venta >= ? AND fecha_venta <= ? "
+<<<<<<< HEAD
+=======
+                                + "AND (referencia_pago NOT LIKE 'Pago de Apartado%' OR referencia_pago IS NULL) "
+>>>>>>> origin/parte-muoz
                                 + "GROUP BY id_metodo_pago";
                 Map<Integer, Double> ventasTotales = new HashMap<>();
                 Map<Integer, Integer> ventasCount = new HashMap<>();
@@ -200,6 +204,10 @@ public class ControlCajaDAO {
                                    + "INNER JOIN VENTAS v ON d.id_ventas = v.id_ventas "
                                    + "LEFT JOIN INVENTARIO p ON d.id_producto = p.id_producto "
                                    + "WHERE v.fecha_venta >= ? AND v.fecha_venta <= ? "
+<<<<<<< HEAD
+=======
+                                   + "AND (v.referencia_pago NOT LIKE 'Pago de Apartado%' OR v.referencia_pago IS NULL) "
+>>>>>>> origin/parte-muoz
                                    + "GROUP BY p.codigo_barras_producto, d.descripcion_venta "
                                    + "ORDER BY cantidad_vendida DESC";
                 List<Map<String, Object>> productosVendidos = new ArrayList<>();

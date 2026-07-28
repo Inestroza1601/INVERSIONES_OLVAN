@@ -28,4 +28,8 @@ public class Seguridad {
             throw new RuntimeException("Error en el algoritmo de encriptación", e);
         }
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/parte-muoz

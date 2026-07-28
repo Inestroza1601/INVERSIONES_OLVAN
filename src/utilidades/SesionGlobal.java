@@ -25,4 +25,8 @@ public class SesionGlobal {
     public static Usuario getUsuarioActual() {
         return usuarioActual;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/parte-muoz

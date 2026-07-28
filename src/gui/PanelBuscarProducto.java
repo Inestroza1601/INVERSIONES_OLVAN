@@ -163,9 +163,15 @@ public class PanelBuscarProducto extends JPanel {
         List<Producto> productos = dao.listarProductosActivos();
 
         for (Producto p : productos) {
+<<<<<<< HEAD
             String pCompra = String.format("L %.2f", p.getPrecioCompra());
             String pVenta = String.format("L %.2f", p.getPrecioVenta());
             String pMayorista = p.getPrecioMayorista() > 0 ? String.format("L %.2f", p.getPrecioMayorista()) : "N/A";
+=======
+            String pCompra = String.format("L %,.2f", p.getPrecioCompra());
+            String pVenta = String.format("L %,.2f", p.getPrecioVenta());
+            String pMayorista = p.getPrecioMayorista() > 0 ? String.format("L %,.2f", p.getPrecioMayorista()) : "N/A";
+>>>>>>> origin/parte-muoz
 
             modeloTabla.addRow(new Object[]{
                 p.getIdProducto(),       // 0: ID

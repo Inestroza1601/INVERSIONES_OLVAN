@@ -78,4 +78,8 @@ public class EstadisticasDAO {
         // Empaquetamos todo en un arreglo para mandarlo al panel visual
         return new Object[]{totalActual, totalAnterior, ticketProm, topProducto};
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/parte-muoz

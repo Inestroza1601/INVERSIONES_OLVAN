@@ -7,6 +7,10 @@ public class Usuario {
     private String nombreUsuario;
     private String passwordHash;
     private boolean estadoUsuario;
+<<<<<<< HEAD
+=======
+    private String emailUsuario;
+>>>>>>> origin/parte-muoz
 
     public Usuario() {}
 
@@ -23,4 +27,10 @@ public class Usuario {
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
     public boolean isEstadoUsuario() { return estadoUsuario; }
     public void setEstadoUsuario(boolean estadoUsuario) { this.estadoUsuario = estadoUsuario; }
+<<<<<<< HEAD
 }
+=======
+    public String getEmailUsuario() { return emailUsuario; }
+    public void setEmailUsuario(String emailUsuario) { this.emailUsuario = emailUsuario; }
+}
+>>>>>>> origin/parte-muoz

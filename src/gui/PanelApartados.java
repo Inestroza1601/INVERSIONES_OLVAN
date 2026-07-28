@@ -21,6 +21,10 @@ public class PanelApartados extends JPanel {
     private JTable tablaApartados;
     private DefaultTableModel modeloTabla;
     private JTextField txtBuscar;
+<<<<<<< HEAD
+=======
+    private JCheckBox chkMostrarEntregados;
+>>>>>>> origin/parte-muoz
 
     public PanelApartados() {
         this.dao = new ApartadoDAO();
@@ -45,12 +49,27 @@ public class PanelApartados extends JPanel {
         JPanel pnlBuscar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         pnlBuscar.setOpaque(false);
         txtBuscar = new JTextField(15);
+<<<<<<< HEAD
         txtBuscar.putClientProperty("JTextField.placeholderText", "Buscar por cliente...");
+=======
+        txtBuscar.putClientProperty("JTextField.placeholderText", "Buscar por cliente, ID o DNI...");
+>>>>>>> origin/parte-muoz
         txtBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         txtBuscar.setPreferredSize(new Dimension(200, 35));
         txtBuscar.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(0, 8, 0, 8)));
         txtBuscar.addActionListener(e -> filtrarApartados());
         pnlBuscar.add(txtBuscar);
+<<<<<<< HEAD
+=======
+
+        chkMostrarEntregados = new JCheckBox("Mostrar Entregados/Cancelados");
+        chkMostrarEntregados.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        chkMostrarEntregados.setOpaque(false);
+        chkMostrarEntregados.setSelected(false);
+        chkMostrarEntregados.addActionListener(e -> cargarApartados());
+        pnlBuscar.add(chkMostrarEntregados);
+
+>>>>>>> origin/parte-muoz
         pnlCabecera.add(pnlBuscar, BorderLayout.EAST);
 
         this.add(pnlCabecera, BorderLayout.NORTH);
@@ -62,6 +81,36 @@ public class PanelApartados extends JPanel {
         tablaApartados.setRowHeight(32);
         tablaApartados.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         
+<<<<<<< HEAD
+=======
+        tablaApartados.getColumnModel().getColumn(7).setCellRenderer(new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (value != null) {
+                    String estado = value.toString().toUpperCase();
+                    if (estado.equals("ENTREGADO")) {
+                        c.setForeground(isSelected ? Color.WHITE : new Color(39, 174, 96));
+                        c.setFont(c.getFont().deriveFont(Font.BOLD));
+                    } else if (estado.equals("CANCELADO")) {
+                        c.setForeground(isSelected ? Color.WHITE : new Color(231, 76, 60));
+                        c.setFont(c.getFont().deriveFont(Font.BOLD));
+                    } else if (estado.equals("VIGENTE")) {
+                        c.setForeground(isSelected ? Color.WHITE : new Color(41, 128, 185));
+                        c.setFont(c.getFont().deriveFont(Font.BOLD));
+                    } else if (estado.equals("PAGADO")) {
+                        c.setForeground(isSelected ? Color.WHITE : new Color(243, 156, 18));
+                        c.setFont(c.getFont().deriveFont(Font.BOLD));
+                    } else {
+                        c.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
+                        c.setFont(c.getFont().deriveFont(Font.PLAIN));
+                    }
+                }
+                return c;
+            }
+        });
+
+>>>>>>> origin/parte-muoz
         JScrollPane scroll = new JScrollPane(tablaApartados);
         scroll.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)));
         scroll.getViewport().setBackground(Color.WHITE);
@@ -71,37 +120,70 @@ public class PanelApartados extends JPanel {
         JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         pnlBotones.setOpaque(false);
 
+<<<<<<< HEAD
         JButton btnDetalles = new JButton("👁 Ver Detalles");
+=======
+        JButton btnDetalles = new JButton("Ver Detalles", new IconoBoton(1));
+>>>>>>> origin/parte-muoz
         btnDetalles.setBackground(Color.WHITE);
         btnDetalles.setForeground(new Color(45, 45, 45));
         btnDetalles.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnDetalles.setFocusPainted(false);
+<<<<<<< HEAD
+=======
+        btnDetalles.setIconTextGap(8);
+>>>>>>> origin/parte-muoz
         btnDetalles.setPreferredSize(new Dimension(140, 38));
         btnDetalles.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)));
         btnDetalles.addActionListener(e -> verDetallesApartado());
 
+<<<<<<< HEAD
         JButton btnAbonar = new JButton("💵 Registrar Abono");
+=======
+        JButton btnAbonar = new JButton("Registrar Abono", new IconoBoton(2));
+>>>>>>> origin/parte-muoz
         btnAbonar.setBackground(new Color(39, 174, 96)); // Verde Menta
         btnAbonar.setForeground(Color.WHITE);
         btnAbonar.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnAbonar.setFocusPainted(false);
+<<<<<<< HEAD
         btnAbonar.setPreferredSize(new Dimension(150, 38));
         btnAbonar.addActionListener(e -> registrarAbonoRapido());
 
         JButton btnEntregar = new JButton("📦 Entregar Artículos");
+=======
+        btnAbonar.setIconTextGap(8);
+        btnAbonar.setPreferredSize(new Dimension(160, 38));
+        btnAbonar.addActionListener(e -> registrarAbonoRapido());
+
+        JButton btnEntregar = new JButton("Entregar Artículos", new IconoBoton(3));
+>>>>>>> origin/parte-muoz
         btnEntregar.setBackground(new Color(41, 128, 185)); // Azul
         btnEntregar.setForeground(Color.WHITE);
         btnEntregar.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnEntregar.setFocusPainted(false);
+<<<<<<< HEAD
         btnEntregar.setPreferredSize(new Dimension(160, 38));
         btnEntregar.addActionListener(e -> entregarArticulos());
 
         JButton btnCancelar = new JButton("❌ Cancelar Apartado");
+=======
+        btnEntregar.setIconTextGap(8);
+        btnEntregar.setPreferredSize(new Dimension(175, 38));
+        btnEntregar.addActionListener(e -> entregarArticulos());
+
+        JButton btnCancelar = new JButton("Cancelar Apartado", new IconoBoton(4));
+>>>>>>> origin/parte-muoz
         btnCancelar.setBackground(new Color(227, 0, 15)); // Rojo Logo
         btnCancelar.setForeground(Color.WHITE);
         btnCancelar.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnCancelar.setFocusPainted(false);
+<<<<<<< HEAD
         btnCancelar.setPreferredSize(new Dimension(165, 38));
+=======
+        btnCancelar.setIconTextGap(8);
+        btnCancelar.setPreferredSize(new Dimension(175, 38));
+>>>>>>> origin/parte-muoz
         btnCancelar.addActionListener(e -> cancelarApartadoCompleto());
 
         // Restringir botón de cancelar si es cajero
@@ -121,7 +203,18 @@ public class PanelApartados extends JPanel {
         modeloTabla.setRowCount(0);
         apartados = dao.listarApartados();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+<<<<<<< HEAD
         for (Apartado a : apartados) {
+=======
+        boolean mostrarEntregados = chkMostrarEntregados.isSelected();
+
+        for (Apartado a : apartados) {
+            String estado = a.getEstadoApartado();
+            if (!mostrarEntregados && (estado.equalsIgnoreCase("Entregado") || estado.equalsIgnoreCase("Cancelado"))) {
+                continue; // Skip delivered or canceled ones
+            }
+
+>>>>>>> origin/parte-muoz
             String fApe = sdf.format(a.getFechaApartado());
             String fLim = a.getFechaLimite() != null ? sdf.format(a.getFechaLimite()) : "N/A";
             String clie = a.getNombreCliente() + " " + (a.getApellidoCliente() != null ? a.getApellidoCliente() : "");
@@ -131,10 +224,17 @@ public class PanelApartados extends JPanel {
                 fApe,
                 fLim,
                 clie,
+<<<<<<< HEAD
                 "L " + String.format("%.2f", a.getTotalApartado()),
                 "L " + String.format("%.2f", a.getTotalApartado() - a.getSaldoPendiente()),
                 "L " + String.format("%.2f", a.getSaldoPendiente()),
                 a.getEstadoApartado()
+=======
+                "L " + String.format("%,.2f", a.getTotalApartado()),
+                "L " + String.format("%,.2f", a.getTotalApartado() - a.getSaldoPendiente()),
+                "L " + String.format("%,.2f", a.getSaldoPendiente()),
+                estado
+>>>>>>> origin/parte-muoz
             });
         }
     }
@@ -145,9 +245,26 @@ public class PanelApartados extends JPanel {
         
         modeloTabla.setRowCount(0);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+<<<<<<< HEAD
         for (Apartado a : apartados) {
             String clie = (a.getNombreCliente() + " " + (a.getApellidoCliente() != null ? a.getApellidoCliente() : "")).toLowerCase();
             if (clie.contains(filter)) {
+=======
+        boolean mostrarEntregados = chkMostrarEntregados.isSelected();
+
+        for (Apartado a : apartados) {
+            String estado = a.getEstadoApartado();
+            if (!mostrarEntregados && (estado.equalsIgnoreCase("Entregado") || estado.equalsIgnoreCase("Cancelado"))) {
+                continue;
+            }
+
+            String clie = (a.getNombreCliente() + " " + (a.getApellidoCliente() != null ? a.getApellidoCliente() : "")).toLowerCase();
+            String dni = a.getIdentidadCliente() != null ? a.getIdentidadCliente().toLowerCase().replace("-", "").replace(" ", "") : "";
+            String idStr = String.valueOf(a.getIdApartado());
+            String filterClean = filter.replace("-", "").replace(" ", "");
+
+            if (clie.contains(filter) || idStr.contains(filter) || dni.contains(filterClean) || dni.contains(filter)) {
+>>>>>>> origin/parte-muoz
                 String fApe = sdf.format(a.getFechaApartado());
                 String fLim = a.getFechaLimite() != null ? sdf.format(a.getFechaLimite()) : "N/A";
                 modeloTabla.addRow(new Object[]{
@@ -155,10 +272,17 @@ public class PanelApartados extends JPanel {
                     fApe,
                     fLim,
                     a.getNombreCliente() + " " + (a.getApellidoCliente() != null ? a.getApellidoCliente() : ""),
+<<<<<<< HEAD
                     "L " + String.format("%.2f", a.getTotalApartado()),
                     "L " + String.format("%.2f", a.getTotalApartado() - a.getSaldoPendiente()),
                     "L " + String.format("%.2f", a.getSaldoPendiente()),
                     a.getEstadoApartado()
+=======
+                    "L " + String.format("%,.2f", a.getTotalApartado()),
+                    "L " + String.format("%,.2f", a.getTotalApartado() - a.getSaldoPendiente()),
+                    "L " + String.format("%,.2f", a.getSaldoPendiente()),
+                    estado
+>>>>>>> origin/parte-muoz
                 });
             }
         }
@@ -186,6 +310,7 @@ public class PanelApartados extends JPanel {
             return;
         }
 
+<<<<<<< HEAD
         JTextField txtAbono = new JTextField();
         Map<Integer, String> metodos = new VentasDAO().obtenerMetodosPago();
         JComboBox<String> cmbMetodo = new JComboBox<>();
@@ -245,6 +370,14 @@ public class PanelApartados extends JPanel {
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Monto de abono inválido.", "Error", JOptionPane.ERROR_MESSAGE);
             }
+=======
+        Window parent = SwingUtilities.getWindowAncestor(this);
+        DialogoRegistrarAbono dialog = new DialogoRegistrarAbono((Frame) parent, id);
+        dialog.setVisible(true);
+
+        if (dialog.isExito()) {
+            cargarApartados();
+>>>>>>> origin/parte-muoz
         }
     }
 
@@ -259,7 +392,11 @@ public class PanelApartados extends JPanel {
 
         if (ap == null) return;
         if (ap.getSaldoPendiente() > 0.05) {
+<<<<<<< HEAD
             JOptionPane.showMessageDialog(this, "No se puede entregar la mercancía de un apartado con saldo pendiente (L " + String.format("%.2f", ap.getSaldoPendiente()) + ").", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+=======
+            JOptionPane.showMessageDialog(this, "No se puede entregar la mercancía de un apartado con saldo pendiente (L " + String.format("%,.2f", ap.getSaldoPendiente()) + ").", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+>>>>>>> origin/parte-muoz
             return;
         }
 
@@ -272,6 +409,7 @@ public class PanelApartados extends JPanel {
             return;
         }
 
+<<<<<<< HEAD
         int opt = JOptionPane.showConfirmDialog(this, "¿Confirmar que la mercancía ha sido entregada físicamente al cliente?", "Entregar Apartado", JOptionPane.YES_NO_OPTION);
         if (opt == JOptionPane.YES_OPTION) {
             if (dao.entregarApartado(id)) {
@@ -279,6 +417,24 @@ public class PanelApartados extends JPanel {
                 cargarApartados();
             } else {
                 JOptionPane.showMessageDialog(this, "Error al actualizar estado en la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
+=======
+        JCheckBox chkISV = new JCheckBox("Calcular y aplicar 15% de Impuesto (ISV) a esta venta", true);
+        Object[] msj = {
+            "¿Confirmar que la mercancía ha sido entregada físicamente al cliente?",
+            "Esta acción registrará oficialmente los ingresos en el Historial de Ventas.",
+            " ",
+            chkISV
+        };
+        int opt = JOptionPane.showConfirmDialog(this, msj, "Entregar Apartado y Registrar Venta", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+        
+        if (opt == JOptionPane.YES_OPTION) {
+            int idUser = utilidades.SesionGlobal.getUsuarioActual() != null ? utilidades.SesionGlobal.getUsuarioActual().getIdUsuario() : 1;
+            if (dao.entregarApartadoYGenerarVenta(id, idUser, chkISV.isSelected())) {
+                JOptionPane.showMessageDialog(this, "Apartado completado, entregado y Venta registrada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                cargarApartados();
+            } else {
+                JOptionPane.showMessageDialog(this, "Error de base de datos al entregar apartado y generar venta.", "Error", JOptionPane.ERROR_MESSAGE);
+>>>>>>> origin/parte-muoz
             }
         }
     }
@@ -329,6 +485,7 @@ public class PanelApartados extends JPanel {
         }
 
         int id = (int) tablaApartados.getValueAt(selectedRow, 0);
+<<<<<<< HEAD
         Apartado ap = dao.obtenerPorId(id);
         if (ap == null) return;
 
@@ -382,4 +539,56 @@ public class PanelApartados extends JPanel {
 
         dialog.setVisible(true);
     }
+=======
+        
+        Window parent = SwingUtilities.getWindowAncestor(this);
+        DialogoDetallesApartado dialog = new DialogoDetallesApartado((Frame) parent, id);
+        dialog.setVisible(true);
+    }
+    
+    // Clase interna para dibujar iconos vectoriales de los botones sin usar emojis
+    private class IconoBoton implements Icon {
+        private int tipo;
+        private int size = 18;
+        
+        public IconoBoton(int tipo) { this.tipo = tipo; }
+
+        @Override public int getIconWidth() { return size; }
+        @Override public int getIconHeight() { return size; }
+
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(c.getForeground());
+            g2.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+
+            switch (tipo) {
+                case 1: // Ojo (Detalles)
+                    g2.drawArc(x + 2, y + 5, 14, 8, 0, 180);
+                    g2.drawArc(x + 2, y + 5, 14, 8, 180, 180);
+                    g2.drawOval(x + 7, y + 7, 4, 4);
+                    break;
+                case 2: // Billete (Abonar)
+                    g2.drawRect(x + 2, y + 4, 14, 10);
+                    g2.drawOval(x + 7, y + 7, 4, 4);
+                    g2.drawLine(x + 4, y + 6, x + 4, y + 6);
+                    g2.drawLine(x + 14, y + 12, x + 14, y + 12);
+                    break;
+                case 3: // Caja (Entregar)
+                    g2.drawPolygon(new int[]{x + 9, x + 16, x + 16, x + 9, x + 2, x + 2}, 
+                                   new int[]{y + 2, y + 6, y + 14, y + 17, y + 14, y + 6}, 6);
+                    g2.drawLine(x + 2, y + 6, x + 9, y + 10);
+                    g2.drawLine(x + 16, y + 6, x + 9, y + 10);
+                    g2.drawLine(x + 9, y + 10, x + 9, y + 17);
+                    break;
+                case 4: // Cruz (Cancelar)
+                    g2.drawLine(x + 5, y + 5, x + 13, y + 13);
+                    g2.drawLine(x + 13, y + 5, x + 5, y + 13);
+                    break;
+            }
+            g2.dispose();
+        }
+    }
+>>>>>>> origin/parte-muoz
 }

@@ -189,17 +189,72 @@ public class PanelCrearProducto extends JPanel {
         lblVistaPreviaImagen.setForeground(Color.GRAY);
         lblVistaPreviaImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+<<<<<<< HEAD
         JButton btnCargarImagen = new JButton("Examinar...");
         btnCargarImagen.setBackground(new Color(240, 242, 245)); // Gris Nube
         btnCargarImagen.setForeground(new Color(45, 45, 45)); // Gris Oscuro
         btnCargarImagen.setFocusPainted(false);
         btnCargarImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
+=======
+        lblVistaPreviaImagen.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblVistaPreviaImagen.setToolTipText("Clic para ver imagen en grande");
+        lblVistaPreviaImagen.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (rutaImagenSeleccionada != null && !rutaImagenSeleccionada.isEmpty()) {
+                    Window window = SwingUtilities.getWindowAncestor(PanelCrearProducto.this);
+                    if (window instanceof Frame) {
+                        new DialogoVisorImagen((Frame) window, "Visor de Fotografía", rutaImagenSeleccionada).setVisible(true);
+                    } else if (window instanceof JDialog) {
+                        new DialogoVisorImagen((JDialog) window, "Visor de Fotografía", rutaImagenSeleccionada).setVisible(true);
+                    }
+                }
+            }
+        });
+
+        JButton btnTomarFoto = new JButton("Foto Celular");
+        btnTomarFoto.setIcon(new IconoCamara());
+        btnTomarFoto.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnTomarFoto.setBackground(new Color(39, 174, 96)); // Verde en lugar de rojo
+        btnTomarFoto.setForeground(Color.WHITE);
+        btnTomarFoto.setFocusPainted(false);
+        btnTomarFoto.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnTomarFoto.setMaximumSize(new Dimension(150, 35));
+        btnTomarFoto.addActionListener(e -> {
+            Window window = SwingUtilities.getWindowAncestor(PanelCrearProducto.this);
+            Frame frame = (window instanceof Frame) ? (Frame) window : null;
+            new DialogoEscanearQR(frame, true, b64 -> {
+                rutaImagenSeleccionada = b64;
+                ImageIcon icon = utilidades.ImagenHelper.obtenerIcono(rutaImagenSeleccionada, 150, 150);
+                if (icon != null) {
+                    lblVistaPreviaImagen.setText("");
+                    lblVistaPreviaImagen.setIcon(icon);
+                }
+                JOptionPane.showMessageDialog(this, "Foto capturada y adjuntada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            }).setVisible(true);
+        });
+
+        JButton btnCargarImagen = new JButton("De la PC");
+        btnCargarImagen.setIcon(new IconoCarpeta());
+        btnCargarImagen.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnCargarImagen.setBackground(new Color(240, 242, 245));
+        btnCargarImagen.setForeground(new Color(45, 45, 45));
+        btnCargarImagen.setFocusPainted(false);
+        btnCargarImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnCargarImagen.setMaximumSize(new Dimension(150, 35));
+>>>>>>> origin/parte-muoz
         btnCargarImagen.addActionListener(e -> seleccionarImagen());
 
         pnlImagen.add(lblTituloImg);
         pnlImagen.add(Box.createVerticalStrut(20));
         pnlImagen.add(lblVistaPreviaImagen);
+<<<<<<< HEAD
         pnlImagen.add(Box.createVerticalStrut(20));
+=======
+        pnlImagen.add(Box.createVerticalStrut(15));
+        pnlImagen.add(btnTomarFoto);
+        pnlImagen.add(Box.createVerticalStrut(5));
+>>>>>>> origin/parte-muoz
         pnlImagen.add(btnCargarImagen);
 
         panelCentral.add(scrollForm, BorderLayout.CENTER);
@@ -684,4 +739,41 @@ public class PanelCrearProducto extends JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
+<<<<<<< HEAD
+=======
+
+    private class IconoCamara implements Icon {
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(Color.WHITE);
+            g2.fillRoundRect(x + 2, y + 6, 16, 10, 4, 4);
+            g2.fillRoundRect(x + 6, y + 3, 8, 4, 2, 2);
+            g2.setColor(new Color(227, 0, 15));
+            g2.fillOval(x + 6, y + 7, 8, 8);
+            g2.setColor(Color.WHITE);
+            g2.drawOval(x + 6, y + 7, 8, 8);
+            g2.dispose();
+        }
+        @Override public int getIconWidth() { return 20; }
+        @Override public int getIconHeight() { return 20; }
+    }
+
+    private class IconoCarpeta implements Icon {
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(new Color(100, 100, 100));
+            g2.fillRoundRect(x + 2, y + 4, 8, 4, 2, 2);
+            g2.fillRoundRect(x + 2, y + 6, 16, 10, 2, 2);
+            g2.setColor(new Color(130, 130, 130));
+            g2.fillRoundRect(x + 2, y + 8, 16, 8, 2, 2);
+            g2.dispose();
+        }
+        @Override public int getIconWidth() { return 20; }
+        @Override public int getIconHeight() { return 20; }
+    }
+>>>>>>> origin/parte-muoz
 }

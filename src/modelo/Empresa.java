@@ -83,4 +83,8 @@ public class Empresa {
     
     public String getPoliticasGarantia() { return politicasGarantia; }
     public void setPoliticasGarantia(String politicasGarantia) { this.politicasGarantia = politicasGarantia; }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/parte-muoz

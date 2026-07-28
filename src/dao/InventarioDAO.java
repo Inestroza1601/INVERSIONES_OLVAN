@@ -222,4 +222,8 @@ public class InventarioDAO {
             return ps.executeUpdate() > 0;
         } catch (SQLException e) { System.err.println("Error al actualizar producto: " + e.getMessage()); return false; }
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/parte-muoz

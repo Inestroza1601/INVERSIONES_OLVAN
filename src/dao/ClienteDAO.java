@@ -20,7 +20,11 @@ public class ClienteDAO {
     // 1. LISTAR CLIENTES (Solo los activos)
     public List<Cliente> listarClientesActivos() {
         List<Cliente> lista = new ArrayList<>();
+<<<<<<< HEAD
         String sql = "SELECT * FROM CLIENTES WHERE estado_cliente = 1 ORDER BY nombre_cliente ASC";
+=======
+        String sql = "SELECT * FROM CLIENTES WHERE estado_cliente = 1 AND id_cliente != 1 ORDER BY nombre_cliente ASC";
+>>>>>>> origin/parte-muoz
 
         try (Connection con = factory.getConexion();
              PreparedStatement ps = con.prepareStatement(sql);
@@ -145,4 +149,8 @@ public class ClienteDAO {
         }
         return identidades;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/parte-muoz

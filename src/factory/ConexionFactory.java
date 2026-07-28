@@ -155,4 +155,8 @@ public class ConexionFactory {
             }
         }).start();
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/parte-muoz

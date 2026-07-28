@@ -20,7 +20,11 @@ public class UsuarioDAO {
     // 1. CREAR NUEVO USUARIO
     public boolean registrarUsuario(Usuario u) {
         // SQL sin id_usuario porque es IDENTITY
+<<<<<<< HEAD
         String sql = "INSERT INTO USUARIOS (id_rol, nombre_usuario, password_hash, estado_usuario) VALUES (?, ?, ?, 1)";
+=======
+        String sql = "INSERT INTO USUARIOS (id_rol, nombre_usuario, password_hash, estado_usuario, email_usuario) VALUES (?, ?, ?, 1, ?)";
+>>>>>>> origin/parte-muoz
         
         try (Connection con = factory.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -28,6 +32,10 @@ public class UsuarioDAO {
             ps.setInt(1, u.getIdRol());
             ps.setString(2, u.getNombreUsuario());
             ps.setString(3, u.getPasswordHash()); 
+<<<<<<< HEAD
+=======
+            ps.setString(4, u.getEmailUsuario());
+>>>>>>> origin/parte-muoz
             
             return ps.executeUpdate() > 0;
             
@@ -71,6 +79,10 @@ public class UsuarioDAO {
                 u.setNombreUsuario(rs.getString("nombre_usuario"));
                 u.setPasswordHash(rs.getString("password_hash"));
                 u.setEstadoUsuario(rs.getBoolean("estado_usuario"));
+<<<<<<< HEAD
+=======
+                u.setEmailUsuario(rs.getString("email_usuario"));
+>>>>>>> origin/parte-muoz
                 lista.add(u);
             }
         } catch (SQLException e) {
@@ -85,9 +97,15 @@ public class UsuarioDAO {
         boolean actualizaClave = u.getPasswordHash() != null && !u.getPasswordHash().isEmpty();
         
         if (actualizaClave) {
+<<<<<<< HEAD
             sql = "UPDATE USUARIOS SET id_rol = ?, nombre_usuario = ?, password_hash = ? WHERE id_usuario = ?";
         } else {
             sql = "UPDATE USUARIOS SET id_rol = ?, nombre_usuario = ? WHERE id_usuario = ?";
+=======
+            sql = "UPDATE USUARIOS SET id_rol = ?, nombre_usuario = ?, password_hash = ?, email_usuario = ? WHERE id_usuario = ?";
+        } else {
+            sql = "UPDATE USUARIOS SET id_rol = ?, nombre_usuario = ?, email_usuario = ? WHERE id_usuario = ?";
+>>>>>>> origin/parte-muoz
         }
         
         try (Connection con = factory.getConexion();
@@ -98,9 +116,17 @@ public class UsuarioDAO {
             
             if (actualizaClave) {
                 ps.setString(3, u.getPasswordHash());
+<<<<<<< HEAD
                 ps.setInt(4, u.getIdUsuario()); // Corrección a setInt
             } else {
                 ps.setInt(3, u.getIdUsuario()); // Corrección a setInt
+=======
+                ps.setString(4, u.getEmailUsuario());
+                ps.setInt(5, u.getIdUsuario()); // Corrección a setInt
+            } else {
+                ps.setString(3, u.getEmailUsuario());
+                ps.setInt(4, u.getIdUsuario()); // Corrección a setInt
+>>>>>>> origin/parte-muoz
             }
             
             return ps.executeUpdate() > 0;
@@ -131,6 +157,10 @@ public class UsuarioDAO {
                     u.setNombreUsuario(rs.getString("nombre_usuario"));
                     u.setPasswordHash(rs.getString("password_hash"));
                     u.setEstadoUsuario(rs.getBoolean("estado_usuario"));
+<<<<<<< HEAD
+=======
+                    u.setEmailUsuario(rs.getString("email_usuario"));
+>>>>>>> origin/parte-muoz
                     return u;
                 }
             }
@@ -141,6 +171,101 @@ public class UsuarioDAO {
     }
     
     // =========================================================
+<<<<<<< HEAD
+=======
+    // METODOS DE RECUPERACION DE CONTRASEÑA
+    // =========================================================
+    
+    public Usuario obtenerUsuarioPorNombre(String nombreUsuario) {
+        String sql = "SELECT * FROM USUARIOS WHERE LOWER(nombre_usuario) = LOWER(?) AND estado_usuario = 1";
+        try (Connection con = factory.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+             
+            ps.setString(1, nombreUsuario.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Usuario u = new Usuario();
+                    u.setIdUsuario(rs.getInt("id_usuario"));
+                    u.setIdRol(rs.getInt("id_rol"));
+                    u.setNombreUsuario(rs.getString("nombre_usuario"));
+                    u.setEmailUsuario(rs.getString("email_usuario"));
+                    return u;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al buscar usuario por nombre: " + e.getMessage());
+        }
+        return null;
+    }
+    
+    public Usuario obtenerUsuarioPorEmail(String email) {
+        String sql = "SELECT * FROM USUARIOS WHERE LOWER(email_usuario) = LOWER(?) AND estado_usuario = 1";
+        try (Connection con = factory.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+             
+            ps.setString(1, email.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Usuario u = new Usuario();
+                    u.setIdUsuario(rs.getInt("id_usuario"));
+                    u.setIdRol(rs.getInt("id_rol"));
+                    u.setNombreUsuario(rs.getString("nombre_usuario"));
+                    u.setEmailUsuario(rs.getString("email_usuario"));
+                    return u;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al buscar usuario por email: " + e.getMessage());
+        }
+        return null;
+    }
+    
+    public boolean guardarTokenRecuperacion(int idUsuario, String token) {
+        // Token expira en 15 minutos
+        String sql = "UPDATE USUARIOS SET token_recuperacion = ?, expiracion_token = DATEADD(minute, 15, GETDATE()) WHERE id_usuario = ?";
+        try (Connection con = factory.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, token);
+            ps.setInt(2, idUsuario);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al guardar token: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    public boolean validarTokenRecuperacion(int idUsuario, String token) {
+        String sql = "SELECT * FROM USUARIOS WHERE id_usuario = ? AND token_recuperacion = ? AND expiracion_token > GETDATE()";
+        try (Connection con = factory.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idUsuario);
+            ps.setString(2, token);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next(); // Si hay resultado, el token es válido
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al validar token: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    public boolean actualizarPassword(int idUsuario, String passwordPlana) {
+        String hash = utilidades.Seguridad.encriptarSHA256(passwordPlana);
+        // Limpiamos el token al actualizar la contraseña
+        String sql = "UPDATE USUARIOS SET password_hash = ?, token_recuperacion = NULL, expiracion_token = NULL WHERE id_usuario = ?";
+        try (Connection con = factory.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, hash);
+            ps.setInt(2, idUsuario);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar password: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // =========================================================
+>>>>>>> origin/parte-muoz
     // GESTIÓN DINÁMICA DE ROLES
     // =========================================================
 
@@ -197,4 +322,8 @@ public class UsuarioDAO {
 
         return idRol;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/parte-muoz

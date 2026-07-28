@@ -8,6 +8,10 @@ public class PanelInventario extends JPanel {
     private JPanel panelSubMenu;
     private JButton btnCrearProducto;
     private JButton btnBuscarProducto;
+<<<<<<< HEAD
+=======
+    private JButton btnInventarioDefectuoso;
+>>>>>>> origin/parte-muoz
     private JPanel panelContenedorInventario;
 
     public PanelInventario() {
@@ -27,12 +31,20 @@ public class PanelInventario extends JPanel {
 
         // 2. Crear y estilizar los botones del sub-menú
         btnCrearProducto = crearBotonSubMenu("Crear Producto");
+<<<<<<< HEAD
+=======
+        btnInventarioDefectuoso = crearBotonSubMenu("Inventario Defectuoso");
+>>>>>>> origin/parte-muoz
         btnBuscarProducto = crearBotonSubMenu("Buscar Producto / Inventario"); 
 
         panelSubMenu.add(btnBuscarProducto); // Ponemos buscar primero, es la acción más común
         int rolId = (utilidades.SesionGlobal.getUsuarioActual() != null) ? utilidades.SesionGlobal.getUsuarioActual().getIdRol() : 1;
         if (rolId != 3) {
             panelSubMenu.add(btnCrearProducto);
+<<<<<<< HEAD
+=======
+            panelSubMenu.add(btnInventarioDefectuoso);
+>>>>>>> origin/parte-muoz
         }
 
         // 3. Crear el contenedor central (VACÍO, sin el JLabel)
@@ -48,6 +60,13 @@ public class PanelInventario extends JPanel {
             mostrarSubPanel(new PanelCrearProducto());
         });
 
+<<<<<<< HEAD
+=======
+        btnInventarioDefectuoso.addActionListener(e -> {
+            mostrarSubPanel(new PanelInventarioDefectuoso());
+        });
+
+>>>>>>> origin/parte-muoz
         btnBuscarProducto.addActionListener(e -> {
             mostrarSubPanel(new PanelBuscarProducto());
         });

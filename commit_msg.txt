@@ -1,0 +1,8 @@
+﻿feat: Implementación de sistema de recuperación de contraseña por correo electrónico
+
+- Se integraron las librerías JavaMail (javax.mail.jar y ctivation.jar) para el envío de correos.
+- Se creó la clase utilitaria EmailSender.java encargada de gestionar el SMTP y despachar los códigos/enlaces de recuperación.
+- Se implementaron las interfaces DialogoRecuperarPassword.java y DialogoCambiarPassword.java para guiar al usuario en el proceso de reseteo.
+- Se modificó PanelLogin.java para incorporar el acceso a la recuperación de credenciales.
+- Se actualizaron UsuarioDAO.java y el modelo Usuario.java para manejar la validación y actualización de contraseñas de manera segura en la base de datos.
+- Se actualizó el archivo de configuración del proyecto y el script de base de datos (ctualizaciones_db.sql) con los esquemas pertinentes.
