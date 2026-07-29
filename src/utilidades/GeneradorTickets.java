@@ -1063,4 +1063,97 @@ public class GeneradorTickets {
             e.printStackTrace();
         }
     }
+
+    public static void imprimirTicketGarantia(int idDetalleOriginal, String resolucion, String observacion) {
+        try {
+            java.io.File dir = new java.io.File("reportes");
+            if (!dir.exists()) dir.mkdirs();
+            String ruta = "reportes/Comprobante_Reclamo_" + idDetalleOriginal + "_" + System.currentTimeMillis() + ".pdf";
+            
+            Rectangle tamanoTicket = new Rectangle(226, 800);
+            Document documento = new Document(tamanoTicket, 10, 10, 15, 15);
+            PdfWriter.getInstance(documento, new java.io.FileOutputStream(ruta));
+            documento.open();
+            
+            com.itextpdf.text.Font fuenteTitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
+            com.itextpdf.text.Font fuenteNormal = FontFactory.getFont(FontFactory.HELVETICA, 8);
+            com.itextpdf.text.Font fuenteBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 8);
+            
+            Paragraph titulo = new Paragraph("RECIBO DE RECLAMO\nDE GARANTÍA", fuenteTitulo);
+            titulo.setAlignment(Element.ALIGN_CENTER);
+            documento.add(titulo);
+            documento.add(new Paragraph("----------------------------------------", fuenteNormal));
+            
+            documento.add(new Paragraph("Fecha: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date()), fuenteNormal));
+            documento.add(new Paragraph("Detalle Venta Orig: #" + idDetalleOriginal, fuenteNormal));
+            documento.add(new Paragraph("----------------------------------------", fuenteNormal));
+            
+            documento.add(new Paragraph("RESOLUCIÓN APLICADA:", fuenteBold));
+            documento.add(new Paragraph(resolucion, fuenteNormal));
+            documento.add(new Paragraph(" ", fuenteNormal));
+            
+            documento.add(new Paragraph("OBSERVACIONES / DAÑO:", fuenteBold));
+            documento.add(new Paragraph(observacion, fuenteNormal));
+            
+            documento.add(new Paragraph("----------------------------------------", fuenteNormal));
+            Paragraph footer = new Paragraph("Firma Cliente: _________________\n\nFirma Técnico: _________________\n\nSu caso será procesado. Gracias.", fuenteNormal);
+            footer.setAlignment(Element.ALIGN_CENTER);
+            documento.add(footer);
+            
+            documento.close();
+            
+            if (java.awt.Desktop.isDesktopSupported()) {
+                java.awt.Desktop.getDesktop().open(new java.io.File(ruta));
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void imprimirTicketEntregaReparacion(String nombreProducto, String observacion) {
+        try {
+            java.io.File dir = new java.io.File("reportes");
+            if (!dir.exists()) dir.mkdirs();
+            String ruta = "reportes/Comprobante_Entrega_Reparacion_" + System.currentTimeMillis() + ".pdf";
+            
+            Rectangle tamanoTicket = new Rectangle(226, 800);
+            Document documento = new Document(tamanoTicket, 10, 10, 15, 15);
+            PdfWriter.getInstance(documento, new java.io.FileOutputStream(ruta));
+            documento.open();
+            
+            com.itextpdf.text.Font fuenteTitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
+            com.itextpdf.text.Font fuenteNormal = FontFactory.getFont(FontFactory.HELVETICA, 8);
+            com.itextpdf.text.Font fuenteBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 8);
+            
+            Paragraph titulo = new Paragraph("ENTREGA DE EQUIPO\nREPARADO / GARANTÍA", fuenteTitulo);
+            titulo.setAlignment(Element.ALIGN_CENTER);
+            documento.add(titulo);
+            documento.add(new Paragraph("----------------------------------------", fuenteNormal));
+            
+            documento.add(new Paragraph("Fecha: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date()), fuenteNormal));
+            documento.add(new Paragraph("----------------------------------------", fuenteNormal));
+            
+            documento.add(new Paragraph("PRODUCTO ENTREGADO:", fuenteBold));
+            documento.add(new Paragraph(nombreProducto, fuenteNormal));
+            documento.add(new Paragraph(" ", fuenteNormal));
+            
+            documento.add(new Paragraph("OBSERVACIONES / DETALLES DE REPARACIÓN:", fuenteBold));
+            documento.add(new Paragraph(observacion, fuenteNormal));
+            
+            documento.add(new Paragraph("----------------------------------------", fuenteNormal));
+            Paragraph footer = new Paragraph("Firma Cliente: _________________\n\nRecibí conforme el equipo detallado.\n\nGracias por su paciencia.", fuenteNormal);
+            footer.setAlignment(Element.ALIGN_CENTER);
+            documento.add(footer);
+            
+            documento.close();
+            
+            if (java.awt.Desktop.isDesktopSupported()) {
+                java.awt.Desktop.getDesktop().open(new java.io.File(ruta));
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

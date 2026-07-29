@@ -288,8 +288,17 @@ public class PanelApartados extends JPanel {
         
         if (opt == JOptionPane.YES_OPTION) {
             int idUser = utilidades.SesionGlobal.getUsuarioActual() != null ? utilidades.SesionGlobal.getUsuarioActual().getIdUsuario() : 1;
-            if (dao.entregarApartadoYGenerarVenta(id, idUser, chkISV.isSelected())) {
-                JOptionPane.showMessageDialog(this, "Apartado completado, entregado y Venta registrada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            int idVentaGenerada = dao.entregarApartadoYGenerarVenta(id, idUser, chkISV.isSelected());
+            if (idVentaGenerada > 0) {
+                try {
+                    java.io.File pdf = utilidades.GeneradorTickets.generarFactura(idVentaGenerada);
+                    if (java.awt.Desktop.isDesktopSupported()) {
+                        java.awt.Desktop.getDesktop().open(pdf);
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                JOptionPane.showMessageDialog(this, "Apartado completado, entregado y Comprobante registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 cargarApartados();
             } else {
                 JOptionPane.showMessageDialog(this, "Error de base de datos al entregar apartado y generar venta.", "Error", JOptionPane.ERROR_MESSAGE);
