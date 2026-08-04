@@ -37,6 +37,12 @@ public class PanelCrearProducto extends JPanel {
     private JLabel lblVistaPreviaImagen;
     private String rutaImagenSeleccionada = null; 
     private JButton btnGuardar;
+    private java.util.List<String> imagenesSeleccionadas = new java.util.ArrayList<>();
+    private int indiceImagenActual = -1;
+    private JLabel lblNavegacionImg;
+    private JButton btnAnteriorImg;
+    private JButton btnSiguienteImg;
+    private JButton btnEliminarImg;
     
     private JComboBox<String> cmbDiasGarantia;
     private final int[] valoresGarantia = {0, 3, 7, 15, 30, 60, 90,365}; // Array interno para guardar en BD
@@ -79,7 +85,7 @@ public class PanelCrearProducto extends JPanel {
         String textoTitulo = (productoAEditar == null) ? "Registrar Nuevo Producto" : "Edición de Producto";
         JLabel lblTitulo = new JLabel(textoTitulo);
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        lblTitulo.setForeground(Color.WHITE);
+        lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         this.add(lblTitulo, BorderLayout.NORTH);
 
         JPanel panelCentral = new JPanel(new BorderLayout(30, 0));
@@ -177,7 +183,7 @@ public class PanelCrearProducto extends JPanel {
         ));
         pnlImagen.setPreferredSize(new Dimension(250, 0)); 
 
-        JLabel lblTituloImg = new JLabel("Fotografía");
+        JLabel lblTituloImg = new JLabel("Fotografías (Máx 7)");
         lblTituloImg.setForeground(new Color(45, 45, 45)); // Gris Oscuro
         lblTituloImg.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblTituloImg.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -194,14 +200,69 @@ public class PanelCrearProducto extends JPanel {
         lblVistaPreviaImagen.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                if (rutaImagenSeleccionada != null && !rutaImagenSeleccionada.isEmpty()) {
+                if (indiceImagenActual >= 0 && indiceImagenActual < imagenesSeleccionadas.size()) {
                     Window window = SwingUtilities.getWindowAncestor(PanelCrearProducto.this);
                     if (window instanceof Frame) {
-                        new DialogoVisorImagen((Frame) window, "Visor de Fotografía", rutaImagenSeleccionada).setVisible(true);
+                        new DialogoVisorImagen((Frame) window, "Visor de Fotografía", imagenesSeleccionadas, indiceImagenActual).setVisible(true);
                     } else if (window instanceof JDialog) {
-                        new DialogoVisorImagen((JDialog) window, "Visor de Fotografía", rutaImagenSeleccionada).setVisible(true);
+                        new DialogoVisorImagen((JDialog) window, "Visor de Fotografía", imagenesSeleccionadas, indiceImagenActual).setVisible(true);
                     }
                 }
+            }
+        });
+
+        // Controles de Carrusel
+        JPanel pnlCarrusel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+        pnlCarrusel.setOpaque(false);
+        pnlCarrusel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        btnAnteriorImg = new JButton("<");
+        btnAnteriorImg.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnAnteriorImg.setPreferredSize(new Dimension(40, 26));
+        btnAnteriorImg.setFocusPainted(false);
+        btnAnteriorImg.setEnabled(false);
+        btnAnteriorImg.addActionListener(e -> {
+            if (indiceImagenActual > 0) {
+                indiceImagenActual--;
+                actualizarVistaPreviaImagen();
+            }
+        });
+
+        lblNavegacionImg = new JLabel("0 / 0", SwingConstants.CENTER);
+        lblNavegacionImg.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        lblNavegacionImg.setPreferredSize(new Dimension(50, 26));
+
+        btnSiguienteImg = new JButton(">");
+        btnSiguienteImg.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnSiguienteImg.setPreferredSize(new Dimension(40, 26));
+        btnSiguienteImg.setFocusPainted(false);
+        btnSiguienteImg.setEnabled(false);
+        btnSiguienteImg.addActionListener(e -> {
+            if (indiceImagenActual < imagenesSeleccionadas.size() - 1) {
+                indiceImagenActual++;
+                actualizarVistaPreviaImagen();
+            }
+        });
+
+        pnlCarrusel.add(btnAnteriorImg);
+        pnlCarrusel.add(lblNavegacionImg);
+        pnlCarrusel.add(btnSiguienteImg);
+
+        btnEliminarImg = new JButton("Eliminar Foto");
+        btnEliminarImg.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        btnEliminarImg.setBackground(new Color(220, 53, 69));
+        btnEliminarImg.setForeground(Color.WHITE);
+        btnEliminarImg.setFocusPainted(false);
+        btnEliminarImg.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnEliminarImg.setMaximumSize(new Dimension(150, 26));
+        btnEliminarImg.setEnabled(false);
+        btnEliminarImg.addActionListener(e -> {
+            if (indiceImagenActual >= 0 && indiceImagenActual < imagenesSeleccionadas.size()) {
+                imagenesSeleccionadas.remove(indiceImagenActual);
+                if (indiceImagenActual >= imagenesSeleccionadas.size()) {
+                    indiceImagenActual = imagenesSeleccionadas.size() - 1;
+                }
+                actualizarVistaPreviaImagen();
             }
         });
 
@@ -214,15 +275,16 @@ public class PanelCrearProducto extends JPanel {
         btnTomarFoto.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnTomarFoto.setMaximumSize(new Dimension(150, 35));
         btnTomarFoto.addActionListener(e -> {
+            if (imagenesSeleccionadas.size() >= 7) {
+                JOptionPane.showMessageDialog(this, "Límite de 7 imágenes alcanzado.", "Límite Excedido", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             Window window = SwingUtilities.getWindowAncestor(PanelCrearProducto.this);
             Frame frame = (window instanceof Frame) ? (Frame) window : null;
             new DialogoEscanearQR(frame, true, b64 -> {
-                rutaImagenSeleccionada = b64;
-                ImageIcon icon = utilidades.ImagenHelper.obtenerIcono(rutaImagenSeleccionada, 150, 150);
-                if (icon != null) {
-                    lblVistaPreviaImagen.setText("");
-                    lblVistaPreviaImagen.setIcon(icon);
-                }
+                imagenesSeleccionadas.add(b64);
+                indiceImagenActual = imagenesSeleccionadas.size() - 1;
+                actualizarVistaPreviaImagen();
                 JOptionPane.showMessageDialog(this, "Foto capturada y adjuntada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             }).setVisible(true);
         });
@@ -238,8 +300,12 @@ public class PanelCrearProducto extends JPanel {
         btnCargarImagen.addActionListener(e -> seleccionarImagen());
 
         pnlImagen.add(lblTituloImg);
-        pnlImagen.add(Box.createVerticalStrut(20));
+        pnlImagen.add(Box.createVerticalStrut(15));
         pnlImagen.add(lblVistaPreviaImagen);
+        pnlImagen.add(Box.createVerticalStrut(10));
+        pnlImagen.add(pnlCarrusel);
+        pnlImagen.add(Box.createVerticalStrut(5));
+        pnlImagen.add(btnEliminarImg);
         pnlImagen.add(Box.createVerticalStrut(15));
         pnlImagen.add(btnTomarFoto);
         pnlImagen.add(Box.createVerticalStrut(5));
@@ -360,7 +426,11 @@ public class PanelCrearProducto extends JPanel {
             p.setPrecioMayorista(chkPrecioMayorista.isSelected() && !txtPrecioMayorista.getText().trim().isEmpty() ? Double.parseDouble(txtPrecioMayorista.getText().trim()) : 0.0);
             p.setStockProducto(Integer.parseInt(txtStockInicial.getText().trim()));
             p.setStockMinimo(Integer.parseInt(txtStockMinimo.getText().trim()));
-            p.setRutaImagen(rutaImagenSeleccionada);
+            if (imagenesSeleccionadas.isEmpty()) {
+                p.setRutaImagen(null);
+            } else {
+                p.setRutaImagen(String.join("|", imagenesSeleccionadas));
+            }
             p.setDiasGarantia(valoresGarantia[cmbDiasGarantia.getSelectedIndex()]);
             p.setRequiereSerie(chkRequiereSerie.isSelected());
             // -----------------------------------------
@@ -389,7 +459,9 @@ public class PanelCrearProducto extends JPanel {
         txtCodigoBarras.setText(""); txtNombre.setText(""); txtPrecioCompra.setText("");
         txtPrecioVenta.setText(""); txtPrecioMayorista.setText(""); chkPrecioMayorista.setSelected(false);
         txtPrecioMayorista.setEnabled(false); txtStockInicial.setText(""); txtStockMinimo.setText("0");
-        lblVistaPreviaImagen.setIcon(null); lblVistaPreviaImagen.setText("Sin Imagen"); rutaImagenSeleccionada = null;
+        imagenesSeleccionadas.clear();
+        indiceImagenActual = -1;
+        actualizarVistaPreviaImagen();
         cmbCategoria.setSelectedIndex(0); cmbProveedor.setSelectedIndex(0); cmbUbicacion.setSelectedIndex(0);
         codigosEnRam = new InventarioDAO().obtenerCodigosEnRam();
         cmbDiasGarantia.setSelectedIndex(0); chkRequiereSerie.setSelected(false);
@@ -423,14 +495,24 @@ public class PanelCrearProducto extends JPanel {
         for (int i = 0; i < valoresGarantia.length; i++) { if (valoresGarantia[i] == dias) index = i; }
         cmbDiasGarantia.setSelectedIndex(index);
         
+        imagenesSeleccionadas.clear();
         if(productoAEditar.getRutaImagen() != null && !productoAEditar.getRutaImagen().trim().isEmpty()) {
-            rutaImagenSeleccionada = productoAEditar.getRutaImagen();
-            ImageIcon icono = utilidades.ImagenHelper.obtenerIcono(rutaImagenSeleccionada, 150, 150);
-            if (icono != null) {
-                lblVistaPreviaImagen.setText("");
-                lblVistaPreviaImagen.setIcon(icono);
+            String rawImg = productoAEditar.getRutaImagen();
+            if (rawImg.contains("|")) {
+                String[] parts = rawImg.split("\\|");
+                for (String part : parts) {
+                    if (!part.trim().isEmpty()) {
+                        imagenesSeleccionadas.add(part);
+                    }
+                }
+            } else {
+                imagenesSeleccionadas.add(rawImg);
             }
+            indiceImagenActual = 0;
+        } else {
+            indiceImagenActual = -1;
         }
+        actualizarVistaPreviaImagen();
     }
     
     private void seleccionarComboPorId(JComboBox<ItemCatalogo> combo, int id) {
@@ -610,20 +692,48 @@ public class PanelCrearProducto extends JPanel {
     }
 
     private void seleccionarImagen() {
+        if (imagenesSeleccionadas.size() >= 7) {
+            JOptionPane.showMessageDialog(this, "Límite de 7 imágenes alcanzado.", "Límite Excedido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         JFileChooser fileChooser = new JFileChooser(); fileChooser.setFileFilter(new FileNameExtensionFilter("Imágenes (JPG, PNG)", "jpg", "jpeg", "png"));
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File archivo = fileChooser.getSelectedFile();
             String b64 = utilidades.ImagenHelper.comprimirYConvertirABase64(archivo);
             if (b64 != null) {
-                rutaImagenSeleccionada = b64;
-                ImageIcon icon = utilidades.ImagenHelper.obtenerIcono(rutaImagenSeleccionada, 150, 150);
-                if (icon != null) {
-                    lblVistaPreviaImagen.setText("");
-                    lblVistaPreviaImagen.setIcon(icon);
-                }
+                imagenesSeleccionadas.add(b64);
+                indiceImagenActual = imagenesSeleccionadas.size() - 1;
+                actualizarVistaPreviaImagen();
             } else {
                 JOptionPane.showMessageDialog(this, "Error al procesar y comprimir la imagen.", "Error", JOptionPane.ERROR_MESSAGE);
             }
+        }
+    }
+
+    private void actualizarVistaPreviaImagen() {
+        if (imagenesSeleccionadas.isEmpty() || indiceImagenActual < 0 || indiceImagenActual >= imagenesSeleccionadas.size()) {
+            lblVistaPreviaImagen.setIcon(null);
+            lblVistaPreviaImagen.setText("Sin Imagen");
+            lblNavegacionImg.setText("0 / 0");
+            btnAnteriorImg.setEnabled(false);
+            btnSiguienteImg.setEnabled(false);
+            btnEliminarImg.setEnabled(false);
+            rutaImagenSeleccionada = null;
+        } else {
+            String imgBase64 = imagenesSeleccionadas.get(indiceImagenActual);
+            rutaImagenSeleccionada = imgBase64;
+            ImageIcon icon = utilidades.ImagenHelper.obtenerIcono(imgBase64, 150, 150);
+            if (icon != null) {
+                lblVistaPreviaImagen.setText("");
+                lblVistaPreviaImagen.setIcon(icon);
+            } else {
+                lblVistaPreviaImagen.setText("Error al cargar");
+                lblVistaPreviaImagen.setIcon(null);
+            }
+            lblNavegacionImg.setText((indiceImagenActual + 1) + " / " + imagenesSeleccionadas.size());
+            btnAnteriorImg.setEnabled(indiceImagenActual > 0);
+            btnSiguienteImg.setEnabled(indiceImagenActual < imagenesSeleccionadas.size() - 1);
+            btnEliminarImg.setEnabled(true);
         }
     }
 

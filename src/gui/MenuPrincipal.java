@@ -218,10 +218,10 @@ public class MenuPrincipal extends JFrame {
     private JButton crearBotonWebAnimado(String texto, Icon icono, boolean esPeligro) {
         JButton boton = new JButton(texto);
         boton.setIcon(icono);
-        boton.setIconTextGap(14);
-        boton.setPreferredSize(new Dimension(Integer.MAX_VALUE, 46));
-        boton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 46));
-        boton.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        boton.setIconTextGap(16);
+        boton.setPreferredSize(new Dimension(Integer.MAX_VALUE, 50));
+        boton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        boton.setFont(new Font("Segoe UI", Font.BOLD, 16));
 
         boton.setBackground(COLOR_FONDO_SIDEBAR);
         boton.setForeground(COLOR_TEXTO_MENU);

@@ -449,6 +449,38 @@ public class PanelPuntoVenta extends JPanel {
 
         boolean esApartado = cmbTipoTransaccion.getSelectedIndex() == 1;
 
+        if (idClienteActual == 1) {
+            if (esApartado) {
+                JOptionPane.showMessageDialog(this, "Para registrar un Apartado (Abonos) es obligatorio seleccionar un cliente registrado. No se permite Consumidor Final.", "Cliente Requerido", JOptionPane.WARNING_MESSAGE);
+                DialogoBuscarClientePOS dlgBuscar = new DialogoBuscarClientePOS((Frame) SwingUtilities.getWindowAncestor(this));
+                dlgBuscar.setVisible(true);
+                
+                if (idClienteActual == 1) {
+                    JOptionPane.showMessageDialog(this, "Operación cancelada. Se requiere asociar un cliente para registrar el apartado.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+            } else {
+                String msg = "No ha seleccionado un cliente para esta venta.<br>¿Desea buscar uno o proseguir como Consumidor Final?";
+                DialogoConfirmacionCliente dlgConfirm = new DialogoConfirmacionCliente((Frame) SwingUtilities.getWindowAncestor(this), msg);
+                dlgConfirm.setVisible(true);
+                
+                int res = dlgConfirm.getResultado();
+                if (res == 0) { // Buscar Cliente
+                    DialogoBuscarClientePOS dlgBuscar = new DialogoBuscarClientePOS((Frame) SwingUtilities.getWindowAncestor(this));
+                    dlgBuscar.setVisible(true);
+                    
+                    if (idClienteActual == 1) {
+                        JOptionPane.showMessageDialog(this, "Operación cancelada. Se requiere un cliente o seleccionar 'Consumidor Final'.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                } else if (res == 1) { // Consumidor Final
+                    // Proseguir como Consumidor Final
+                } else { // Cancelar o cerrar
+                    return;
+                }
+            }
+        }
+
         if (esApartado) {
             JTextField txtAbonoInicial = new JTextField("0.00");
             txtAbonoInicial.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -666,19 +698,176 @@ public class PanelPuntoVenta extends JPanel {
         }
     }
 
+    private class DialogoConfirmacionCliente extends JDialog {
+        private int resultado = -1; // 0 = Buscar Cliente, 1 = Consumidor Final, 2 = Cancelar
+
+        public DialogoConfirmacionCliente(Frame parent, String mensajeInfo) {
+            super(parent, "Confirmación de Cliente", true);
+            setSize(450, 240);
+            setLocationRelativeTo(parent);
+            setUndecorated(true); // Sin marcos para un diseño limpio y moderno
+            
+            JPanel pnlPrincipal = new JPanel(new BorderLayout(15, 15));
+            pnlPrincipal.setBackground(Color.WHITE); // Fondo blanco limpio
+            pnlPrincipal.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 208, 192), 1, true), // Borde suave redondeado
+                BorderFactory.createEmptyBorder(25, 25, 25, 25)
+            ));
+
+            // Cabecera / Título con Icono
+            JPanel pnlHeader = new JPanel(new BorderLayout(10, 5));
+            pnlHeader.setOpaque(false);
+
+            JLabel lblIcon = new JLabel("👥");
+            lblIcon.setFont(new Font("Segoe UI", Font.PLAIN, 46));
+            lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
+            lblIcon.setForeground(new Color(45, 106, 79));
+            pnlHeader.add(lblIcon, BorderLayout.NORTH);
+
+            JLabel lblTitulo = new JLabel("Asociar Cliente a la Transacción");
+            lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            lblTitulo.setForeground(new Color(30, 41, 59)); // Gris oscuro moderno
+            lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+            pnlHeader.add(lblTitulo, BorderLayout.SOUTH);
+            pnlPrincipal.add(pnlHeader, BorderLayout.NORTH);
+
+            // Mensaje Central
+            JLabel lblMensaje = new JLabel("<html><center>" + mensajeInfo + "</center></html>");
+            lblMensaje.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            lblMensaje.setForeground(new Color(71, 85, 105)); // Gris suave
+            lblMensaje.setHorizontalAlignment(SwingConstants.CENTER);
+            pnlPrincipal.add(lblMensaje, BorderLayout.CENTER);
+
+            // Botonera
+            JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+            pnlBotones.setOpaque(false);
+
+            JButton btnBuscar = utilidades.EfectosUI.crearBotonVerde("Buscar Cliente");
+            btnBuscar.setFont(new Font("Segoe UI", Font.BOLD, 13));
+            btnBuscar.setPreferredSize(new Dimension(135, 42));
+            btnBuscar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            btnBuscar.addActionListener(e -> {
+                resultado = 0;
+                dispose();
+            });
+
+            JButton btnCF = utilidades.EfectosUI.crearBotonBlanco("Consumidor Final");
+            btnCF.setFont(new Font("Segoe UI", Font.BOLD, 13));
+            btnCF.setPreferredSize(new Dimension(145, 42));
+            btnCF.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            btnCF.addActionListener(e -> {
+                resultado = 1;
+                dispose();
+            });
+
+            JButton btnCancelar = utilidades.EfectosUI.crearBotonPeligro("Cancelar");
+            btnCancelar.setFont(new Font("Segoe UI", Font.BOLD, 13));
+            btnCancelar.setPreferredSize(new Dimension(95, 42));
+            btnCancelar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            btnCancelar.addActionListener(e -> {
+                resultado = 2;
+                dispose();
+            });
+
+            pnlBotones.add(btnBuscar);
+            pnlBotones.add(btnCF);
+            pnlBotones.add(btnCancelar);
+
+            pnlPrincipal.add(pnlBotones, BorderLayout.SOUTH);
+            
+            add(pnlPrincipal);
+        }
+
+        public int getResultado() {
+            return resultado;
+        }
+    }
+
     private class DialogoBuscarClientePOS extends JDialog {
         public DialogoBuscarClientePOS(Frame parent) {
             super(parent, "Seleccionar Cliente", true);
-            setSize(700, 500); setLocationRelativeTo(parent); getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); setLayout(new BorderLayout(10, 10));
+            setSize(800, 550); setLocationRelativeTo(parent); 
+            getContentPane().setBackground(Color.WHITE); 
+            setLayout(new BorderLayout(10, 10));
             
-            JPanel pnlTop = new JPanel(new BorderLayout()); pnlTop.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); pnlTop.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-            JTextField txtB = new JTextField(); txtB.setBackground(new Color(255, 255, 255)); txtB.setForeground(new Color(45, 45, 45)); txtB.setCaretColor(new Color(45, 45, 45)); txtB.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(180, 208, 192)), BorderFactory.createEmptyBorder(0, 8, 0, 8))); txtB.setFont(new Font("Segoe UI", Font.PLAIN, 14)); txtB.putClientProperty("JTextField.placeholderText", "Buscar por Nombre o Identidad...");
-            pnlTop.add(txtB, BorderLayout.CENTER); add(pnlTop, BorderLayout.NORTH);
+            JPanel pnlTopWrapper = new JPanel(new BorderLayout());
+            pnlTopWrapper.setOpaque(false);
             
+            JPanel pnlHeader = new JPanel(new BorderLayout(15, 5));
+            pnlHeader.setBackground(Color.WHITE);
+            pnlHeader.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
+
+            JPanel pnlTitleText = new JPanel(new GridLayout(2, 1, 0, 2));
+            pnlTitleText.setOpaque(false);
+            JLabel lblTitle = new JLabel("Buscar y Seleccionar Cliente");
+            lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            lblTitle.setForeground(new Color(30, 41, 59));
+            JLabel lblSubtitle = new JLabel("Busque por nombre o identidad, o registre un nuevo cliente.");
+            lblSubtitle.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            lblSubtitle.setForeground(new Color(100, 116, 139));
+            pnlTitleText.add(lblTitle);
+            pnlTitleText.add(lblSubtitle);
+            pnlHeader.add(pnlTitleText, BorderLayout.WEST);
+
             String[] cols = {"ID", "Avatar", "Nombre Completo", "Identidad", "Teléfono"};
             DefaultTableModel mod = new DefaultTableModel(null, cols) { @Override public boolean isCellEditable(int r, int c) { return false; } };
-            JTable tab = new JTable(mod); tab.setBackground(new Color(255, 255, 255)); tab.setForeground(new Color(45, 45, 45)); tab.setRowHeight(45); tab.setFont(new Font("Segoe UI", Font.PLAIN, 14)); tab.setSelectionBackground(new Color(205, 235, 218)); tab.setSelectionForeground(Color.BLACK);
-            tab.getTableHeader().setBackground(utilidades.EfectosUI.COLOR_SIDEBAR_PASTEL); tab.getTableHeader().setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO); tab.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, utilidades.EfectosUI.COLOR_BORDE)); tab.getTableHeader().setPreferredSize(new Dimension(0, 35));
+
+            JButton btnNuevo = utilidades.EfectosUI.crearBotonVerde("+ Nuevo Cliente");
+            btnNuevo.setFont(new Font("Segoe UI", Font.BOLD, 13));
+            btnNuevo.setPreferredSize(new Dimension(150, 36));
+            btnNuevo.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            btnNuevo.addActionListener(e -> {
+                JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Nuevo Cliente", true);
+                dialog.setUndecorated(true); dialog.setBackground(new Color(0,0,0,0));
+                dialog.add(new PanelFormularioCliente(dialog, new PanelGestionClientes(), null));
+                dialog.pack(); dialog.setLocationRelativeTo(this); dialog.setVisible(true);
+                
+                // Recargar tabla de clientes
+                mod.setRowCount(0);
+                mod.addRow(new Object[]{1, "C", "CONSUMIDOR FINAL", "0000-0000-00000", "N/A"});
+                int maxId = 1;
+                String maxNombre = "CONSUMIDOR FINAL";
+                for (Cliente c : new ClienteDAO().listarClientesActivos()) {
+                    String nombreComp = c.getNombreCliente() + " " + (c.getApellidoCliente()!=null?c.getApellidoCliente():"");
+                    String inicial = nombreComp.isEmpty() ? "?" : nombreComp.substring(0, 1).toUpperCase();
+                    mod.addRow(new Object[]{c.getIdCliente(), inicial, nombreComp, c.getIdentidadCliente(), c.getTelefonoCliente()});
+                    if (c.getIdCliente() > maxId) {
+                        maxId = c.getIdCliente();
+                        maxNombre = nombreComp;
+                    }
+                }
+                
+                // Auto-seleccionar nuevo cliente creado
+                if (maxId != 1) {
+                    idClienteActual = maxId;
+                    lblClienteSeleccionado.setText(maxNombre);
+                    dispose();
+                }
+            });
+            pnlHeader.add(btnNuevo, BorderLayout.EAST);
+            pnlTopWrapper.add(pnlHeader, BorderLayout.NORTH);
+
+            JPanel pnlSearch = new JPanel(new BorderLayout());
+            pnlSearch.setBackground(Color.WHITE);
+            pnlSearch.setBorder(BorderFactory.createEmptyBorder(0, 20, 15, 20));
+            
+            JTextField txtB = new JTextField();
+            txtB.setPreferredSize(new Dimension(0, 42));
+            txtB.setBackground(new Color(248, 250, 252));
+            txtB.setForeground(new Color(51, 65, 85));
+            txtB.setCaretColor(new Color(51, 65, 85));
+            txtB.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(226, 232, 240), 1, true),
+                BorderFactory.createEmptyBorder(0, 12, 0, 12)
+            ));
+            txtB.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            txtB.putClientProperty("JTextField.placeholderText", "🔍 Escriba el nombre, identidad o DNI del cliente...");
+            pnlSearch.add(txtB, BorderLayout.CENTER);
+            pnlTopWrapper.add(pnlSearch, BorderLayout.SOUTH);
+            add(pnlTopWrapper, BorderLayout.NORTH);
+            
+            JTable tab = new JTable(mod); tab.setBackground(Color.WHITE); tab.setForeground(new Color(51, 65, 85)); tab.setRowHeight(45); tab.setFont(new Font("Segoe UI", Font.PLAIN, 14)); tab.setSelectionBackground(new Color(205, 235, 218)); tab.setSelectionForeground(Color.BLACK);
+            tab.getTableHeader().setBackground(new Color(248, 250, 252)); tab.getTableHeader().setForeground(new Color(71, 85, 105)); tab.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(226, 232, 240))); tab.getTableHeader().setPreferredSize(new Dimension(0, 38)); tab.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
             
             tab.getColumnModel().getColumn(0).setMinWidth(0); tab.getColumnModel().getColumn(0).setMaxWidth(0); 
             tab.getColumnModel().getColumn(1).setPreferredWidth(50); tab.getColumnModel().getColumn(1).setMaxWidth(50);
@@ -689,11 +878,11 @@ public class PanelPuntoVenta extends JPanel {
                         @Override protected void paintComponent(Graphics g) {
                             super.paintComponent(g); Graphics2D g2 = (Graphics2D) g; g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                             String inicial = value != null ? value.toString() : "?"; int hash = Math.abs(inicial.hashCode());
-                            Color[] paleta = {new Color(220, 53, 69), new Color(13, 110, 253), new Color(39, 174, 96), new Color(253, 126, 20)};
+                            Color[] paleta = {new Color(79, 70, 229), new Color(13, 148, 136), new Color(225, 29, 72), new Color(217, 119, 6)};
                             g2.setColor(paleta[hash % paleta.length]);
-                            int size = 30; int x = (getWidth() - size) / 2; int y = (getHeight() - size) / 2;
+                            int size = 32; int x = (getWidth() - size) / 2; int y = (getHeight() - size) / 2;
                             g2.fill(new java.awt.geom.Ellipse2D.Double(x, y, size, size));
-                            g2.setColor(Color.WHITE); g2.setFont(new Font("Segoe UI", Font.BOLD, 14)); FontMetrics fm = g2.getFontMetrics();
+                            g2.setColor(Color.WHITE); g2.setFont(new Font("Segoe UI", Font.BOLD, 13)); FontMetrics fm = g2.getFontMetrics();
                             g2.drawString(inicial, x + (size - fm.stringWidth(inicial)) / 2, y + ((size - fm.getHeight()) / 2) + fm.getAscent());
                         }
                     };
@@ -704,7 +893,7 @@ public class PanelPuntoVenta extends JPanel {
             TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(mod); tab.setRowSorter(sorter);
             txtB.getDocument().addDocumentListener(new DocumentListener() {
                 @Override public void insertUpdate(DocumentEvent e) { s(); } public void removeUpdate(DocumentEvent e) { s(); } @Override public void changedUpdate(DocumentEvent e) { s(); }
-                private void s() { sorter.setRowFilter(RowFilter.regexFilter("(?i)" + txtB.getText(), 2, 3)); }
+                private void s() { sorter.setRowFilter(RowFilter.regexFilter("(?i)" + txtB.getText().trim(), 2, 3)); }
             });
             tab.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent e) {
@@ -721,7 +910,7 @@ public class PanelPuntoVenta extends JPanel {
                 String inicial = nombreComp.isEmpty() ? "?" : nombreComp.substring(0, 1).toUpperCase();
                 mod.addRow(new Object[]{c.getIdCliente(), inicial, nombreComp, c.getIdentidadCliente(), c.getTelefonoCliente()});
             }
-            JScrollPane sc = new JScrollPane(tab); sc.setBorder(BorderFactory.createLineBorder(new Color(180, 208, 192))); sc.getViewport().setBackground(new Color(255, 255, 255)); add(sc, BorderLayout.CENTER);
+            JScrollPane sc = new JScrollPane(tab); sc.setBorder(BorderFactory.createLineBorder(new Color(241, 245, 249))); sc.getViewport().setBackground(Color.WHITE); add(sc, BorderLayout.CENTER);
         }
     }
 

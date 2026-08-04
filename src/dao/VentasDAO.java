@@ -213,7 +213,8 @@ public class VentasDAO {
         java.util.List<Object[]> ventas = new java.util.ArrayList<>();
         String sql = "SELECT v.id_ventas, v.fecha_venta, v.subtotal_venta, v.impuesto_venta, v.total_venta, "
                    + "v.referencia_pago, v.banco_pago, c.id_cliente, c.nombre_cliente, c.apellido_cliente, c.identidad_cliente, "
-                   + "u.nombre_usuario, m.nombre_metodo "
+                   + "u.nombre_usuario, m.nombre_metodo, "
+                   + "STUFF((SELECT ', ' + dv.descripcion_venta FROM DETALLES_VENTA dv WHERE dv.id_ventas = v.id_ventas FOR XML PATH('')), 1, 2, '') AS productos "
                    + "FROM VENTAS v "
                    + "LEFT JOIN CLIENTES c ON v.id_cliente_venta = c.id_cliente "
                    + "LEFT JOIN USUARIOS u ON v.id_usuario = u.id_usuario "
@@ -242,7 +243,8 @@ public class VentasDAO {
                     rs.getDouble("total_venta"),
                     rs.getString("referencia_pago"),
                     rs.getString("identidad_cliente"),
-                    rs.getString("banco_pago")
+                    rs.getString("banco_pago"),
+                    rs.getString("productos")
                 });
             }
         } catch (SQLException e) {

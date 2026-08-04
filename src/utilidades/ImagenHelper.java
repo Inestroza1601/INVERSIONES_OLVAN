@@ -25,6 +25,10 @@ public class ImagenHelper {
         if (valor == null || valor.trim().isEmpty()) {
             return null;
         }
+        
+        if (valor.contains("|")) {
+            valor = valor.split("\\|")[0];
+        }
 
         try {
             BufferedImage img = null;
@@ -48,7 +52,20 @@ public class ImagenHelper {
             }
 
             if (img != null) {
-                Image scaled = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                int originalWidth = img.getWidth();
+                int originalHeight = img.getHeight();
+                
+                double ratioX = (double) width / originalWidth;
+                double ratioY = (double) height / originalHeight;
+                double ratio = Math.min(ratioX, ratioY);
+                
+                int targetWidth = (int) (originalWidth * ratio);
+                int targetHeight = (int) (originalHeight * ratio);
+                
+                if (targetWidth <= 0) targetWidth = 1;
+                if (targetHeight <= 0) targetHeight = 1;
+
+                Image scaled = img.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
                 return new ImageIcon(scaled);
             }
         } catch (Exception e) {

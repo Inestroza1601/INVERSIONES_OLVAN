@@ -25,21 +25,27 @@ public class PanelInventario extends JPanel {
         panelContenedorInventario.setLayout(new BorderLayout());
         panelContenedorInventario.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
 
-        // 2. Barra de botones en la parte inferior
+        // 2. Barra de botones en la parte inferior (elevados)
         panelSubMenu = new JPanel();
         panelSubMenu.setLayout(new FlowLayout(FlowLayout.RIGHT, 12, 10));
         panelSubMenu.setBackground(new Color(213, 233, 222));
-        panelSubMenu.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(190, 215, 200)));
+        panelSubMenu.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(190, 215, 200)),
+                BorderFactory.createEmptyBorder(10, 12, 20, 12)
+        ));
 
         // 3. Botones del sub-menú (verdes vintage, mismo tamaño)
         btnBuscarProducto = utilidades.EfectosUI.crearBotonVerde("Buscar Producto / Inventario");
         btnCrearProducto = utilidades.EfectosUI.crearBotonVerde("Crear Producto");
         btnInventarioDefectuoso = utilidades.EfectosUI.crearBotonVerde("Inventario Defectuoso");
 
-        Dimension tamBoton = new Dimension(210, 38);
+        Dimension tamBoton = new Dimension(260, 50);
         btnBuscarProducto.setPreferredSize(tamBoton);
         btnCrearProducto.setPreferredSize(tamBoton);
         btnInventarioDefectuoso.setPreferredSize(tamBoton);
+        btnBuscarProducto.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btnCrearProducto.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btnInventarioDefectuoso.setFont(new Font("Segoe UI", Font.BOLD, 16));
 
         panelSubMenu.add(btnBuscarProducto);
         int rolId = (utilidades.SesionGlobal.getUsuarioActual() != null) ? utilidades.SesionGlobal.getUsuarioActual().getIdRol() : 1;
@@ -49,7 +55,7 @@ public class PanelInventario extends JPanel {
         }
 
         this.add(panelContenedorInventario, BorderLayout.CENTER);
-        this.add(panelSubMenu, BorderLayout.SOUTH);  // Botones al fondo
+        this.add(panelSubMenu, BorderLayout.SOUTH);  // Botones abajo (con elevación)
 
         // 4. Configurar los Eventos
         btnBuscarProducto.addActionListener(e -> {

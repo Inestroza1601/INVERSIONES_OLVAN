@@ -188,14 +188,25 @@ if (!isset($_SESSION['user_id'])) exit;
                     </div>
                 </div>
 
-                <div class="form-group row">
+                <div class="form-group row" style="align-items: flex-start; gap: 15px;">
                     <div style="flex:1;">
-                        <label>Imagen del Producto</label>
+                        <label>Imágenes del Producto (Máx 7 perspectivas)</label>
                         <input type="file" id="prod-image-file" class="form-input" onchange="uploadProductImage()">
                         <input type="hidden" id="prod-image-url">
+                        <small style="color:var(--text-muted); display:block; margin-top:5px;">Suba imágenes para agregar perspectivas adicionales al carrusel.</small>
                     </div>
-                    <div style="flex:0 0 100px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-color); border-radius:var(--border-radius-md); overflow:hidden;">
-                        <img id="prod-image-preview" src="https://cdn-icons-png.flaticon.com/512/869/869045.png" style="width:100%; height:100%; object-fit:cover;">
+                    <div style="flex:0 0 150px; display:flex; flex-direction:column; align-items:center; gap:8px;">
+                        <div style="position:relative; width:150px; height:150px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-color); border-radius:var(--border-radius-md); overflow:hidden; background:#f8fafc;">
+                            <img id="prod-image-preview" src="https://cdn-icons-png.flaticon.com/512/869/869045.png" style="width:100%; height:100%; object-fit:contain; cursor:pointer;" onclick="App.showImagePreview(document.getElementById('prod-image-url').value)">
+                            
+                            <!-- Left Arrow -->
+                            <button type="button" id="btn-prev-prod-img" onclick="changeWebProductImgIndex(-1)" style="position:absolute; left:5px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.6); color:#fff; border:none; border-radius:50%; width:24px; height:24px; font-size:10px; cursor:pointer; display:none; align-items:center; justify-content:center; padding:0;"><i class="fas fa-chevron-left"></i></button>
+                            
+                            <!-- Right Arrow -->
+                            <button type="button" id="btn-next-prod-img" onclick="changeWebProductImgIndex(1)" style="position:absolute; right:5px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.6); color:#fff; border:none; border-radius:50%; width:24px; height:24px; font-size:10px; cursor:pointer; display:none; align-items:center; justify-content:center; padding:0;"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                        <div id="prod-img-counter" style="font-size:0.8rem; font-weight:600; color:var(--text-muted);">0 / 0</div>
+                        <button type="button" id="btn-delete-prod-img" class="btn btn-danger btn-sm" onclick="deleteWebProductImg()" style="padding: 2px 10px; font-size: 0.75rem; display:none;">Eliminar Perspectiva</button>
                     </div>
                 </div>
 
@@ -402,7 +413,8 @@ if (!isset($_SESSION['user_id'])) exit;
         }
 
         filtered.forEach(p => {
-            const img = p.ruta_imagen_producto ? p.ruta_imagen_producto : 'https://cdn-icons-png.flaticon.com/512/869/869045.png';
+            const imgFull = p.ruta_imagen_producto ? p.ruta_imagen_producto : 'https://cdn-icons-png.flaticon.com/512/869/869045.png';
+            const img = p.ruta_imagen_producto ? p.ruta_imagen_producto.split('|')[0] : 'https://cdn-icons-png.flaticon.com/512/869/869045.png';
             const wholesaleLabel = p.precio_mayorista_producto > 0 ? `<br><small style="color:var(--text-muted);">Mayor: L ${parseFloat(p.precio_mayorista_producto).toFixed(2)}</small>` : '';
             
             let actionButtons = '';
@@ -421,7 +433,7 @@ if (!isset($_SESSION['user_id'])) exit;
 
             tbody.insertAdjacentHTML('beforeend', `
                 <tr>
-                    <td><img src="${img}" style="width:40px; height:40px; object-fit:cover; border-radius:6px; border:1px solid var(--border-color); cursor:pointer;" onclick="App.showImagePreview('${img}')" onerror="this.src='https://cdn-icons-png.flaticon.com/512/869/869045.png'"></td>
+                    <td><img src="${img}" style="width:40px; height:40px; object-fit:contain; background:#f8fafc; border-radius:6px; border:1px solid var(--border-color); cursor:pointer;" onclick="App.showImagePreview('${imgFull}')" onerror="this.src='https://cdn-icons-png.flaticon.com/512/869/869045.png'"></td>
                     <td class="bold">${p.codigo_barras_producto || 'N/A'}</td>
                     <td>
                         <div style="font-weight:600;">${p.nombre_producto}</div>
@@ -448,14 +460,73 @@ if (!isset($_SESSION['user_id'])) exit;
     };
 
     // SAVE PRODUCT
+    let webProductImages = [];
+    let webProductImgIndex = 0;
+
+    window.updateImageCarousel = function() {
+        const previewImg = document.getElementById('prod-image-preview');
+        const counter = document.getElementById('prod-img-counter');
+        const btnPrev = document.getElementById('btn-prev-prod-img');
+        const btnNext = document.getElementById('btn-next-prod-img');
+        const btnDelete = document.getElementById('btn-delete-prod-img');
+        const hiddenInput = document.getElementById('prod-image-url');
+
+        hiddenInput.value = webProductImages.join('|');
+
+        if (webProductImages.length === 0) {
+            previewImg.src = 'https://cdn-icons-png.flaticon.com/512/869/869045.png';
+            counter.textContent = '0 / 0';
+            btnPrev.style.display = 'none';
+            btnNext.style.display = 'none';
+            btnDelete.style.display = 'none';
+            webProductImgIndex = 0;
+        } else {
+            if (webProductImgIndex < 0) webProductImgIndex = 0;
+            if (webProductImgIndex >= webProductImages.length) webProductImgIndex = webProductImages.length - 1;
+
+            previewImg.src = webProductImages[webProductImgIndex];
+            counter.textContent = `${webProductImgIndex + 1} / ${webProductImages.length}`;
+            
+            if (webProductImages.length > 1) {
+                btnPrev.style.display = 'flex';
+                btnNext.style.display = 'flex';
+            } else {
+                btnPrev.style.display = 'none';
+                btnNext.style.display = 'none';
+            }
+            btnDelete.style.display = 'block';
+        }
+    };
+
+    window.changeWebProductImgIndex = function(direction) {
+        if (webProductImages.length === 0) return;
+        webProductImgIndex += direction;
+        if (webProductImgIndex < 0) webProductImgIndex = webProductImages.length - 1;
+        if (webProductImgIndex >= webProductImages.length) webProductImgIndex = 0;
+        updateImageCarousel();
+    };
+
+    window.deleteWebProductImg = function() {
+        if (webProductImages.length === 0) return;
+        webProductImages.splice(webProductImgIndex, 1);
+        if (webProductImgIndex >= webProductImages.length) {
+            webProductImgIndex = webProductImages.length - 1;
+        }
+        updateImageCarousel();
+        App.showToast('Imagen eliminada.');
+    };
+
+    // SAVE PRODUCT
     window.openProductForm = function() {
         document.getElementById('inv-prod-modal').style.display = 'flex';
         document.getElementById('inv-prod-modal-title').textContent = 'Registrar Producto';
         document.getElementById('inv-prod-form').reset();
         document.getElementById('prod-id').value = '';
         document.getElementById('prod-stock-container').style.display = 'block';
-        document.getElementById('prod-image-preview').src = 'https://cdn-icons-png.flaticon.com/512/869/869045.png';
-        document.getElementById('prod-image-url').value = '';
+        
+        webProductImages = [];
+        webProductImgIndex = 0;
+        updateImageCarousel();
     };
 
     window.closeProductForm = function() {
@@ -465,6 +536,12 @@ if (!isset($_SESSION['user_id'])) exit;
     window.uploadProductImage = function() {
         const fileInput = document.getElementById('prod-image-file');
         if (fileInput.files.length === 0) return;
+
+        if (webProductImages.length >= 7) {
+            App.showToast('Límite de 7 imágenes alcanzado.', 'error');
+            fileInput.value = '';
+            return;
+        }
 
         const fd = new FormData();
         fd.append('image', fileInput.files[0]);
@@ -476,9 +553,11 @@ if (!isset($_SESSION['user_id'])) exit;
         .then(r => r.json())
         .then(res => {
             if (res.success) {
-                document.getElementById('prod-image-url').value = res.url;
-                document.getElementById('prod-image-preview').src = res.url;
+                webProductImages.push(res.url);
+                webProductImgIndex = webProductImages.length - 1;
+                updateImageCarousel();
                 App.showToast('Imagen subida con éxito.');
+                fileInput.value = '';
             } else {
                 alert(res.message);
             }
@@ -553,8 +632,9 @@ if (!isset($_SESSION['user_id'])) exit;
         document.getElementById('prod-stock-container').style.display = 'none'; // Ocultar stock inicial al editar
         document.getElementById('prod-warranty').value = p.dias_garantia || 0;
         document.getElementById('prod-require-serial').checked = (p.requiere_serie === 1 || p.requiere_serie === true || p.requiere_serie === '1');
-        document.getElementById('prod-image-url').value = p.ruta_imagen_producto || '';
-        document.getElementById('prod-image-preview').src = p.ruta_imagen_producto ? p.ruta_imagen_producto : 'https://cdn-icons-png.flaticon.com/512/869/869045.png';
+        webProductImages = p.ruta_imagen_producto ? p.ruta_imagen_producto.split('|').filter(img => img.trim() !== '') : [];
+        webProductImgIndex = 0;
+        updateImageCarousel();
     };
 
     window.deleteProduct = function(id) {

@@ -58,7 +58,7 @@ public class PanelHistorialVentas extends JPanel {
         txtBuscar = new JTextField(15);
         txtBuscar.putClientProperty("JTextField.placeholderText", "Buscar por cliente, DNI, fecha o método...");
         txtBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        txtBuscar.setPreferredSize(new Dimension(220, 35));
+        txtBuscar.setPreferredSize(new Dimension(350, 38));
         txtBuscar.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)),
                 BorderFactory.createEmptyBorder(0, 8, 0, 8)));
         txtBuscar.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -73,8 +73,7 @@ public class PanelHistorialVentas extends JPanel {
         this.add(pnlCabecera, BorderLayout.NORTH);
 
         // Tabla
-        String[] cols = { "ID Venta", "Tipo", "Fecha / Hora", "Cliente", "Método Pago", "Vendedor", "Subtotal", "ISV (15%)",
-                "Total" };
+        String[] cols = { "ID Venta", "Tipo", "Nombre", "Fecha / Hora", "Cliente", "Método Pago", "Vendedor", "Total" };
         modeloTabla = new DefaultTableModel(null, cols) {
             @Override
             public boolean isCellEditable(int r, int c) {
@@ -88,6 +87,7 @@ public class PanelHistorialVentas extends JPanel {
         // Ajustar anchos
         tablaVentas.getColumnModel().getColumn(0).setPreferredWidth(60); // ID
         tablaVentas.getColumnModel().getColumn(1).setPreferredWidth(90); // Tipo
+        tablaVentas.getColumnModel().getColumn(2).setPreferredWidth(250); // Nombre
 
         JScrollPane scroll = new JScrollPane(tablaVentas);
         scroll.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)));
@@ -95,19 +95,19 @@ public class PanelHistorialVentas extends JPanel {
         this.add(scroll, BorderLayout.CENTER);
 
         // Botones de accion (abajo-derecha con padding)
-        JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 10));
+        JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 15));
         pnlBotones.setOpaque(false);
         pnlBotones.setBackground(new Color(213, 233, 222));
         pnlBotones.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(190, 215, 200)));
 
         JButton btnDetalles = utilidades.EfectosUI.crearBotonVerde("Ver Detalles");
-        btnDetalles.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        btnDetalles.setPreferredSize(new Dimension(160, 38));
+        btnDetalles.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btnDetalles.setPreferredSize(new Dimension(180, 50));
         btnDetalles.addActionListener(e -> verDetallesVenta());
 
         JButton btnReimprimir = utilidades.EfectosUI.crearBotonVerde("Reimprimir Ticket");
-        btnReimprimir.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        btnReimprimir.setPreferredSize(new Dimension(160, 38));
+        btnReimprimir.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btnReimprimir.setPreferredSize(new Dimension(180, 50));
         btnReimprimir.addActionListener(e -> reimprimirTicket());
 
         pnlBotones.add(btnDetalles);
@@ -130,12 +130,11 @@ public class PanelHistorialVentas extends JPanel {
             modeloTabla.addRow(new Object[] {
                     v[0], // id_ventas
                     tipoVenta, // Tipo
+                    v[11] != null ? v[11].toString() : "", // Nombre
                     v[1] != null ? sdf.format((java.util.Date) v[1]) : "N/A", // fecha_venta
                     v[2], // cliente
                     v[3], // metodo
                     v[4], // vendedor
-                    "L " + String.format("%,.2f", (double) v[5]), // subtotal
-                    "L " + String.format("%,.2f", (double) v[6]), // isv
                     "L " + String.format("%,.2f", (double) v[7]) // total
             });
         }
@@ -157,11 +156,13 @@ public class PanelHistorialVentas extends JPanel {
             String idStr = v[0].toString();
             String dni = v[9] != null ? v[9].toString().toLowerCase().replace("-", "").replace(" ", "") : "";
             String fecha = v[1] != null ? sdf.format((java.util.Date) v[1]).toLowerCase() : "";
+            String product = v[11] != null ? v[11].toString().toLowerCase() : "";
             
             String filterClean = filter.replace("-", "").replace(" ", "");
 
             if (client.contains(filter) || method.contains(filter) || seller.contains(filter)
-                    || idStr.contains(filter) || dni.contains(filterClean) || dni.contains(filter) || fecha.contains(filter)) {
+                    || idStr.contains(filter) || dni.contains(filterClean) || dni.contains(filter) || fecha.contains(filter)
+                    || product.contains(filter)) {
                 
                 String ref = v[8] != null ? v[8].toString() : "";
                 String tipoVenta = ref.startsWith("Pago de Apartado #") ? "Apartado" : "Normal";
@@ -172,12 +173,11 @@ public class PanelHistorialVentas extends JPanel {
                 modeloTabla.addRow(new Object[] {
                         v[0],
                         tipoVenta,
+                        v[11] != null ? v[11].toString() : "",
                         v[1] != null ? sdf.format((java.util.Date) v[1]) : "N/A",
                         v[2],
                         v[3],
                         v[4],
-                        "L " + String.format("%,.2f", (double) v[5]),
-                        "L " + String.format("%,.2f", (double) v[6]),
                         "L " + String.format("%,.2f", (double) v[7])
                 });
             }

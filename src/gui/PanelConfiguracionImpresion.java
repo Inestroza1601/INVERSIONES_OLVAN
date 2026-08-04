@@ -211,13 +211,13 @@ public class PanelConfiguracionImpresion extends JPanel {
 
     private JButton crearBotonEstiloPestana(String texto) {
         JButton btn = new JButton(texto);
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btn.setBackground(new Color(255, 255, 255)); 
         btn.setForeground(new Color(45, 45, 45)); 
         btn.setFocusPainted(false);
         btn.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(220, 222, 225)),
-            BorderFactory.createEmptyBorder(8, 16, 8, 16)
+            BorderFactory.createEmptyBorder(14, 22, 14, 22)
         ));
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btn.putClientProperty("JButton.buttonType", "roundRect");

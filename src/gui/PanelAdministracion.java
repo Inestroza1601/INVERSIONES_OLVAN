@@ -42,9 +42,11 @@ public class PanelAdministracion extends JPanel {
         btnDatosEmpresa = utilidades.EfectosUI.crearBotonVerde("Datos de Empresa");
         btnUsuarios = utilidades.EfectosUI.crearBotonVerde("Gestion de Usuarios");
 
-        Dimension tamBoton = new Dimension(210, 38);
+        Dimension tamBoton = new Dimension(260, 50);
         btnDatosEmpresa.setPreferredSize(tamBoton);
         btnUsuarios.setPreferredSize(tamBoton);
+        btnDatosEmpresa.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btnUsuarios.setFont(new Font("Segoe UI", Font.BOLD, 16));
 
         panelSubMenu.add(btnDatosEmpresa);
         panelSubMenu.add(btnUsuarios);

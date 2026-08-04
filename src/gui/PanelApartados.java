@@ -105,44 +105,44 @@ public class PanelApartados extends JPanel {
         this.add(scroll, BorderLayout.CENTER);
 
         // Botonera Lateral/Inferior
-        JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
+        JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
         pnlBotones.setOpaque(false);
 
         JButton btnDetalles = new JButton("Ver Detalles", new IconoBoton(1));
         btnDetalles.setBackground(Color.WHITE);
         btnDetalles.setForeground(new Color(45, 45, 45));
-        btnDetalles.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnDetalles.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnDetalles.setFocusPainted(false);
         btnDetalles.setIconTextGap(8);
-        btnDetalles.setPreferredSize(new Dimension(140, 38));
+        btnDetalles.setPreferredSize(new Dimension(170, 50));
         btnDetalles.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)));
         btnDetalles.addActionListener(e -> verDetallesApartado());
 
         JButton btnAbonar = new JButton("Registrar Abono", new IconoBoton(2));
         btnAbonar.setBackground(new Color(39, 174, 96)); // Verde Menta
         btnAbonar.setForeground(Color.WHITE);
-        btnAbonar.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnAbonar.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnAbonar.setFocusPainted(false);
         btnAbonar.setIconTextGap(8);
-        btnAbonar.setPreferredSize(new Dimension(160, 38));
+        btnAbonar.setPreferredSize(new Dimension(210, 50));
         btnAbonar.addActionListener(e -> registrarAbonoRapido());
 
         JButton btnEntregar = new JButton("Entregar Artículos", new IconoBoton(3));
         btnEntregar.setBackground(new Color(41, 128, 185)); // Azul
         btnEntregar.setForeground(Color.WHITE);
-        btnEntregar.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnEntregar.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnEntregar.setFocusPainted(false);
         btnEntregar.setIconTextGap(8);
-        btnEntregar.setPreferredSize(new Dimension(175, 38));
+        btnEntregar.setPreferredSize(new Dimension(230, 50));
         btnEntregar.addActionListener(e -> entregarArticulos());
 
         JButton btnCancelar = new JButton("Cancelar Apartado", new IconoBoton(4));
         btnCancelar.setBackground(new Color(227, 0, 15)); // Rojo Logo
         btnCancelar.setForeground(Color.WHITE);
-        btnCancelar.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnCancelar.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnCancelar.setFocusPainted(false);
         btnCancelar.setIconTextGap(8);
-        btnCancelar.setPreferredSize(new Dimension(175, 38));
+        btnCancelar.setPreferredSize(new Dimension(230, 50));
         btnCancelar.addActionListener(e -> cancelarApartadoCompleto());
 
         // Restringir botón de cancelar si es cajero

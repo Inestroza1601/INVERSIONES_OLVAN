@@ -219,20 +219,24 @@ public class PanelBuscarProducto extends JPanel {
         }
         if (imgVal == null || imgVal.trim().isEmpty()) return;
         
-        ImageIcon icon = utilidades.ImagenHelper.obtenerIcono(imgVal, 500, 500);
-        if (icon == null) return;
-        
-        JDialog zoomDialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Previsualización del Producto", true);
-        zoomDialog.setLayout(new BorderLayout());
-        zoomDialog.getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
-        zoomDialog.setSize(520, 520);
-        
-        JLabel lblZoom = new JLabel(icon);
-        lblZoom.setHorizontalAlignment(SwingConstants.CENTER);
-        zoomDialog.add(lblZoom, BorderLayout.CENTER);
-        
-        zoomDialog.setLocationRelativeTo(this);
-        zoomDialog.setVisible(true);
+        java.util.List<String> list = new java.util.ArrayList<>();
+        if (imgVal.contains("|")) {
+            String[] parts = imgVal.split("\\|");
+            for (String part : parts) {
+                if (!part.trim().isEmpty()) {
+                    list.add(part);
+                }
+            }
+        } else {
+            list.add(imgVal);
+        }
+
+        Window window = SwingUtilities.getWindowAncestor(this);
+        if (window instanceof Frame) {
+            new DialogoVisorImagen((Frame) window, "Previsualización del Producto", list, 0).setVisible(true);
+        } else if (window instanceof JDialog) {
+            new DialogoVisorImagen((JDialog) window, "Previsualización del Producto", list, 0).setVisible(true);
+        }
     }
 
     /**

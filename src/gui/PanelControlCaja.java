@@ -240,8 +240,8 @@ public class PanelControlCaja extends JPanel {
         pnlBotones.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
         JButton btnReimprimirDer = utilidades.EfectosUI.crearBotonVerde("Reimprimir Cierre");
-        btnReimprimirDer.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        btnReimprimirDer.setPreferredSize(new Dimension(0, 42));
+        btnReimprimirDer.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btnReimprimirDer.setPreferredSize(new Dimension(0, 50));
         btnReimprimirDer.addActionListener(e -> {
             int row = tablaHistorial.getSelectedRow();
             if (row < 0) {
@@ -269,8 +269,8 @@ public class PanelControlCaja extends JPanel {
         });
 
         JButton btnCerrarCaja = utilidades.EfectosUI.crearBotonVerde("Cerrar Caja");
-        btnCerrarCaja.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        btnCerrarCaja.setPreferredSize(new Dimension(0, 42));
+        btnCerrarCaja.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btnCerrarCaja.setPreferredSize(new Dimension(0, 50));
         btnCerrarCaja.addActionListener(e -> mostrarVentanaCierreCaja());
 
         pnlBotones.add(btnReimprimirDer);
@@ -307,8 +307,8 @@ public class PanelControlCaja extends JPanel {
         lblDesc.setHorizontalAlignment(SwingConstants.CENTER);
 
         btnAbrirCaja = utilidades.EfectosUI.crearBotonVerde("Abrir Turno de Caja");
-        btnAbrirCaja.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        btnAbrirCaja.setPreferredSize(new Dimension(180, 40));
+        btnAbrirCaja.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btnAbrirCaja.setPreferredSize(new Dimension(220, 50));
         btnAbrirCaja.addActionListener(e -> mostrarAperturaModal());
 
         gbc.gridy = 0; panel.add(lblIconWarn, gbc);
@@ -436,19 +436,19 @@ public class PanelControlCaja extends JPanel {
         pnlFoot.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(180, 208, 192)));
 
         JButton btnCancelar = new JButton("Cancelar");
-        btnCancelar.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnCancelar.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnCancelar.setBackground(new Color(140, 145, 150));
         btnCancelar.setForeground(Color.WHITE);
         btnCancelar.setFocusPainted(false);
-        btnCancelar.setPreferredSize(new Dimension(110, 38));
+        btnCancelar.setPreferredSize(new Dimension(130, 50));
         btnCancelar.addActionListener(e -> dlgCierre.dispose());
 
         JButton btnEjecutar = new JButton("Realizar Arqueo y Cierre");
-        btnEjecutar.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnEjecutar.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnEjecutar.setBackground(new Color(227, 0, 15));
         btnEjecutar.setForeground(Color.WHITE);
         btnEjecutar.setFocusPainted(false);
-        btnEjecutar.setPreferredSize(new Dimension(210, 38));
+        btnEjecutar.setPreferredSize(new Dimension(240, 50));
         btnEjecutar.addActionListener(e -> {
             try {
                 double montoReal = Double.parseDouble(txtMontoReal.getText().trim().replace(",", ""));
