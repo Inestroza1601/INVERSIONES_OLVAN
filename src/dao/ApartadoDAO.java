@@ -394,7 +394,7 @@ public class ApartadoDAO {
         }
     }
 
-    public boolean entregarApartadoYGenerarVenta(int idApartado, int idUsuarioCaja, boolean aplicarISV) {
+    public int entregarApartadoYGenerarVenta(int idApartado, int idUsuarioCaja, boolean aplicarISV) {
         String sqlApartadoUpdate = "UPDATE APARTADOS SET estado_apartado = 'ENTREGADO', fecha_entrega = GETDATE() WHERE id_apartado = ? AND estado_apartado = 'PAGADO'";
         String sqlVenta = "INSERT INTO VENTAS (fecha_venta, id_cliente_venta, id_usuario, id_metodo_pago, subtotal_venta, impuesto_venta, total_venta, referencia_pago, banco_pago) VALUES (GETDATE(), ?, ?, ?, ?, ?, ?, ?, ?)";
         String sqlDetalleVenta = "INSERT INTO DETALLES_VENTA (id_ventas, id_producto, descripcion_venta, cantidad_venta, precio_unitario_venta, subtotal_venta, identificador_serie, dias_garantia) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -407,7 +407,7 @@ public class ApartadoDAO {
             // 1. Get Apartado details
             Apartado ap = obtenerPorId(idApartado);
             if (ap == null || !ap.getEstadoApartado().equalsIgnoreCase("PAGADO")) {
-                con.rollback(); return false;
+                con.rollback(); return 0;
             }
             
             // Get last payment method used for this layaway, default to 1 (Cash)
@@ -446,7 +446,7 @@ public class ApartadoDAO {
                     if (rsKeys.next()) idVentaGenerado = rsKeys.getInt(1); 
                 }
             }
-            if (idVentaGenerado == 0) { con.rollback(); return false; }
+            if (idVentaGenerado == 0) { con.rollback(); return 0; }
             
             // 3. Insert into DETALLES_VENTA
             List<DetalleApartado> detalles = listarDetalles(idApartado);
@@ -488,12 +488,12 @@ public class ApartadoDAO {
             }
             
             con.commit();
-            return true;
+            return idVentaGenerado;
             
         } catch (SQLException e) {
             if (con != null) try { con.rollback(); } catch (SQLException ex) {}
             System.err.println("Error al entregar apartado y generar venta: " + e.getMessage());
-            return false;
+            return 0;
         } finally {
             if (con != null) try { con.setAutoCommit(true); con.close(); } catch (SQLException e) {}
         }

@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -17,6 +18,7 @@ public class PanelInventarioDefectuoso extends JPanel {
 
     private JTable tablaDefectuosos;
     private DefaultTableModel modeloTabla;
+    private TableRowSorter<DefaultTableModel> sorter;
     private InventarioDefectuosoDAO dao;
 
     public PanelInventarioDefectuoso() {
@@ -30,18 +32,34 @@ public class PanelInventarioDefectuoso extends JPanel {
         this.setBackground(new Color(245, 247, 250));
 
         // Cabecera
-        JPanel panelCabecera = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel panelCabecera = new JPanel(new BorderLayout());
         panelCabecera.setBackground(new Color(245, 247, 250));
         panelCabecera.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
 
         JLabel lblTitulo = new JLabel("Control de Inventario Defectuoso");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
         lblTitulo.setForeground(new Color(45, 45, 45));
-        panelCabecera.add(lblTitulo);
+        panelCabecera.add(lblTitulo, BorderLayout.WEST);
+
+        // Barra de búsqueda
+        JPanel pnlBusqueda = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        pnlBusqueda.setOpaque(false);
+        JLabel lblBuscar = new JLabel("Buscar:");
+        lblBuscar.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblBuscar.setForeground(new Color(60, 60, 60));
+        JTextField txtBusqueda = new JTextField(20);
+        txtBusqueda.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtBusqueda.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(200, 200, 200)),
+            BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        ));
+        pnlBusqueda.add(lblBuscar);
+        pnlBusqueda.add(txtBusqueda);
+        panelCabecera.add(pnlBusqueda, BorderLayout.EAST);
 
         // Tabla
-        String[] columnas = { "ID Producto", "Imagen", "Código de Barras", "Nombre del Producto", "Estado",
-                "Cantidad Defectuosa" };
+        String[] columnas = { "ID Producto", "Imagen", "Código de Barras", "Nombre del Producto", "Cliente", "Estado",
+                "Cantidad Defectuosa", "Identidad" };
         modeloTabla = new DefaultTableModel(null, columnas) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -64,6 +82,23 @@ public class PanelInventarioDefectuoso extends JPanel {
         tablaDefectuosos.setShowVerticalLines(false);
         tablaDefectuosos.setGridColor(new Color(230, 230, 230));
 
+        sorter = new TableRowSorter<>(modeloTabla);
+        tablaDefectuosos.setRowSorter(sorter);
+
+        txtBusqueda.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { filtrar(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { filtrar(); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { filtrar(); }
+            private void filtrar() {
+                String text = txtBusqueda.getText();
+                if (text.trim().length() == 0) {
+                    sorter.setRowFilter(null);
+                } else {
+                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                }
+            }
+        });
+
         JTableHeader header = tablaDefectuosos.getTableHeader();
         header.setFont(new Font("Segoe UI", Font.BOLD, 14));
         header.setBackground(new Color(255, 255, 255));
@@ -72,7 +107,7 @@ public class PanelInventarioDefectuoso extends JPanel {
         ((DefaultTableCellRenderer) header.getDefaultRenderer()).setHorizontalAlignment(JLabel.LEFT);
 
         // Renderizado del Estado
-        tablaDefectuosos.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
+        tablaDefectuosos.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                     boolean hasFocus, int row, int column) {
@@ -93,16 +128,21 @@ public class PanelInventarioDefectuoso extends JPanel {
             }
         });
 
-        // Ocultar ID Producto visualmente
+        // Ocultar ID Producto e Identidad visualmente
         tablaDefectuosos.getColumnModel().getColumn(0).setMinWidth(0);
         tablaDefectuosos.getColumnModel().getColumn(0).setMaxWidth(0);
         tablaDefectuosos.getColumnModel().getColumn(0).setWidth(0);
 
+        tablaDefectuosos.getColumnModel().getColumn(7).setMinWidth(0);
+        tablaDefectuosos.getColumnModel().getColumn(7).setMaxWidth(0);
+        tablaDefectuosos.getColumnModel().getColumn(7).setWidth(0);
+
         // Ajustar ancho de columnas
         tablaDefectuosos.getColumnModel().getColumn(1).setPreferredWidth(80);
         tablaDefectuosos.getColumnModel().getColumn(2).setPreferredWidth(120);
-        tablaDefectuosos.getColumnModel().getColumn(3).setPreferredWidth(250);
-        tablaDefectuosos.getColumnModel().getColumn(4).setPreferredWidth(200);
+        tablaDefectuosos.getColumnModel().getColumn(3).setPreferredWidth(200);
+        tablaDefectuosos.getColumnModel().getColumn(4).setPreferredWidth(150);
+        tablaDefectuosos.getColumnModel().getColumn(5).setPreferredWidth(150);
 
         JScrollPane scrollPane = new JScrollPane(tablaDefectuosos);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -149,8 +189,10 @@ public class PanelInventarioDefectuoso extends JPanel {
                     iconPreview,
                     fila.get("codigo_barras"),
                     fila.get("nombre_producto"),
+                    fila.get("cliente"),
                     fila.get("estado_defecto"),
-                    fila.get("cantidad")
+                    fila.get("cantidad"),
+                    fila.get("identidad")
             });
         }
     }
@@ -190,8 +232,11 @@ public class PanelInventarioDefectuoso extends JPanel {
                     int rowindex = tablaDefectuosos.getSelectedRow();
                     if (rowindex < 0)
                         return;
+                        
+                    // Traducir indice en caso de filtro
+                    rowindex = tablaDefectuosos.convertRowIndexToModel(rowindex);
 
-                    String estado = modeloTabla.getValueAt(rowindex, 4).toString();
+                    String estado = modeloTabla.getValueAt(rowindex, 5).toString();
 
                     menu.removeAll();
                     menu.add(itemDetalles);
@@ -250,20 +295,20 @@ public class PanelInventarioDefectuoso extends JPanel {
     }
 
     private void accionVerDetalles() {
-        int fila = tablaDefectuosos.getSelectedRow();
-        if (fila == -1)
+        int filaView = tablaDefectuosos.getSelectedRow();
+        if (filaView == -1)
             return;
+            
+        int fila = tablaDefectuosos.convertRowIndexToModel(filaView);
 
         int idProducto = (int) modeloTabla.getValueAt(fila, 0);
         String producto = modeloTabla.getValueAt(fila, 3).toString();
-        String estado = modeloTabla.getValueAt(fila, 4).toString();
+        String estado = modeloTabla.getValueAt(fila, 5).toString();
 
         List<Map<String, Object>> detalles = dao.obtenerDetallesPorProductoYEstado(idProducto, estado);
 
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Detalles de Producto Defectuoso",
                 true);
-        dialog.setSize(650, 500);
-        dialog.setLocationRelativeTo(this);
         dialog.setLayout(new BorderLayout());
         dialog.getContentPane().setBackground(Color.WHITE);
 
@@ -336,8 +381,7 @@ public class PanelInventarioDefectuoso extends JPanel {
             scrollCard.getVerticalScrollBar().setUnitIncrement(16);
             
             dialog.add(scrollCard, BorderLayout.CENTER);
-            dialog.setSize(550, 400); // Fixed size, scroll handles overflow
-            dialog.setLocationRelativeTo(this);
+            dialog.add(scrollCard, BorderLayout.CENTER);
         } else {
             String[] colD = { "Imagen", "Fecha de Ingreso", "Motivo del Daño", "Resolución Garantía", "Base64" };
             DefaultTableModel modD = new DefaultTableModel(null, colD) {
@@ -394,7 +438,9 @@ public class PanelInventarioDefectuoso extends JPanel {
                 }
             });
 
-            dialog.add(new JScrollPane(tabD), BorderLayout.CENTER);
+            JScrollPane scrollTab = new JScrollPane(tabD);
+            scrollTab.setPreferredSize(new Dimension(650, 300));
+            dialog.add(scrollTab, BorderLayout.CENTER);
         }
 
         JPanel pnlBot = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -406,6 +452,8 @@ public class PanelInventarioDefectuoso extends JPanel {
         pnlBot.add(btnOk);
         dialog.add(pnlBot, BorderLayout.SOUTH);
 
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
     }
 
@@ -416,11 +464,13 @@ public class PanelInventarioDefectuoso extends JPanel {
     }
 
     private void accionCambiarEstado(String nuevoEstado, String kardexRef) {
-        int fila = tablaDefectuosos.getSelectedRow();
-        if (fila == -1)
+        int filaView = tablaDefectuosos.getSelectedRow();
+        if (filaView == -1)
             return;
+            
+        int fila = tablaDefectuosos.convertRowIndexToModel(filaView);
 
-        String estadoActual = modeloTabla.getValueAt(fila, 4).toString();
+        String estadoActual = modeloTabla.getValueAt(fila, 5).toString();
 
         if (estadoActual.contains("Rep. Cliente")) {
             if (nuevoEstado.equals("Enviado a Proveedor")) {
@@ -456,14 +506,16 @@ public class PanelInventarioDefectuoso extends JPanel {
     }
 
     private void accionReingresar() {
-        int fila = tablaDefectuosos.getSelectedRow();
-        if (fila == -1)
+        int filaView = tablaDefectuosos.getSelectedRow();
+        if (filaView == -1)
             return;
+            
+        int fila = tablaDefectuosos.convertRowIndexToModel(filaView);
 
         int idProducto = (int) modeloTabla.getValueAt(fila, 0);
         String producto = modeloTabla.getValueAt(fila, 3).toString();
-        String estadoActual = modeloTabla.getValueAt(fila, 4).toString();
-        int cant = (int) modeloTabla.getValueAt(fila, 5);
+        String estadoActual = modeloTabla.getValueAt(fila, 5).toString();
+        int cant = (int) modeloTabla.getValueAt(fila, 6);
 
         int confirm = JOptionPane.showConfirmDialog(this,
                 "Esta acción sacará " + cant + " unidad(es) de '" + producto
@@ -485,26 +537,25 @@ public class PanelInventarioDefectuoso extends JPanel {
     }
 
     private void accionEntregarCliente() {
-        int fila = tablaDefectuosos.getSelectedRow();
-        if (fila == -1)
+        int filaView = tablaDefectuosos.getSelectedRow();
+        if (filaView == -1)
             return;
+            
+        int fila = tablaDefectuosos.convertRowIndexToModel(filaView);
 
         int idProducto = (int) modeloTabla.getValueAt(fila, 0);
-        String estadoActual = modeloTabla.getValueAt(fila, 4).toString();
+        String producto = modeloTabla.getValueAt(fila, 3).toString();
+        String cliente = modeloTabla.getValueAt(fila, 4).toString();
+        String estadoActual = modeloTabla.getValueAt(fila, 5).toString();
 
-        int confirm = JOptionPane.showConfirmDialog(this,
-                "Al confirmar, el producto será removido de esta tabla dando por concluido el reclamo de garantía.\n\n¿Estás seguro de que ya entregaste el producto reparado al cliente?",
-                "Entregar a Cliente", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        Window owner = SwingUtilities.getWindowAncestor(this);
+        DialogoEntregarDefectuoso dialog = new DialogoEntregarDefectuoso(owner, idProducto, producto, estadoActual, cliente);
+        dialog.setVisible(true);
 
-        if (confirm == JOptionPane.YES_OPTION) {
-            if (dao.entregarCliente(idProducto, estadoActual)) {
-                JOptionPane.showMessageDialog(this, "Garantía finalizada. Producto entregado.", "Éxito",
-                        JOptionPane.INFORMATION_MESSAGE);
-                cargarDatos();
-            } else {
-                JOptionPane.showMessageDialog(this, "Error al procesar la entrega.", "Error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
+        if (dialog.isExito()) {
+            JOptionPane.showMessageDialog(this, "Garantía finalizada. Producto entregado.", "Éxito",
+                    JOptionPane.INFORMATION_MESSAGE);
+            cargarDatos();
         }
     }
 

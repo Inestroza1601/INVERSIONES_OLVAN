@@ -323,6 +323,8 @@ public class DialogoReclamarGarantia extends JDialog {
                 int idUsuario = utilidades.SesionGlobal.getUsuarioActual() != null ? utilidades.SesionGlobal.getUsuarioActual().getIdUsuario() : 1;
                 if (dao.aplicarReclamo(idDetalle, txtObservacion.getText(), fotoBase64, cmbResolucion.getSelectedItem().toString(), chkReintegro.isSelected(), idUsuario)) {
                     this.exito = true;
+                    // Generar Ticket de Garantia
+                    utilidades.GeneradorTickets.imprimirTicketGarantia(idDetalle, cmbResolucion.getSelectedItem().toString(), txtObservacion.getText());
                     this.dispose();
                 } else {
                     JOptionPane.showMessageDialog(this, "Hubo un error al aplicar el reclamo.", "Error", JOptionPane.ERROR_MESSAGE);
