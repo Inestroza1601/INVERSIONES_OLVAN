@@ -110,7 +110,7 @@ public class PanelHistorialVentas extends JPanel {
 
         JButton btnReimprimir = new JButton("Reimprimir Ticket");
         btnReimprimir.setIcon(new IconoImpresora());
-        btnReimprimir.setBackground(new Color(41, 128, 185)); // Azul
+        btnReimprimir.setBackground(new Color(39, 174, 96)); // Verde
         btnReimprimir.setForeground(Color.WHITE);
         btnReimprimir.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnReimprimir.setFocusPainted(false);

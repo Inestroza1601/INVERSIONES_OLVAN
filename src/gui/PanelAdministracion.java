@@ -38,7 +38,7 @@ public class PanelAdministracion extends JPanel {
         btnDatosEmpresa = crearBotonSubMenu("Datos de Empresa");
         btnUsuarios = crearBotonSubMenu("Gestión de Usuarios"); 
 
-        panelSubMenu.add(btnDatosEmpresa);
+        // panelSubMenu.add(btnDatosEmpresa); // Oculto a petición
         panelSubMenu.add(btnUsuarios);
 
         // 4. Crear el contenedor central (Aquí cargará PanelDatosEmpresa)
