@@ -162,14 +162,67 @@ public class PanelLogin extends JPanel {
         
         gbcDer.gridy = 6; gbcDer.insets = new Insets(0, 45, 15, 45); pnlDerecha.add(lblRecuperar, gbcDer);
 
-        btnEntrar = new JButton("Ingresar al Sistema");
-        btnEntrar.setBackground(new Color(39, 174, 96));
+        btnEntrar = new JButton("Ingresar al Sistema") {
+            private float hoverProg = 0.0f;
+            private Timer tmr;
+            {
+                addMouseListener(new java.awt.event.MouseAdapter() {
+                    @Override
+                    public void mouseEntered(java.awt.event.MouseEvent e) {
+                        if (tmr != null && tmr.isRunning()) tmr.stop();
+                        tmr = new Timer(15, ae -> {
+                            hoverProg += 0.15f;
+                            if (hoverProg >= 1.0f) { hoverProg = 1.0f; tmr.stop(); }
+                            repaint();
+                        });
+                        tmr.start();
+                    }
+                    @Override
+                    public void mouseExited(java.awt.event.MouseEvent e) {
+                        if (tmr != null && tmr.isRunning()) tmr.stop();
+                        tmr = new Timer(15, ae -> {
+                            hoverProg -= 0.15f;
+                            if (hoverProg <= 0.0f) { hoverProg = 0.0f; tmr.stop(); }
+                            repaint();
+                        });
+                        tmr.start();
+                    }
+                });
+            }
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                Color c1 = new Color(16, 185, 129); // Emerald 500
+                Color c2 = new Color(5, 150, 105);  // Emerald 600
+                if (hoverProg > 0.01f) {
+                    // Más brillante en hover
+                    c1 = new Color(52, 211, 153);
+                    c2 = new Color(16, 185, 129);
+                }
+                
+                GradientPaint gp = new GradientPaint(0, 0, c1, getWidth(), getHeight(), c2);
+                g2.setPaint(gp);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                
+                // Texto
+                g2.setColor(Color.WHITE);
+                g2.setFont(getFont());
+                FontMetrics fm = g2.getFontMetrics();
+                int tx = (getWidth() - fm.stringWidth(getText())) / 2;
+                int ty = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
+                g2.drawString(getText(), tx, ty);
+                g2.dispose();
+            }
+        };
         btnEntrar.setForeground(Color.WHITE);
         btnEntrar.setFont(new Font("Segoe UI", Font.BOLD, 15));
         btnEntrar.setFocusPainted(false);
+        btnEntrar.setBorderPainted(false);
+        btnEntrar.setContentAreaFilled(false);
         btnEntrar.setPreferredSize(new Dimension(0, 48)); 
         btnEntrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnEntrar.putClientProperty("JButton.buttonType", "roundRect");
         btnEntrar.addActionListener(e -> procesarLogin());
         
         gbcDer.gridy = 7; gbcDer.insets = new Insets(0, 45, 15, 45); pnlDerecha.add(btnEntrar, gbcDer);

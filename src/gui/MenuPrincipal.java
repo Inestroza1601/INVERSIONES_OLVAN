@@ -3,6 +3,8 @@ package gui;
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MenuPrincipal extends JFrame {
 
@@ -20,21 +22,24 @@ public class MenuPrincipal extends JFrame {
     private JButton btnApartados;
     private JButton btnHistorialVentas;
     private JButton btnGarantias;
+    private JButton btnEstadisticas;
     private JButton btnCerrarSesion;
     private JButton botonActivo = null;
-    private JButton btnEstadisticas;
 
-    // --- PALETA DE COLORES "SOFT LIGHT" INVERSIONES OLVAN ---
-    private final Color COLOR_FONDO_PRINCIPAL = new Color(240, 242, 245);
-    private final Color COLOR_TEXTO_MENU = new Color(85, 85, 85);
-    private final Color COLOR_VERDE_MENTA = new Color(39, 174, 96);
-    private final Color COLOR_VERDE_CLARO = new Color(46, 204, 113, 25);
-    private final Color COLOR_ROJO_LOGO = new Color(227, 0, 15);
-    private final Color COLOR_ROJO_CLARO = new Color(227, 0, 15, 20);
-    private final Color COLOR_BORDE_LATERAL = new Color(220, 222, 225);
+    // --- PALETA CROMÁTICA OFICIAL: VERDE Y BLANCO ---
+    private final Color COLOR_FONDO_SIDEBAR = new Color(255, 255, 255); // Blanco Puro
+    private final Color COLOR_FONDO_APP = new Color(248, 250, 252);     // Fondo suave
+    private final Color COLOR_TEXTO_MENU = new Color(71, 85, 105);      // Gris pizarra legible
+    private final Color COLOR_VERDE_EMERALD = new Color(16, 185, 129);  // Verde Esmeralda
+    private final Color COLOR_VERDE_OSCURO = new Color(5, 150, 105);    // Verde Esmeralda oscuro
+    private final Color COLOR_VERDE_HOVER = new Color(236, 253, 245);   // Menta suave
+    private final Color COLOR_ROJO_PELIGRO = new Color(239, 68, 68);
+    private final Color COLOR_ROJO_HOVER = new Color(254, 242, 242);
+    private final Color COLOR_ROJO_TEXTO = new Color(220, 38, 38);
+    private final Color COLOR_BORDE_LATERAL = new Color(226, 232, 240);
 
     public MenuPrincipal() {
-        setTitle("ORION SYSTEMS - CONEXION A TU ALCANCE");
+        setTitle("INVERSIONES OLVAN - SISTEMA INTEGRAL");
         try {
             java.net.URL imgURL = getClass().getResource("/image/logo.png");
             if (imgURL != null) {
@@ -44,11 +49,12 @@ public class MenuPrincipal extends JFrame {
             System.err.println("No se pudo cargar el logo: " + e.getMessage());
         }
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setSize(1024, 768);
+        setSize(1200, 800);
+        setMinimumSize(new Dimension(1024, 700));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-        getContentPane().setBackground(COLOR_FONDO_PRINCIPAL);
+        getContentPane().setBackground(COLOR_FONDO_APP);
 
         cardLayout = new CardLayout();
         panelContenedor = new JPanel(cardLayout);
@@ -61,64 +67,80 @@ public class MenuPrincipal extends JFrame {
     }
 
     public void iniciarEntornoApp() {
-        JPanel panelApp = new JPanel(new BorderLayout());
-        panelApp.setBackground(COLOR_FONDO_PRINCIPAL);
+        botonActivo = null;
 
-        // Panel Lateral
+        JPanel panelApp = new JPanel(new BorderLayout());
+        panelApp.setBackground(COLOR_FONDO_APP);
+
+        // Panel Lateral Izquierdo (Blanco y Verde)
         panelLateralIzquierdo = new JPanel();
         panelLateralIzquierdo.setLayout(new BoxLayout(panelLateralIzquierdo, BoxLayout.Y_AXIS));
-        panelLateralIzquierdo.setPreferredSize(new Dimension(240, 0));
-        panelLateralIzquierdo.setBackground(COLOR_FONDO_PRINCIPAL);
-
+        panelLateralIzquierdo.setPreferredSize(new Dimension(250, 0));
+        panelLateralIzquierdo.setBackground(COLOR_FONDO_SIDEBAR);
         panelLateralIzquierdo.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createMatteBorder(0, 0, 0, 1, COLOR_BORDE_LATERAL),
-                BorderFactory.createEmptyBorder(40, 0, 40, 0)));
+                BorderFactory.createEmptyBorder(25, 0, 20, 0)));
+
+        // Cabecera con Marca
+        JLabel lblEmpresa = new JLabel("INVERSIONES OLVAN");
+        lblEmpresa.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        lblEmpresa.setForeground(COLOR_VERDE_OSCURO);
+        lblEmpresa.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblEmpresa.setBorder(BorderFactory.createEmptyBorder(0, 25, 2, 0));
+
+        JLabel lblOnline = new JLabel("● SISTEMA ONLINE");
+        lblOnline.setFont(new Font("Segoe UI", Font.BOLD, 10));
+        lblOnline.setForeground(COLOR_VERDE_EMERALD);
+        lblOnline.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblOnline.setBorder(BorderFactory.createEmptyBorder(0, 25, 15, 0));
 
         JLabel lblMenu = new JLabel("MENÚ PRINCIPAL");
-        lblMenu.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        lblMenu.setForeground(new Color(140, 145, 150));
+        lblMenu.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        lblMenu.setForeground(new Color(148, 163, 184));
         lblMenu.setAlignmentX(Component.LEFT_ALIGNMENT);
-        lblMenu.setBorder(BorderFactory.createEmptyBorder(0, 25, 20, 0));
+        lblMenu.setBorder(BorderFactory.createEmptyBorder(0, 25, 12, 0));
 
-        // Botones
-        btnAdministracion = crearBotonWeb("Administración", new IconoMenu(1), false);
-        btnClientes = crearBotonWeb("Clientes", new IconoMenu(2), false);
-        btnInventario = crearBotonWeb("Inventario", new IconoMenu(3), false);
-        btnPuntoVenta = crearBotonWeb("Punto de Venta", new IconoMenu(4), false);
-        btnControlCaja = crearBotonWeb("Control de Caja", new IconoMenu(8), false);
-        btnApartados = crearBotonWeb("Apartados", new IconoMenu(9), false);
-        btnHistorialVentas = crearBotonWeb("Historial de Ventas", new IconoMenu(9), false);
-        btnGarantias = crearBotonWeb("Garantías", new IconoMenu(5), false);
-        btnEstadisticas = crearBotonWeb("Estadísticas", new IconoMenu(7), false);
-        btnCerrarSesion = crearBotonWeb("Cerrar Sesión", new IconoMenu(6), true);
+        // Creación de botones con micro-animaciones fluidas
+        btnAdministracion = crearBotonWebAnimado("Administración", new IconoMenu(1), false);
+        btnClientes = crearBotonWebAnimado("Clientes", new IconoMenu(2), false);
+        btnInventario = crearBotonWebAnimado("Inventario", new IconoMenu(3), false);
+        btnPuntoVenta = crearBotonWebAnimado("Punto de Venta", new IconoMenu(4), false);
+        btnControlCaja = crearBotonWebAnimado("Control de Caja", new IconoMenu(8), false);
+        btnApartados = crearBotonWebAnimado("Apartados", new IconoMenu(9), false);
+        btnHistorialVentas = crearBotonWebAnimado("Historial de Ventas", new IconoMenu(9), false);
+        btnGarantias = crearBotonWebAnimado("Garantías", new IconoMenu(5), false);
+        btnEstadisticas = crearBotonWebAnimado("Estadísticas", new IconoMenu(7), false);
+        btnCerrarSesion = crearBotonWebAnimado("Cerrar Sesión", new IconoMenu(6), true);
 
         int rolId = (utilidades.SesionGlobal.getUsuarioActual() != null)
                 ? utilidades.SesionGlobal.getUsuarioActual().getIdRol()
                 : 1;
 
+        panelLateralIzquierdo.add(lblEmpresa);
+        panelLateralIzquierdo.add(lblOnline);
         panelLateralIzquierdo.add(lblMenu);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(20));
+        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
 
         if (rolId != 3) {
             panelLateralIzquierdo.add(btnAdministracion);
-            panelLateralIzquierdo.add(Box.createVerticalStrut(12));
+            panelLateralIzquierdo.add(Box.createVerticalStrut(4));
         }
         panelLateralIzquierdo.add(btnClientes);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(12));
+        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
         panelLateralIzquierdo.add(btnInventario);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(12));
+        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
         panelLateralIzquierdo.add(btnPuntoVenta);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(12));
+        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
         panelLateralIzquierdo.add(btnControlCaja);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(12));
+        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
         panelLateralIzquierdo.add(btnApartados);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(12));
+        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
         panelLateralIzquierdo.add(btnHistorialVentas);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(12));
+        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
         panelLateralIzquierdo.add(btnGarantias);
 
         if (rolId != 3) {
-            panelLateralIzquierdo.add(Box.createVerticalStrut(12));
+            panelLateralIzquierdo.add(Box.createVerticalStrut(4));
             panelLateralIzquierdo.add(btnEstadisticas);
         }
 
@@ -128,12 +150,13 @@ public class MenuPrincipal extends JFrame {
         // Panel Central
         panelCentral = new JPanel();
         panelCentral.setLayout(new BorderLayout());
-        panelCentral.setBackground(COLOR_FONDO_PRINCIPAL);
+        panelCentral.setBackground(COLOR_FONDO_APP);
+
         if (rolId == 3) {
-            panelCentral.add(new PanelPuntoVenta(), BorderLayout.CENTER);
+            mostrarPanelHijo(new PanelPuntoVenta());
             marcarBotonActivo(btnPuntoVenta, false);
         } else {
-            panelCentral.add(new PanelEstadisticas(), BorderLayout.CENTER);
+            mostrarPanelHijo(new PanelEstadisticas());
             marcarBotonActivo(btnEstadisticas, false);
         }
 
@@ -143,7 +166,7 @@ public class MenuPrincipal extends JFrame {
         panelContenedor.add(panelApp, "APP");
         cardLayout.show(panelContenedor, "APP");
 
-        // Eventos
+        // Eventos de apertura de módulos con animación
         btnAdministracion.addActionListener(e -> mostrarPanelHijo(new PanelAdministracion()));
         btnClientes.addActionListener(e -> mostrarPanelHijo(new PanelGestionClientes()));
         btnInventario.addActionListener(e -> mostrarPanelHijo(new PanelInventario()));
@@ -152,6 +175,8 @@ public class MenuPrincipal extends JFrame {
         btnApartados.addActionListener(e -> mostrarPanelHijo(new PanelApartados()));
         btnHistorialVentas.addActionListener(e -> mostrarPanelHijo(new PanelHistorialVentas()));
         btnGarantias.addActionListener(e -> mostrarPanelHijo(new PanelGestionGarantias()));
+        btnEstadisticas.addActionListener(e -> mostrarPanelHijo(new PanelEstadisticas()));
+
         btnCerrarSesion.addActionListener(e -> {
             Object[] opciones = { "Sí, cerrar sesión", "Cancelar" };
             int opcion = JOptionPane.showOptionDialog(this,
@@ -171,15 +196,267 @@ public class MenuPrincipal extends JFrame {
                 cardLayout.show(panelContenedor, "LOGIN");
             }
         });
-        btnEstadisticas.addActionListener(e -> mostrarPanelHijo(new PanelEstadisticas()));
     }
 
+    // =========================================================================
+    // ANIMACIÓN DE TRANSICIÓN AL ABRIR VENTANAS (FADE-IN + SLIDE SUAVE)
+    // =========================================================================
     public void mostrarPanelHijo(JPanel nuevoPanel) {
         panelCentral.removeAll();
-        nuevoPanel.setBackground(COLOR_FONDO_PRINCIPAL);
-        panelCentral.add(nuevoPanel, BorderLayout.CENTER);
+        nuevoPanel.setBackground(COLOR_FONDO_APP);
+
+        PanelTransicionSuave contenedorAnimado = new PanelTransicionSuave(nuevoPanel);
+        panelCentral.add(contenedorAnimado, BorderLayout.CENTER);
         panelCentral.revalidate();
         panelCentral.repaint();
+    }
+
+    // =========================================================================
+    // CREACIÓN DE BOTONES CON ANIMACIÓN SUAVE DE HOVER (INTERPOLACIÓN 60 FPS)
+    // =========================================================================
+    private JButton crearBotonWebAnimado(String texto, Icon icono, boolean esPeligro) {
+        JButton boton = new JButton(texto);
+        boton.setIcon(icono);
+        boton.setIconTextGap(14);
+        boton.setPreferredSize(new Dimension(Integer.MAX_VALUE, 46));
+        boton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 46));
+        boton.setFont(new Font("Segoe UI", Font.BOLD, 13));
+
+        boton.setBackground(COLOR_FONDO_SIDEBAR);
+        boton.setForeground(COLOR_TEXTO_MENU);
+        boton.setFocusPainted(false);
+        boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        boton.setHorizontalAlignment(SwingConstants.LEFT);
+        boton.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        javax.swing.border.Border bordeNormal = BorderFactory.createEmptyBorder(0, 25, 0, 0);
+        boton.setBorder(bordeNormal);
+        boton.putClientProperty("JButton.buttonType", "borderless");
+
+        Color targetColorFondo = esPeligro ? COLOR_ROJO_HOVER : COLOR_VERDE_HOVER;
+        Color targetColorBorde = esPeligro ? COLOR_ROJO_PELIGRO : COLOR_VERDE_EMERALD;
+        Color targetColorTexto = esPeligro ? COLOR_ROJO_TEXTO : COLOR_VERDE_OSCURO;
+
+        // Controlador de micro-animación fluida de color y barra indicadora
+        class AnimadorHover {
+            private float progreso = 0.0f;
+            private Timer timer;
+
+            void animar(boolean entrar) {
+                if (boton == botonActivo) return;
+                if (timer != null && timer.isRunning()) timer.stop();
+
+                timer = new Timer(15, e -> {
+                    if (entrar) {
+                        progreso += 0.20f;
+                        if (progreso >= 1.0f) {
+                            progreso = 1.0f;
+                            timer.stop();
+                        }
+                    } else {
+                        progreso -= 0.20f;
+                        if (progreso <= 0.0f) {
+                            progreso = 0.0f;
+                            timer.stop();
+                        }
+                    }
+
+                    if (boton != botonActivo) {
+                        Color bg = mezclarColores(COLOR_FONDO_SIDEBAR, targetColorFondo, progreso);
+                        Color fg = mezclarColores(COLOR_TEXTO_MENU, targetColorTexto, progreso);
+                        int anchoBorde = (int) (5 * progreso);
+
+                        boton.setBackground(bg);
+                        boton.setForeground(fg);
+                        if (anchoBorde > 0) {
+                            boton.setBorder(BorderFactory.createCompoundBorder(
+                                    BorderFactory.createMatteBorder(0, anchoBorde, 0, 0, targetColorBorde),
+                                    BorderFactory.createEmptyBorder(0, 25 - anchoBorde, 0, 0)));
+                        } else {
+                            boton.setBorder(bordeNormal);
+                        }
+                        boton.repaint();
+                    }
+                });
+                timer.start();
+            }
+        }
+
+        AnimadorHover animador = new AnimadorHover();
+
+        boton.addActionListener(e -> marcarBotonActivo(boton, esPeligro));
+
+        boton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                animador.animar(true);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                animador.animar(false);
+            }
+        });
+
+        return boton;
+    }
+
+    private void marcarBotonActivo(JButton botonSeleccionado, boolean esPeligro) {
+        if (botonActivo != null && botonActivo != botonSeleccionado) {
+            botonActivo.setBackground(COLOR_FONDO_SIDEBAR);
+            botonActivo.setForeground(COLOR_TEXTO_MENU);
+            botonActivo.setBorder(BorderFactory.createEmptyBorder(0, 25, 0, 0));
+        }
+
+        botonActivo = botonSeleccionado;
+
+        Color colorFondoActivo = esPeligro ? COLOR_ROJO_HOVER : COLOR_VERDE_HOVER;
+        Color colorLineaLateral = esPeligro ? COLOR_ROJO_PELIGRO : COLOR_VERDE_EMERALD;
+        Color colorTextoActivo = esPeligro ? COLOR_ROJO_TEXTO : COLOR_VERDE_OSCURO;
+
+        botonActivo.setBackground(colorFondoActivo);
+        botonActivo.setForeground(colorTextoActivo);
+        botonActivo.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 5, 0, 0, colorLineaLateral),
+                BorderFactory.createEmptyBorder(0, 20, 0, 0)));
+    }
+
+    private static Color mezclarColores(Color c1, Color c2, float fraccion) {
+        fraccion = Math.max(0.0f, Math.min(1.0f, fraccion));
+        int r = (int) (c1.getRed() + (c2.getRed() - c1.getRed()) * fraccion);
+        int g = (int) (c1.getGreen() + (c2.getGreen() - c1.getGreen()) * fraccion);
+        int b = (int) (c1.getBlue() + (c2.getBlue() - c1.getBlue()) * fraccion);
+        return new Color(r, g, b);
+    }
+
+    // =========================================================================
+    // PANEL CONTENEDOR CON ANIMACIÓN SUAVE DE ENTRADA (FADE-IN Y SLIDE)
+    // =========================================================================
+    private class PanelTransicionSuave extends JPanel {
+        private float opacidad = 0.05f;
+        private int desplazamientoY = 10;
+        private Timer timerTransicion;
+
+        public PanelTransicionSuave(JPanel hijo) {
+            setLayout(new BorderLayout());
+            setBackground(COLOR_FONDO_APP);
+            add(hijo, BorderLayout.CENTER);
+
+            timerTransicion = new Timer(14, e -> {
+                opacidad += 0.15f;
+                desplazamientoY = Math.max(0, (int) (10 * (1.0f - opacidad)));
+                if (opacidad >= 1.0f) {
+                    opacidad = 1.0f;
+                    desplazamientoY = 0;
+                    timerTransicion.stop();
+                }
+                repaint();
+            });
+            timerTransicion.start();
+        }
+
+        @Override
+        public void paint(Graphics g) {
+            if (opacidad >= 1.0f) {
+                super.paint(g);
+                return;
+            }
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            
+            // Fondo limpio
+            g2.setColor(getBackground());
+            g2.fillRect(0, 0, getWidth(), getHeight());
+
+            // Efecto de aparición con transparencia gradual y deslizamiento suave
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Math.min(1.0f, Math.max(0.0f, opacidad))));
+            g2.translate(0, desplazamientoY);
+            super.paint(g2);
+            g2.dispose();
+        }
+    }
+
+    // =========================================================================
+    // ÍCONOS VECTORIALES NÍPIDOS DEL MENÚ
+    // =========================================================================
+    private class IconoMenu implements Icon {
+        private int tipo;
+
+        public IconoMenu(int tipo) {
+            this.tipo = tipo;
+        }
+
+        @Override
+        public int getIconWidth() {
+            return 20;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return 20;
+        }
+
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+
+            g2.setColor(c.getForeground());
+            g2.setStroke(new BasicStroke(1.9f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+
+            switch (tipo) {
+                case 1: // Administración
+                    g2.drawLine(x + 2, y + 6, x + 18, y + 6);
+                    g2.drawOval(x + 12, y + 3, 4, 5);
+                    g2.drawLine(x + 2, y + 14, x + 18, y + 14);
+                    g2.drawOval(x + 4, y + 11, 4, 5);
+                    break;
+                case 2: // Clientes
+                    g2.drawOval(x + 6, y + 1, 8, 8);
+                    g2.drawArc(x + 1, y + 9, 18, 12, 0, 180);
+                    break;
+                case 3: // Inventario
+                    g2.drawRect(x + 2, y + 4, 16, 13);
+                    g2.drawLine(x + 2, y + 9, x + 18, y + 9);
+                    g2.drawLine(x + 10, y + 9, x + 10, y + 17);
+                    break;
+                case 4: // Punto de Venta
+                    g2.drawPolygon(new int[] { x + 2, x + 10, x + 18, x + 10 },
+                            new int[] { y + 10, y + 2, y + 10, y + 18 }, 4);
+                    g2.drawOval(x + 6, y + 9, 2, 2);
+                    break;
+                case 5: // Garantías
+                    g2.drawPolygon(new int[] { x + 2, x + 18, x + 18, x + 10, x + 2 },
+                            new int[] { y + 2, y + 2, y + 10, y + 18, y + 10 }, 5);
+                    g2.drawLine(x + 7, y + 9, x + 10, y + 12);
+                    g2.drawLine(x + 10, y + 12, x + 14, y + 6);
+                    break;
+                case 6: // Cerrar Sesión
+                    g2.drawArc(x + 3, y + 3, 14, 14, -240, 300);
+                    g2.drawLine(x + 10, y + 1, x + 10, y + 9);
+                    break;
+                case 7: // Estadísticas
+                    g2.drawLine(x + 2, y + 18, x + 18, y + 18);
+                    g2.fillRect(x + 3, y + 9, 3, 9);
+                    g2.fillRect(x + 8, y + 4, 3, 14);
+                    g2.fillRect(x + 13, y + 12, 3, 6);
+                    break;
+                case 8: // Control de Caja
+                    g2.drawRect(x + 2, y + 4, 16, 12);
+                    g2.drawLine(x + 2, y + 10, x + 18, y + 10);
+                    g2.drawOval(x + 9, y + 6, 2, 2);
+                    g2.drawLine(x + 7, y + 13, x + 13, y + 13);
+                    break;
+                case 9: // Historial / Apartados
+                    g2.drawRect(x + 3, y + 2, 14, 16);
+                    g2.drawLine(x + 6, y + 6, x + 14, y + 6);
+                    g2.drawLine(x + 6, y + 10, x + 14, y + 10);
+                    g2.drawLine(x + 6, y + 14, x + 11, y + 14);
+                    break;
+            }
+            g2.dispose();
+        }
     }
 
     public static void main(String[] args) {
@@ -192,159 +469,5 @@ public class MenuPrincipal extends JFrame {
         SwingUtilities.invokeLater(() -> {
             new MenuPrincipal().setVisible(true);
         });
-    }
-
-    private JButton crearBotonWeb(String texto, Icon icono, boolean esPeligro) {
-        JButton boton = new JButton(texto);
-
-        boton.setIcon(icono);
-        boton.setIconTextGap(15);
-
-        boton.setPreferredSize(new Dimension(Integer.MAX_VALUE, 55));
-        boton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 55));
-        boton.setFont(new Font("Segoe UI", Font.BOLD, 14));
-
-        boton.setBackground(COLOR_FONDO_PRINCIPAL);
-        boton.setForeground(COLOR_TEXTO_MENU);
-        boton.setFocusPainted(false);
-        boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        boton.setHorizontalAlignment(SwingConstants.LEFT);
-        boton.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        javax.swing.border.Border bordeNormal = BorderFactory.createEmptyBorder(0, 25, 0, 0);
-        boton.setBorder(bordeNormal);
-        boton.putClientProperty("JButton.buttonType", "borderless");
-
-        Color colorFondoHover = esPeligro ? COLOR_ROJO_CLARO : COLOR_VERDE_CLARO;
-        Color colorLineaLateral = esPeligro ? COLOR_ROJO_LOGO : COLOR_VERDE_MENTA;
-        Color colorTextoHover = esPeligro ? COLOR_ROJO_LOGO : COLOR_VERDE_MENTA;
-
-        javax.swing.border.Border bordeHover = BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 5, 0, 0, colorLineaLateral),
-                BorderFactory.createEmptyBorder(0, 20, 0, 0));
-
-        boton.addActionListener(e -> marcarBotonActivo(boton, esPeligro));
-
-        boton.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                if (boton != botonActivo) {
-                    boton.setBackground(colorFondoHover);
-                    boton.setForeground(colorTextoHover);
-                    boton.setBorder(bordeHover);
-                }
-            }
-
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                if (boton != botonActivo) {
-                    boton.setBackground(COLOR_FONDO_PRINCIPAL);
-                    boton.setForeground(COLOR_TEXTO_MENU);
-                    boton.setBorder(bordeNormal);
-                }
-            }
-        });
-
-        return boton;
-    }
-
-    private class IconoMenu implements Icon {
-        private int tipo;
-
-        public IconoMenu(int tipo) {
-            this.tipo = tipo;
-        }
-
-        @Override
-        public int getIconWidth() {
-            return 22;
-        }
-
-        @Override
-        public int getIconHeight() {
-            return 22;
-        }
-
-        @Override
-        public void paintIcon(Component c, Graphics g, int x, int y) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            g2.setColor(c.getForeground());
-            g2.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-
-            switch (tipo) {
-                case 1:
-                    g2.drawLine(x + 2, y + 7, x + 20, y + 7);
-                    g2.drawOval(x + 14, y + 4, 4, 5);
-                    g2.drawLine(x + 2, y + 15, x + 20, y + 15);
-                    g2.drawOval(x + 4, y + 12, 4, 5);
-                    break;
-                case 2:
-                    g2.drawOval(x + 7, y + 2, 8, 8);
-                    g2.drawArc(x + 2, y + 10, 18, 14, 0, 180);
-                    break;
-                case 3:
-                    g2.drawRect(x + 3, y + 5, 16, 13);
-                    g2.drawLine(x + 3, y + 10, x + 19, y + 10);
-                    g2.drawLine(x + 11, y + 10, x + 11, y + 18);
-                    break;
-                case 4:
-                    g2.drawPolygon(new int[] { x + 3, x + 11, x + 19, x + 11 },
-                            new int[] { y + 11, y + 3, y + 11, y + 19 }, 4);
-                    g2.drawOval(x + 7, y + 10, 2, 2);
-                    break;
-                case 5:
-                    g2.drawPolygon(new int[] { x + 3, x + 19, x + 19, x + 11, x + 3 },
-                            new int[] { y + 3, y + 3, y + 11, y + 19, y + 11 }, 5);
-                    g2.drawLine(x + 8, y + 10, x + 11, y + 13);
-                    g2.drawLine(x + 11, y + 13, x + 15, y + 7);
-                    break;
-                case 6:
-                    g2.drawArc(x + 4, y + 4, 14, 14, -240, 300);
-                    g2.drawLine(x + 11, y + 2, x + 11, y + 10);
-                    break;
-                case 7:
-                    g2.drawLine(x + 2, y + 19, x + 20, y + 19);
-                    g2.fillRect(x + 4, y + 10, 3, 9);
-                    g2.fillRect(x + 10, y + 4, 3, 15);
-                    g2.fillRect(x + 16, y + 13, 3, 6);
-                    break;
-                case 8:
-                    g2.drawRect(x + 3, y + 5, 16, 12);
-                    g2.drawLine(x + 3, y + 11, x + 19, y + 11);
-                    g2.drawOval(x + 10, y + 7, 2, 2);
-                    g2.drawLine(x + 8, y + 14, x + 14, y + 14);
-                    break;
-                case 9:
-                    g2.drawRect(x + 4, y + 3, 14, 16);
-                    g2.drawLine(x + 7, y + 7, x + 15, y + 7);
-                    g2.drawLine(x + 7, y + 11, x + 15, y + 11);
-                    g2.drawLine(x + 7, y + 15, x + 12, y + 15);
-                    break;
-            }
-            g2.dispose();
-        }
-    }
-
-    private void marcarBotonActivo(JButton botonSeleccionado, boolean esPeligro) {
-        if (botonActivo != null && botonActivo != botonSeleccionado) {
-            botonActivo.setBackground(COLOR_FONDO_PRINCIPAL);
-            botonActivo.setForeground(COLOR_TEXTO_MENU);
-            botonActivo.setBorder(BorderFactory.createEmptyBorder(0, 25, 0, 0));
-        }
-
-        botonActivo = botonSeleccionado;
-
-        Color colorFondoHover = esPeligro ? COLOR_ROJO_CLARO : COLOR_VERDE_CLARO;
-        Color colorLineaLateral = esPeligro ? COLOR_ROJO_LOGO : COLOR_VERDE_MENTA;
-        Color colorTextoActivo = esPeligro ? COLOR_ROJO_LOGO : COLOR_VERDE_MENTA;
-
-        botonActivo.setBackground(colorFondoHover);
-        botonActivo.setForeground(colorTextoActivo);
-        botonActivo.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 5, 0, 0, colorLineaLateral),
-                BorderFactory.createEmptyBorder(0, 20, 0, 0)));
     }
 }
