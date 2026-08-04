@@ -17,6 +17,7 @@ public class PanelHistorialVentas extends JPanel {
     private JTable tablaVentas;
     private DefaultTableModel modeloTabla;
     private JTextField txtBuscar;
+    private JComboBox<String> cmbOrdenar;
 
     public PanelHistorialVentas() {
         this.dao = new VentasDAO();
@@ -40,13 +41,32 @@ public class PanelHistorialVentas extends JPanel {
 
         JPanel pnlBuscar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         pnlBuscar.setOpaque(false);
+        
+        String[] opcionesOrden = { "Más Recientes", "Más Antiguos", "Mayor a Menor (Total)", "Menor a Mayor (Total)", "Cliente (A-Z)", "Cliente (Z-A)" };
+        cmbOrdenar = new JComboBox<>(opcionesOrden);
+        cmbOrdenar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        cmbOrdenar.setPreferredSize(new Dimension(200, 35));
+        cmbOrdenar.setBackground(Color.WHITE);
+        cmbOrdenar.addActionListener(e -> {
+            if (ventas != null) {
+                ordenarVentasLista();
+                filtrarVentas();
+            }
+        });
+        pnlBuscar.add(cmbOrdenar);
+        
         txtBuscar = new JTextField(15);
-        txtBuscar.putClientProperty("JTextField.placeholderText", "Buscar por cliente, DNI o método...");
+        txtBuscar.putClientProperty("JTextField.placeholderText", "Buscar por cliente, DNI, fecha o método...");
         txtBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         txtBuscar.setPreferredSize(new Dimension(220, 35));
         txtBuscar.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)),
                 BorderFactory.createEmptyBorder(0, 8, 0, 8)));
-        txtBuscar.addActionListener(e -> filtrarVentas());
+        txtBuscar.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { filtrarVentas(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { filtrarVentas(); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { filtrarVentas(); }
+        });
+        txtBuscar.addActionListener(e -> filtrarVentas()); // Keep enter key support just in case
         pnlBuscar.add(txtBuscar);
         pnlCabecera.add(pnlBuscar, BorderLayout.EAST);
 
@@ -78,7 +98,8 @@ public class PanelHistorialVentas extends JPanel {
         JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         pnlBotones.setOpaque(false);
 
-        JButton btnDetalles = new JButton("👁 Ver Detalles");
+        JButton btnDetalles = new JButton("Ver Detalles");
+        btnDetalles.setIcon(new IconoOjo());
         btnDetalles.setBackground(Color.WHITE);
         btnDetalles.setForeground(new Color(45, 45, 45));
         btnDetalles.setFont(new Font("Segoe UI", Font.BOLD, 13));
@@ -87,12 +108,13 @@ public class PanelHistorialVentas extends JPanel {
         btnDetalles.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)));
         btnDetalles.addActionListener(e -> verDetallesVenta());
 
-        JButton btnReimprimir = new JButton("🖨 Reimprimir Ticket");
+        JButton btnReimprimir = new JButton("Reimprimir Ticket");
+        btnReimprimir.setIcon(new IconoImpresora());
         btnReimprimir.setBackground(new Color(41, 128, 185)); // Azul
         btnReimprimir.setForeground(Color.WHITE);
         btnReimprimir.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnReimprimir.setFocusPainted(false);
-        btnReimprimir.setPreferredSize(new Dimension(160, 38));
+        btnReimprimir.setPreferredSize(new Dimension(180, 38));
         btnReimprimir.addActionListener(e -> reimprimirTicket());
 
         pnlBotones.add(btnDetalles);
@@ -103,6 +125,7 @@ public class PanelHistorialVentas extends JPanel {
     private void cargarVentas() {
         modeloTabla.setRowCount(0);
         ventas = dao.listarVentas();
+        ordenarVentasLista();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         for (Object[] v : ventas) {
             String ref = v[8] != null ? v[8].toString() : "";
@@ -140,11 +163,12 @@ public class PanelHistorialVentas extends JPanel {
             String seller = v[4].toString().toLowerCase();
             String idStr = v[0].toString();
             String dni = v[9] != null ? v[9].toString().toLowerCase().replace("-", "").replace(" ", "") : "";
+            String fecha = v[1] != null ? sdf.format((java.util.Date) v[1]).toLowerCase() : "";
             
             String filterClean = filter.replace("-", "").replace(" ", "");
 
             if (client.contains(filter) || method.contains(filter) || seller.contains(filter)
-                    || idStr.contains(filter) || dni.contains(filterClean) || dni.contains(filter)) {
+                    || idStr.contains(filter) || dni.contains(filterClean) || dni.contains(filter) || fecha.contains(filter)) {
                 
                 String ref = v[8] != null ? v[8].toString() : "";
                 String tipoVenta = ref.startsWith("Pago de Apartado #") ? "Apartado" : "Normal";
@@ -167,6 +191,49 @@ public class PanelHistorialVentas extends JPanel {
         }
     }
 
+    private void ordenarVentasLista() {
+        if (ventas == null || ventas.isEmpty() || cmbOrdenar == null) return;
+        String seleccion = (String) cmbOrdenar.getSelectedItem();
+        if (seleccion == null) return;
+        
+        ventas.sort((v1, v2) -> {
+            try {
+                switch (seleccion) {
+                    case "Más Antiguos":
+                        java.util.Date d1 = (java.util.Date) v1[1];
+                        java.util.Date d2 = (java.util.Date) v2[1];
+                        if (d1 == null || d2 == null) return 0;
+                        return d1.compareTo(d2);
+                    case "Más Recientes":
+                        java.util.Date d1_r = (java.util.Date) v1[1];
+                        java.util.Date d2_r = (java.util.Date) v2[1];
+                        if (d1_r == null || d2_r == null) return 0;
+                        return d2_r.compareTo(d1_r);
+                    case "Mayor a Menor (Total)":
+                        Double t1 = (Double) v1[7];
+                        Double t2 = (Double) v2[7];
+                        return t2.compareTo(t1);
+                    case "Menor a Mayor (Total)":
+                        Double t1_m = (Double) v1[7];
+                        Double t2_m = (Double) v2[7];
+                        return t1_m.compareTo(t2_m);
+                    case "Cliente (A-Z)":
+                        String c1 = v1[2] != null ? v1[2].toString() : "";
+                        String c2 = v2[2] != null ? v2[2].toString() : "";
+                        return c1.compareToIgnoreCase(c2);
+                    case "Cliente (Z-A)":
+                        String c1_z = v1[2] != null ? v1[2].toString() : "";
+                        String c2_z = v2[2] != null ? v2[2].toString() : "";
+                        return c2_z.compareToIgnoreCase(c1_z);
+                    default:
+                        return 0;
+                }
+            } catch (Exception e) {
+                return 0;
+            }
+        });
+    }
+
     private void verDetallesVenta() {
         int selectedRow = tablaVentas.getSelectedRow();
         if (selectedRow < 0) {
@@ -184,9 +251,25 @@ public class PanelHistorialVentas extends JPanel {
 
         Window parent = SwingUtilities.getWindowAncestor(this);
         JDialog dialog = new JDialog((Frame) parent, "Detalles de Venta #" + idVenta, true);
-        dialog.setSize(600, 480);
+        dialog.setSize(650, 520);
         dialog.setLocationRelativeTo(this);
-        dialog.setLayout(new BorderLayout(10, 10));
+        dialog.setLayout(new BorderLayout());
+        dialog.getContentPane().setBackground(Color.WHITE);
+        
+        // Cabecera estilizada
+        JPanel pnlCabecera = new JPanel(new BorderLayout());
+        pnlCabecera.setBackground(new Color(41, 128, 185)); // Azul corporativo
+        pnlCabecera.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        JLabel lblTitulo = new JLabel("Detalles de Venta #" + idVenta);
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        lblTitulo.setForeground(Color.WHITE);
+        pnlCabecera.add(lblTitulo, BorderLayout.WEST);
+        dialog.add(pnlCabecera, BorderLayout.NORTH);
+        
+        // Contenedor Central
+        JPanel pnlCentro = new JPanel(new BorderLayout(10, 15));
+        pnlCentro.setBackground(Color.WHITE);
+        pnlCentro.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
 
         String ref = (String) venta.get("ref");
         String banco = (String) venta.get("banco");
@@ -199,29 +282,27 @@ public class PanelHistorialVentas extends JPanel {
         }
 
         // Info General
-        JPanel pnlInfo = new JPanel(new GridLayout(4, 2, 10, 10));
-        pnlInfo.setBorder(BorderFactory.createEmptyBorder(15, 15, 10, 15));
-        pnlInfo.add(new JLabel("Cliente: " + venta.get("cliente")));
-        pnlInfo.add(new JLabel("Fecha / Hora: " + venta.get("fecha")));
-        pnlInfo.add(new JLabel("Método de Pago: " + venta.get("metodo")));
+        JPanel pnlInfo = new JPanel(new GridLayout(4, 2, 15, 12));
+        pnlInfo.setBackground(Color.WHITE);
+        
+        pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Cliente:</span><br><b style='font-size:14px; color:#2c3e50'>" + venta.get("cliente") + "</b></html>"));
+        pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Fecha / Hora:</span><br><b style='font-size:14px; color:#2c3e50'>" + venta.get("fecha") + "</b></html>"));
+        pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Método de Pago:</span><br><b style='font-size:14px; color:#2c3e50'>" + venta.get("metodo") + "</b></html>"));
 
         if (esApartado) {
-            pnlInfo.add(new JLabel("Transacción: Pago de Apartado #" + numApartado));
-            pnlInfo.add(new JLabel("Referencia / Banco: N/A"));
+            pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Transacción:</span><br><b style='font-size:14px; color:#2c3e50'>Pago de Apartado #" + numApartado + "</b></html>"));
+            pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Referencia / Banco:</span><br><b style='font-size:14px; color:#2c3e50'>N/A</b></html>"));
         } else if (esGarantia) {
-            JLabel lblGarantia = new JLabel("Transacción: " + ref);
-            lblGarantia.setForeground(new Color(227, 0, 15)); // Rojo para destacar que es garantía
-            pnlInfo.add(lblGarantia);
-            pnlInfo.add(new JLabel("Referencia / Banco: N/A"));
+            pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Transacción:</span><br><b style='font-size:14px; color:#e74c3c'>" + ref + "</b></html>"));
+            pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Referencia / Banco:</span><br><b style='font-size:14px; color:#2c3e50'>N/A</b></html>"));
         } else {
-            pnlInfo.add(new JLabel("Transacción: Venta Regular"));
+            pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Transacción:</span><br><b style='font-size:14px; color:#2c3e50'>Venta Regular</b></html>"));
             String infoExtra = (ref != null && !ref.isEmpty() ? ref : "N/A") + (banco != null && !banco.isEmpty() ? " (" + banco + ")" : "");
-            pnlInfo.add(new JLabel("Referencia / Banco: " + infoExtra));
+            pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Referencia / Banco:</span><br><b style='font-size:14px; color:#2c3e50'>" + infoExtra + "</b></html>"));
         }
 
-        pnlInfo.add(new JLabel("Subtotal: L " + String.format("%,.2f", (double) venta.get("subtotal"))));
-        pnlInfo.add(new JLabel("Impuesto (15%): L " + String.format("%,.2f", (double) venta.get("isv"))));
-        pnlInfo.add(new JLabel("")); // Empty placeholder for grid balance
+        pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Subtotal:</span><br><b style='font-size:14px; color:#2c3e50'>L " + String.format("%,.2f", (double) venta.get("subtotal")) + "</b></html>"));
+        pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Impuesto (15%):</span><br><b style='font-size:14px; color:#2c3e50'>L " + String.format("%,.2f", (double) venta.get("isv")) + "</b></html>"));
 
         // Tabla Productos
         String[] colP = { "Descripción / Serie", "Cantidad", "Precio Unitario", "Total Fila" };
@@ -248,13 +329,19 @@ public class PanelHistorialVentas extends JPanel {
 
         JScrollPane scrollProd = new JScrollPane(tabP);
         scrollProd.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)));
+        scrollProd.getViewport().setBackground(Color.WHITE);
 
-        dialog.add(pnlInfo, BorderLayout.NORTH);
-        dialog.add(scrollProd, BorderLayout.CENTER);
+        pnlCentro.add(pnlInfo, BorderLayout.NORTH);
+        pnlCentro.add(scrollProd, BorderLayout.CENTER);
+        dialog.add(pnlCentro, BorderLayout.CENTER);
 
         // Pie
         JPanel pnlBot = new JPanel(new BorderLayout());
-        pnlBot.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+        pnlBot.setBackground(new Color(245, 247, 250)); // Fondo ligeramente gris
+        pnlBot.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(220, 222, 225)),
+            BorderFactory.createEmptyBorder(15, 20, 15, 20)
+        ));
 
         JLabel lblTotal = new JLabel("TOTAL PAGADO: L " + String.format("%,.2f", (double) venta.get("total")));
         lblTotal.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -283,6 +370,12 @@ public class PanelHistorialVentas extends JPanel {
         }
 
         JButton btnCerrar = new JButton("Cerrar");
+        btnCerrar.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnCerrar.setBackground(Color.WHITE);
+        btnCerrar.setForeground(new Color(45, 45, 45));
+        btnCerrar.setFocusPainted(false);
+        btnCerrar.setPreferredSize(new Dimension(100, 35));
+        btnCerrar.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
         btnCerrar.addActionListener(e -> dialog.dispose());
         pnlBotonesDer.add(btnCerrar);
 
@@ -342,6 +435,45 @@ public class PanelHistorialVentas extends JPanel {
                 JOptionPane.showMessageDialog(this, "Error al generar el PDF:\n" + ex.getMessage(), "Error",
                         JOptionPane.ERROR_MESSAGE);
             }
+        }
+    }
+
+    private class IconoOjo implements Icon {
+        @Override public int getIconWidth() { return 18; }
+        @Override public int getIconHeight() { return 18; }
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(c.getForeground());
+            g2.setStroke(new BasicStroke(1.5f));
+            g2.drawArc(x, y + 4, 18, 10, 0, 180);
+            g2.drawArc(x, y + 4, 18, 10, 0, -180);
+            g2.fillOval(x + 6, y + 6, 6, 6);
+            g2.dispose();
+        }
+    }
+
+    private class IconoImpresora implements Icon {
+        @Override public int getIconWidth() { return 18; }
+        @Override public int getIconHeight() { return 18; }
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(c.getForeground());
+            g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            // Papel superior
+            g2.drawRect(x + 5, y + 1, 8, 4);
+            // Cuerpo de la impresora
+            g2.drawRoundRect(x + 2, y + 5, 14, 7, 3, 3);
+            g2.drawLine(x + 4, y + 8, x + 6, y + 8); // Lucesitas
+            // Bandeja/Papel inferior
+            g2.fillRect(x + 4, y + 9, 10, 7);
+            g2.setColor(c.getBackground());
+            g2.drawLine(x + 6, y + 11, x + 12, y + 11);
+            g2.drawLine(x + 6, y + 13, x + 12, y + 13);
+            g2.dispose();
         }
     }
 }

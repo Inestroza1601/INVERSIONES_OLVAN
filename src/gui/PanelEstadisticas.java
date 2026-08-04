@@ -252,10 +252,12 @@ public class PanelEstadisticas extends JPanel {
 
             int width = getWidth();
             int height = getHeight();
-            int padding = 30;
-            int diameter = Math.min(width, height * 2) - padding * 2;
+            int paddingTop = 20; // Espacio superior para el grosor de la línea
+            int paddingBottom = 30;
+            int paddingSides = 30;
+            int diameter = Math.min(width - paddingSides * 2, (height - paddingBottom - paddingTop) * 2);
             int x = (width - diameter) / 2;
-            int y = height - (diameter / 2) - padding; // Centro en la parte inferior
+            int y = height - paddingBottom - (diameter / 2); // Centro en la parte inferior
 
             // 1. Dibujar el arco de fondo (Gris claro)
             g2.setStroke(new BasicStroke(20, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
@@ -271,7 +273,7 @@ public class PanelEstadisticas extends JPanel {
             // 3. Texto del total en el centro
             DecimalFormat df = new DecimalFormat("#,##0.00");
             String textoCentro = "L. " + df.format(valorActual);
-            g2.setFont(new Font("Segoe UI", Font.BOLD, 36));
+            g2.setFont(new Font("Segoe UI", Font.BOLD, 28));
             g2.setColor(COLOR_TEXTO);
             FontMetrics fm = g2.getFontMetrics();
             int tx = (width - fm.stringWidth(textoCentro)) / 2;

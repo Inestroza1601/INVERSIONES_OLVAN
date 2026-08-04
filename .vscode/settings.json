@@ -1,5 +1,16 @@
 {
     "java.project.referencedLibraries": [
-        "drivers/*.jar"
+        "drivers/activation.jar",
+        "drivers/core-3.5.3.jar",
+        "drivers/flatlaf-3.4.1.jar",
+        "drivers/itextpdf-5.5.13.3.jar",
+        "drivers/javase-3.5.0.jar",
+        "drivers/javax.mail.jar",
+        "drivers/jfreechart-1.5.3.jar",
+        "drivers/mssql-jdbc-12.4.2.jre11.jar",
+        "drivers/nanohttpd-2.3.1.jar"
+    ],
+    "java.project.sourcePaths": [
+        "src"
     ]
 }
