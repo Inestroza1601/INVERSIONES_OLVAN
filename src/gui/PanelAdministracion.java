@@ -23,47 +23,45 @@ public class PanelAdministracion extends JPanel {
      * Este es NUESTRO método para armar la pantalla, esquivando el bloqueo de NetBeans.
      */
     private void iniciarDiseno() {
-        // 1. Limpiamos cualquier cosa que NetBeans haya puesto y cambiamos el Layout
         this.removeAll();
         this.setLayout(new BorderLayout());
-        this.setBackground(new Color(240, 242, 245)); // Gris Nube
+        this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
 
-        // 2. Crear el Sub-Menú superior
+        // 1. Contenedor central (arriba)
+        panelContenedorAdmon = new JPanel();
+        panelContenedorAdmon.setLayout(new BorderLayout());
+        panelContenedorAdmon.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
+
+        // 2. Barra de botones en la parte inferior
         panelSubMenu = new JPanel();
-        panelSubMenu.setLayout(new FlowLayout(FlowLayout.LEFT, 15, 10)); 
-        panelSubMenu.setBackground(new Color(255, 255, 255)); // Blanco puro
-        panelSubMenu.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 222, 225))); // Gris muy claro para el borde
+        panelSubMenu.setLayout(new FlowLayout(FlowLayout.RIGHT, 12, 10));
+        panelSubMenu.setBackground(new Color(213, 233, 222));
+        panelSubMenu.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(190, 215, 200)));
 
-        // 3. Crear y estilizar los botones del sub-menú
-        btnDatosEmpresa = crearBotonSubMenu("Datos de Empresa");
-        btnUsuarios = crearBotonSubMenu("Gestión de Usuarios"); 
+        // 3. Botones del sub-menú (mismo tamaño)
+        btnDatosEmpresa = utilidades.EfectosUI.crearBotonVerde("Datos de Empresa");
+        btnUsuarios = utilidades.EfectosUI.crearBotonVerde("Gestion de Usuarios");
+
+        Dimension tamBoton = new Dimension(210, 38);
+        btnDatosEmpresa.setPreferredSize(tamBoton);
+        btnUsuarios.setPreferredSize(tamBoton);
 
         panelSubMenu.add(btnDatosEmpresa);
         panelSubMenu.add(btnUsuarios);
 
-        // 4. Crear el contenedor central (Aquí cargará PanelDatosEmpresa)
-        panelContenedorAdmon = new JPanel();
-        panelContenedorAdmon.setLayout(new BorderLayout());
-        panelContenedorAdmon.setBackground(new Color(240, 242, 245)); // Gris Nube
-        
-        JLabel lblAdmon = new JLabel("Gracias por confiar en ORION SYSTEMS. \nPor favor, seleccione una opción del menú superior", SwingConstants.CENTER);
-        lblAdmon.setForeground(new Color(140, 145, 150)); // Gris suave
-        lblAdmon.setFont(new Font("Segoe UI", Font.ITALIC, 18));
-        panelContenedorAdmon.add(lblAdmon, BorderLayout.CENTER);
+        this.add(panelContenedorAdmon, BorderLayout.CENTER);
+        this.add(panelSubMenu, BorderLayout.SOUTH);
 
-        // 5. Agregar paneles a este módulo
-        this.add(panelSubMenu, BorderLayout.NORTH); 
-        this.add(panelContenedorAdmon, BorderLayout.CENTER); 
-
-        // 6. Configurar los Eventos
+        // 4. Configurar los Eventos
         btnDatosEmpresa.addActionListener(e -> {
             mostrarSubPanel(new PanelDatosEmpresa());
         });
 
-        // --- AGREGAR ESTO ---
         btnUsuarios.addActionListener(e -> {
             mostrarSubPanel(new PanelGestionUsuarios());
         });
+
+        mostrarSubPanel(new PanelDatosEmpresa());
     }
 
     /**
@@ -74,21 +72,6 @@ public class PanelAdministracion extends JPanel {
         panelContenedorAdmon.add(nuevoPanel, BorderLayout.CENTER);
         panelContenedorAdmon.revalidate();
         panelContenedorAdmon.repaint();
-    }
-
-    /**
-     * Diseño elegante para los botones del sub-menú
-     */
-    private JButton crearBotonSubMenu(String texto) {
-        JButton boton = new JButton(texto);
-        boton.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        boton.setBackground(new Color(39, 174, 96)); // Verde Menta
-        boton.setForeground(new Color(255, 255, 255)); // Blanco
-        boton.setFocusPainted(false);
-        boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        boton.setPreferredSize(new Dimension(180, 35));
-        boton.putClientProperty("JButton.buttonType", "roundRect");
-        return boton;
     }                       
    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

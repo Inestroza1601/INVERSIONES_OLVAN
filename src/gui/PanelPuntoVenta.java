@@ -58,18 +58,20 @@ public class PanelPuntoVenta extends JPanel {
 
     private void iniciarDiseno() {
         this.setLayout(new BorderLayout(20, 20));
-        this.setBackground(new Color(240, 242, 245)); // Gris Nube
+        this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); // Verde Vintage
         this.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
         JPanel pnlTop = new JPanel(new BorderLayout(15, 0)); pnlTop.setOpaque(false);
         JPanel pnlClientes = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0)); pnlClientes.setOpaque(false);
-        JLabel lblClie = new JLabel("Cliente:"); lblClie.setForeground(new Color(140, 145, 150)); lblClie.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        lblClienteSeleccionado = new JLabel("CONSUMIDOR FINAL"); lblClienteSeleccionado.setForeground(new Color(45, 45, 45)); lblClienteSeleccionado.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        JLabel lblClie = new JLabel("Cliente:"); lblClie.setForeground(utilidades.EfectosUI.COLOR_TEXTO_SUBTITULO); lblClie.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblClienteSeleccionado = new JLabel("CONSUMIDOR FINAL"); lblClienteSeleccionado.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO); lblClienteSeleccionado.setFont(new Font("Segoe UI", Font.BOLD, 14));
         
-        JButton btnBuscarCliente = new JButton("🔍 Buscar"); btnBuscarCliente.setBackground(new Color(255, 255, 255)); btnBuscarCliente.setForeground(new Color(45, 45, 45)); btnBuscarCliente.setFocusPainted(false); btnBuscarCliente.setCursor(new Cursor(Cursor.HAND_CURSOR)); btnBuscarCliente.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        JButton btnBuscarCliente = new JButton("Buscar"); btnBuscarCliente.setBackground(new Color(255, 255, 255)); btnBuscarCliente.setForeground(new Color(30, 41, 59)); btnBuscarCliente.setFocusPainted(false); btnBuscarCliente.setCursor(new Cursor(Cursor.HAND_CURSOR)); btnBuscarCliente.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(6, 14, 6, 14)));
+        utilidades.EfectosUI.aplicarEfectoHover(btnBuscarCliente, Color.WHITE, utilidades.EfectosUI.COLOR_VERDE_CLARO, new Color(30, 41, 59), Color.BLACK);
         btnBuscarCliente.addActionListener(e -> new DialogoBuscarClientePOS((Frame) SwingUtilities.getWindowAncestor(this)).setVisible(true));
         
-        JButton btnNuevoCliente = new JButton("+ Nuevo"); btnNuevoCliente.setBackground(new Color(39, 174, 96)); btnNuevoCliente.setForeground(Color.WHITE); btnNuevoCliente.setFocusPainted(false); btnNuevoCliente.setCursor(new Cursor(Cursor.HAND_CURSOR)); btnNuevoCliente.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
+        JButton btnNuevoCliente = new JButton("+ Nuevo"); btnNuevoCliente.setBackground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO); btnNuevoCliente.setForeground(Color.WHITE); btnNuevoCliente.setFont(new Font("Segoe UI", Font.BOLD, 13)); btnNuevoCliente.setFocusPainted(false); btnNuevoCliente.setCursor(new Cursor(Cursor.HAND_CURSOR)); btnNuevoCliente.setBorder(BorderFactory.createEmptyBorder(6, 14, 6, 14));
+        utilidades.EfectosUI.aplicarEfectoHover(btnNuevoCliente, utilidades.EfectosUI.COLOR_VERDE_PRIMARIO, utilidades.EfectosUI.COLOR_VERDE_HOVER, Color.WHITE, Color.WHITE);
         btnNuevoCliente.addActionListener(e -> {
             JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Nuevo Cliente", true);
             dialog.setUndecorated(true); dialog.setBackground(new Color(0,0,0,0));
@@ -79,23 +81,31 @@ public class PanelPuntoVenta extends JPanel {
 
         pnlClientes.add(lblClie); pnlClientes.add(lblClienteSeleccionado); pnlClientes.add(btnBuscarCliente); pnlClientes.add(btnNuevoCliente);
 
-        JPanel pnlLector = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0)); pnlLector.setOpaque(false);
-        txtCodigoBarrasBusqueda = new JTextField(15); txtCodigoBarrasBusqueda.putClientProperty("JTextField.placeholderText", "Escanear código..."); txtCodigoBarrasBusqueda.setFont(new Font("Segoe UI", Font.PLAIN, 14)); txtCodigoBarrasBusqueda.setPreferredSize(new Dimension(220, 35)); txtCodigoBarrasBusqueda.setBackground(new Color(255, 255, 255)); txtCodigoBarrasBusqueda.setForeground(new Color(45, 45, 45)); txtCodigoBarrasBusqueda.setCaretColor(new Color(45, 45, 45)); txtCodigoBarrasBusqueda.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(0, 8, 0, 8)));
+        JPanel pnlLector = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0)); pnlLector.setOpaque(false);
+        txtCodigoBarrasBusqueda = new JTextField(); 
+        txtCodigoBarrasBusqueda.putClientProperty("JTextField.placeholderText", "Escanear código de barras o escribir código..."); 
+        txtCodigoBarrasBusqueda.putClientProperty("JTextField.showClearButton", true);
+        txtCodigoBarrasBusqueda.setFont(new Font("Segoe UI", Font.PLAIN, 14)); 
+        txtCodigoBarrasBusqueda.setPreferredSize(new Dimension(460, 38)); 
+        txtCodigoBarrasBusqueda.setBackground(new Color(255, 255, 255)); 
+        txtCodigoBarrasBusqueda.setForeground(new Color(45, 45, 45)); 
+        txtCodigoBarrasBusqueda.setCaretColor(new Color(45, 45, 45)); 
+        txtCodigoBarrasBusqueda.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(200, 220, 210), 1), 
+            BorderFactory.createEmptyBorder(0, 12, 0, 12)
+        ));
         txtCodigoBarrasBusqueda.addActionListener(e -> buscarProductoPorCodigo(txtCodigoBarrasBusqueda.getText().trim()));
         
-        JButton btnBuscarProducto = new JButton("Catálogo"); btnBuscarProducto.setBackground(new Color(13, 110, 253)); btnBuscarProducto.setForeground(Color.WHITE); btnBuscarProducto.setFont(new Font("Segoe UI", Font.BOLD, 12)); btnBuscarProducto.setPreferredSize(new Dimension(100, 35)); btnBuscarProducto.setFocusPainted(false); btnBuscarProducto.setCursor(new Cursor(Cursor.HAND_CURSOR)); btnBuscarProducto.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-        btnBuscarProducto.addActionListener(e -> new DialogoBuscarProductoPOS((Frame) SwingUtilities.getWindowAncestor(this)).setVisible(true));
-
-        pnlLector.add(txtCodigoBarrasBusqueda); pnlLector.add(btnBuscarProducto);
+        pnlLector.add(txtCodigoBarrasBusqueda);
         pnlTop.add(pnlClientes, BorderLayout.WEST); pnlTop.add(pnlLector, BorderLayout.EAST);
         this.add(pnlTop, BorderLayout.NORTH);
 
         String[] columnas = {"ID", "Foto", "Nombre del Producto", "Cant.", "Precio Unit.", "Subtotal Fila", "StockMax", "RutaFoto", "IMEI", "DiasGarantia"};
         modeloTablaVentas = new DefaultTableModel(null, columnas) { @Override public boolean isCellEditable(int row, int column) { return false; } };
         tablaVentas = new JTable(modeloTablaVentas); 
-        tablaVentas.setShowGrid(false); tablaVentas.setIntercellSpacing(new Dimension(0, 0)); tablaVentas.setRowHeight(60); tablaVentas.setBackground(new Color(255, 255, 255)); tablaVentas.setForeground(new Color(45, 45, 45)); tablaVentas.setFont(new Font("Segoe UI", Font.PLAIN, 14)); tablaVentas.setSelectionBackground(new Color(230, 235, 240)); tablaVentas.setSelectionForeground(new Color(45, 45, 45));
-        tablaVentas.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14)); tablaVentas.getTableHeader().setBackground(new Color(240, 242, 245)); tablaVentas.getTableHeader().setForeground(new Color(100, 100, 100)); tablaVentas.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 222, 225)));
-        tablaVentas.getTableHeader().setPreferredSize(new Dimension(tablaVentas.getTableHeader().getPreferredSize().width, 40));
+        tablaVentas.setShowGrid(false); tablaVentas.setIntercellSpacing(new Dimension(0, 0)); tablaVentas.setRowHeight(60); tablaVentas.setBackground(new Color(255, 255, 255)); tablaVentas.setForeground(new Color(30, 41, 59)); tablaVentas.setFont(new Font("Segoe UI", Font.PLAIN, 14)); tablaVentas.setSelectionBackground(new Color(213, 233, 222)); tablaVentas.setSelectionForeground(new Color(19, 58, 42));
+        tablaVentas.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14)); tablaVentas.getTableHeader().setBackground(new Color(230, 242, 235)); tablaVentas.getTableHeader().setForeground(new Color(19, 58, 42)); tablaVentas.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, utilidades.EfectosUI.COLOR_VERDE_PRIMARIO));
+        tablaVentas.getTableHeader().setPreferredSize(new Dimension(tablaVentas.getTableHeader().getPreferredSize().width, 42));
         
         tablaVentas.getColumnModel().getColumn(0).setMinWidth(0); tablaVentas.getColumnModel().getColumn(0).setMaxWidth(0); 
         tablaVentas.getColumnModel().getColumn(6).setMinWidth(0); tablaVentas.getColumnModel().getColumn(6).setMaxWidth(0); 
@@ -174,9 +184,11 @@ public class PanelPuntoVenta extends JPanel {
         
         lblSubtotal = new JLabel("Subtotal: L 0.00"); lblSubtotal.setForeground(new Color(140, 145, 150)); lblSubtotal.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         lblImpuesto = new JLabel("ISV (15%): L 0.00"); lblImpuesto.setForeground(new Color(140, 145, 150)); lblImpuesto.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        lblTotal = new JLabel("L 0.00"); lblTotal.setForeground(new Color(39, 174, 96)); lblTotal.setFont(new Font("Segoe UI", Font.BOLD, 36));
+        lblTotal = new JLabel("L 0.00"); lblTotal.setForeground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO); lblTotal.setFont(new Font("Segoe UI", Font.BOLD, 36));
 
-        JButton btnCobrar = new JButton("Cobrar Venta"); btnCobrar.setBackground(new Color(13, 110, 253)); btnCobrar.setForeground(Color.WHITE); btnCobrar.setFont(new Font("Segoe UI", Font.BOLD, 16)); btnCobrar.setPreferredSize(new Dimension(0, 50)); btnCobrar.setFocusPainted(false); btnCobrar.setCursor(new Cursor(Cursor.HAND_CURSOR)); btnCobrar.setBorder(BorderFactory.createEmptyBorder(0,0,0,0)); btnCobrar.addActionListener(e -> procesarVenta());
+        JButton btnCobrar = new JButton("Cobrar Venta"); btnCobrar.setBackground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO); btnCobrar.setForeground(Color.WHITE); btnCobrar.setFont(new Font("Segoe UI", Font.BOLD, 16)); btnCobrar.setPreferredSize(new Dimension(0, 50)); btnCobrar.setFocusPainted(false); btnCobrar.setCursor(new Cursor(Cursor.HAND_CURSOR)); btnCobrar.setBorder(BorderFactory.createEmptyBorder(0,0,0,0)); btnCobrar.putClientProperty("JButton.buttonType", "roundRect");
+        utilidades.EfectosUI.aplicarEfectoHover(btnCobrar, utilidades.EfectosUI.COLOR_VERDE_PRIMARIO, utilidades.EfectosUI.COLOR_VERDE_HOVER, Color.WHITE, Color.BLACK);
+        btnCobrar.addActionListener(e -> procesarVenta());
 
         cmbTipoTransaccion = new JComboBox<>(new String[]{"Venta Directa", "Apartado (Abonos)"});
         cmbTipoTransaccion.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -186,17 +198,29 @@ public class PanelPuntoVenta extends JPanel {
             btnCobrar.setText(esApartado ? "Registrar Apartado" : "Cobrar Venta");
         });
 
-        gbc.gridy = 0; pnlLiquidacion.add(new JLabel("Tipo Transacción:"){{setForeground(new Color(100, 100, 100));}}, gbc);
-        gbc.gridy = 1; pnlLiquidacion.add(cmbTipoTransaccion, gbc);
-        gbc.gridy = 2; gbc.insets = new Insets(10, 0, 5, 0); pnlLiquidacion.add(new JLabel("Método de Pago:"){{setForeground(new Color(100, 100, 100));}}, gbc);
-        gbc.gridy = 3; pnlLiquidacion.add(cmbMetodoPago, gbc);
+        gbc.gridy = 0; gbc.insets = new Insets(0, 0, 5, 0); pnlLiquidacion.add(new JLabel("Tipo Transacción:"){{setForeground(new Color(100, 100, 100)); setFont(new Font("Segoe UI", Font.BOLD, 12));}}, gbc);
+        gbc.gridy = 1; gbc.insets = new Insets(0, 0, 8, 0); pnlLiquidacion.add(cmbTipoTransaccion, gbc);
+        gbc.gridy = 2; gbc.insets = new Insets(5, 0, 5, 0); pnlLiquidacion.add(new JLabel("Método de Pago:"){{setForeground(new Color(100, 100, 100)); setFont(new Font("Segoe UI", Font.BOLD, 12));}}, gbc);
+        gbc.gridy = 3; gbc.insets = new Insets(0, 0, 5, 0); pnlLiquidacion.add(cmbMetodoPago, gbc);
         gbc.gridy = 4; gbc.insets = new Insets(5, 0, 5, 0); pnlLiquidacion.add(pnlCamposExtraPago, gbc);
         gbc.gridy = 5; gbc.insets = new Insets(15, 0, 0, 0); pnlLiquidacion.add(lblSubtotal, gbc);
         gbc.gridy = 6; gbc.insets = new Insets(5, 0, 0, 0); pnlLiquidacion.add(lblImpuesto, gbc);
         gbc.gridy = 7; gbc.insets = new Insets(15, 0, 0, 0); pnlLiquidacion.add(new JLabel("TOTAL:"){{setForeground(new Color(45, 45, 45)); setFont(new Font("Segoe UI", Font.BOLD, 14));}}, gbc);
         gbc.gridy = 8; gbc.insets = new Insets(0, 0, 20, 0); pnlLiquidacion.add(lblTotal, gbc);
-        gbc.gridy = 9; pnlLiquidacion.add(btnCobrar, gbc);
+        gbc.gridy = 9; gbc.insets = new Insets(0, 0, 0, 0); pnlLiquidacion.add(btnCobrar, gbc);
+        
+        JButton btnBuscarProducto = utilidades.EfectosUI.crearBotonVerde("Catálogo de Productos");
+        btnBuscarProducto.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        btnBuscarProducto.setPreferredSize(new Dimension(0, 50));
+        btnBuscarProducto.addActionListener(e -> new DialogoBuscarProductoPOS((Frame) SwingUtilities.getWindowAncestor(this)).setVisible(true));
+
+        JPanel pnlBotonCatalogo = new JPanel(new BorderLayout());
+        pnlBotonCatalogo.setOpaque(false);
+        pnlBotonCatalogo.setBorder(BorderFactory.createEmptyBorder(0, 0, 25, 0));
+        pnlBotonCatalogo.add(btnBuscarProducto, BorderLayout.CENTER);
+
         pnlControlVenta.add(pnlLiquidacion, BorderLayout.NORTH);
+        pnlControlVenta.add(pnlBotonCatalogo, BorderLayout.SOUTH);
         this.add(pnlControlVenta, BorderLayout.EAST);
     }
 
@@ -645,16 +669,16 @@ public class PanelPuntoVenta extends JPanel {
     private class DialogoBuscarClientePOS extends JDialog {
         public DialogoBuscarClientePOS(Frame parent) {
             super(parent, "Seleccionar Cliente", true);
-            setSize(700, 500); setLocationRelativeTo(parent); getContentPane().setBackground(new Color(240, 242, 245)); setLayout(new BorderLayout(10, 10));
+            setSize(700, 500); setLocationRelativeTo(parent); getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); setLayout(new BorderLayout(10, 10));
             
-            JPanel pnlTop = new JPanel(new BorderLayout()); pnlTop.setBackground(new Color(240, 242, 245)); pnlTop.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-            JTextField txtB = new JTextField(); txtB.setBackground(new Color(255, 255, 255)); txtB.setForeground(new Color(45, 45, 45)); txtB.setCaretColor(new Color(45, 45, 45)); txtB.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(0, 5, 0, 5))); txtB.setFont(new Font("Segoe UI", Font.PLAIN, 14)); txtB.putClientProperty("JTextField.placeholderText", "Buscar por Nombre o Identidad...");
+            JPanel pnlTop = new JPanel(new BorderLayout()); pnlTop.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); pnlTop.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            JTextField txtB = new JTextField(); txtB.setBackground(new Color(255, 255, 255)); txtB.setForeground(new Color(45, 45, 45)); txtB.setCaretColor(new Color(45, 45, 45)); txtB.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(180, 208, 192)), BorderFactory.createEmptyBorder(0, 8, 0, 8))); txtB.setFont(new Font("Segoe UI", Font.PLAIN, 14)); txtB.putClientProperty("JTextField.placeholderText", "Buscar por Nombre o Identidad...");
             pnlTop.add(txtB, BorderLayout.CENTER); add(pnlTop, BorderLayout.NORTH);
             
             String[] cols = {"ID", "Avatar", "Nombre Completo", "Identidad", "Teléfono"};
             DefaultTableModel mod = new DefaultTableModel(null, cols) { @Override public boolean isCellEditable(int r, int c) { return false; } };
-            JTable tab = new JTable(mod); tab.setBackground(new Color(255, 255, 255)); tab.setForeground(new Color(45, 45, 45)); tab.setRowHeight(45); tab.setFont(new Font("Segoe UI", Font.PLAIN, 14)); tab.setSelectionBackground(new Color(230, 235, 240)); tab.setSelectionForeground(new Color(45, 45, 45));
-            tab.getTableHeader().setBackground(new Color(240, 242, 245)); tab.getTableHeader().setForeground(new Color(100, 100, 100)); tab.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 222, 225))); tab.getTableHeader().setPreferredSize(new Dimension(0, 35));
+            JTable tab = new JTable(mod); tab.setBackground(new Color(255, 255, 255)); tab.setForeground(new Color(45, 45, 45)); tab.setRowHeight(45); tab.setFont(new Font("Segoe UI", Font.PLAIN, 14)); tab.setSelectionBackground(new Color(205, 235, 218)); tab.setSelectionForeground(Color.BLACK);
+            tab.getTableHeader().setBackground(utilidades.EfectosUI.COLOR_SIDEBAR_PASTEL); tab.getTableHeader().setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO); tab.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, utilidades.EfectosUI.COLOR_BORDE)); tab.getTableHeader().setPreferredSize(new Dimension(0, 35));
             
             tab.getColumnModel().getColumn(0).setMinWidth(0); tab.getColumnModel().getColumn(0).setMaxWidth(0); 
             tab.getColumnModel().getColumn(1).setPreferredWidth(50); tab.getColumnModel().getColumn(1).setMaxWidth(50);
@@ -697,7 +721,7 @@ public class PanelPuntoVenta extends JPanel {
                 String inicial = nombreComp.isEmpty() ? "?" : nombreComp.substring(0, 1).toUpperCase();
                 mod.addRow(new Object[]{c.getIdCliente(), inicial, nombreComp, c.getIdentidadCliente(), c.getTelefonoCliente()});
             }
-            JScrollPane sc = new JScrollPane(tab); sc.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225))); sc.getViewport().setBackground(new Color(255, 255, 255)); add(sc, BorderLayout.CENTER);
+            JScrollPane sc = new JScrollPane(tab); sc.setBorder(BorderFactory.createLineBorder(new Color(180, 208, 192))); sc.getViewport().setBackground(new Color(255, 255, 255)); add(sc, BorderLayout.CENTER);
         }
     }
 
@@ -705,10 +729,10 @@ public class PanelPuntoVenta extends JPanel {
     private class DialogoBuscarProductoPOS extends JDialog {
         public DialogoBuscarProductoPOS(Frame parent) {
             super(parent, "Catálogo Rápido", true);
-            setSize(600, 500); setLocationRelativeTo(parent); getContentPane().setBackground(new Color(240, 242, 245)); setLayout(new BorderLayout(10, 10));
+            setSize(600, 500); setLocationRelativeTo(parent); getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); setLayout(new BorderLayout(10, 10));
             
-            JPanel pnlTop = new JPanel(new BorderLayout()); pnlTop.setBackground(new Color(240, 242, 245)); pnlTop.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-            JTextField txtB = new JTextField(); txtB.setBackground(new Color(255, 255, 255)); txtB.setForeground(new Color(45, 45, 45)); txtB.setCaretColor(new Color(45, 45, 45)); txtB.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(0, 5, 0, 5))); txtB.setFont(new Font("Segoe UI", Font.PLAIN, 14)); txtB.putClientProperty("JTextField.placeholderText", "Buscar por Nombre o Código...");
+            JPanel pnlTop = new JPanel(new BorderLayout()); pnlTop.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); pnlTop.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            JTextField txtB = new JTextField(); txtB.setBackground(new Color(255, 255, 255)); txtB.setForeground(new Color(45, 45, 45)); txtB.setCaretColor(new Color(45, 45, 45)); txtB.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(180, 208, 192)), BorderFactory.createEmptyBorder(0, 8, 0, 8))); txtB.setFont(new Font("Segoe UI", Font.PLAIN, 14)); txtB.putClientProperty("JTextField.placeholderText", "Buscar por Nombre o Código...");
             pnlTop.add(txtB, BorderLayout.CENTER); add(pnlTop, BorderLayout.NORTH);
             
             String[] cols = {"ID", "Foto", "Código", "Producto", "Precio", "Stock"};
@@ -736,8 +760,8 @@ public class PanelPuntoVenta extends JPanel {
                 }
             };
             
-            tab.setBackground(new Color(255, 255, 255)); tab.setForeground(new Color(45, 45, 45)); tab.setRowHeight(60); tab.setFont(new Font("Segoe UI", Font.PLAIN, 14)); tab.setSelectionBackground(new Color(230, 235, 240)); tab.setSelectionForeground(new Color(45, 45, 45));
-            tab.getTableHeader().setBackground(new Color(240, 242, 245)); tab.getTableHeader().setForeground(new Color(100, 100, 100)); tab.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 222, 225))); tab.getTableHeader().setPreferredSize(new Dimension(0, 35));
+            tab.setBackground(new Color(255, 255, 255)); tab.setForeground(new Color(45, 45, 45)); tab.setRowHeight(60); tab.setFont(new Font("Segoe UI", Font.PLAIN, 14)); tab.setSelectionBackground(new Color(205, 235, 218)); tab.setSelectionForeground(Color.BLACK);
+            tab.getTableHeader().setBackground(utilidades.EfectosUI.COLOR_SIDEBAR_PASTEL); tab.getTableHeader().setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO); tab.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, utilidades.EfectosUI.COLOR_BORDE)); tab.getTableHeader().setPreferredSize(new Dimension(0, 35));
             
             tab.getColumnModel().getColumn(0).setMinWidth(0); tab.getColumnModel().getColumn(0).setMaxWidth(0); 
             tab.getColumnModel().getColumn(1).setPreferredWidth(70); tab.getColumnModel().getColumn(1).setMaxWidth(70); 
@@ -745,7 +769,7 @@ public class PanelPuntoVenta extends JPanel {
             
             TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(mod); tab.setRowSorter(sorter);
             txtB.getDocument().addDocumentListener(new DocumentListener() {
-                @Override public void insertUpdate(DocumentEvent e) { s(); } @Override public void removeUpdate(DocumentEvent e) { s(); } @Override public void changedUpdate(DocumentEvent e) { s(); }
+                @Override public void insertUpdate(DocumentEvent e) { s(); } public void removeUpdate(DocumentEvent e) { s(); } @Override public void changedUpdate(DocumentEvent e) { s(); }
                 private void s() { sorter.setRowFilter(RowFilter.regexFilter("(?i)" + txtB.getText(), 2, 3)); }
             });
             
@@ -782,7 +806,7 @@ public class PanelPuntoVenta extends JPanel {
     private void mostrarZoomImagen(String ruta) {
         if (ruta == null || !new File(ruta).exists()) return;
         JDialog zoomDialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Previsualización", true);
-        zoomDialog.setLayout(new BorderLayout()); zoomDialog.getContentPane().setBackground(new Color(240, 242, 245)); 
+        zoomDialog.setLayout(new BorderLayout()); zoomDialog.getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); 
         int tamano = 600; zoomDialog.setSize(tamano, tamano);
         Image imgOriginal = new ImageIcon(ruta).getImage();
         int anchoOriginal = imgOriginal.getWidth(null); int altoOriginal = imgOriginal.getHeight(null);

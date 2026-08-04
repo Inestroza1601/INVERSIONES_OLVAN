@@ -47,21 +47,24 @@ public class DialogoEscanearQR extends JDialog {
         this.setSize(400, 450);
         this.setLocationRelativeTo(getParent());
         this.setLayout(new BorderLayout());
-        this.getContentPane().setBackground(Color.WHITE);
+        this.getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
 
         JPanel panelSuperior = new JPanel();
-        panelSuperior.setBackground(Color.WHITE);
-        panelSuperior.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
+        panelSuperior.setBackground(utilidades.EfectosUI.COLOR_SIDEBAR_PASTEL);
+        panelSuperior.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, utilidades.EfectosUI.COLOR_BORDE),
+            BorderFactory.createEmptyBorder(20, 20, 15, 20)
+        ));
         
         lblInstrucciones = new JLabel("<html><center>Escanea este código con tu celular<br>para tomar y subir la foto.</center></html>", SwingConstants.CENTER);
         lblInstrucciones.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        lblInstrucciones.setForeground(new Color(45, 45, 45));
+        lblInstrucciones.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         panelSuperior.add(lblInstrucciones);
         
         this.add(panelSuperior, BorderLayout.NORTH);
 
         JPanel panelCentral = new JPanel(new GridBagLayout());
-        panelCentral.setBackground(Color.WHITE);
+        panelCentral.setOpaque(false);
         
         String ip = QRHelper.obtenerIPLocal();
         String url = "http://" + ip + ":8080/";
@@ -78,12 +81,12 @@ public class DialogoEscanearQR extends JDialog {
         this.add(panelCentral, BorderLayout.CENTER);
 
         JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelInferior.setBackground(Color.WHITE);
+        panelInferior.setOpaque(false);
         panelInferior.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
         
         JLabel lblUrl = new JLabel("O visita: " + url);
         lblUrl.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        lblUrl.setForeground(new Color(150, 150, 150));
+        lblUrl.setForeground(utilidades.EfectosUI.COLOR_TEXTO_SUBTITULO);
         panelInferior.add(lblUrl);
         
         this.add(panelInferior, BorderLayout.SOUTH);

@@ -26,7 +26,7 @@ public class DialogoCambiarPassword extends JDialog {
     
     private void iniciarDiseno() {
         JPanel pnlFondo = new JPanel(new GridBagLayout());
-        pnlFondo.setBackground(Color.WHITE);
+        pnlFondo.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
         pnlFondo.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
         
         GridBagConstraints gbc = new GridBagConstraints();
@@ -36,11 +36,11 @@ public class DialogoCambiarPassword extends JDialog {
         
         JLabel lblTitulo = new JLabel("Ingresa tu nueva contraseña");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        lblTitulo.setForeground(new Color(45, 45, 45));
+        lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         
         JLabel lblSub = new JLabel("<html><body>Hemos enviado un código de 6 dígitos a su correo.<br>Ingrese el código y su nueva contraseña.</body></html>");
         lblSub.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        lblSub.setForeground(new Color(100, 100, 100));
+        lblSub.setForeground(utilidades.EfectosUI.COLOR_TEXTO_SUBTITULO);
         
         gbc.gridy = 0; pnlFondo.add(lblTitulo, gbc);
         gbc.gridy = 1; pnlFondo.add(lblSub, gbc);
@@ -79,7 +79,7 @@ public class DialogoCambiarPassword extends JDialog {
         
         // Botones
         JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
-        pnlBotones.setBackground(Color.WHITE);
+        pnlBotones.setOpaque(false);
         
         btnCancelar = new JButton("Cancelar");
         btnCancelar.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -88,13 +88,10 @@ public class DialogoCambiarPassword extends JDialog {
         btnCancelar.setFocusPainted(false);
         btnCancelar.addActionListener(e -> dispose());
         
-        btnGuardar = new JButton("Cambiar Contraseña");
-        btnGuardar.setBackground(new Color(39, 174, 96));
-        btnGuardar.setForeground(Color.WHITE);
+        btnGuardar = utilidades.EfectosUI.crearBotonVerde("Cambiar Contraseña");
         btnGuardar.setFont(new Font("Segoe UI", Font.BOLD, 14));
         btnGuardar.setPreferredSize(new Dimension(180, 40));
         btnGuardar.putClientProperty("JButton.buttonType", "roundRect");
-        btnGuardar.setFocusPainted(false);
         btnGuardar.addActionListener(e -> guardarPassword());
         
         pnlBotones.add(btnCancelar);

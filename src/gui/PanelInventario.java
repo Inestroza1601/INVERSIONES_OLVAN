@@ -18,35 +18,44 @@ public class PanelInventario extends JPanel {
     private void iniciarDiseno() {
         this.removeAll();
         this.setLayout(new BorderLayout());
-        this.setBackground(new Color(240, 242, 245)); // Gris Nube (Fondo principal)
+        this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
 
-        // 1. Crear el Sub-Menú superior
+        // 1. Crear el contenedor central (la tabla/sub-panel sube arriba del todo)
+        panelContenedorInventario = new JPanel();
+        panelContenedorInventario.setLayout(new BorderLayout());
+        panelContenedorInventario.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
+
+        // 2. Barra de botones en la parte inferior
         panelSubMenu = new JPanel();
-        panelSubMenu.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0)); // Quitamos los márgenes para que parezcan pestañas
-        panelSubMenu.setBackground(new Color(255, 255, 255)); // Blanco puro para el menú
-        panelSubMenu.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 222, 225))); // Borde Gris Claro
+        panelSubMenu.setLayout(new FlowLayout(FlowLayout.RIGHT, 12, 10));
+        panelSubMenu.setBackground(new Color(213, 233, 222));
+        panelSubMenu.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(190, 215, 200)));
 
-        // 2. Crear y estilizar los botones del sub-menú
-        btnCrearProducto = crearBotonSubMenu("Crear Producto");
-        btnInventarioDefectuoso = crearBotonSubMenu("Inventario Defectuoso");
-        btnBuscarProducto = crearBotonSubMenu("Buscar Producto / Inventario"); 
+        // 3. Botones del sub-menú (verdes vintage, mismo tamaño)
+        btnBuscarProducto = utilidades.EfectosUI.crearBotonVerde("Buscar Producto / Inventario");
+        btnCrearProducto = utilidades.EfectosUI.crearBotonVerde("Crear Producto");
+        btnInventarioDefectuoso = utilidades.EfectosUI.crearBotonVerde("Inventario Defectuoso");
 
-        panelSubMenu.add(btnBuscarProducto); // Ponemos buscar primero, es la acción más común
+        Dimension tamBoton = new Dimension(210, 38);
+        btnBuscarProducto.setPreferredSize(tamBoton);
+        btnCrearProducto.setPreferredSize(tamBoton);
+        btnInventarioDefectuoso.setPreferredSize(tamBoton);
+
+        panelSubMenu.add(btnBuscarProducto);
         int rolId = (utilidades.SesionGlobal.getUsuarioActual() != null) ? utilidades.SesionGlobal.getUsuarioActual().getIdRol() : 1;
         if (rolId != 3) {
             panelSubMenu.add(btnCrearProducto);
             panelSubMenu.add(btnInventarioDefectuoso);
         }
 
-        // 3. Crear el contenedor central (VACÍO, sin el JLabel)
-        panelContenedorInventario = new JPanel();
-        panelContenedorInventario.setLayout(new BorderLayout());
-        panelContenedorInventario.setBackground(new Color(240, 242, 245)); // Gris Nube
-
-        this.add(panelSubMenu, BorderLayout.NORTH); 
-        this.add(panelContenedorInventario, BorderLayout.CENTER); 
+        this.add(panelContenedorInventario, BorderLayout.CENTER);
+        this.add(panelSubMenu, BorderLayout.SOUTH);  // Botones al fondo
 
         // 4. Configurar los Eventos
+        btnBuscarProducto.addActionListener(e -> {
+            mostrarSubPanel(new PanelBuscarProducto());
+        });
+
         btnCrearProducto.addActionListener(e -> {
             mostrarSubPanel(new PanelCrearProducto());
         });
@@ -55,44 +64,7 @@ public class PanelInventario extends JPanel {
             mostrarSubPanel(new PanelInventarioDefectuoso());
         });
 
-        btnBuscarProducto.addActionListener(e -> {
-            mostrarSubPanel(new PanelBuscarProducto());
-        });
-
-        // 5. LA MAGIA: Hacemos clic automático en "Buscar" al abrir el módulo
-        SwingUtilities.invokeLater(() -> {
-            btnBuscarProducto.doClick();
-        });
-    }
-
-    // Nuevo diseño de botones tipo "Tab" web adaptado a paleta clara
-    private JButton crearBotonSubMenu(String texto) {
-        JButton boton = new JButton(texto);
-        boton.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        boton.setBackground(new Color(255, 255, 255)); // Blanco Puro
-        boton.setForeground(new Color(140, 145, 150)); // Gris Suave (Inactivo)
-        boton.setFocusPainted(false);
-        boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        boton.setPreferredSize(new Dimension(200, 45)); // Más altos y anchos
-        boton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0)); // Sin borde
-        boton.putClientProperty("JButton.buttonType", "borderless"); // Quita el diseño por defecto de FlatLaf
-
-        // Efecto Hover (Se ilumina al pasar el mouse)
-        boton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                boton.setBackground(new Color(240, 242, 245)); // Gris Nube para un hover sutil
-                boton.setForeground(new Color(45, 45, 45)); // Gris Oscuro (Texto Activo)
-                // Le agregamos una línea azul abajo al pasar el cursor (Color Azul de acciones informativas)
-                boton.setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, new Color(13, 110, 253)));
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                boton.setBackground(new Color(255, 255, 255)); // Vuelve al Blanco Puro
-                boton.setForeground(new Color(140, 145, 150)); // Vuelve al Gris Suave
-                boton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-            }
-        });
-
-        return boton;
+        mostrarSubPanel(new PanelBuscarProducto());
     }
 
     public void mostrarSubPanel(JPanel nuevoPanel) {

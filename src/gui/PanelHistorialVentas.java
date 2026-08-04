@@ -27,7 +27,7 @@ public class PanelHistorialVentas extends JPanel {
 
     private void iniciarDiseno() {
         this.setLayout(new BorderLayout(20, 20));
-        this.setBackground(new Color(240, 242, 245)); // Gris Nube
+        this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); // Verde Vintage
         this.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
         // Cabecera
@@ -36,7 +36,7 @@ public class PanelHistorialVentas extends JPanel {
 
         JLabel lblTitulo = new JLabel("Historial de Ventas");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        lblTitulo.setForeground(new Color(45, 45, 45));
+        lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         pnlCabecera.add(lblTitulo, BorderLayout.WEST);
 
         JPanel pnlBuscar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
@@ -94,27 +94,20 @@ public class PanelHistorialVentas extends JPanel {
         scroll.getViewport().setBackground(Color.WHITE);
         this.add(scroll, BorderLayout.CENTER);
 
-        // Botones de acción
-        JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
+        // Botones de accion (abajo-derecha con padding)
+        JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 10));
         pnlBotones.setOpaque(false);
+        pnlBotones.setBackground(new Color(213, 233, 222));
+        pnlBotones.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(190, 215, 200)));
 
-        JButton btnDetalles = new JButton("Ver Detalles");
-        btnDetalles.setIcon(new IconoOjo());
-        btnDetalles.setBackground(Color.WHITE);
-        btnDetalles.setForeground(new Color(45, 45, 45));
+        JButton btnDetalles = utilidades.EfectosUI.crearBotonVerde("Ver Detalles");
         btnDetalles.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        btnDetalles.setFocusPainted(false);
-        btnDetalles.setPreferredSize(new Dimension(140, 38));
-        btnDetalles.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)));
+        btnDetalles.setPreferredSize(new Dimension(160, 38));
         btnDetalles.addActionListener(e -> verDetallesVenta());
 
-        JButton btnReimprimir = new JButton("Reimprimir Ticket");
-        btnReimprimir.setIcon(new IconoImpresora());
-        btnReimprimir.setBackground(new Color(39, 174, 96)); // Verde
-        btnReimprimir.setForeground(Color.WHITE);
+        JButton btnReimprimir = utilidades.EfectosUI.crearBotonVerde("Reimprimir Ticket");
         btnReimprimir.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        btnReimprimir.setFocusPainted(false);
-        btnReimprimir.setPreferredSize(new Dimension(180, 38));
+        btnReimprimir.setPreferredSize(new Dimension(160, 38));
         btnReimprimir.addActionListener(e -> reimprimirTicket());
 
         pnlBotones.add(btnDetalles);

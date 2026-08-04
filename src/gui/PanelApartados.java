@@ -31,7 +31,7 @@ public class PanelApartados extends JPanel {
 
     private void iniciarDiseno() {
         this.setLayout(new BorderLayout(20, 20));
-        this.setBackground(new Color(240, 242, 245)); // Gris Nube
+        this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); // Verde Vintage
         this.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
         // Cabecera
@@ -40,7 +40,7 @@ public class PanelApartados extends JPanel {
 
         JLabel lblTitulo = new JLabel("Módulo de Apartados y Abonos");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        lblTitulo.setForeground(new Color(45, 45, 45));
+        lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         pnlCabecera.add(lblTitulo, BorderLayout.WEST);
 
         JPanel pnlBuscar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
@@ -56,6 +56,7 @@ public class PanelApartados extends JPanel {
         chkMostrarEntregados = new JCheckBox("Mostrar Entregados/Cancelados");
         chkMostrarEntregados.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         chkMostrarEntregados.setOpaque(false);
+        chkMostrarEntregados.setForeground(utilidades.EfectosUI.COLOR_TEXTO_OSCURO);
         chkMostrarEntregados.setSelected(false);
         chkMostrarEntregados.addActionListener(e -> cargarApartados());
         pnlBuscar.add(chkMostrarEntregados);

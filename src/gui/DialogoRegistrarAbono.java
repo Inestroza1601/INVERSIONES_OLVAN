@@ -64,22 +64,25 @@ public class DialogoRegistrarAbono extends JDialog {
         setSize(950, 600);
         setLocationRelativeTo(getParent());
         setLayout(new BorderLayout());
-        getContentPane().setBackground(new Color(245, 247, 250));
+        getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
         
         // Cabecera superior
         JPanel pnlCabecera = new JPanel(new BorderLayout());
-        pnlCabecera.setBackground(Color.WHITE);
-        pnlCabecera.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        pnlCabecera.setBackground(utilidades.EfectosUI.COLOR_SIDEBAR_PASTEL);
+        pnlCabecera.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, utilidades.EfectosUI.COLOR_BORDE),
+            BorderFactory.createEmptyBorder(15, 20, 15, 20)
+        ));
         
         JLabel lblTitulo = new JLabel("Registro de Abono");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        lblTitulo.setForeground(new Color(30, 30, 30));
+        lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         
         String cliente = ap.getNombreCliente() + " " + (ap.getApellidoCliente() != null ? ap.getApellidoCliente() : "");
         JLabel lblCliente = new JLabel("Cliente: " + cliente + " | Fecha Límite: " + 
             (ap.getFechaLimite() != null ? new SimpleDateFormat("dd/MM/yyyy").format(ap.getFechaLimite()) : "N/A"));
         lblCliente.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        lblCliente.setForeground(Color.GRAY);
+        lblCliente.setForeground(utilidades.EfectosUI.COLOR_TEXTO_SUBTITULO);
         
         pnlCabecera.add(lblTitulo, BorderLayout.NORTH);
         pnlCabecera.add(lblCliente, BorderLayout.SOUTH);
@@ -225,11 +228,8 @@ public class DialogoRegistrarAbono extends JDialog {
         pnlDerecho.add(pnlForm, BorderLayout.NORTH);
         
         // Boton Procesar
-        JButton btnProcesar = new JButton("Procesar Abono");
-        btnProcesar.setBackground(new Color(39, 174, 96));
-        btnProcesar.setForeground(Color.WHITE);
+        JButton btnProcesar = utilidades.EfectosUI.crearBotonVerde("Procesar Abono");
         btnProcesar.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        btnProcesar.setFocusPainted(false);
         btnProcesar.setPreferredSize(new Dimension(0, 50));
         btnProcesar.addActionListener(e -> procesarAbono());
         

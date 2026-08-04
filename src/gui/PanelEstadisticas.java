@@ -8,12 +8,12 @@ import java.text.DecimalFormat;
 
 public class PanelEstadisticas extends JPanel {
 
-    private final Color COLOR_FONDO = new Color(240, 242, 245); // Gris nube
-    private final Color COLOR_TARJETA = new Color(255, 255, 255); // Blanco puro
-    private final Color COLOR_TEXTO = new Color(45, 45, 45); // Gris oscuro
-    private final Color COLOR_ACENTO = new Color(39, 174, 96); // Verde Menta
-    private final Color COLOR_EXITO = new Color(39, 174, 96);   // Verde Menta
-    private final Color COLOR_ALERTA = new Color(227, 0, 15);  // Rojo Logo
+    private final Color COLOR_FONDO = utilidades.EfectosUI.COLOR_FONDO_PANEL; // Verde Pastel Suave Fondo
+    private final Color COLOR_TARJETA = new Color(255, 255, 255); // Blanco puro para tarjetas
+    private final Color COLOR_TEXTO = new Color(30, 41, 59);      // Gris pizarra oscuro
+    private final Color COLOR_ACENTO = new Color(42, 157, 114);   // Verde Esmeralda Pastel
+    private final Color COLOR_EXITO = new Color(42, 157, 114);    // Verde Esmeralda Pastel
+    private final Color COLOR_ALERTA = new Color(239, 68, 68);    // Rojo Coral
 
     private JComboBox<String> cmbFiltro;
     private TacometroPanel tacometro;
@@ -24,14 +24,14 @@ public class PanelEstadisticas extends JPanel {
 
     public PanelEstadisticas() {
         iniciarDiseno();
-        cargarDatosDesdeBD("Día"); // <-- Ahora carga la BD al abrir
+        cargarDatosDesdeBD("Día");
     }
 
     private void iniciarDiseno() {
         this.removeAll();
         this.setLayout(new BorderLayout(20, 20));
         this.setBackground(COLOR_FONDO);
-        this.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
+        this.setBorder(BorderFactory.createEmptyBorder(25, 35, 25, 35));
 
         // --- 1. CABECERA (TÍTULO Y FILTRO) ---
         JPanel panelCabecera = new JPanel(new BorderLayout());
@@ -43,13 +43,13 @@ public class PanelEstadisticas extends JPanel {
         panelTextos.setOpaque(false);
 
         // El toque corporativo minimalista
-        JLabel lblMarca = new JLabel("O R I O N   S Y S T E M S");
+        JLabel lblMarca = new JLabel("I N V E R S I O N E S   O L V A N");
         lblMarca.setFont(new Font("Segoe UI", Font.BOLD, 12));
         lblMarca.setForeground(COLOR_ACENTO); 
         
         JLabel lblTitulo = new JLabel("Dashboard de Estadísticas");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        lblTitulo.setForeground(COLOR_TEXTO);
+        lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
 
         panelTextos.add(lblMarca);
         panelTextos.add(Box.createVerticalStrut(2)); // Un mini respiro entre textos
@@ -69,8 +69,7 @@ public class PanelEstadisticas extends JPanel {
         this.add(panelCabecera, BorderLayout.NORTH);
 
         // --- 2. ZONA CENTRAL (CUADRÍCULA 2x2 SIMÉTRICA) ---
-        // Aquí está la magia: un GridLayout de 2 filas y 2 columnas con espacio de 30px
-        JPanel panelCuadricula = new JPanel(new GridLayout(2, 2, 30, 30));
+        JPanel panelCuadricula = new JPanel(new GridLayout(2, 2, 25, 25));
         panelCuadricula.setOpaque(false);
 
         // Tarjeta 1: Tacómetro
@@ -86,9 +85,9 @@ public class PanelEstadisticas extends JPanel {
         lblDiferenciaPorcentaje.setFont(new Font("Segoe UI", Font.BOLD, 55)); // Fuente ampliada
         lblDiferenciaPorcentaje.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        lblMensajeComparacion = new JLabel("<html><div style='text-align: center;'>Orion Systems analizando datos...</div></html>");
+        lblMensajeComparacion = new JLabel("<html><div style='text-align: center;'>Analizando datos comerciales...</div></html>");
         lblMensajeComparacion.setFont(new Font("Segoe UI", Font.PLAIN, 15));
-        lblMensajeComparacion.setForeground(new Color(140, 145, 150));
+        lblMensajeComparacion.setForeground(new Color(100, 116, 139));
         lblMensajeComparacion.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         tarjetaComparativa.add(Box.createVerticalGlue());
@@ -99,7 +98,6 @@ public class PanelEstadisticas extends JPanel {
 
         // Tarjeta 3: Ticket Promedio
         JPanel tarjetaTicket = crearTarjeta("Ticket Promedio");
-        // Centramos el texto y hacemos la fuente mucho más imponente
         lblTicketPromedio = new JLabel("L. 0.00", SwingConstants.CENTER);
         lblTicketPromedio.setFont(new Font("Segoe UI", Font.BOLD, 42)); 
         lblTicketPromedio.setForeground(COLOR_TEXTO);
@@ -107,9 +105,8 @@ public class PanelEstadisticas extends JPanel {
 
         // Tarjeta 4: Top Producto
         JPanel tarjetaTop = crearTarjeta("Producto Más Vendido");
-        // Centramos el texto y usamos HTML para que se divida en 2 líneas si es muy largo
         lblTopProducto = new JLabel("<html><div style='text-align: center;'>Cargando...</div></html>", SwingConstants.CENTER);
-        lblTopProducto.setFont(new Font("Segoe UI", Font.BOLD, 28)); 
+        lblTopProducto.setFont(new Font("Segoe UI", Font.BOLD, 26)); 
         lblTopProducto.setForeground(COLOR_ACENTO);
         tarjetaTop.add(lblTopProducto, BorderLayout.CENTER);
 
@@ -128,8 +125,13 @@ public class PanelEstadisticas extends JPanel {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                // Fondo blanco redondeado con sombra suave y acento superior
                 g2.setColor(COLOR_TARJETA);
-                g2.fill(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 20, 20));
+                g2.fill(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 16, 16));
+                
+                // Línea superior decorativa verde esmeralda
+                g2.setColor(COLOR_ACENTO);
+                g2.fill(new RoundRectangle2D.Double(0, 0, getWidth(), 4, 16, 16));
                 g2.dispose();
             }
         };
@@ -137,8 +139,8 @@ public class PanelEstadisticas extends JPanel {
         tarjeta.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         JLabel lblTitulo = new JLabel(titulo);
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        lblTitulo.setForeground(new Color(140, 145, 150));
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        lblTitulo.setForeground(new Color(100, 116, 139));
         tarjeta.add(lblTitulo, BorderLayout.NORTH);
 
         return tarjeta;
@@ -259,21 +261,21 @@ public class PanelEstadisticas extends JPanel {
             int x = (width - diameter) / 2;
             int y = height - paddingBottom - (diameter / 2); // Centro en la parte inferior
 
-            // 1. Dibujar el arco de fondo (Gris claro)
+            // 1. Dibujar el arco de fondo (Gris suave / Menta muy tenue)
             g2.setStroke(new BasicStroke(20, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            g2.setColor(new Color(220, 222, 225));
+            g2.setColor(new Color(226, 232, 240));
             g2.draw(new Arc2D.Double(x, y, diameter, diameter, 0, 180, Arc2D.OPEN));
 
-            // 2. Dibujar el arco de progreso (Color Acento)
+            // 2. Dibujar el arco de progreso (Degradado Esmeralda a Menta)
             double porcentaje = Math.min(valorActual / maximo, 1.0);
             double anguloProgreso = porcentaje * 180;
-            g2.setColor(COLOR_ACENTO);
+            g2.setPaint(new GradientPaint(x, y, new Color(52, 211, 153), x + diameter, y, new Color(5, 150, 105)));
             g2.draw(new Arc2D.Double(x, y, diameter, diameter, 180 - anguloProgreso, anguloProgreso, Arc2D.OPEN));
 
             // 3. Texto del total en el centro
             DecimalFormat df = new DecimalFormat("#,##0.00");
             String textoCentro = "L. " + df.format(valorActual);
-            g2.setFont(new Font("Segoe UI", Font.BOLD, 28));
+            g2.setFont(new Font("Segoe UI", Font.BOLD, 30));
             g2.setColor(COLOR_TEXTO);
             FontMetrics fm = g2.getFontMetrics();
             int tx = (width - fm.stringWidth(textoCentro)) / 2;
@@ -282,8 +284,8 @@ public class PanelEstadisticas extends JPanel {
             
             // Texto de Meta
             String textoMeta = "Meta: L. " + df.format(maximo);
-            g2.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-            g2.setColor(new Color(140, 145, 150));
+            g2.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            g2.setColor(COLOR_ACENTO);
             FontMetrics fmMeta = g2.getFontMetrics();
             g2.drawString(textoMeta, (width - fmMeta.stringWidth(textoMeta)) / 2, ty + 25);
         }

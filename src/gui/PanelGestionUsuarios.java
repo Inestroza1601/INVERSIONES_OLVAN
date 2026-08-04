@@ -37,13 +37,13 @@ public class PanelGestionUsuarios extends JPanel {
     private void iniciarDiseno() {
         this.removeAll();
         this.setLayout(new BorderLayout(15, 15));
-        this.setBackground(new Color(240, 242, 245)); // Gris Nube
+        this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); // Verde Vintage
         this.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Título Superior
         JLabel lblTitulo = new JLabel("Gestión y Roles de Usuarios");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        lblTitulo.setForeground(new Color(45, 45, 45)); // Gris Oscuro
+        lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         this.add(lblTitulo, BorderLayout.NORTH);
 
         this.add(crearPanelFormulario(), BorderLayout.WEST);

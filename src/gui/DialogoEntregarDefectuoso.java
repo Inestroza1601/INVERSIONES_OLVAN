@@ -36,20 +36,23 @@ public class DialogoEntregarDefectuoso extends JDialog {
         this.setSize(500, 500);
         this.setLocationRelativeTo(getOwner());
         this.setLayout(new BorderLayout());
-        this.getContentPane().setBackground(Color.WHITE);
+        this.getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
 
         // Header Panel
         JPanel pnlHead = new JPanel(new BorderLayout());
-        pnlHead.setBackground(new Color(245, 247, 250));
-        pnlHead.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        pnlHead.setBackground(utilidades.EfectosUI.COLOR_SIDEBAR_PASTEL);
+        pnlHead.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, utilidades.EfectosUI.COLOR_BORDE),
+            BorderFactory.createEmptyBorder(15, 20, 15, 20)
+        ));
 
         JLabel lblTitle = new JLabel("Entrega al Cliente");
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        lblTitle.setForeground(new Color(45, 45, 45));
+        lblTitle.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
 
         JLabel lblSub = new JLabel("Producto: " + nombreProducto + " | Propietario: " + cliente);
         lblSub.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        lblSub.setForeground(new Color(100, 100, 100));
+        lblSub.setForeground(utilidades.EfectosUI.COLOR_TEXTO_SUBTITULO);
 
         pnlHead.add(lblTitle, BorderLayout.NORTH);
         pnlHead.add(lblSub, BorderLayout.SOUTH);
@@ -57,17 +60,17 @@ public class DialogoEntregarDefectuoso extends JDialog {
         // Body Panel
         JPanel pnlBody = new JPanel();
         pnlBody.setLayout(new BoxLayout(pnlBody, BoxLayout.Y_AXIS));
-        pnlBody.setBackground(Color.WHITE);
+        pnlBody.setOpaque(false);
         pnlBody.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
         
         // Historial Timeline
         JLabel lblHistorial = new JLabel("Historial de Movimientos:");
         lblHistorial.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        lblHistorial.setForeground(new Color(60, 60, 60));
+        lblHistorial.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         lblHistorial.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         java.util.List<java.util.Map<String, Object>> detalles = dao.obtenerDetallesPorProductoYEstado(idProducto, estadoActual);
-        StringBuilder timeline = new StringBuilder("<html><div style='font-size:12px; color:#444; margin-bottom:10px;'>");
+        StringBuilder timeline = new StringBuilder("<html><div style='font-size:12px; color:#1e4d38; margin-bottom:10px;'>");
         if (!detalles.isEmpty()) {
             java.util.Map<String, Object> d = detalles.get(0);
             timeline.append("• <b>Ingreso:</b> ").append(d.get("fecha")).append("<br>");
@@ -87,7 +90,7 @@ public class DialogoEntregarDefectuoso extends JDialog {
 
         JLabel lblObs = new JLabel("Observaciones de la Reparación / Notas del Proveedor:");
         lblObs.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        lblObs.setForeground(new Color(60, 60, 60));
+        lblObs.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         lblObs.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         txtObservaciones = new JTextArea(3, 20);
@@ -95,14 +98,14 @@ public class DialogoEntregarDefectuoso extends JDialog {
         txtObservaciones.setLineWrap(true);
         txtObservaciones.setWrapStyleWord(true);
         txtObservaciones.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(200, 200, 200)),
+                BorderFactory.createLineBorder(new Color(180, 208, 192)),
                 BorderFactory.createEmptyBorder(8, 8, 8, 8)
         ));
 
         JScrollPane scrollObs = new JScrollPane(txtObservaciones);
         scrollObs.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel lblInfo = new JLabel("<html><i style='color:#7f8c8d; font-size:11px'>Al confirmar, se registrará la entrega y se imprimirá un comprobante.</i></html>");
+        JLabel lblInfo = new JLabel("<html><i style='color:#557a66; font-size:11px'>Al confirmar, se registrará la entrega y se imprimirá un comprobante.</i></html>");
         lblInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         pnlBody.add(lblHistorial);
@@ -117,7 +120,7 @@ public class DialogoEntregarDefectuoso extends JDialog {
 
         // Footer Panel
         JPanel pnlFoot = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-        pnlFoot.setBackground(new Color(245, 247, 250));
+        pnlFoot.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
         pnlFoot.setBorder(new EmptyBorder(5, 10, 5, 10));
 
         btnCancelar = new JButton("Cancelar");
@@ -128,11 +131,8 @@ public class DialogoEntregarDefectuoso extends JDialog {
         btnCancelar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnCancelar.addActionListener(e -> dispose());
 
-        btnConfirmar = new JButton("Confirmar e Imprimir");
+        btnConfirmar = utilidades.EfectosUI.crearBotonVerde("Confirmar e Imprimir");
         btnConfirmar.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        btnConfirmar.setBackground(new Color(39, 174, 96));
-        btnConfirmar.setForeground(Color.WHITE);
-        btnConfirmar.setFocusPainted(false);
         btnConfirmar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnConfirmar.addActionListener(e -> procesarEntrega());
 

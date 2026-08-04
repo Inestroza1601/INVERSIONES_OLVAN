@@ -19,17 +19,17 @@ public class DialogoBuscarProductoSustituto extends JDialog {
         super(parent, "Catálogo Rápido - Selección de Sustituto", Dialog.ModalityType.APPLICATION_MODAL);
         setSize(600, 500);
         setLocationRelativeTo(parent);
-        getContentPane().setBackground(new Color(240, 242, 245));
+        getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
         setLayout(new BorderLayout(10, 10));
 
         JPanel pnlTop = new JPanel(new BorderLayout());
-        pnlTop.setBackground(new Color(240, 242, 245));
+        pnlTop.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
         pnlTop.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         JTextField txtB = new JTextField();
         txtB.setBackground(new Color(255, 255, 255));
         txtB.setForeground(new Color(45, 45, 45));
         txtB.setCaretColor(new Color(45, 45, 45));
-        txtB.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(0, 5, 0, 5)));
+        txtB.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(180, 208, 192)), BorderFactory.createEmptyBorder(0, 8, 0, 8)));
         txtB.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         txtB.putClientProperty("JTextField.placeholderText", "Buscar por Nombre o Código...");
         pnlTop.add(txtB, BorderLayout.CENTER);
@@ -63,11 +63,11 @@ public class DialogoBuscarProductoSustituto extends JDialog {
         tab.setForeground(new Color(45, 45, 45));
         tab.setRowHeight(60);
         tab.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        tab.setSelectionBackground(new Color(230, 235, 240));
-        tab.setSelectionForeground(new Color(45, 45, 45));
-        tab.getTableHeader().setBackground(new Color(240, 242, 245));
-        tab.getTableHeader().setForeground(new Color(100, 100, 100));
-        tab.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 222, 225)));
+        tab.setSelectionBackground(new Color(205, 235, 218));
+        tab.setSelectionForeground(Color.BLACK);
+        tab.getTableHeader().setBackground(utilidades.EfectosUI.COLOR_SIDEBAR_PASTEL);
+        tab.getTableHeader().setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
+        tab.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, utilidades.EfectosUI.COLOR_BORDE));
         tab.getTableHeader().setPreferredSize(new Dimension(0, 35));
 
         tab.getColumnModel().getColumn(0).setMinWidth(0);

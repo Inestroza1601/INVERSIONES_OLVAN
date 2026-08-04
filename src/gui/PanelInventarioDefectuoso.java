@@ -29,16 +29,16 @@ public class PanelInventarioDefectuoso extends JPanel {
 
     private void iniciarDiseno() {
         this.setLayout(new BorderLayout());
-        this.setBackground(new Color(245, 247, 250));
+        this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
 
         // Cabecera
         JPanel panelCabecera = new JPanel(new BorderLayout());
-        panelCabecera.setBackground(new Color(245, 247, 250));
+        panelCabecera.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
         panelCabecera.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
 
         JLabel lblTitulo = new JLabel("Control de Inventario Defectuoso");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        lblTitulo.setForeground(new Color(45, 45, 45));
+        lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         panelCabecera.add(lblTitulo, BorderLayout.WEST);
 
         // Barra de búsqueda
@@ -46,7 +46,7 @@ public class PanelInventarioDefectuoso extends JPanel {
         pnlBusqueda.setOpaque(false);
         JLabel lblBuscar = new JLabel("Buscar:");
         lblBuscar.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        lblBuscar.setForeground(new Color(60, 60, 60));
+        lblBuscar.setForeground(utilidades.EfectosUI.COLOR_TEXTO_SUBTITULO);
         JTextField txtBusqueda = new JTextField(20);
         txtBusqueda.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         txtBusqueda.setBorder(BorderFactory.createCompoundBorder(
@@ -77,10 +77,10 @@ public class PanelInventarioDefectuoso extends JPanel {
         tablaDefectuosos = new JTable(modeloTabla);
         tablaDefectuosos.setRowHeight(60);
         tablaDefectuosos.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        tablaDefectuosos.setSelectionBackground(new Color(230, 240, 255));
-        tablaDefectuosos.setSelectionForeground(Color.BLACK);
+        tablaDefectuosos.setSelectionBackground(new Color(209, 250, 229));
+        tablaDefectuosos.setSelectionForeground(new Color(6, 95, 70));
         tablaDefectuosos.setShowVerticalLines(false);
-        tablaDefectuosos.setGridColor(new Color(230, 230, 230));
+        tablaDefectuosos.setGridColor(new Color(241, 245, 249));
 
         sorter = new TableRowSorter<>(modeloTabla);
         tablaDefectuosos.setRowSorter(sorter);
@@ -101,9 +101,10 @@ public class PanelInventarioDefectuoso extends JPanel {
 
         JTableHeader header = tablaDefectuosos.getTableHeader();
         header.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        header.setBackground(new Color(255, 255, 255));
-        header.setForeground(new Color(100, 100, 100));
-        header.setPreferredSize(new Dimension(0, 40));
+        header.setBackground(new Color(236, 253, 245)); // Verde Menta fresca
+        header.setForeground(new Color(6, 95, 70));     // Verde Esmeralda Oscuro
+        header.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(16, 185, 129)));
+        header.setPreferredSize(new Dimension(0, 42));
         ((DefaultTableCellRenderer) header.getDefaultRenderer()).setHorizontalAlignment(JLabel.LEFT);
 
         // Renderizado del Estado
@@ -351,10 +352,10 @@ public class PanelInventarioDefectuoso extends JPanel {
             
             String cliente = (String) d.get("cliente");
             if (estado.contains("Rep. Cliente") && cliente != null && !cliente.isEmpty()) {
-                pnlInfo.add(crearEtiquetaDetalle("Cliente Propietario", "👤 " + cliente));
+                pnlInfo.add(crearEtiquetaDetalle("Cliente Propietario", cliente));
                 pnlInfo.add(Box.createVerticalStrut(15));
             } else {
-                pnlInfo.add(crearEtiquetaDetalle("Propietario", "🏢 Inversiones Olvan (Empresa)"));
+                pnlInfo.add(crearEtiquetaDetalle("Propietario", "Inversiones Olvan (Empresa)"));
                 pnlInfo.add(Box.createVerticalStrut(15));
             }
             

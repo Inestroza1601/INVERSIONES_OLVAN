@@ -24,7 +24,7 @@ public class PanelGestionGarantias extends JPanel {
     private void iniciarDiseno() {
         this.removeAll();
         this.setLayout(new BorderLayout(20, 20));
-        this.setBackground(new Color(240, 242, 245)); // Gris Nube 
+        this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); // Verde Vintage
         this.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
         // --- 1. PANEL SUPERIOR ---
@@ -33,7 +33,7 @@ public class PanelGestionGarantias extends JPanel {
 
         JLabel lblTitulo = new JLabel("Control de Garantías");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        lblTitulo.setForeground(new Color(45, 45, 45)); // Gris Oscuro
+        lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
 
         JPanel panelCentro = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         panelCentro.setOpaque(false);
@@ -44,17 +44,19 @@ public class PanelGestionGarantias extends JPanel {
         panelCentro.add(txtBusqueda);
 
         // Etiqueta de la empresa
-        JLabel lblEmpresa = new JLabel("Orion Systems");
-        lblEmpresa.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        lblEmpresa.setForeground(new Color(140, 145, 150)); // Gris suave
+        JLabel lblEmpresa = new JLabel("INVERSIONES OLVAN");
+        lblEmpresa.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblEmpresa.setForeground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO);
 
         JPanel panelFiltros = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         panelFiltros.setOpaque(false);
         chkMostrarVencidas = new JCheckBox("Mostrar Vencidas");
         chkMostrarVencidas.setOpaque(false);
+        chkMostrarVencidas.setForeground(utilidades.EfectosUI.COLOR_TEXTO_OSCURO);
         chkMostrarVencidas.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         chkMostrarReclamadas = new JCheckBox("Mostrar Reclamadas");
         chkMostrarReclamadas.setOpaque(false);
+        chkMostrarReclamadas.setForeground(utilidades.EfectosUI.COLOR_TEXTO_OSCURO);
         chkMostrarReclamadas.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         panelFiltros.add(chkMostrarVencidas);
         panelFiltros.add(chkMostrarReclamadas);
@@ -81,16 +83,16 @@ public class PanelGestionGarantias extends JPanel {
         tablaGarantias.setIntercellSpacing(new Dimension(0, 0));
         tablaGarantias.setRowHeight(45);
         tablaGarantias.setBackground(new Color(255, 255, 255)); // Blanco puro
-        tablaGarantias.setForeground(new Color(45, 45, 45)); // Gris oscuro
+        tablaGarantias.setForeground(new Color(30, 41, 59));
         tablaGarantias.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        tablaGarantias.setSelectionBackground(new Color(230, 235, 240)); // Gris/Azul suave 
-        tablaGarantias.setSelectionForeground(new Color(45, 45, 45));
+        tablaGarantias.setSelectionBackground(new Color(209, 250, 229)); // Menta luminosa 
+        tablaGarantias.setSelectionForeground(new Color(6, 95, 70));
 
         tablaGarantias.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-        tablaGarantias.getTableHeader().setBackground(new Color(240, 242, 245)); // Gris Nube
-        tablaGarantias.getTableHeader().setForeground(new Color(100, 100, 100)); // Gris intermedio
-        tablaGarantias.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 222, 225)));
-        tablaGarantias.getTableHeader().setPreferredSize(new Dimension(0, 40));
+        tablaGarantias.getTableHeader().setBackground(new Color(236, 253, 245)); // Verde Menta fresca
+        tablaGarantias.getTableHeader().setForeground(new Color(6, 95, 70));     // Verde Esmeralda Oscuro
+        tablaGarantias.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(16, 185, 129)));
+        tablaGarantias.getTableHeader().setPreferredSize(new Dimension(0, 42));
 
         // Ocultar IDs
         ocultarColumna(7); // ID Venta

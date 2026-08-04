@@ -29,7 +29,7 @@ public class PanelBuscarProducto extends JPanel {
 
     private void iniciarDiseno() {
         this.setLayout(new BorderLayout(20, 20));
-        this.setBackground(new Color(240, 242, 245)); // Gris Nube
+        this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); // Verde Vintage
         this.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
         // --- PANEL SUPERIOR ---
@@ -38,7 +38,7 @@ public class PanelBuscarProducto extends JPanel {
 
         JLabel lblTitulo = new JLabel("Catálogo de Inventario");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        lblTitulo.setForeground(new Color(45, 45, 45)); // Gris Oscuro
+        lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
 
         txtBusqueda = new JTextField(20);
         txtBusqueda.putClientProperty("JTextField.placeholderText", "Buscar por nombre o código...");
@@ -78,13 +78,14 @@ public class PanelBuscarProducto extends JPanel {
         tablaInventario.setShowGrid(false);
         tablaInventario.setRowHeight(70); 
         tablaInventario.setBackground(new Color(255, 255, 255)); // Blanco Puro
-        tablaInventario.setForeground(new Color(45, 45, 45)); // Gris Oscuro
+        tablaInventario.setForeground(new Color(30, 41, 59));
         tablaInventario.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        tablaInventario.setSelectionBackground(new Color(230, 235, 240)); // Selección gris/azul suave
+        tablaInventario.setSelectionBackground(new Color(209, 250, 229)); // Selección menta luminosa
+        tablaInventario.setSelectionForeground(new Color(6, 95, 70));
         tablaInventario.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-        tablaInventario.getTableHeader().setBackground(new Color(240, 242, 245)); // Gris Nube
-        tablaInventario.getTableHeader().setForeground(new Color(100, 100, 100)); // Gris intermedio
-        tablaInventario.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 222, 225)));
+        tablaInventario.getTableHeader().setBackground(new Color(236, 253, 245)); // Verde Menta fresca
+        tablaInventario.getTableHeader().setForeground(new Color(6, 95, 70));     // Verde Esmeralda Oscuro
+        tablaInventario.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(16, 185, 129)));
         tablaInventario.getTableHeader().setPreferredSize(new Dimension(0, 45));
 
         tablaInventario.getColumnModel().getColumn(0).setMinWidth(0);
@@ -223,7 +224,7 @@ public class PanelBuscarProducto extends JPanel {
         
         JDialog zoomDialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Previsualización del Producto", true);
         zoomDialog.setLayout(new BorderLayout());
-        zoomDialog.getContentPane().setBackground(new Color(240, 242, 245));
+        zoomDialog.getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
         zoomDialog.setSize(520, 520);
         
         JLabel lblZoom = new JLabel(icon);

@@ -24,19 +24,22 @@ public class DialogoHistorialAbonosVenta extends JDialog {
         setSize(700, 400);
         setLocationRelativeTo(getParent());
         setLayout(new BorderLayout(15, 15));
-        getContentPane().setBackground(new Color(245, 247, 250));
+        getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
 
         JPanel pnlHeader = new JPanel(new BorderLayout());
-        pnlHeader.setBackground(new Color(39, 174, 96));
-        pnlHeader.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        pnlHeader.setBackground(utilidades.EfectosUI.COLOR_SIDEBAR_PASTEL);
+        pnlHeader.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, utilidades.EfectosUI.COLOR_BORDE),
+            BorderFactory.createEmptyBorder(15, 20, 15, 20)
+        ));
         
         JLabel lblTitulo = new JLabel("Detalle de Pagos / Abonos");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        lblTitulo.setForeground(Color.WHITE);
+        lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         
         JLabel lblSub = new JLabel("Abonos recibidos para el Apartado #" + idApartado);
         lblSub.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        lblSub.setForeground(new Color(240, 240, 240));
+        lblSub.setForeground(utilidades.EfectosUI.COLOR_TEXTO_SUBTITULO);
         
         pnlHeader.add(lblTitulo, BorderLayout.NORTH);
         pnlHeader.add(lblSub, BorderLayout.CENTER);
@@ -92,7 +95,7 @@ public class DialogoHistorialAbonosVenta extends JDialog {
         }
 
         JPanel pnlFooter = new JPanel(new BorderLayout());
-        pnlFooter.setBackground(new Color(245, 247, 250));
+        pnlFooter.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
         pnlFooter.setBorder(BorderFactory.createEmptyBorder(10, 20, 15, 20));
         
         JLabel lblTotal = new JLabel("Total Abonado: L " + String.format("%,.2f", totalAbonos));

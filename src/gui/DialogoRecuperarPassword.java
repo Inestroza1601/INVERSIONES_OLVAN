@@ -22,7 +22,7 @@ public class DialogoRecuperarPassword extends JDialog {
     
     private void iniciarDiseno() {
         JPanel pnlFondo = new JPanel(new GridBagLayout());
-        pnlFondo.setBackground(Color.WHITE);
+        pnlFondo.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
         pnlFondo.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
         
         GridBagConstraints gbc = new GridBagConstraints();
@@ -32,11 +32,11 @@ public class DialogoRecuperarPassword extends JDialog {
         
         JLabel lblTitulo = new JLabel("Recuperación de Contraseña");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        lblTitulo.setForeground(new Color(45, 45, 45));
+        lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         
         JLabel lblInstrucciones = new JLabel("<html><body>Ingrese su nombre de usuario.<br>Verificaremos su cuenta y enviaremos el código a su correo.</body></html>");
         lblInstrucciones.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        lblInstrucciones.setForeground(new Color(100, 100, 100));
+        lblInstrucciones.setForeground(utilidades.EfectosUI.COLOR_TEXTO_SUBTITULO);
         
         txtUsuario = new JTextField(25);
         txtUsuario.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -49,7 +49,7 @@ public class DialogoRecuperarPassword extends JDialog {
         gbc.gridy = 2; pnlFondo.add(txtUsuario, gbc);
         
         JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
-        pnlBotones.setBackground(Color.WHITE);
+        pnlBotones.setOpaque(false);
         
         btnCancelar = new JButton("Cancelar");
         btnCancelar.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -58,13 +58,10 @@ public class DialogoRecuperarPassword extends JDialog {
         btnCancelar.setFocusPainted(false);
         btnCancelar.addActionListener(e -> dispose());
         
-        btnEnviar = new JButton("Enviar Código");
-        btnEnviar.setBackground(new Color(39, 174, 96));
-        btnEnviar.setForeground(Color.WHITE);
+        btnEnviar = utilidades.EfectosUI.crearBotonVerde("Enviar Código");
         btnEnviar.setFont(new Font("Segoe UI", Font.BOLD, 14));
         btnEnviar.setPreferredSize(new Dimension(140, 40));
         btnEnviar.putClientProperty("JButton.buttonType", "roundRect");
-        btnEnviar.setFocusPainted(false);
         btnEnviar.addActionListener(e -> enviarCodigo());
         
         pnlBotones.add(btnCancelar);

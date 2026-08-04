@@ -37,7 +37,7 @@ public class DialogoReclamarGarantia extends JDialog {
 
     private void iniciarDiseno(String cliente, String producto, String serie, String fechaCompra) {
         JPanel panelPrincipal = new JPanel(new BorderLayout(20, 20));
-        panelPrincipal.setBackground(new Color(245, 247, 250)); // Fondo limpio
+        panelPrincipal.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); // Fondo verde pastel
         panelPrincipal.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
         // --- 1. CABECERA: DATOS DEL PRODUCTO ---

@@ -47,7 +47,7 @@ public class PanelDatosEmpresa extends JPanel {
     private void iniciarDiseno() {
         this.removeAll(); 
         this.setLayout(new BorderLayout());
-        this.setBackground(new Color(240, 242, 245)); // Gris Nube
+        this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); // Verde Vintage
 
         // =========================================================
         // 1. PANEL SUPERIOR (TÍTULO Y SELECTOR DE EMPRESA)
@@ -57,7 +57,7 @@ public class PanelDatosEmpresa extends JPanel {
         
         JLabel lblTitulo = new JLabel("Configuración de Empresas");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        lblTitulo.setForeground(new Color(45, 45, 45)); // Gris Oscuro
+        lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
         pnlTop.add(lblTitulo, BorderLayout.NORTH);
 
@@ -68,7 +68,7 @@ public class PanelDatosEmpresa extends JPanel {
 
         JLabel lblSeleccion = new JLabel("Seleccionar Empresa:");
         lblSeleccion.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        lblSeleccion.setForeground(new Color(100, 100, 100));
+        lblSeleccion.setForeground(utilidades.EfectosUI.COLOR_TEXTO_SUBTITULO);
 
         cmbEmpresas = new JComboBox<>();
         cmbEmpresas.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -96,13 +96,7 @@ public class PanelDatosEmpresa extends JPanel {
         txtIdEmpresa.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)));
         txtIdEmpresa.setPreferredSize(new Dimension(50, 35));
 
-        btnNuevaEmpresa = new JButton("+ Crear Nueva");
-        btnNuevaEmpresa.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        btnNuevaEmpresa.setBackground(new Color(13, 110, 253)); // Azul
-        btnNuevaEmpresa.setForeground(Color.WHITE);
-        btnNuevaEmpresa.setFocusPainted(false);
-        btnNuevaEmpresa.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
-        btnNuevaEmpresa.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnNuevaEmpresa = utilidades.EfectosUI.crearBotonVerde("+ Crear Nueva");
         btnNuevaEmpresa.addActionListener(e -> prepararNuevaEmpresa());
 
         pnlControl.add(lblSeleccion);
@@ -202,7 +196,7 @@ public class PanelDatosEmpresa extends JPanel {
         panelImpresion.setEmpresaEnEdicion(emp); 
         
         btnGuardar.setText("Actualizar Empresa");
-        btnGuardar.setBackground(new Color(39, 174, 96)); // Verde Menta
+        btnGuardar.setBackground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO);
     }
     private void prepararNuevaEmpresa() {
         // Deseleccionamos el combo temporalmente
@@ -231,7 +225,7 @@ public class PanelDatosEmpresa extends JPanel {
         // panelImpresion.limpiarFormulario();
 
         btnGuardar.setText("Guardar Nueva Empresa");
-        btnGuardar.setBackground(new Color(13, 110, 253)); // Azul
+        btnGuardar.setBackground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO);
         txtNombreEmpresa.requestFocus();
     }
 

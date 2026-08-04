@@ -15,34 +15,49 @@ public class PanelLogin extends JPanel {
     private JPasswordField txtPassword;
     private JButton btnEntrar;
     private MenuPrincipal menuPrincipal;
+    private JPanel pnlTarjeta;
+
+    private float tarjetaAlpha = 0.0f;
+    private int tarjetaOffsetY = 15;
+    private int tarjetaOffsetX = 0;
+    private Timer animTimer;
 
     public PanelLogin(MenuPrincipal menuPrincipal) {
         this.menuPrincipal = menuPrincipal;
         iniciarDiseno();
+        iniciarAnimacionEntrada();
     }
 
     private void iniciarDiseno() {
-        // El panel principal ocupa toda la ventana y mantiene el fondo unificado
         setLayout(new GridBagLayout());
-        setBackground(new Color(240, 242, 245)); // Gris nube suave, sin imagen de fondo
+        setBackground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO); // Verde Vintage de los botones
 
         // --- TARJETA FLOTANTE CENTRAL ---
-        JPanel pnlTarjeta = new JPanel(new GridLayout(1, 2)) {
+        pnlTarjeta = new JPanel(new GridLayout(1, 2)) {
             @Override
             public void paint(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                if (tarjetaAlpha < 1.0f || tarjetaOffsetY != 0 || tarjetaOffsetX != 0) {
+                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Math.max(0.0f, Math.min(1.0f, tarjetaAlpha))));
+                    g2.translate(tarjetaOffsetX, tarjetaOffsetY);
+                }
+
+                // Sombra suave posterior a la tarjeta
+                g2.setColor(new Color(15, 45, 30, 90));
+                g2.fillRoundRect(4, 6, getWidth() - 8, getHeight() - 8, 35, 35);
+
                 // Máscara de recorte redondeada
                 g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 35, 35));
                 super.paint(g2);
+
+                // Borde redondeado elegante
+                g2.setClip(null);
+                g2.setColor(new Color(25, 65, 48, 140));
+                g2.setStroke(new BasicStroke(1.5f));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 35, 35);
                 g2.dispose();
-                
-                // Dibujar borde
-                Graphics2D g2Border = (Graphics2D) g.create();
-                g2Border.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2Border.setColor(new Color(200, 205, 210));
-                g2Border.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 35, 35);
-                g2Border.dispose();
             }
         };
         pnlTarjeta.setPreferredSize(new Dimension(900, 520));
@@ -50,7 +65,7 @@ public class PanelLogin extends JPanel {
 
         // --- MITAD IZQUIERDA (BRANDING) ---
         JPanel pnlIzquierda = new JPanel(new GridBagLayout());
-        pnlIzquierda.setBackground(new Color(39, 174, 96)); 
+        pnlIzquierda.setBackground(new Color(236, 246, 240)); // Salvia claro muy suave y limpio
         
         JLabel lblBranding = new JLabel("", SwingConstants.CENTER);
         try {
@@ -63,8 +78,8 @@ public class PanelLogin extends JPanel {
         } catch (Exception e) {}
         
         JLabel lblBienvenida = new JLabel("<html><center>Bienvenido al Sistema<br>Integral de Ventas e Inventario</center></html>", SwingConstants.CENTER);
-        lblBienvenida.setFont(new Font("Segoe UI", Font.PLAIN, 15));
-        lblBienvenida.setForeground(new Color(255, 255, 255, 230));
+        lblBienvenida.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        lblBienvenida.setForeground(new Color(19, 58, 42));
 
         GridBagConstraints gbcIzq = new GridBagConstraints();
         gbcIzq.gridx = 0; gbcIzq.gridy = 0;
@@ -89,44 +104,40 @@ public class PanelLogin extends JPanel {
         
         JLabel lblSub = new JLabel("Ingresa tus credenciales para continuar", SwingConstants.CENTER);
         lblSub.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        lblSub.setForeground(new Color(140, 145, 150));
+        lblSub.setForeground(new Color(140, 140, 140));
 
-        gbcDer.gridy = 0; gbcDer.insets = new Insets(20, 45, 5, 45); pnlDerecha.add(lblTitulo, gbcDer);
-        gbcDer.gridy = 1; gbcDer.insets = new Insets(0, 45, 35, 45); pnlDerecha.add(lblSub, gbcDer);
+        gbcDer.gridy = 0; pnlDerecha.add(lblTitulo, gbcDer);
+        gbcDer.gridy = 1; gbcDer.insets = new Insets(0, 45, 25, 45); pnlDerecha.add(lblSub, gbcDer);
 
         // --- CAMPOS ---
-        gbcDer.insets = new Insets(5, 45, 5, 45);
-        
-        JLabel lblUsr = new JLabel("Usuario");
-        lblUsr.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        lblUsr.setForeground(new Color(100, 100, 100));
-        
+        JLabel lblUser = new JLabel("Usuario");
+        lblUser.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        lblUser.setForeground(new Color(70, 70, 70));
+
         txtUsuario = new JTextField();
+        txtUsuario.setPreferredSize(new Dimension(0, 42));
         txtUsuario.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        txtUsuario.setPreferredSize(new Dimension(0, 45)); 
         txtUsuario.putClientProperty("JTextField.placeholderText", "Ingresa tu usuario");
         txtUsuario.putClientProperty("JTextField.showClearButton", true);
-        txtUsuario.putClientProperty("JComponent.roundRect", true);
         
-        gbcDer.gridy = 2; gbcDer.insets = new Insets(5, 45, 4, 45); pnlDerecha.add(lblUsr, gbcDer);
+        gbcDer.gridy = 2; gbcDer.insets = new Insets(5, 45, 4, 45); pnlDerecha.add(lblUser, gbcDer);
         gbcDer.gridy = 3; gbcDer.insets = new Insets(0, 45, 15, 45); pnlDerecha.add(txtUsuario, gbcDer);
 
         JLabel lblPass = new JLabel("Contraseña");
         lblPass.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        lblPass.setForeground(new Color(100, 100, 100));
+        lblPass.setForeground(new Color(70, 70, 70));
 
         txtPassword = new JPasswordField();
+        txtPassword.setPreferredSize(new Dimension(0, 42));
         txtPassword.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        txtPassword.setPreferredSize(new Dimension(0, 45)); 
         txtPassword.putClientProperty("JTextField.placeholderText", "Ingresa tu contraseña");
-        txtPassword.putClientProperty("JTextField.showClearButton", true);
         txtPassword.putClientProperty("JTextField.showRevealButton", true);
-        txtPassword.putClientProperty("JComponent.roundRect", true);
-        txtPassword.addKeyListener(new KeyAdapter() {
+        
+        txtPassword.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    procesarLogin();
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    btnEntrar.doClick();
                 }
             }
         });
@@ -134,7 +145,7 @@ public class PanelLogin extends JPanel {
         gbcDer.gridy = 4; gbcDer.insets = new Insets(5, 45, 4, 45); pnlDerecha.add(lblPass, gbcDer);
         gbcDer.gridy = 5; gbcDer.insets = new Insets(0, 45, 35, 45); pnlDerecha.add(txtPassword, gbcDer);
 
-        // Listener para limpiar el borde rojo cuando el usuario empiece a escribir de nuevo
+        // Listener para limpiar el borde rojo al escribir
         DocumentListener resetErrorListener = new DocumentListener() {
             @Override public void insertUpdate(DocumentEvent e) { resetError(); }
             @Override public void removeUpdate(DocumentEvent e) { resetError(); }
@@ -150,7 +161,7 @@ public class PanelLogin extends JPanel {
         // --- ENLACE OLVIDE MI CONTRASEÑA ---
         JLabel lblRecuperar = new JLabel("¿Olvidaste tu contraseña?");
         lblRecuperar.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        lblRecuperar.setForeground(new Color(41, 128, 185)); // Azul tipo enlace
+        lblRecuperar.setForeground(new Color(45, 106, 79)); // Verde Vintage
         lblRecuperar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblRecuperar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -165,6 +176,7 @@ public class PanelLogin extends JPanel {
         btnEntrar = new JButton("Ingresar al Sistema") {
             private float hoverProg = 0.0f;
             private Timer tmr;
+            private boolean isPressed = false;
             {
                 addMouseListener(new java.awt.event.MouseAdapter() {
                     @Override
@@ -187,6 +199,16 @@ public class PanelLogin extends JPanel {
                         });
                         tmr.start();
                     }
+                    @Override
+                    public void mousePressed(java.awt.event.MouseEvent e) {
+                        isPressed = true;
+                        repaint();
+                    }
+                    @Override
+                    public void mouseReleased(java.awt.event.MouseEvent e) {
+                        isPressed = false;
+                        repaint();
+                    }
                 });
             }
             @Override
@@ -194,20 +216,26 @@ public class PanelLogin extends JPanel {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 
-                Color c1 = new Color(16, 185, 129); // Emerald 500
-                Color c2 = new Color(5, 150, 105);  // Emerald 600
+                Color c1 = new Color(45, 106, 79); // Verde Bosque Vintage
+                Color c2 = new Color(30, 77, 56);  // Verde Vintage Profundo
                 if (hoverProg > 0.01f) {
-                    // Más brillante en hover
-                    c1 = new Color(52, 211, 153);
-                    c2 = new Color(16, 185, 129);
+                    c1 = new Color(55, 126, 95);
+                    c2 = new Color(45, 106, 79);
                 }
                 
                 GradientPaint gp = new GradientPaint(0, 0, c1, getWidth(), getHeight(), c2);
                 g2.setPaint(gp);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
                 
-                // Texto
-                g2.setColor(Color.WHITE);
+                // Texto negro en hover o al presionar / blanco cuando el cursor se retira
+                if (isPressed || hoverProg > 0.05f) {
+                    int r = (int) (255 - 255 * hoverProg);
+                    int gVal = (int) (255 - 255 * hoverProg);
+                    int b = (int) (255 - 255 * hoverProg);
+                    g2.setColor(isPressed ? Color.BLACK : new Color(Math.max(0, r), Math.max(0, gVal), Math.max(0, b)));
+                } else {
+                    g2.setColor(Color.WHITE);
+                }
                 g2.setFont(getFont());
                 FontMetrics fm = g2.getFontMetrics();
                 int tx = (getWidth() - fm.stringWidth(getText())) / 2;
@@ -235,6 +263,56 @@ public class PanelLogin extends JPanel {
         this.add(pnlTarjeta);
     }
 
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        // Fondo Verde Vintage Elegante del color de los botones
+        GradientPaint gp = new GradientPaint(0, 0, new Color(34, 82, 60), getWidth(), getHeight(), new Color(45, 106, 79));
+        g2.setPaint(gp);
+        g2.fillRect(0, 0, getWidth(), getHeight());
+        g2.dispose();
+    }
+
+    public void iniciarAnimacionEntrada() {
+        tarjetaAlpha = 0.0f;
+        tarjetaOffsetY = 15;
+        tarjetaOffsetX = 0;
+        if (animTimer != null && animTimer.isRunning()) animTimer.stop();
+
+        animTimer = new Timer(15, e -> {
+            tarjetaAlpha += 0.08f;
+            tarjetaOffsetY = Math.max(0, (int) (15 * (1.0f - tarjetaAlpha)));
+            if (tarjetaAlpha >= 1.0f) {
+                tarjetaAlpha = 1.0f;
+                tarjetaOffsetY = 0;
+                animTimer.stop();
+            }
+            repaint();
+        });
+        animTimer.start();
+    }
+
+    private void ejecutarShakeError() {
+        if (animTimer != null && animTimer.isRunning()) animTimer.stop();
+        int[] frames = {-12, 12, -9, 9, -5, 5, -2, 2, 0};
+        final int[] index = {0};
+
+        animTimer = new Timer(22, e -> {
+            if (index[0] < frames.length) {
+                tarjetaOffsetX = frames[index[0]];
+                index[0]++;
+                repaint();
+            } else {
+                tarjetaOffsetX = 0;
+                animTimer.stop();
+                repaint();
+            }
+        });
+        animTimer.start();
+    }
+
     private void procesarLogin() {
         String usr = txtUsuario.getText().trim();
         String pass = new String(txtPassword.getPassword());
@@ -242,6 +320,7 @@ public class PanelLogin extends JPanel {
         if (usr.isEmpty() || pass.isEmpty()) {
             if (usr.isEmpty()) txtUsuario.putClientProperty("JComponent.outline", "error");
             if (pass.isEmpty()) txtPassword.putClientProperty("JComponent.outline", "error");
+            ejecutarShakeError();
             JOptionPane.showMessageDialog(this, "Debe ingresar usuario y contraseña.", "Campos Incompletos", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -250,9 +329,12 @@ public class PanelLogin extends JPanel {
         Usuario logged = uDAO.autenticarUsuario(usr, pass);
 
         if (logged != null) {
-            // Mostrar mensaje de bienvenida exitoso
-            JOptionPane.showMessageDialog(this, "¡Bienvenido al sistema, " + logged.getNombreUsuario() + "!", "Inicio de Sesión Exitoso", JOptionPane.INFORMATION_MESSAGE);
-            
+            btnEntrar.setEnabled(false);
+            txtUsuario.setEnabled(false);
+            txtPassword.setEnabled(false);
+            btnEntrar.setText("¡Acceso Correcto! Entrando...");
+            btnEntrar.repaint();
+
             SesionGlobal.setUsuarioActual(logged);
             
             if (SesionGlobal.getEmpresaActual() == null) {
@@ -264,11 +346,29 @@ public class PanelLogin extends JPanel {
                 } catch(Exception ex) {}
             }
 
-            menuPrincipal.iniciarEntornoApp();
+            // Animación suave de salida (Fade-Out + Elevación)
+            if (animTimer != null && animTimer.isRunning()) animTimer.stop();
+            animTimer = new Timer(15, e -> {
+                tarjetaAlpha -= 0.08f;
+                tarjetaOffsetY -= 2;
+                if (tarjetaAlpha <= 0.0f) {
+                    tarjetaAlpha = 0.0f;
+                    animTimer.stop();
+                    menuPrincipal.iniciarEntornoApp();
+                    
+                    // Restaurar controles para cuando se cierre sesión
+                    btnEntrar.setEnabled(true);
+                    txtUsuario.setEnabled(true);
+                    txtPassword.setEnabled(true);
+                    btnEntrar.setText("Ingresar al Sistema");
+                }
+                repaint();
+            });
+            animTimer.start();
         } else {
-            // Pintar los campos de rojo si las credenciales son incorrectas
             txtUsuario.putClientProperty("JComponent.outline", "error");
             txtPassword.putClientProperty("JComponent.outline", "error");
+            ejecutarShakeError();
             JOptionPane.showMessageDialog(this, "El nombre de usuario o la contraseña son incorrectos.", "Credenciales Inválidas", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -279,5 +379,6 @@ public class PanelLogin extends JPanel {
         txtUsuario.putClientProperty("JComponent.outline", null);
         txtPassword.putClientProperty("JComponent.outline", null);
         txtUsuario.requestFocus();
+        iniciarAnimacionEntrada();
     }
 }
