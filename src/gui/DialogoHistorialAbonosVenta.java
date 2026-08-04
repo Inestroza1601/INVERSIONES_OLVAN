@@ -27,16 +27,16 @@ public class DialogoHistorialAbonosVenta extends JDialog {
         getContentPane().setBackground(new Color(245, 247, 250));
 
         JPanel pnlHeader = new JPanel(new BorderLayout());
-        pnlHeader.setBackground(new Color(245, 247, 250));
-        pnlHeader.setBorder(BorderFactory.createEmptyBorder(15, 20, 5, 20));
+        pnlHeader.setBackground(new Color(39, 174, 96));
+        pnlHeader.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
         
         JLabel lblTitulo = new JLabel("Detalle de Pagos / Abonos");
-        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        lblTitulo.setForeground(new Color(44, 62, 80));
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        lblTitulo.setForeground(Color.WHITE);
         
         JLabel lblSub = new JLabel("Abonos recibidos para el Apartado #" + idApartado);
         lblSub.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        lblSub.setForeground(Color.GRAY);
+        lblSub.setForeground(new Color(240, 240, 240));
         
         pnlHeader.add(lblTitulo, BorderLayout.NORTH);
         pnlHeader.add(lblSub, BorderLayout.CENTER);

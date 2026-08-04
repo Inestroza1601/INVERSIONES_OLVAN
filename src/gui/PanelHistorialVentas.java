@@ -258,7 +258,7 @@ public class PanelHistorialVentas extends JPanel {
         
         // Cabecera estilizada
         JPanel pnlCabecera = new JPanel(new BorderLayout());
-        pnlCabecera.setBackground(new Color(41, 128, 185)); // Azul corporativo
+        pnlCabecera.setBackground(new Color(39, 174, 96)); // Verde
         pnlCabecera.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
         JLabel lblTitulo = new JLabel("Detalles de Venta #" + idVenta);
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
@@ -355,7 +355,7 @@ public class PanelHistorialVentas extends JPanel {
             JButton btnAbonos = new JButton("Ver Abonos");
             btnAbonos.setFont(new Font("Segoe UI", Font.BOLD, 13));
             btnAbonos.setForeground(Color.WHITE);
-            btnAbonos.setBackground(new Color(41, 128, 185)); // Azul
+            btnAbonos.setBackground(new Color(39, 174, 96)); // Verde
             btnAbonos.setFocusPainted(false);
 
             final String idAp = numApartado;
