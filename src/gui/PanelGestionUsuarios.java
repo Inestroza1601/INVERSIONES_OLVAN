@@ -293,7 +293,16 @@ public class PanelGestionUsuarios extends JPanel {
         
         btnGuardar.setText("Actualizar");
         btnGuardar.setBackground(new Color(39, 174, 96)); // Verde Menta 
-        btnEliminar.setVisible(true); 
+        
+        String estado = tablaUsuarios.getValueAt(fila, 5).toString();
+        if (estado.equals("Activo")) {
+            btnEliminar.setText("Desactivar");
+            btnEliminar.setBackground(new Color(227, 0, 15)); // Rojo
+        } else {
+            btnEliminar.setText("Activar");
+            btnEliminar.setBackground(new Color(39, 174, 96)); // Verde
+        }
+        btnEliminar.setVisible(true);
         
         panelForm.revalidate();
         panelForm.repaint();
@@ -401,13 +410,24 @@ public class PanelGestionUsuarios extends JPanel {
 
         try {
             int id = Integer.parseInt(idString);
+            String estado = tablaUsuarios.getValueAt(filaSelec, 5).toString();
+            UsuarioDAO dao = new UsuarioDAO();
             
-            if (JOptionPane.showConfirmDialog(this, "¿Está seguro de desactivar ID " + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                UsuarioDAO dao = new UsuarioDAO();
-                if (dao.desactivarUsuario(id)) {
-                    JOptionPane.showMessageDialog(this, "Usuario desactivado.");
-                    limpiarFormulario();
-                    cargarTabla(); 
+            if (estado.equals("Activo")) {
+                if (JOptionPane.showConfirmDialog(this, "¿Está seguro de desactivar ID " + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    if (dao.desactivarUsuario(id)) {
+                        JOptionPane.showMessageDialog(this, "Usuario desactivado.");
+                        limpiarFormulario();
+                        cargarTabla(); 
+                    }
+                }
+            } else {
+                if (JOptionPane.showConfirmDialog(this, "¿Está seguro de activar ID " + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    if (dao.activarUsuario(id)) {
+                        JOptionPane.showMessageDialog(this, "Usuario activado.");
+                        limpiarFormulario();
+                        cargarTabla(); 
+                    }
                 }
             }
         } catch (NumberFormatException e) {

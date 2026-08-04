@@ -55,6 +55,21 @@ public class UsuarioDAO {
         }
     }
 
+    public boolean activarUsuario(int idUsuario) {
+        String sql = "UPDATE USUARIOS SET estado_usuario = 1 WHERE id_usuario = ?";
+        
+        try (Connection con = factory.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+             
+            ps.setInt(1, idUsuario); 
+            return ps.executeUpdate() > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Error al activar usuario: " + e.getMessage());
+            return false;
+        }
+    }
+
     // 3. OBTENER TODOS PARA LA TABLA
     public List<Usuario> listarUsuarios() {
         List<Usuario> lista = new ArrayList<>();
