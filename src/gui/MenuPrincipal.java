@@ -34,7 +34,7 @@ public class MenuPrincipal extends JFrame {
     private final Color COLOR_BORDE_LATERAL = new Color(220, 222, 225);
 
     public MenuPrincipal() {
-        setTitle("ORION SYSTEMS - CONEXION A TU ALCANCE");
+        setTitle("ORION SYSTEMS - ORGANIZACIÓN DE RECURSOS, INVENTARIO, OPERACIONES Y NEGOCIOS");
         try {
             java.net.URL imgURL = getClass().getResource("/image/logo.png");
             if (imgURL != null) {

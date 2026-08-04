@@ -16,6 +16,7 @@ public class Producto {
     private boolean eliminado; // 0 = Activo, 1 = Eliminado (Soft Delete)
     private int diasGarantia;
     private boolean requiereSerie;
+    private boolean incluyeImpuesto = true;
 
     public Producto() {
     }
@@ -139,5 +140,13 @@ public class Producto {
 
     public void setRequiereSerie(boolean requiereSerie) {
         this.requiereSerie = requiereSerie;
+    }
+
+    public boolean isIncluyeImpuesto() {
+        return incluyeImpuesto;
+    }
+
+    public void setIncluyeImpuesto(boolean incluyeImpuesto) {
+        this.incluyeImpuesto = incluyeImpuesto;
     }
 }

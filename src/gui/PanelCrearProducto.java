@@ -39,8 +39,9 @@ public class PanelCrearProducto extends JPanel {
     private JButton btnGuardar;
 
     private JComboBox<String> cmbDiasGarantia;
-    private final int[] valoresGarantia = { 0, 3, 7, 15, 30, 60, 90, 365 }; // Array interno para guardar en BD
     private JCheckBox chkRequiereSerie;
+    private JCheckBox chkIncluyeImpuesto;
+    private final int[] valoresGarantia = { 0, 3, 7, 15, 30, 60, 90, 365 }; // Array interno para guardar en BD
 
     private Producto productoAEditar = null;
     private JButton btnKardex;
@@ -152,10 +153,20 @@ public class PanelCrearProducto extends JPanel {
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         pnlForm.add(chkRequiereSerie, gbc);
-        agregarFilaCorta(pnlForm, gbc, 8, "Precio Compra (L):", txtPrecioCompra);
-        agregarFilaCorta(pnlForm, gbc, 9, "Precio Venta (L):", txtPrecioVenta);
 
-        gbc.gridy = 10;
+        chkIncluyeImpuesto = new JCheckBox("El precio ya incluye el impuesto (ISV)");
+        chkIncluyeImpuesto.setBackground(new Color(255, 255, 255));
+        chkIncluyeImpuesto.setForeground(new Color(45, 45, 45));
+        chkIncluyeImpuesto.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        chkIncluyeImpuesto.setFocusPainted(false);
+        chkIncluyeImpuesto.setSelected(true);
+        gbc.gridy = 8;
+        pnlForm.add(chkIncluyeImpuesto, gbc);
+
+        agregarFilaCorta(pnlForm, gbc, 9, "Precio Compra (L):", txtPrecioCompra);
+        agregarFilaCorta(pnlForm, gbc, 10, "Precio Venta (L):", txtPrecioVenta);
+
+        gbc.gridy = 11;
         gbc.gridx = 0;
         gbc.weightx = 0.0;
         gbc.fill = GridBagConstraints.NONE;
@@ -170,10 +181,10 @@ public class PanelCrearProducto extends JPanel {
         txtPrecioMayorista.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(5, 8, 5, 8)));
         pnlForm.add(txtPrecioMayorista, gbc);
-        agregarFilaCorta(pnlForm, gbc, 11, "Stock Inicial:", txtStockInicial);
-        agregarFilaCorta(pnlForm, gbc, 12, "Stock Mínimo:", txtStockMinimo);
+        agregarFilaCorta(pnlForm, gbc, 12, "Stock Inicial:", txtStockInicial);
+        agregarFilaCorta(pnlForm, gbc, 13, "Stock Mínimo:", txtStockMinimo);
 
-        gbc.gridy = 13;
+        gbc.gridy = 14;
         gbc.weighty = 1.0;
         pnlForm.add(new JLabel(""), gbc);
         JScrollPane scrollForm = new JScrollPane(pnlForm);
@@ -388,6 +399,7 @@ public class PanelCrearProducto extends JPanel {
             p.setRutaImagen(rutaImagenSeleccionada);
             p.setDiasGarantia(valoresGarantia[cmbDiasGarantia.getSelectedIndex()]);
             p.setRequiereSerie(chkRequiereSerie.isSelected());
+            p.setIncluyeImpuesto(chkIncluyeImpuesto.isSelected());
             // -----------------------------------------
 
             InventarioDAO dao = new InventarioDAO();
@@ -434,6 +446,7 @@ public class PanelCrearProducto extends JPanel {
         codigosEnRam = new InventarioDAO().obtenerCodigosEnRam();
         cmbDiasGarantia.setSelectedIndex(0);
         chkRequiereSerie.setSelected(false);
+        chkIncluyeImpuesto.setSelected(true);
     }
 
     private void cargarDatosEdicion() {
@@ -459,6 +472,7 @@ public class PanelCrearProducto extends JPanel {
         seleccionarComboPorId(cmbUbicacion, productoAEditar.getIdUbicacion());
 
         chkRequiereSerie.setSelected(productoAEditar.isRequiereSerie());
+        chkIncluyeImpuesto.setSelected(productoAEditar.isIncluyeImpuesto());
         int dias = productoAEditar.getDiasGarantia();
         int index = 0;
         for (int i = 0; i < valoresGarantia.length; i++) {

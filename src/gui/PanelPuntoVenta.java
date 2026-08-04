@@ -63,7 +63,11 @@ public class PanelPuntoVenta extends JPanel {
         this.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
         JPanel pnlTop = new JPanel(new BorderLayout(15, 0));
-        pnlTop.setOpaque(false);
+        pnlTop.setBackground(Color.WHITE);
+        pnlTop.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 222, 225), 1, true),
+                BorderFactory.createEmptyBorder(15, 15, 15, 15)));
+
         JPanel pnlClientes = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         pnlClientes.setOpaque(false);
         JLabel lblClie = new JLabel("Cliente:");
@@ -73,23 +77,27 @@ public class PanelPuntoVenta extends JPanel {
         lblClienteSeleccionado.setForeground(new Color(45, 45, 45));
         lblClienteSeleccionado.setFont(new Font("Segoe UI", Font.BOLD, 14));
 
-        JButton btnBuscarCliente = new JButton("🔍 Buscar");
+        JButton btnBuscarCliente = new JButton("Buscar");
+        btnBuscarCliente.setIcon(IconGenerator.createSearchIcon(14, new Color(45, 45, 45)));
         btnBuscarCliente.setBackground(new Color(255, 255, 255));
         btnBuscarCliente.setForeground(new Color(45, 45, 45));
+        btnBuscarCliente.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnBuscarCliente.setFocusPainted(false);
         btnBuscarCliente.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnBuscarCliente
-                .setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)),
-                        BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        btnBuscarCliente.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 222, 225)),
+                BorderFactory.createEmptyBorder(6, 12, 6, 12)));
         btnBuscarCliente.addActionListener(
                 e -> new DialogoBuscarClientePOS((Frame) SwingUtilities.getWindowAncestor(this)).setVisible(true));
 
-        JButton btnNuevoCliente = new JButton("+ Nuevo");
+        JButton btnNuevoCliente = new JButton("Nuevo");
+        btnNuevoCliente.setIcon(IconGenerator.createPlusIcon(12, Color.WHITE));
         btnNuevoCliente.setBackground(new Color(39, 174, 96));
         btnNuevoCliente.setForeground(Color.WHITE);
+        btnNuevoCliente.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnNuevoCliente.setFocusPainted(false);
         btnNuevoCliente.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnNuevoCliente.setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 12));
+        btnNuevoCliente.setBorder(BorderFactory.createEmptyBorder(7, 14, 7, 14));
         btnNuevoCliente.addActionListener(e -> {
             JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Nuevo Cliente", true);
             dialog.setUndecorated(true);
@@ -110,20 +118,21 @@ public class PanelPuntoVenta extends JPanel {
         txtCodigoBarrasBusqueda = new JTextField(15);
         txtCodigoBarrasBusqueda.putClientProperty("JTextField.placeholderText", "Escanear código...");
         txtCodigoBarrasBusqueda.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        txtCodigoBarrasBusqueda.setPreferredSize(new Dimension(220, 35));
+        txtCodigoBarrasBusqueda.setPreferredSize(new Dimension(240, 38));
         txtCodigoBarrasBusqueda.setBackground(new Color(255, 255, 255));
         txtCodigoBarrasBusqueda.setForeground(new Color(45, 45, 45));
         txtCodigoBarrasBusqueda.setCaretColor(new Color(45, 45, 45));
         txtCodigoBarrasBusqueda.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(0, 8, 0, 8)));
+                BorderFactory.createLineBorder(new Color(13, 110, 253)), BorderFactory.createEmptyBorder(0, 10, 0, 10)));
         txtCodigoBarrasBusqueda
                 .addActionListener(e -> buscarProductoPorCodigo(txtCodigoBarrasBusqueda.getText().trim()));
 
         JButton btnBuscarProducto = new JButton("Catálogo");
+        btnBuscarProducto.setIcon(IconGenerator.createListIcon(14, Color.WHITE));
         btnBuscarProducto.setBackground(new Color(13, 110, 253));
         btnBuscarProducto.setForeground(Color.WHITE);
-        btnBuscarProducto.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btnBuscarProducto.setPreferredSize(new Dimension(100, 35));
+        btnBuscarProducto.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnBuscarProducto.setPreferredSize(new Dimension(120, 38));
         btnBuscarProducto.setFocusPainted(false);
         btnBuscarProducto.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnBuscarProducto.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -137,7 +146,7 @@ public class PanelPuntoVenta extends JPanel {
         this.add(pnlTop, BorderLayout.NORTH);
 
         String[] columnas = { "ID", "Foto", "Nombre del Producto", "Cant.", "Precio Unit.", "Subtotal Fila", "StockMax",
-                "RutaFoto", "IMEI", "DiasGarantia" };
+                "RutaFoto", "IMEI", "DiasGarantia", "IncluyeImpuesto" };
         modeloTablaVentas = new DefaultTableModel(null, columnas) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -170,6 +179,8 @@ public class PanelPuntoVenta extends JPanel {
         tablaVentas.getColumnModel().getColumn(8).setMaxWidth(0);
         tablaVentas.getColumnModel().getColumn(9).setMinWidth(0);
         tablaVentas.getColumnModel().getColumn(9).setMaxWidth(0);
+        tablaVentas.getColumnModel().getColumn(10).setMinWidth(0);
+        tablaVentas.getColumnModel().getColumn(10).setMaxWidth(0);
 
         tablaVentas.getColumnModel().getColumn(1).setPreferredWidth(70);
         tablaVentas.getColumnModel().getColumn(1).setMaxWidth(70);
@@ -207,9 +218,14 @@ public class PanelPuntoVenta extends JPanel {
         });
 
         JScrollPane scrollTabla = new JScrollPane(tablaVentas);
-        scrollTabla.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225), 1, true));
+        scrollTabla.setBorder(BorderFactory.createEmptyBorder());
         scrollTabla.getViewport().setBackground(new Color(255, 255, 255));
-        this.add(scrollTabla, BorderLayout.CENTER);
+        
+        JPanel pnlCenterWrapper = new JPanel(new BorderLayout());
+        pnlCenterWrapper.setBackground(Color.WHITE);
+        pnlCenterWrapper.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225), 1, true));
+        pnlCenterWrapper.add(scrollTabla, BorderLayout.CENTER);
+        this.add(pnlCenterWrapper, BorderLayout.CENTER);
 
         JPanel pnlControlVenta = new JPanel(new BorderLayout(20, 20));
         pnlControlVenta.setOpaque(false);
@@ -296,11 +312,12 @@ public class PanelPuntoVenta extends JPanel {
         lblTotal.setForeground(new Color(39, 174, 96));
         lblTotal.setFont(new Font("Segoe UI", Font.BOLD, 36));
 
-        JButton btnCobrar = new JButton("Cobrar Venta");
+        JButton btnCobrar = new JButton("Completar Venta");
+        btnCobrar.setIcon(IconGenerator.createCheckIcon(22, Color.WHITE));
         btnCobrar.setBackground(new Color(13, 110, 253));
         btnCobrar.setForeground(Color.WHITE);
-        btnCobrar.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        btnCobrar.setPreferredSize(new Dimension(0, 50));
+        btnCobrar.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        btnCobrar.setPreferredSize(new Dimension(0, 55));
         btnCobrar.setFocusPainted(false);
         btnCobrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnCobrar.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -311,7 +328,7 @@ public class PanelPuntoVenta extends JPanel {
         cmbTipoTransaccion.setBackground(Color.WHITE);
         cmbTipoTransaccion.addActionListener(e -> {
             boolean esApartado = cmbTipoTransaccion.getSelectedIndex() == 1;
-            btnCobrar.setText(esApartado ? "Registrar Apartado" : "Cobrar Venta");
+            btnCobrar.setText(esApartado ? "Registrar Apartado" : "Completar Venta");
         });
 
         gbc.gridy = 0;
@@ -382,18 +399,35 @@ public class PanelPuntoVenta extends JPanel {
 
     private void recalcularTotales() {
         granTotal = 0.0;
-        for (int i = 0; i < modeloTablaVentas.getRowCount(); i++)
-            granTotal += (double) modeloTablaVentas.getValueAt(i, 5);
+        sumImpuesto = 0.0;
+        sumSubtotal = 0.0;
 
         ItemPago pagoSeleccionado = (ItemPago) cmbMetodoPago.getSelectedItem();
         boolean pagoConTarjeta = pagoSeleccionado != null && pagoSeleccionado.nombre.toLowerCase().contains("tarjeta");
+        boolean aplicaImpuestoGlobal = facturacionHabilitada || pagoConTarjeta;
 
-        if (facturacionHabilitada || pagoConTarjeta) {
-            sumSubtotal = granTotal / 1.15;
-            sumImpuesto = granTotal - sumSubtotal;
-        } else {
-            sumSubtotal = granTotal;
-            sumImpuesto = 0.0;
+        for (int i = 0; i < modeloTablaVentas.getRowCount(); i++) {
+            double subtotalFila = (double) modeloTablaVentas.getValueAt(i, 5);
+            boolean incluyeImpuesto = (boolean) modeloTablaVentas.getValueAt(i, 10);
+            
+            granTotal += subtotalFila;
+
+            if (aplicaImpuestoGlobal) {
+                if (incluyeImpuesto) {
+                    // El precio de vitrina ya trae el 15% adentro
+                    double sub = subtotalFila / 1.15;
+                    sumSubtotal += sub;
+                    sumImpuesto += (subtotalFila - sub);
+                } else {
+                    // El precio de vitrina NO trae el 15%, hay que sumarlo por encima del granTotal
+                    sumSubtotal += subtotalFila;
+                    double imp = subtotalFila * 0.15;
+                    sumImpuesto += imp;
+                    granTotal += imp; // El Gran Total crece porque el ISV se cobra por aparte
+                }
+            } else {
+                sumSubtotal += subtotalFila;
+            }
         }
 
         lblSubtotal.setText(String.format("Subtotal: L %,.2f", sumSubtotal));
@@ -471,7 +505,7 @@ public class PanelPuntoVenta extends JPanel {
         modeloTablaVentas.addRow(new Object[] {
                 p.getIdProducto(), p.getRutaImagen(), p.getNombreProducto(), 1,
                 p.getPrecioVenta(), p.getPrecioVenta(), p.getStockProducto(), p.getRutaImagen(),
-                imei, p.getDiasGarantia()
+                imei, p.getDiasGarantia(), p.isIncluyeImpuesto()
         });
         recalcularTotales();
     }
@@ -633,6 +667,12 @@ public class PanelPuntoVenta extends JPanel {
         boolean esApartado = cmbTipoTransaccion.getSelectedIndex() == 1;
 
         if (esApartado) {
+            if (idClienteActual == 1) { // 1 representa a Consumidor Final
+                JOptionPane.showMessageDialog(this, 
+                        "Debe seleccionar o registrar un cliente específico para realizar un apartado.\nNo se puede usar 'Consumidor Final'.", 
+                        "Cliente Requerido", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             JTextField txtAbonoInicial = new JTextField("0.00");
             txtAbonoInicial.addKeyListener(new java.awt.event.KeyAdapter() {
                 public void keyTyped(java.awt.event.KeyEvent evt) {
@@ -1387,5 +1427,76 @@ public class PanelPuntoVenta extends JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    // End of variables declaration//GEN-END:variables
+    private static class IconGenerator {
+        public static Icon createSearchIcon(int size, Color color) {
+            return new Icon() {
+                @Override
+                public void paintIcon(Component c, Graphics g, int x, int y) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.setColor(color);
+                    g2.setStroke(new BasicStroke(2f));
+                    int r = (int)(size * 0.45);
+                    g2.drawOval(x + 2, y + 2, r, r);
+                    g2.drawLine(x + 2 + r + (int)(r/2.5), y + 2 + r + (int)(r/2.5), x + size - 2, y + size - 2);
+                    g2.dispose();
+                }
+                @Override public int getIconWidth() { return size; }
+                @Override public int getIconHeight() { return size; }
+            };
+        }
+
+        public static Icon createPlusIcon(int size, Color color) {
+            return new Icon() {
+                @Override
+                public void paintIcon(Component c, Graphics g, int x, int y) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setColor(color);
+                    g2.setStroke(new BasicStroke(2f));
+                    int m = size / 2;
+                    g2.drawLine(x + 2, y + m, x + size - 2, y + m);
+                    g2.drawLine(x + m, y + 2, x + m, y + size - 2);
+                    g2.dispose();
+                }
+                @Override public int getIconWidth() { return size; }
+                @Override public int getIconHeight() { return size; }
+            };
+        }
+
+        public static Icon createListIcon(int size, Color color) {
+            return new Icon() {
+                @Override
+                public void paintIcon(Component c, Graphics g, int x, int y) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setColor(color);
+                    g2.setStroke(new BasicStroke(2f));
+                    for (int i = 0; i < 3; i++) {
+                        int yy = y + 3 + i * 5;
+                        g2.drawLine(x + 1, yy, x + 3, yy);
+                        g2.drawLine(x + 6, yy, x + size - 2, yy);
+                    }
+                    g2.dispose();
+                }
+                @Override public int getIconWidth() { return size; }
+                @Override public int getIconHeight() { return size; }
+            };
+        }
+        
+        public static Icon createCheckIcon(int size, Color color) {
+            return new Icon() {
+                @Override
+                public void paintIcon(Component c, Graphics g, int x, int y) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.setColor(color);
+                    g2.setStroke(new BasicStroke(2.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                    g2.drawLine(x + 3, y + size/2 + 2, x + size/3 + 2, y + size - 3);
+                    g2.drawLine(x + size/3 + 2, y + size - 3, x + size - 3, y + 5);
+                    g2.dispose();
+                }
+                @Override public int getIconWidth() { return size; }
+                @Override public int getIconHeight() { return size; }
+            };
+        }
+    }
 }
