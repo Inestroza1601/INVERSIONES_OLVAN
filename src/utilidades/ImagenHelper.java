@@ -149,4 +149,21 @@ public class ImagenHelper {
         }
         return null;
     }
+
+    /**
+     * Convierte un BufferedImage (por ejemplo descargado de internet) a Base64
+     * guardando la máxima calidad posible en formato PNG.
+     */
+    public static String convertirImagenABase64(BufferedImage img) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(img, "png", baos);
+            byte[] bytes = baos.toByteArray();
+            String b64 = Base64.getEncoder().encodeToString(bytes);
+            return "data:image/png;base64," + b64;
+        } catch (Exception e) {
+            System.err.println("Error al convertir BufferedImage a Base64: " + e.getMessage());
+        }
+        return null;
+    }
 }

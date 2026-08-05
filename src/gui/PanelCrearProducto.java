@@ -299,6 +299,16 @@ public class PanelCrearProducto extends JPanel {
         btnCargarImagen.setMaximumSize(new Dimension(150, 35));
         btnCargarImagen.addActionListener(e -> seleccionarImagen());
 
+        JButton btnCargarURL = new JButton("De la Web");
+        btnCargarURL.setIcon(new IconoNube());
+        btnCargarURL.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnCargarURL.setBackground(new Color(240, 242, 245));
+        btnCargarURL.setForeground(new Color(45, 45, 45));
+        btnCargarURL.setFocusPainted(false);
+        btnCargarURL.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnCargarURL.setMaximumSize(new Dimension(150, 35));
+        btnCargarURL.addActionListener(e -> cargarImagenDesdeURL());
+
         pnlImagen.add(lblTituloImg);
         pnlImagen.add(Box.createVerticalStrut(15));
         pnlImagen.add(lblVistaPreviaImagen);
@@ -310,6 +320,8 @@ public class PanelCrearProducto extends JPanel {
         pnlImagen.add(btnTomarFoto);
         pnlImagen.add(Box.createVerticalStrut(5));
         pnlImagen.add(btnCargarImagen);
+        pnlImagen.add(Box.createVerticalStrut(5));
+        pnlImagen.add(btnCargarURL);
 
         panelCentral.add(scrollForm, BorderLayout.CENTER);
         panelCentral.add(pnlImagen, BorderLayout.EAST);
@@ -696,18 +708,63 @@ public class PanelCrearProducto extends JPanel {
             JOptionPane.showMessageDialog(this, "Límite de 7 imágenes alcanzado.", "Límite Excedido", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        JFileChooser fileChooser = new JFileChooser(); fileChooser.setFileFilter(new FileNameExtensionFilter("Imágenes (JPG, PNG)", "jpg", "jpeg", "png"));
+        JFileChooser fileChooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes (JPG, PNG, GIF, JPEG)", "jpg", "png", "gif", "jpeg");
+        fileChooser.setFileFilter(filter);
+
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File archivo = fileChooser.getSelectedFile();
-            String b64 = utilidades.ImagenHelper.comprimirYConvertirABase64(archivo);
-            if (b64 != null) {
-                imagenesSeleccionadas.add(b64);
-                indiceImagenActual = imagenesSeleccionadas.size() - 1;
-                actualizarVistaPreviaImagen();
-            } else {
-                JOptionPane.showMessageDialog(this, "Error al procesar y comprimir la imagen.", "Error", JOptionPane.ERROR_MESSAGE);
+            File selectedFile = fileChooser.getSelectedFile();
+            try {
+                String base64Image = utilidades.ImagenHelper.comprimirYConvertirABase64(selectedFile);
+                if (base64Image != null) {
+                    imagenesSeleccionadas.add(base64Image);
+                    indiceImagenActual = imagenesSeleccionadas.size() - 1;
+                    actualizarVistaPreviaImagen();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error al procesar la imagen.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error al leer el archivo de imagen.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+
+    private void cargarImagenDesdeURL() {
+        if (imagenesSeleccionadas.size() >= 7) {
+            JOptionPane.showMessageDialog(this, "Límite de 7 imágenes alcanzado.", "Límite Excedido", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        String urlStr = JOptionPane.showInputDialog(this, "Ingrese la URL de la imagen:", "Cargar desde la Web", JOptionPane.QUESTION_MESSAGE);
+        if (urlStr == null || urlStr.trim().isEmpty()) {
+            return;
+        }
+        
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
+            @Override
+            protected String doInBackground() throws Exception {
+                java.net.URL url = new java.net.URL(urlStr.trim());
+                java.awt.image.BufferedImage img = javax.imageio.ImageIO.read(url);
+                if (img == null) throw new Exception("La URL no contiene una imagen válida.");
+                return utilidades.ImagenHelper.convertirImagenABase64(img);
+            }
+            @Override
+            protected void done() {
+                setCursor(Cursor.getDefaultCursor());
+                try {
+                    String b64 = get();
+                    imagenesSeleccionadas.add(b64);
+                    indiceImagenActual = imagenesSeleccionadas.size() - 1;
+                    actualizarVistaPreviaImagen();
+                    JOptionPane.showMessageDialog(PanelCrearProducto.this, "Imagen descargada y adjuntada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(PanelCrearProducto.this, "⚠️ No se pudo descargar la imagen.\nVerifique que la URL sea válida o que tenga conexión a internet (No WiFi).", "Error de Conexión", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        };
+        worker.execute();
     }
 
     private void actualizarVistaPreviaImagen() {
@@ -867,6 +924,22 @@ public class PanelCrearProducto extends JPanel {
             g2.fillRoundRect(x + 2, y + 6, 16, 10, 2, 2);
             g2.setColor(new Color(130, 130, 130));
             g2.fillRoundRect(x + 2, y + 8, 16, 8, 2, 2);
+            g2.dispose();
+        }
+        @Override public int getIconWidth() { return 20; }
+        @Override public int getIconHeight() { return 20; }
+    }
+
+    private class IconoNube implements Icon {
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(new Color(13, 110, 253)); // Azul
+            g2.fillOval(x + 2, y + 8, 6, 6);
+            g2.fillOval(x + 5, y + 4, 8, 8);
+            g2.fillOval(x + 10, y + 6, 7, 7);
+            g2.fillRoundRect(x + 3, y + 9, 13, 5, 5, 5);
             g2.dispose();
         }
         @Override public int getIconWidth() { return 20; }
