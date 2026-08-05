@@ -100,7 +100,7 @@ public class PanelPuntoVenta extends JPanel {
         pnlTop.add(pnlClientes, BorderLayout.WEST); pnlTop.add(pnlLector, BorderLayout.EAST);
         this.add(pnlTop, BorderLayout.NORTH);
 
-        String[] columnas = {"ID", "Foto", "Nombre del Producto", "Cant.", "Precio Unit.", "Subtotal Fila", "StockMax", "RutaFoto", "IMEI", "DiasGarantia"};
+        String[] columnas = {"ID", "Foto", "Nombre del Producto", "Cant.", "Precio Unit.", "Subtotal Fila", "StockMax", "RutaFoto", "IMEI", "DiasGarantia", "IncluyeImpuesto"};
         modeloTablaVentas = new DefaultTableModel(null, columnas) { @Override public boolean isCellEditable(int row, int column) { return false; } };
         tablaVentas = new JTable(modeloTablaVentas); 
         tablaVentas.setShowGrid(false); tablaVentas.setIntercellSpacing(new Dimension(0, 0)); tablaVentas.setRowHeight(60); tablaVentas.setBackground(new Color(255, 255, 255)); tablaVentas.setForeground(new Color(30, 41, 59)); tablaVentas.setFont(new Font("Segoe UI", Font.PLAIN, 14)); tablaVentas.setSelectionBackground(new Color(213, 233, 222)); tablaVentas.setSelectionForeground(new Color(19, 58, 42));
@@ -112,6 +112,7 @@ public class PanelPuntoVenta extends JPanel {
         tablaVentas.getColumnModel().getColumn(7).setMinWidth(0); tablaVentas.getColumnModel().getColumn(7).setMaxWidth(0); 
         tablaVentas.getColumnModel().getColumn(8).setMinWidth(0); tablaVentas.getColumnModel().getColumn(8).setMaxWidth(0);
         tablaVentas.getColumnModel().getColumn(9).setMinWidth(0); tablaVentas.getColumnModel().getColumn(9).setMaxWidth(0);
+        tablaVentas.getColumnModel().getColumn(10).setMinWidth(0); tablaVentas.getColumnModel().getColumn(10).setMaxWidth(0);
         
         tablaVentas.getColumnModel().getColumn(1).setPreferredWidth(70); tablaVentas.getColumnModel().getColumn(1).setMaxWidth(70);
         tablaVentas.getColumnModel().getColumn(1).setCellRenderer(new ImagenMiniaturaRenderer());
@@ -270,18 +271,38 @@ public class PanelPuntoVenta extends JPanel {
 
     private void recalcularTotales() {
         granTotal = 0.0;
-        for (int i = 0; i < modeloTablaVentas.getRowCount(); i++) granTotal += (double) modeloTablaVentas.getValueAt(i, 5);
+        sumSubtotal = 0.0;
+        sumImpuesto = 0.0;
+        
+        for (int i = 0; i < modeloTablaVentas.getRowCount(); i++) {
+            double subFila = (double) modeloTablaVentas.getValueAt(i, 5); // Cant * Precio
+            boolean incluyeImp = (boolean) modeloTablaVentas.getValueAt(i, 10);
+            
+            if (incluyeImp) {
+                sumSubtotal += subFila / 1.15;
+            } else {
+                sumSubtotal += subFila;
+            }
+        }
 
         ItemPago pagoSeleccionado = (ItemPago) cmbMetodoPago.getSelectedItem();
         boolean pagoConTarjeta = pagoSeleccionado != null && pagoSeleccionado.nombre.toLowerCase().contains("tarjeta");
 
+        /*
         if (facturacionHabilitada || pagoConTarjeta) {
-            sumSubtotal = granTotal / 1.15;
-            sumImpuesto = granTotal - sumSubtotal;
+            sumImpuesto = sumSubtotal * 0.15;
+            granTotal = sumSubtotal + sumImpuesto;
         } else {
-            sumSubtotal = granTotal;
+            // Si no hay facturación, el cliente no paga impuesto. (O puedes ajustarlo según necesidad).
+            // Según el requisito, se muestra todo el total:
+            granTotal = sumSubtotal; // Mantiene el subtotal como el precio final, o suma impuesto = 0.0
             sumImpuesto = 0.0;
         }
+        */
+
+        // Siempre cobrar impuesto, incluso si es en efectivo
+        sumImpuesto = sumSubtotal * 0.15;
+        granTotal = sumSubtotal + sumImpuesto;
 
         lblSubtotal.setText(String.format("Subtotal: L %,.2f", sumSubtotal));
         lblImpuesto.setText(String.format("ISV (15%%): L %,.2f", sumImpuesto));
@@ -343,7 +364,7 @@ public class PanelPuntoVenta extends JPanel {
         modeloTablaVentas.addRow(new Object[]{ 
             p.getIdProducto(), p.getRutaImagen(), p.getNombreProducto(), 1, 
             p.getPrecioVenta(), p.getPrecioVenta(), p.getStockProducto(), p.getRutaImagen(), 
-            imei, p.getDiasGarantia() 
+            imei, p.getDiasGarantia(), p.isIncluyeImpuesto()
         });
         recalcularTotales();
     }

@@ -47,6 +47,7 @@ public class PanelCrearProducto extends JPanel {
     private JComboBox<String> cmbDiasGarantia;
     private final int[] valoresGarantia = {0, 3, 7, 15, 30, 60, 90,365}; // Array interno para guardar en BD
     private JCheckBox chkRequiereSerie;
+    private JCheckBox chkIncluyeImpuesto;
     
     private Producto productoAEditar = null;
     private JButton btnKardex;
@@ -148,8 +149,20 @@ public class PanelCrearProducto extends JPanel {
         chkRequiereSerie.setForeground(new Color(39, 174, 96)); // Verde Menta en vez del azul original
         chkRequiereSerie.setFont(new Font("Segoe UI", Font.BOLD, 13));
         chkRequiereSerie.setFocusPainted(false);
+        
+        chkIncluyeImpuesto = new JCheckBox("Aplica Impuesto (ISV 15%)");
+        chkIncluyeImpuesto.setBackground(new Color(255, 255, 255));
+        chkIncluyeImpuesto.setForeground(new Color(39, 174, 96));
+        chkIncluyeImpuesto.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        chkIncluyeImpuesto.setFocusPainted(false);
+        
+        JPanel pnlChecks = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 15, 0));
+        pnlChecks.setOpaque(false);
+        pnlChecks.add(chkRequiereSerie);
+        pnlChecks.add(chkIncluyeImpuesto);
+
         gbc.gridy = 7; gbc.gridx = 1; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
-        pnlForm.add(chkRequiereSerie, gbc);
+        pnlForm.add(pnlChecks, gbc);
         agregarFilaCorta(pnlForm, gbc, 8, "Precio Compra (L):", txtPrecioCompra);
         agregarFilaCorta(pnlForm, gbc, 9, "Precio Venta (L):", txtPrecioVenta);
         
@@ -445,6 +458,7 @@ public class PanelCrearProducto extends JPanel {
             }
             p.setDiasGarantia(valoresGarantia[cmbDiasGarantia.getSelectedIndex()]);
             p.setRequiereSerie(chkRequiereSerie.isSelected());
+            p.setIncluyeImpuesto(chkIncluyeImpuesto.isSelected());
             // -----------------------------------------
 
             InventarioDAO dao = new InventarioDAO();
@@ -476,7 +490,7 @@ public class PanelCrearProducto extends JPanel {
         actualizarVistaPreviaImagen();
         cmbCategoria.setSelectedIndex(0); cmbProveedor.setSelectedIndex(0); cmbUbicacion.setSelectedIndex(0);
         codigosEnRam = new InventarioDAO().obtenerCodigosEnRam();
-        cmbDiasGarantia.setSelectedIndex(0); chkRequiereSerie.setSelected(false);
+        cmbDiasGarantia.setSelectedIndex(0); chkRequiereSerie.setSelected(false); chkIncluyeImpuesto.setSelected(false);
     }
     
     private void cargarDatosEdicion() {
@@ -502,6 +516,7 @@ public class PanelCrearProducto extends JPanel {
         seleccionarComboPorId(cmbUbicacion, productoAEditar.getIdUbicacion());
         
         chkRequiereSerie.setSelected(productoAEditar.isRequiereSerie());
+        chkIncluyeImpuesto.setSelected(productoAEditar.isIncluyeImpuesto());
         int dias = productoAEditar.getDiasGarantia();
         int index = 0;
         for (int i = 0; i < valoresGarantia.length; i++) { if (valoresGarantia[i] == dias) index = i; }

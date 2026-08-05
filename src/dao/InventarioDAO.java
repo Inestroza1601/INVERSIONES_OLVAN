@@ -45,8 +45,8 @@ public class InventarioDAO {
     public boolean registrarProducto(Producto p) {
         String sql = "INSERT INTO INVENTARIO (codigo_barras_producto, nombre_producto, id_categoria, id_proveedor, "
                    + "id_ubicacion, precio_compra_producto, precio_venta_producto, precio_mayorista_producto, "
-                   + "stock_minimo_producto, stock_producto, ruta_imagen_producto, dias_garantia, requiere_serie, eliminado_producto) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
+                   + "stock_minimo_producto, stock_producto, ruta_imagen_producto, dias_garantia, requiere_serie, incluye_impuesto, eliminado_producto) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
 
         try (Connection con = factory.getConexion();
              // Le decimos a Java que recupere el ID que SQL Server generará automáticamente
@@ -85,6 +85,7 @@ public class InventarioDAO {
             
             ps.setInt(12, p.getDiasGarantia());
             ps.setBoolean(13, p.isRequiereSerie());
+            ps.setBoolean(14, p.isIncluyeImpuesto());
 
             int filasAfectadas = ps.executeUpdate();
 
@@ -123,7 +124,7 @@ public class InventarioDAO {
 
     public java.util.List<Producto> listarProductosActivos() {
         java.util.List<Producto> lista = new java.util.ArrayList<>();
-        String sql = "SELECT * FROM INVENTARIO WHERE eliminado_producto = 0 ORDER BY nombre_producto ASC";
+        String sql = "SELECT * FROM INVENTARIO WHERE eliminado_producto = 0 ORDER BY CASE WHEN stock_producto > 0 THEN 0 ELSE 1 END ASC, id_producto ASC";
 
         try (Connection con = factory.getConexion();
              PreparedStatement ps = con.prepareStatement(sql);
@@ -143,6 +144,7 @@ public class InventarioDAO {
                 // --- LAS DOS LÍNEAS QUE FALTABAN AQUÍ ---
                 p.setDiasGarantia(rs.getInt("dias_garantia"));
                 p.setRequiereSerie(rs.getBoolean("requiere_serie"));
+                p.setIncluyeImpuesto(rs.getBoolean("incluye_impuesto"));
                 // ---------------------------------------
                 
                 lista.add(p);
@@ -189,6 +191,7 @@ public class InventarioDAO {
                     p.setRutaImagen(rs.getString("ruta_imagen_producto"));
                     p.setDiasGarantia(rs.getInt("dias_garantia"));
                     p.setRequiereSerie(rs.getBoolean("requiere_serie"));
+                    p.setIncluyeImpuesto(rs.getBoolean("incluye_impuesto"));
                     return p;
                 }
             }
@@ -197,7 +200,7 @@ public class InventarioDAO {
     }
 
     public boolean actualizarProducto(Producto p) {
-        String sql = "UPDATE INVENTARIO SET codigo_barras_producto = ?, nombre_producto = ?, id_categoria = ?, id_proveedor = ?, id_ubicacion = ?, precio_compra_producto = ?, precio_venta_producto = ?, precio_mayorista_producto = ?, stock_minimo_producto = ?, ruta_imagen_producto = ?, dias_garantia = ?, requiere_serie = ? WHERE id_producto = ?";
+        String sql = "UPDATE INVENTARIO SET codigo_barras_producto = ?, nombre_producto = ?, id_categoria = ?, id_proveedor = ?, id_ubicacion = ?, precio_compra_producto = ?, precio_venta_producto = ?, precio_mayorista_producto = ?, stock_minimo_producto = ?, ruta_imagen_producto = ?, dias_garantia = ?, requiere_serie = ?, incluye_impuesto = ? WHERE id_producto = ?";
         try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
             if (p.getCodigoBarras() == null || p.getCodigoBarras().trim().isEmpty()) ps.setNull(1, java.sql.Types.VARCHAR);
             else ps.setString(1, p.getCodigoBarras().trim());
@@ -216,9 +219,9 @@ public class InventarioDAO {
             
             ps.setInt(11, p.getDiasGarantia());
             ps.setBoolean(12, p.isRequiereSerie());
-            ps.setInt(13, p.getIdProducto());
+            ps.setBoolean(13, p.isIncluyeImpuesto());
+            ps.setInt(14, p.getIdProducto());
             
-            ps.setInt(11, p.getIdProducto());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) { System.err.println("Error al actualizar producto: " + e.getMessage()); return false; }
     }
