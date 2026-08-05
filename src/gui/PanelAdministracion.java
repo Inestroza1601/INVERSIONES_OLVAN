@@ -10,6 +10,7 @@ public class PanelAdministracion extends JPanel {
     private JPanel panelSubMenu;
     private JButton btnDatosEmpresa;
     private JButton btnUsuarios;
+    private JButton btnReportes;
     
     // Contenedor dinámico donde se mostrarán los sub-paneles
     private JPanel panelContenedorAdmon;
@@ -41,15 +42,19 @@ public class PanelAdministracion extends JPanel {
         // 3. Botones del sub-menú (mismo tamaño)
         btnDatosEmpresa = utilidades.EfectosUI.crearBotonVerde("Datos de Empresa");
         btnUsuarios = utilidades.EfectosUI.crearBotonVerde("Gestion de Usuarios");
+        btnReportes = utilidades.EfectosUI.crearBotonVerde("Generación de Reportes");
 
-        Dimension tamBoton = new Dimension(260, 50);
+        Dimension tamBoton = new Dimension(250, 50);
         btnDatosEmpresa.setPreferredSize(tamBoton);
         btnUsuarios.setPreferredSize(tamBoton);
+        btnReportes.setPreferredSize(tamBoton);
         btnDatosEmpresa.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnUsuarios.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btnReportes.setFont(new Font("Segoe UI", Font.BOLD, 16));
 
         panelSubMenu.add(btnDatosEmpresa);
         panelSubMenu.add(btnUsuarios);
+        panelSubMenu.add(btnReportes);
 
         this.add(panelContenedorAdmon, BorderLayout.CENTER);
         this.add(panelSubMenu, BorderLayout.SOUTH);
@@ -61,6 +66,10 @@ public class PanelAdministracion extends JPanel {
 
         btnUsuarios.addActionListener(e -> {
             mostrarSubPanel(new PanelGestionUsuarios());
+        });
+
+        btnReportes.addActionListener(e -> {
+            mostrarSubPanel(new PanelReportes());
         });
 
         mostrarSubPanel(new PanelDatosEmpresa());

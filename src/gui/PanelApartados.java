@@ -278,18 +278,15 @@ public class PanelApartados extends JPanel {
             return;
         }
 
-        JCheckBox chkISV = new JCheckBox("Calcular y aplicar 15% de Impuesto (ISV) a esta venta", true);
         Object[] msj = {
             "¿Confirmar que la mercancía ha sido entregada físicamente al cliente?",
-            "Esta acción registrará oficialmente los ingresos en el Historial de Ventas.",
-            " ",
-            chkISV
+            "Esta acción registrará oficialmente los ingresos en el Historial de Ventas."
         };
         int opt = JOptionPane.showConfirmDialog(this, msj, "Entregar Apartado y Registrar Venta", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
         
         if (opt == JOptionPane.YES_OPTION) {
             int idUser = utilidades.SesionGlobal.getUsuarioActual() != null ? utilidades.SesionGlobal.getUsuarioActual().getIdUsuario() : 1;
-            int idVentaGenerada = dao.entregarApartadoYGenerarVenta(id, idUser, chkISV.isSelected());
+            int idVentaGenerada = dao.entregarApartadoYGenerarVenta(id, idUser, false);
             if (idVentaGenerada > 0) {
                 try {
                     java.io.File pdf = utilidades.GeneradorTickets.generarFactura(idVentaGenerada);

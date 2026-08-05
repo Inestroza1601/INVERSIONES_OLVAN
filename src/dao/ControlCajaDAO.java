@@ -251,8 +251,7 @@ public class ControlCajaDAO {
                    + "    monto_cierre_real = ?, "
                    + "    diferencia_caja = ?, "
                    + "    estado_caja = 'CERRADA', "
-                   + "    observaciones = ?, "
-                   + "    id_usuario_cierre = ? "
+                   + "    observaciones = ? "
                    + "WHERE id_caja = ? AND estado_caja = 'ABIERTA'";
                    
         try (Connection con = factory.getConexion();
@@ -261,8 +260,7 @@ public class ControlCajaDAO {
             ps.setDouble(2, montoReal);
             ps.setDouble(3, diferencia);
             ps.setString(4, observaciones.trim());
-            ps.setInt(5, idUsuarioCierre);
-            ps.setInt(6, idCaja);
+            ps.setInt(5, idCaja);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Error al cerrar caja: " + e.getMessage());

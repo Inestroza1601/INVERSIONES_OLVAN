@@ -106,7 +106,7 @@ public class MenuPrincipal extends JFrame {
         btnInventario = crearBotonWebAnimado("Inventario", new IconoMenu(3), false);
         btnPuntoVenta = crearBotonWebAnimado("Punto de Venta", new IconoMenu(4), false);
         btnControlCaja = crearBotonWebAnimado("Control de Caja", new IconoMenu(8), false);
-        btnApartados = crearBotonWebAnimado("Apartados", new IconoMenu(9), false);
+        btnApartados = crearBotonWebAnimado("Apartados", new IconoMenu(10), false);
         btnHistorialVentas = crearBotonWebAnimado("Historial de Ventas", new IconoMenu(9), false);
         btnGarantias = crearBotonWebAnimado("Garantías", new IconoMenu(5), false);
         btnEstadisticas = crearBotonWebAnimado("Estadísticas", new IconoMenu(7), false);
@@ -463,11 +463,16 @@ public class MenuPrincipal extends JFrame {
                     g2.drawOval(x + 9, y + 6, 2, 2);
                     g2.drawLine(x + 7, y + 13, x + 13, y + 13);
                     break;
-                case 9: // Historial / Apartados
+                case 9: // Historial de Ventas
                     g2.drawRect(x + 3, y + 2, 14, 16);
                     g2.drawLine(x + 6, y + 6, x + 14, y + 6);
                     g2.drawLine(x + 6, y + 10, x + 14, y + 10);
                     g2.drawLine(x + 6, y + 14, x + 11, y + 14);
+                    break;
+                case 10: // Apartados (Reloj de espera)
+                    g2.drawOval(x + 3, y + 3, 14, 14);
+                    g2.drawLine(x + 10, y + 5, x + 10, y + 10);
+                    g2.drawLine(x + 10, y + 10, x + 14, y + 10);
                     break;
             }
             g2.dispose();
