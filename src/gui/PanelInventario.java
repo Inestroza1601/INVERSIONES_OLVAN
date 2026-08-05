@@ -57,20 +57,57 @@ public class PanelInventario extends JPanel {
         this.add(panelContenedorInventario, BorderLayout.CENTER);
         this.add(panelSubMenu, BorderLayout.SOUTH);  // Botones abajo (con elevación)
 
-        // 4. Configurar los Eventos
+        // 4. Configurar los Eventos con Carga Asíncrona
         btnBuscarProducto.addActionListener(e -> {
-            mostrarSubPanel(new PanelBuscarProducto());
+            abrirSubPanelAsync(() -> new PanelBuscarProducto());
         });
 
         btnCrearProducto.addActionListener(e -> {
-            mostrarSubPanel(new PanelCrearProducto());
+            abrirSubPanelAsync(() -> new PanelCrearProducto());
         });
 
         btnInventarioDefectuoso.addActionListener(e -> {
-            mostrarSubPanel(new PanelInventarioDefectuoso());
+            abrirSubPanelAsync(() -> new PanelInventarioDefectuoso());
         });
 
-        mostrarSubPanel(new PanelBuscarProducto());
+        abrirSubPanelAsync(() -> new PanelBuscarProducto());
+    }
+
+    public void abrirSubPanelAsync(java.util.function.Supplier<JPanel> panelSupplier) {
+        panelContenedorInventario.removeAll();
+        
+        PanelCargaOverlay loader = new PanelCargaOverlay("Cargando inventario...");
+        panelContenedorInventario.add(loader, BorderLayout.CENTER);
+        panelContenedorInventario.revalidate();
+        panelContenedorInventario.repaint();
+        loader.iniciarAnimacion();
+
+        SwingWorker<JPanel, Void> worker = new SwingWorker<JPanel, Void>() {
+            @Override
+            protected JPanel doInBackground() throws Exception {
+                return panelSupplier.get();
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    JPanel nuevoPanel = get();
+                    loader.detenerAnimacion();
+                    mostrarSubPanel(nuevoPanel);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    loader.detenerAnimacion();
+                    panelContenedorInventario.removeAll();
+                    JLabel lblError = new JLabel("Error al cargar el módulo: " + e.getMessage());
+                    lblError.setHorizontalAlignment(SwingConstants.CENTER);
+                    lblError.setForeground(Color.RED);
+                    panelContenedorInventario.add(lblError, BorderLayout.CENTER);
+                    panelContenedorInventario.revalidate();
+                    panelContenedorInventario.repaint();
+                }
+            }
+        };
+        worker.execute();
     }
 
     public void mostrarSubPanel(JPanel nuevoPanel) {

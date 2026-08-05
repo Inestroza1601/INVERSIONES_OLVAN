@@ -59,20 +59,57 @@ public class PanelAdministracion extends JPanel {
         this.add(panelContenedorAdmon, BorderLayout.CENTER);
         this.add(panelSubMenu, BorderLayout.SOUTH);
 
-        // 4. Configurar los Eventos
+        // 4. Configurar los Eventos con Carga Asíncrona
         btnDatosEmpresa.addActionListener(e -> {
-            mostrarSubPanel(new PanelDatosEmpresa());
+            abrirSubPanelAsync(() -> new PanelDatosEmpresa());
         });
 
         btnUsuarios.addActionListener(e -> {
-            mostrarSubPanel(new PanelGestionUsuarios());
+            abrirSubPanelAsync(() -> new PanelGestionUsuarios());
         });
 
         btnReportes.addActionListener(e -> {
-            mostrarSubPanel(new PanelReportes());
+            abrirSubPanelAsync(() -> new PanelReportes());
         });
 
-        mostrarSubPanel(new PanelDatosEmpresa());
+        abrirSubPanelAsync(() -> new PanelDatosEmpresa());
+    }
+
+    public void abrirSubPanelAsync(java.util.function.Supplier<JPanel> panelSupplier) {
+        panelContenedorAdmon.removeAll();
+        
+        PanelCargaOverlay loader = new PanelCargaOverlay("Cargando módulo...");
+        panelContenedorAdmon.add(loader, BorderLayout.CENTER);
+        panelContenedorAdmon.revalidate();
+        panelContenedorAdmon.repaint();
+        loader.iniciarAnimacion();
+
+        SwingWorker<JPanel, Void> worker = new SwingWorker<JPanel, Void>() {
+            @Override
+            protected JPanel doInBackground() throws Exception {
+                return panelSupplier.get();
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    JPanel nuevoPanel = get();
+                    loader.detenerAnimacion();
+                    mostrarSubPanel(nuevoPanel);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    loader.detenerAnimacion();
+                    panelContenedorAdmon.removeAll();
+                    JLabel lblError = new JLabel("Error al cargar el módulo: " + e.getMessage());
+                    lblError.setHorizontalAlignment(SwingConstants.CENTER);
+                    lblError.setForeground(Color.RED);
+                    panelContenedorAdmon.add(lblError, BorderLayout.CENTER);
+                    panelContenedorAdmon.revalidate();
+                    panelContenedorAdmon.repaint();
+                }
+            }
+        };
+        worker.execute();
     }
 
     /**

@@ -37,9 +37,9 @@ public class GeneradorReportesPDF {
 
         // Intentar cargar el logo
         try {
-            File fileLogo = new File("src/image/logo_inversionesOlvan_sinFondo.png");
-            if (fileLogo.exists()) {
-                Image logo = Image.getInstance(fileLogo.getAbsolutePath());
+            java.net.URL urlLogo = GeneradorReportesPDF.class.getResource("/image/logo_inversionesOlvan_sinFondo.png");
+            if (urlLogo != null) {
+                Image logo = Image.getInstance(urlLogo);
                 logo.scaleToFit(130, 130);
                 PdfPCell celdaLogo = new PdfPCell(logo);
                 celdaLogo.setBorder(Rectangle.NO_BORDER);

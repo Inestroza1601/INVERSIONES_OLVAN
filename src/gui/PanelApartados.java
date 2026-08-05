@@ -246,12 +246,29 @@ public class PanelApartados extends JPanel {
         }
 
         Window parent = SwingUtilities.getWindowAncestor(this);
-        DialogoRegistrarAbono dialog = new DialogoRegistrarAbono((Frame) parent, id);
-        dialog.setVisible(true);
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-        if (dialog.isExito()) {
-            cargarApartados();
-        }
+        SwingWorker<DialogoRegistrarAbono, Void> worker = new SwingWorker<DialogoRegistrarAbono, Void>() {
+            @Override
+            protected DialogoRegistrarAbono doInBackground() throws Exception {
+                return new DialogoRegistrarAbono((Frame) parent, id);
+            }
+            @Override
+            protected void done() {
+                setCursor(Cursor.getDefaultCursor());
+                try {
+                    DialogoRegistrarAbono dialog = get();
+                    dialog.setVisible(true);
+                    if (dialog.isExito()) {
+                        cargarApartados();
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(PanelApartados.this, "Error al abrir la ventana: " + ex.getMessage());
+                }
+            }
+        };
+        worker.execute();
     }
 
     private void entregarArticulos() {
@@ -352,8 +369,25 @@ public class PanelApartados extends JPanel {
         int id = (int) tablaApartados.getValueAt(selectedRow, 0);
         
         Window parent = SwingUtilities.getWindowAncestor(this);
-        DialogoDetallesApartado dialog = new DialogoDetallesApartado((Frame) parent, id);
-        dialog.setVisible(true);
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+        SwingWorker<DialogoDetallesApartado, Void> worker = new SwingWorker<DialogoDetallesApartado, Void>() {
+            @Override
+            protected DialogoDetallesApartado doInBackground() throws Exception {
+                return new DialogoDetallesApartado((Frame) parent, id);
+            }
+            @Override
+            protected void done() {
+                setCursor(Cursor.getDefaultCursor());
+                try {
+                    get().setVisible(true);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(PanelApartados.this, "Error al abrir detalles: " + ex.getMessage());
+                }
+            }
+        };
+        worker.execute();
     }
     
     // Clase interna para dibujar iconos vectoriales de los botones sin usar emojis

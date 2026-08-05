@@ -550,14 +550,30 @@ public class PanelInventarioDefectuoso extends JPanel {
         String estadoActual = modeloTabla.getValueAt(fila, 5).toString();
 
         Window owner = SwingUtilities.getWindowAncestor(this);
-        DialogoEntregarDefectuoso dialog = new DialogoEntregarDefectuoso(owner, idProducto, producto, estadoActual, cliente);
-        dialog.setVisible(true);
-
-        if (dialog.isExito()) {
-            JOptionPane.showMessageDialog(this, "Garantía finalizada. Producto entregado.", "Éxito",
-                    JOptionPane.INFORMATION_MESSAGE);
-            cargarDatos();
-        }
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        
+        SwingWorker<DialogoEntregarDefectuoso, Void> worker = new SwingWorker<DialogoEntregarDefectuoso, Void>() {
+            @Override
+            protected DialogoEntregarDefectuoso doInBackground() throws Exception {
+                return new DialogoEntregarDefectuoso(owner, idProducto, producto, estadoActual, cliente);
+            }
+            @Override
+            protected void done() {
+                setCursor(Cursor.getDefaultCursor());
+                try {
+                    DialogoEntregarDefectuoso dialog = get();
+                    dialog.setVisible(true);
+                    if (dialog.isExito()) {
+                        JOptionPane.showMessageDialog(PanelInventarioDefectuoso.this, "Garantía finalizada. Producto entregado.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                        cargarDatos();
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(PanelInventarioDefectuoso.this, "Error al cargar la entrega: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        };
+        worker.execute();
     }
 
     // --- ICONOS CREADOS A MANO ---

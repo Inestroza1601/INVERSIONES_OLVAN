@@ -92,7 +92,7 @@ public class PanelGestionUsuarios extends JPanel {
         
         // --- 🚀 COMBOBOX Y BOTÓN NUEVO ROL (UNIFICADO) ---
         cmbRol = new JComboBox<>();
-        cmbRol.setEditable(true); 
+        // cmbRol.setEditable(true); // Deshabilitado para que solo se pueda seleccionar
 
         JPanel panelContenedorRol = new JPanel(new BorderLayout(5, 0));
         panelContenedorRol.setOpaque(false);
@@ -334,6 +334,11 @@ public class PanelGestionUsuarios extends JPanel {
             return;
         }
 
+        if (chkAccesoSistema.isSelected() && txtEmail.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El correo electrónico es obligatorio para usuarios con acceso al sistema.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         Usuario u = new Usuario();
         
         if (btnGuardar.getText().equals("Actualizar")) {
@@ -376,7 +381,12 @@ public class PanelGestionUsuarios extends JPanel {
                 // Si ya tenía acceso y deja la caja vacía, el DAO conserva la clave anterior
                 u.setPasswordHash(""); 
             } else {
-                // Si escribió una clave nueva, la encriptamos
+                // Validar que la contraseña no se repita con la de otro usuario
+                if (dao.existePassword(passEscrita)) {
+                    JOptionPane.showMessageDialog(this, "Contraseña no admitida por falta de seguridad. Ingrese una distinta.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                // Si escribió una clave nueva y es válida, la encriptamos
                 u.setPasswordHash(Seguridad.encriptarSHA256(passEscrita));
             }
         } else {

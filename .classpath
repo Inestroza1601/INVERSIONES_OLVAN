@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="drivers/activation.jar"/>
+	<classpathentry kind="lib" path="drivers/core-3.5.3.jar"/>
+	<classpathentry kind="lib" path="drivers/flatlaf-3.4.1.jar"/>
+	<classpathentry kind="lib" path="drivers/itextpdf-5.5.13.3.jar"/>
+	<classpathentry kind="lib" path="drivers/javase-3.5.0.jar"/>
+	<classpathentry kind="lib" path="drivers/javax.mail.jar"/>
+	<classpathentry kind="lib" path="drivers/jfreechart-1.5.3.jar"/>
+	<classpathentry kind="lib" path="drivers/mssql-jdbc-12.4.2.jre11.jar"/>
+	<classpathentry kind="lib" path="drivers/nanohttpd-2.3.1.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

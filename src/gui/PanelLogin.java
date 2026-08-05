@@ -325,52 +325,86 @@ public class PanelLogin extends JPanel {
             return;
         }
 
-        UsuarioDAO uDAO = new UsuarioDAO();
-        Usuario logged = uDAO.autenticarUsuario(usr, pass);
+        // Estado visual de carga
+        btnEntrar.setEnabled(false);
+        txtUsuario.setEnabled(false);
+        txtPassword.setEnabled(false);
+        btnEntrar.setText("Conectando al servidor...");
+        btnEntrar.repaint();
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-        if (logged != null) {
-            btnEntrar.setEnabled(false);
-            txtUsuario.setEnabled(false);
-            txtPassword.setEnabled(false);
-            btnEntrar.setText("¡Acceso Correcto! Entrando...");
-            btnEntrar.repaint();
+        SwingWorker<modelo.Usuario, Void> loginWorker = new SwingWorker<modelo.Usuario, Void>() {
+            @Override
+            protected modelo.Usuario doInBackground() throws Exception {
+                // Consultas a BD en segundo plano
+                dao.UsuarioDAO uDAO = new dao.UsuarioDAO();
+                modelo.Usuario logged = uDAO.autenticarUsuario(usr, pass);
 
-            SesionGlobal.setUsuarioActual(logged);
-            
-            if (SesionGlobal.getEmpresaActual() == null) {
-                try {
-                    modelo.Empresa emp = new dao.EmpresaDAO().obtenerDatos();
-                    if (emp != null) {
-                        SesionGlobal.setEmpresaActual(emp);
+                if (logged != null) {
+                    if (utilidades.SesionGlobal.getEmpresaActual() == null) {
+                        try {
+                            modelo.Empresa emp = new dao.EmpresaDAO().obtenerDatos();
+                            if (emp != null) {
+                                utilidades.SesionGlobal.setEmpresaActual(emp);
+                            }
+                        } catch(Exception ex) {
+                            ex.printStackTrace();
+                        }
                     }
-                } catch(Exception ex) {}
+                }
+                return logged;
             }
 
-            // Animación suave de salida (Fade-Out + Elevación)
-            if (animTimer != null && animTimer.isRunning()) animTimer.stop();
-            animTimer = new Timer(15, e -> {
-                tarjetaAlpha -= 0.08f;
-                tarjetaOffsetY -= 2;
-                if (tarjetaAlpha <= 0.0f) {
-                    tarjetaAlpha = 0.0f;
-                    animTimer.stop();
-                    menuPrincipal.iniciarEntornoApp();
-                    
-                    // Restaurar controles para cuando se cierre sesión
+            @Override
+            protected void done() {
+                setCursor(Cursor.getDefaultCursor());
+                try {
+                    modelo.Usuario logged = get();
+                    if (logged != null) {
+                        btnEntrar.setText("¡Acceso Correcto! Entrando...");
+                        btnEntrar.repaint();
+                        utilidades.SesionGlobal.setUsuarioActual(logged);
+
+                        // Animación suave de salida (Fade-Out + Elevación)
+                        if (animTimer != null && animTimer.isRunning()) animTimer.stop();
+                        animTimer = new Timer(15, e -> {
+                            tarjetaAlpha -= 0.08f;
+                            tarjetaOffsetY -= 2;
+                            if (tarjetaAlpha <= 0.0f) {
+                                tarjetaAlpha = 0.0f;
+                                animTimer.stop();
+                                menuPrincipal.iniciarEntornoApp();
+
+                                // Restaurar controles para cuando se cierre sesión
+                                btnEntrar.setEnabled(true);
+                                txtUsuario.setEnabled(true);
+                                txtPassword.setEnabled(true);
+                                btnEntrar.setText("Ingresar al Sistema");
+                            }
+                            repaint();
+                        });
+                        animTimer.start();
+                    } else {
+                        btnEntrar.setEnabled(true);
+                        txtUsuario.setEnabled(true);
+                        txtPassword.setEnabled(true);
+                        btnEntrar.setText("Ingresar al Sistema");
+                        txtUsuario.putClientProperty("JComponent.outline", "error");
+                        txtPassword.putClientProperty("JComponent.outline", "error");
+                        ejecutarShakeError();
+                        JOptionPane.showMessageDialog(PanelLogin.this, "El nombre de usuario o la contraseña son incorrectos.", "Credenciales Inválidas", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (Exception ex) {
                     btnEntrar.setEnabled(true);
                     txtUsuario.setEnabled(true);
                     txtPassword.setEnabled(true);
                     btnEntrar.setText("Ingresar al Sistema");
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(PanelLogin.this, "Error de conexión con la base de datos.", "Error de Red", JOptionPane.ERROR_MESSAGE);
                 }
-                repaint();
-            });
-            animTimer.start();
-        } else {
-            txtUsuario.putClientProperty("JComponent.outline", "error");
-            txtPassword.putClientProperty("JComponent.outline", "error");
-            ejecutarShakeError();
-            JOptionPane.showMessageDialog(this, "El nombre de usuario o la contraseña son incorrectos.", "Credenciales Inválidas", JOptionPane.ERROR_MESSAGE);
-        }
+            }
+        };
+        loginWorker.execute();
     }
     
     public void limpiarCampos() {

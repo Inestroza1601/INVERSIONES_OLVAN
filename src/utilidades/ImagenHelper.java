@@ -75,53 +75,77 @@ public class ImagenHelper {
     }
 
     /**
-     * Lee un archivo de imagen local, lo redimensiona a un máximo de 350px de ancho
-     * manteniendo la relación de aspecto, lo comprime en JPEG a 70% de calidad,
-     * y retorna el string Base64 listo para guardar en la BD.
+     * Escala una imagen utilizando interpolación bicúbica de alta calidad y reducciones progresivas (bilineales) si es necesario.
+     */
+    public static ImageIcon escalarConAltaCalidad(Image img, int targetWidth, int targetHeight) {
+        if (img == null) return null;
+        
+        int w = img.getWidth(null);
+        int h = img.getHeight(null);
+        if (w <= 0 || h <= 0) return new ImageIcon(img);
+        
+        // Si es upscale, usar Bicubic directamente
+        if (w <= targetWidth && h <= targetHeight) {
+            BufferedImage bimg = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = bimg.createGraphics();
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.drawImage(img, 0, 0, targetWidth, targetHeight, null);
+            g2.dispose();
+            return new ImageIcon(bimg);
+        }
+        
+        // Si es downscale severo (ej. 1000px a 60px), usar filtrado progresivo
+        BufferedImage scratch = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = scratch.createGraphics();
+        g2.drawImage(img, 0, 0, null);
+        g2.dispose();
+        
+        while (w > targetWidth * 2 || h > targetHeight * 2) {
+            w = (w > targetWidth * 2) ? w / 2 : targetWidth;
+            h = (h > targetHeight * 2) ? h / 2 : targetHeight;
+            
+            BufferedImage temp = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+            g2 = temp.createGraphics();
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2.drawImage(scratch, 0, 0, w, h, null);
+            g2.dispose();
+            scratch = temp;
+        }
+        
+        BufferedImage imgFinal = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_ARGB);
+        g2 = imgFinal.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.drawImage(scratch, 0, 0, targetWidth, targetHeight, null);
+        g2.dispose();
+        
+        return new ImageIcon(imgFinal);
+    }
+
+    /**
+     * Lee un archivo de imagen local y lo convierte directamente a Base64
+     * SIN aplicar ninguna compresión ni redimensionamiento para mantener la calidad 100% original.
      */
     public static String comprimirYConvertirABase64(File file) {
         try {
-            BufferedImage original = ImageIO.read(file);
-            if (original == null) return null;
-
-            int originalWidth = original.getWidth();
-            int originalHeight = original.getHeight();
-
-            int targetWidth = 350;
-            if (originalWidth <= targetWidth) {
-                targetWidth = originalWidth;
+            byte[] bytes = java.nio.file.Files.readAllBytes(file.toPath());
+            String b64 = java.util.Base64.getEncoder().encodeToString(bytes);
+            
+            // Determinar el MIME type básico según la extensión
+            String mimeType = "image/png"; // por defecto
+            String name = file.getName().toLowerCase();
+            if (name.endsWith(".jpg") || name.endsWith(".jpeg")) {
+                mimeType = "image/jpeg";
+            } else if (name.endsWith(".gif")) {
+                mimeType = "image/gif";
             }
-            int targetHeight = (originalHeight * targetWidth) / originalWidth;
-
-            // Redimensionar con calidad
-            BufferedImage resized = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
-            Graphics2D g = resized.createGraphics();
-            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            g.drawImage(original, 0, 0, targetWidth, targetHeight, null);
-            g.dispose();
-
-            // Comprimir JPEG 70%
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
-            if (!writers.hasNext()) throw new IllegalStateException("No se encontró compresor JPEG");
-            ImageWriter writer = writers.next();
-
-            try (ImageOutputStream ios = ImageIO.createImageOutputStream(baos)) {
-                writer.setOutput(ios);
-                ImageWriteParam param = writer.getDefaultWriteParam();
-                if (param.canWriteCompressed()) {
-                    param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                    param.setCompressionQuality(0.70f); // 70% Calidad
-                }
-                writer.write(null, new IIOImage(resized, null, null), param);
-            }
-            writer.dispose();
-
-            byte[] bytes = baos.toByteArray();
-            String b64 = Base64.getEncoder().encodeToString(bytes);
-            return "data:image/jpeg;base64," + b64;
+            
+            return "data:" + mimeType + ";base64," + b64;
         } catch (Exception e) {
-            System.err.println("Error al comprimir imagen a Base64: " + e.getMessage());
+            System.err.println("Error al convertir imagen a Base64: " + e.getMessage());
         }
         return null;
     }

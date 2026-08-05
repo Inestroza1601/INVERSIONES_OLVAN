@@ -212,7 +212,28 @@ public class PanelPuntoVenta extends JPanel {
         JButton btnBuscarProducto = utilidades.EfectosUI.crearBotonVerde("Catálogo de Productos");
         btnBuscarProducto.setFont(new Font("Segoe UI", Font.BOLD, 15));
         btnBuscarProducto.setPreferredSize(new Dimension(0, 50));
-        btnBuscarProducto.addActionListener(e -> new DialogoBuscarProductoPOS((Frame) SwingUtilities.getWindowAncestor(this)).setVisible(true));
+        btnBuscarProducto.addActionListener(e -> {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            btnBuscarProducto.setEnabled(false);
+            SwingWorker<DialogoBuscarProductoPOS, Void> worker = new SwingWorker<DialogoBuscarProductoPOS, Void>() {
+                @Override
+                protected DialogoBuscarProductoPOS doInBackground() throws Exception {
+                    return new DialogoBuscarProductoPOS((Frame) SwingUtilities.getWindowAncestor(PanelPuntoVenta.this));
+                }
+                @Override
+                protected void done() {
+                    setCursor(Cursor.getDefaultCursor());
+                    btnBuscarProducto.setEnabled(true);
+                    try {
+                        get().setVisible(true);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(PanelPuntoVenta.this, "Error al cargar el catálogo.");
+                    }
+                }
+            };
+            worker.execute();
+        });
 
         JPanel pnlBotonCatalogo = new JPanel(new BorderLayout());
         pnlBotonCatalogo.setOpaque(false);
@@ -817,32 +838,54 @@ public class PanelPuntoVenta extends JPanel {
             btnNuevo.setPreferredSize(new Dimension(150, 36));
             btnNuevo.setCursor(new Cursor(Cursor.HAND_CURSOR));
             btnNuevo.addActionListener(e -> {
-                JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Nuevo Cliente", true);
-                dialog.setUndecorated(true); dialog.setBackground(new Color(0,0,0,0));
-                dialog.add(new PanelFormularioCliente(dialog, new PanelGestionClientes(), null));
-                dialog.pack(); dialog.setLocationRelativeTo(this); dialog.setVisible(true);
-                
-                // Recargar tabla de clientes
-                mod.setRowCount(0);
-                mod.addRow(new Object[]{1, "C", "CONSUMIDOR FINAL", "0000-0000-00000", "N/A"});
-                int maxId = 1;
-                String maxNombre = "CONSUMIDOR FINAL";
-                for (Cliente c : new ClienteDAO().listarClientesActivos()) {
-                    String nombreComp = c.getNombreCliente() + " " + (c.getApellidoCliente()!=null?c.getApellidoCliente():"");
-                    String inicial = nombreComp.isEmpty() ? "?" : nombreComp.substring(0, 1).toUpperCase();
-                    mod.addRow(new Object[]{c.getIdCliente(), inicial, nombreComp, c.getIdentidadCliente(), c.getTelefonoCliente()});
-                    if (c.getIdCliente() > maxId) {
-                        maxId = c.getIdCliente();
-                        maxNombre = nombreComp;
+                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                btnNuevo.setEnabled(false);
+
+                SwingWorker<PanelFormularioCliente, Void> worker = new SwingWorker<PanelFormularioCliente, Void>() {
+                    @Override
+                    protected PanelFormularioCliente doInBackground() throws Exception {
+                        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(DialogoBuscarClientePOS.this), "Nuevo Cliente", true);
+                        dialog.setUndecorated(true); dialog.setBackground(new Color(0,0,0,0));
+                        return new PanelFormularioCliente(dialog, new PanelGestionClientes(), null);
                     }
-                }
-                
-                // Auto-seleccionar nuevo cliente creado
-                if (maxId != 1) {
-                    idClienteActual = maxId;
-                    lblClienteSeleccionado.setText(maxNombre);
-                    dispose();
-                }
+                    @Override
+                    protected void done() {
+                        setCursor(Cursor.getDefaultCursor());
+                        btnNuevo.setEnabled(true);
+                        try {
+                            PanelFormularioCliente form = get();
+                            JDialog dialog = form.getDialogoPadre();
+                            dialog.add(form);
+                            dialog.pack(); dialog.setLocationRelativeTo(DialogoBuscarClientePOS.this); 
+                            dialog.setVisible(true);
+                            
+                            // Recargar tabla de clientes (se hace cuando se cierra el diálogo)
+                            mod.setRowCount(0);
+                            mod.addRow(new Object[]{1, "C", "CONSUMIDOR FINAL", "0000-0000-00000", "N/A"});
+                            int maxId = 1;
+                            String maxNombre = "CONSUMIDOR FINAL";
+                            for (Cliente c : new ClienteDAO().listarClientesActivos()) {
+                                String nombreComp = c.getNombreCliente() + " " + (c.getApellidoCliente()!=null?c.getApellidoCliente():"");
+                                String inicial = nombreComp.isEmpty() ? "?" : nombreComp.substring(0, 1).toUpperCase();
+                                mod.addRow(new Object[]{c.getIdCliente(), inicial, nombreComp, c.getIdentidadCliente(), c.getTelefonoCliente()});
+                                if (c.getIdCliente() > maxId) {
+                                    maxId = c.getIdCliente();
+                                    maxNombre = nombreComp;
+                                }
+                            }
+                            
+                            // Auto-seleccionar nuevo cliente creado
+                            if (maxId != 1) {
+                                idClienteActual = maxId;
+                                lblClienteSeleccionado.setText(maxNombre);
+                                dispose();
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                };
+                worker.execute();
             });
             pnlHeader.add(btnNuevo, BorderLayout.EAST);
             pnlTopWrapper.add(pnlHeader, BorderLayout.NORTH);

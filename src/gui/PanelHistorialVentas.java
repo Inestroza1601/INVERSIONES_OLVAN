@@ -355,7 +355,27 @@ public class PanelHistorialVentas extends JPanel {
             btnAbonos.addActionListener(e -> {
                 try {
                     int idApInt = Integer.parseInt(idAp);
-                    new DialogoHistorialAbonosVenta((Frame) parent, idApInt).setVisible(true);
+                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                    btnAbonos.setEnabled(false);
+
+                    SwingWorker<DialogoHistorialAbonosVenta, Void> worker = new SwingWorker<DialogoHistorialAbonosVenta, Void>() {
+                        @Override
+                        protected DialogoHistorialAbonosVenta doInBackground() throws Exception {
+                            return new DialogoHistorialAbonosVenta((Frame) parent, idApInt);
+                        }
+                        @Override
+                        protected void done() {
+                            setCursor(Cursor.getDefaultCursor());
+                            btnAbonos.setEnabled(true);
+                            try {
+                                get().setVisible(true);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                JOptionPane.showMessageDialog(parent, "Error al cargar el historial de abonos.");
+                            }
+                        }
+                    };
+                    worker.execute();
                 } catch (Exception ex) {
                 }
             });

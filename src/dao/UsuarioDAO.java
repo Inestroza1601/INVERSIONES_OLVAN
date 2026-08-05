@@ -253,6 +253,25 @@ public class UsuarioDAO {
     }
 
     // =========================================================
+    // VALIDACION DE SEGURIDAD
+    // =========================================================
+
+    public boolean existePassword(String passwordPlana) {
+        String hash = utilidades.Seguridad.encriptarSHA256(passwordPlana);
+        String sql = "SELECT 1 FROM USUARIOS WHERE password_hash = ?";
+        try (Connection con = factory.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, hash);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next(); // Retorna true si hay un hash igual
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al verificar password: " + e.getMessage());
+        }
+        return false;
+    }
+
+    // =========================================================
     // GESTIÓN DINÁMICA DE ROLES
     // =========================================================
 

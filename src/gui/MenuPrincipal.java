@@ -153,10 +153,10 @@ public class MenuPrincipal extends JFrame {
         panelCentral.setBackground(COLOR_FONDO_APP);
 
         if (rolId == 3) {
-            mostrarPanelHijo(new PanelPuntoVenta());
+            abrirPanelAsync(() -> new PanelPuntoVenta());
             marcarBotonActivo(btnPuntoVenta, false);
         } else {
-            mostrarPanelHijo(new PanelEstadisticas());
+            abrirPanelAsync(() -> new PanelEstadisticas());
             marcarBotonActivo(btnEstadisticas, false);
         }
 
@@ -167,16 +167,16 @@ public class MenuPrincipal extends JFrame {
         panelContenedor.add(appAnimada, "APP");
         cardLayout.show(panelContenedor, "APP");
 
-        // Eventos de apertura de módulos con animación
-        btnAdministracion.addActionListener(e -> mostrarPanelHijo(new PanelAdministracion()));
-        btnClientes.addActionListener(e -> mostrarPanelHijo(new PanelGestionClientes()));
-        btnInventario.addActionListener(e -> mostrarPanelHijo(new PanelInventario()));
-        btnPuntoVenta.addActionListener(e -> mostrarPanelHijo(new PanelPuntoVenta()));
-        btnControlCaja.addActionListener(e -> mostrarPanelHijo(new PanelControlCaja()));
-        btnApartados.addActionListener(e -> mostrarPanelHijo(new PanelApartados()));
-        btnHistorialVentas.addActionListener(e -> mostrarPanelHijo(new PanelHistorialVentas()));
-        btnGarantias.addActionListener(e -> mostrarPanelHijo(new PanelGestionGarantias()));
-        btnEstadisticas.addActionListener(e -> mostrarPanelHijo(new PanelEstadisticas()));
+        // Eventos de apertura de módulos con animación y carga asíncrona
+        btnAdministracion.addActionListener(e -> abrirPanelAsync(() -> new PanelAdministracion()));
+        btnClientes.addActionListener(e -> abrirPanelAsync(() -> new PanelGestionClientes()));
+        btnInventario.addActionListener(e -> abrirPanelAsync(() -> new PanelInventario()));
+        btnPuntoVenta.addActionListener(e -> abrirPanelAsync(() -> new PanelPuntoVenta()));
+        btnControlCaja.addActionListener(e -> abrirPanelAsync(() -> new PanelControlCaja()));
+        btnApartados.addActionListener(e -> abrirPanelAsync(() -> new PanelApartados()));
+        btnHistorialVentas.addActionListener(e -> abrirPanelAsync(() -> new PanelHistorialVentas()));
+        btnGarantias.addActionListener(e -> abrirPanelAsync(() -> new PanelGestionGarantias()));
+        btnEstadisticas.addActionListener(e -> abrirPanelAsync(() -> new PanelEstadisticas()));
 
         btnCerrarSesion.addActionListener(e -> {
             Object[] opciones = { "Sí, cerrar sesión", "Cancelar" };
@@ -210,6 +210,47 @@ public class MenuPrincipal extends JFrame {
         panelCentral.add(contenedorAnimado, BorderLayout.CENTER);
         panelCentral.revalidate();
         panelCentral.repaint();
+    }
+
+    // =========================================================================
+    // CARGA ASÍNCRONA DE PANELES (NUEVO SISTEMA ANTI-FREEZE)
+    // =========================================================================
+    public void abrirPanelAsync(java.util.function.Supplier<JPanel> panelSupplier) {
+        panelCentral.removeAll();
+        
+        PanelCargaOverlay loader = new PanelCargaOverlay("Cargando módulo...");
+        panelCentral.add(loader, BorderLayout.CENTER);
+        panelCentral.revalidate();
+        panelCentral.repaint();
+        loader.iniciarAnimacion();
+
+        SwingWorker<JPanel, Void> worker = new SwingWorker<JPanel, Void>() {
+            @Override
+            protected JPanel doInBackground() throws Exception {
+                // Instancia el panel en segundo plano (las DB queries del constructor corren aquí)
+                return panelSupplier.get();
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    JPanel nuevoPanel = get();
+                    loader.detenerAnimacion();
+                    mostrarPanelHijo(nuevoPanel); // Reutilizamos mostrarPanelHijo para la transición de entrada
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    loader.detenerAnimacion();
+                    panelCentral.removeAll();
+                    JLabel lblError = new JLabel("Error al cargar el módulo: " + e.getMessage());
+                    lblError.setForeground(COLOR_ROJO_TEXTO);
+                    lblError.setHorizontalAlignment(SwingConstants.CENTER);
+                    panelCentral.add(lblError, BorderLayout.CENTER);
+                    panelCentral.revalidate();
+                    panelCentral.repaint();
+                }
+            }
+        };
+        worker.execute();
     }
 
     // =========================================================================

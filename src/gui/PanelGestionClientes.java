@@ -166,12 +166,34 @@ public class PanelGestionClientes extends JPanel {
         dialog.setUndecorated(true);
         dialog.setBackground(new Color(0, 0, 0, 0)); 
         
-        PanelFormularioCliente panelFormulario = new PanelFormularioCliente(dialog, this, cliente);
-        
-        dialog.add(panelFormulario);
-        dialog.pack();
-        dialog.setLocationRelativeTo(ventanaPadre);
-        dialog.setVisible(true);
+        // Estado visual de carga (Cursor)
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        if (btnNuevoCliente != null) btnNuevoCliente.setEnabled(false);
+
+        SwingWorker<PanelFormularioCliente, Void> worker = new SwingWorker<PanelFormularioCliente, Void>() {
+            @Override
+            protected PanelFormularioCliente doInBackground() throws Exception {
+                // Instancia el panel en segundo plano (las DB queries corren aquí)
+                return new PanelFormularioCliente(dialog, PanelGestionClientes.this, cliente);
+            }
+
+            @Override
+            protected void done() {
+                setCursor(Cursor.getDefaultCursor());
+                if (btnNuevoCliente != null) btnNuevoCliente.setEnabled(true);
+                try {
+                    PanelFormularioCliente panelFormulario = get();
+                    dialog.add(panelFormulario);
+                    dialog.pack();
+                    dialog.setLocationRelativeTo(ventanaPadre);
+                    dialog.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(PanelGestionClientes.this, "Error al abrir el formulario: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        };
+        worker.execute();
     }
 
     // =========================================================================

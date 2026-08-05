@@ -22,6 +22,12 @@ public class PanelBuscarProducto extends JPanel {
     private DefaultTableModel modeloTabla;
     private JTextField txtBusqueda;
     private TableRowSorter<DefaultTableModel> sorter;
+    
+    // Caché y estado para Lazy Loading con Shimmer
+    private java.util.Map<String, ImageIcon> cacheImagenes = new java.util.concurrent.ConcurrentHashMap<>();
+    private java.util.Set<String> imagenesEnProceso = java.util.Collections.synchronizedSet(new java.util.HashSet<>());
+    private float animacionShimmerPhase = 0f;
+    private Timer timerShimmer;
 
     public PanelBuscarProducto() {
         iniciarDiseno();
@@ -95,6 +101,13 @@ public class PanelBuscarProducto extends JPanel {
         tablaInventario.getColumnModel().getColumn(1).setMaxWidth(80);
         tablaInventario.getColumnModel().getColumn(1).setCellRenderer(new ImagenProductoRenderer());
 
+        // Centrar el texto en todas las demás columnas para que se vea ordenado y alineado con el encabezado
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        for (int i = 2; i < tablaInventario.getColumnCount(); i++) {
+            tablaInventario.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
         sorter = new TableRowSorter<>(modeloTabla);
         sorter.setSortKeys(java.util.List.of(new RowSorter.SortKey(0, SortOrder.DESCENDING)));
         
@@ -156,6 +169,16 @@ public class PanelBuscarProducto extends JPanel {
         this.add(scrollPane, BorderLayout.CENTER);
 
         cargarDatosDesdeBD();
+
+        // Timer global para la animación fluida del Shimmer (brillo)
+        timerShimmer = new Timer(30, e -> {
+            if (!imagenesEnProceso.isEmpty()) {
+                animacionShimmerPhase += 0.05f;
+                if (animacionShimmerPhase > 1f) animacionShimmerPhase = 0f;
+                tablaInventario.repaint(); // Repinta para animar el skeleton
+            }
+        });
+        timerShimmer.start();
     }
 
     public void cargarDatosDesdeBD() {
@@ -182,32 +205,102 @@ public class PanelBuscarProducto extends JPanel {
     }
 
     // =========================================================
-    // RENDERIZADOR DE IMAGEN
+    // RENDERIZADOR DE IMAGEN CON LAZY LOADING Y SHIMMER EFFECT
     // =========================================================
     private class ImagenProductoRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            JLabel label = new JLabel();
-            label.setHorizontalAlignment(SwingConstants.CENTER);
-            label.setOpaque(true);
-            label.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
-
-            String imgVal = (value != null) ? value.toString() : null;
-
-            if (imgVal == null || imgVal.trim().isEmpty()) {
+            
+            String imgValOriginal = (value != null) ? value.toString() : null;
+            if (imgValOriginal == null || imgValOriginal.trim().isEmpty()) {
                 if (SesionGlobal.getEmpresaActual() != null && SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
-                    imgVal = SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
+                    imgValOriginal = SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
                 }
             }
-
-            ImageIcon icon = utilidades.ImagenHelper.obtenerIcono(imgVal, 60, 60);
-            if (icon != null) {
-                label.setIcon(icon);
-            } else {
-                label.setText("No Img");
-                label.setForeground(Color.GRAY);
+            
+            final String imgVal = imgValOriginal;
+            
+            // Si ya está en caché, retornamos el JLabel normal
+            if (imgVal != null && cacheImagenes.containsKey(imgVal)) {
+                JLabel label = new JLabel();
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                label.setOpaque(true);
+                label.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+                
+                ImageIcon icon = cacheImagenes.get(imgVal);
+                if (icon != null && icon.getIconWidth() > 0) {
+                    label.setIcon(icon);
+                } else {
+                    label.setText("No Img");
+                    label.setForeground(Color.GRAY);
+                }
+                return label;
             }
-            return label;
+
+            // Si NO está en caché, iniciamos SwingWorker y retornamos panel animado
+            if (imgVal != null && !imagenesEnProceso.contains(imgVal)) {
+                imagenesEnProceso.add(imgVal);
+                
+                SwingWorker<ImageIcon, Void> worker = new SwingWorker<>() {
+                    @Override
+                    protected ImageIcon doInBackground() throws Exception {
+                        // Extraer solo la primera imagen si hay varias
+                        String valProcesar = imgVal;
+                        if (valProcesar.contains("|")) {
+                            valProcesar = valProcesar.split("\\|")[0];
+                        }
+                        return utilidades.ImagenHelper.obtenerIcono(valProcesar, 60, 60);
+                    }
+                    @Override
+                    protected void done() {
+                        try {
+                            ImageIcon icon = get();
+                            // Guardamos null-safe
+                            cacheImagenes.put(imgVal, icon != null ? icon : new ImageIcon()); 
+                        } catch (Exception ex) {
+                            cacheImagenes.put(imgVal, new ImageIcon());
+                        } finally {
+                            imagenesEnProceso.remove(imgVal);
+                            table.repaint();
+                        }
+                    }
+                };
+                worker.execute();
+            }
+
+            // --- RENDERIZADO DEL SKELETON ANIMADO (BRÍLLO) ---
+            JPanel panelShimmer = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    
+                    // Fondo gris base
+                    g2.setColor(new Color(235, 237, 240));
+                    g2.fillRoundRect(getWidth()/2 - 30, getHeight()/2 - 30, 60, 60, 10, 10);
+                    
+                    // Gradiente de brillo que se mueve
+                    int gradientWidth = 60;
+                    int startX = (getWidth()/2 - 30) - gradientWidth + (int)(animacionShimmerPhase * (60 + gradientWidth * 2));
+                    
+                    Color c1 = new Color(255, 255, 255, 0);
+                    Color c2 = new Color(255, 255, 255, 200);
+                    
+                    LinearGradientPaint paint = new LinearGradientPaint(
+                            startX, 0, startX + gradientWidth, 0,
+                            new float[]{0.0f, 0.5f, 1.0f},
+                            new Color[]{c1, c2, c1}
+                    );
+                    
+                    g2.setPaint(paint);
+                    g2.fillRoundRect(getWidth()/2 - 30, getHeight()/2 - 30, 60, 60, 10, 10);
+                    g2.dispose();
+                }
+            };
+            panelShimmer.setOpaque(true);
+            panelShimmer.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+            return panelShimmer;
         }
     }
     
@@ -333,10 +426,15 @@ public class PanelBuscarProducto extends JPanel {
         
         PanelInventario parent = (PanelInventario) SwingUtilities.getAncestorOfClass(PanelInventario.class, PanelBuscarProducto.this);
         if(parent != null) {
-            InventarioDAO dao = new InventarioDAO();
-            Producto p = dao.obtenerProductoPorId(idProducto); 
-            if (p != null) parent.mostrarSubPanel(new PanelCrearProducto(p)); 
-            else JOptionPane.showMessageDialog(this, "Error: No se encontraron los datos.", "Error", JOptionPane.ERROR_MESSAGE);
+            parent.abrirSubPanelAsync(() -> {
+                InventarioDAO dao = new InventarioDAO();
+                Producto p = dao.obtenerProductoPorId(idProducto); 
+                if (p != null) {
+                    return new PanelCrearProducto(p);
+                } else {
+                    throw new RuntimeException("Error: No se encontraron los datos del producto.");
+                }
+            });
         }
     }
 
