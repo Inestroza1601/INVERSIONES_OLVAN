@@ -20,6 +20,8 @@ public class PanelConfiguracionImpresion extends JPanel {
     private JTextArea txtMensajeEntrega;
     private JTextArea txtMensajeCotizacion;
     private JTextArea txtMensajeGarantia;
+    private JTextArea txtMensajeCambio;
+    private JTextArea txtMensajeReclamo;
     private JTextField txtRutaLogo;
     private Empresa empresaActiva;
     private JPanel panelTarjetas;
@@ -60,6 +62,8 @@ public class PanelConfiguracionImpresion extends JPanel {
         txtMensajeEntrega = crearTextAreaEditable("Revise su equipo antes de salir.");
         txtMensajeCotizacion = crearTextAreaEditable("Cotización válida por 15 días.");
         txtMensajeGarantia = crearTextAreaEditable("Conserve este documento. La garantía no aplica por daños físicos, humedad, exposición a líquidos o manipulación por terceros.");
+        txtMensajeCambio = crearTextAreaEditable("Este comprobante avala el cambio de su producto por garantía.");
+        txtMensajeReclamo = crearTextAreaEditable("Su reclamo de garantía ha sido recibido y será procesado. Gracias.");
         txtRutaLogo = new JTextField(); 
 
         CardLayout cardLayout = new CardLayout();
@@ -72,6 +76,8 @@ public class PanelConfiguracionImpresion extends JPanel {
         panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: ENTREGA", txtMensajeEntrega), "Entrega");
         panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: COTIZACIÓN", txtMensajeCotizacion), "Cotizacion");
         panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("POLÍTICAS DE GARANTÍA", txtMensajeGarantia), "Garantia");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("COMPROBANTE DE CAMBIO", txtMensajeCambio), "Cambio");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("RECIBO DE RECLAMO", txtMensajeReclamo), "Reclamo");
 
         // --- PANEL INFERIOR (Botones de Control) ---
         JPanel panelBotonesControl = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 15));
@@ -82,12 +88,16 @@ public class PanelConfiguracionImpresion extends JPanel {
         JButton btnEntrega = crearBotonEstiloPestana("Entrega");
         JButton btnCotizacion = crearBotonEstiloPestana("Cotización");
         JButton btnGarantia = crearBotonEstiloPestana("Garantías");
+        JButton btnCambio = crearBotonEstiloPestana("Cambio");
+        JButton btnReclamo = crearBotonEstiloPestana("Reclamo");
 
         btnFactura.addActionListener(e -> cardLayout.show(panelTarjetas, "Factura"));
         btnRecibo.addActionListener(e -> cardLayout.show(panelTarjetas, "Recibo"));
         btnEntrega.addActionListener(e -> cardLayout.show(panelTarjetas, "Entrega"));
         btnCotizacion.addActionListener(e -> cardLayout.show(panelTarjetas, "Cotizacion"));
         btnGarantia.addActionListener(e -> cardLayout.show(panelTarjetas, "Garantia")); 
+        btnCambio.addActionListener(e -> cardLayout.show(panelTarjetas, "Cambio")); 
+        btnReclamo.addActionListener(e -> cardLayout.show(panelTarjetas, "Reclamo")); 
 
         JButton btnLogo = crearBotonEstiloPestana("Cargar Logo");
         btnLogo.setBackground(new Color(39, 174, 96)); // Verde Menta
@@ -108,9 +118,11 @@ public class PanelConfiguracionImpresion extends JPanel {
         panelBotonesControl.add(btnRecibo);
         panelBotonesControl.add(btnEntrega);
         panelBotonesControl.add(btnCotizacion);
-        panelBotonesControl.add(btnGarantia); 
-        panelBotonesControl.add(btnLogo);
+        panelBotonesControl.add(btnGarantia);
+        panelBotonesControl.add(btnCambio);
+        panelBotonesControl.add(btnReclamo);
         panelBotonesControl.add(lblSeparador);
+        panelBotonesControl.add(btnLogo);
         panelBotonesControl.add(btnImpresoras);
         
         this.add(panelTarjetas, BorderLayout.CENTER);
@@ -129,6 +141,8 @@ public class PanelConfiguracionImpresion extends JPanel {
             if (emp.getMensajeTicketEntrega() != null) txtMensajeEntrega.setText(emp.getMensajeTicketEntrega());
             if (emp.getMensajeTicketPieCotizacion() != null) txtMensajeCotizacion.setText(emp.getMensajeTicketPieCotizacion());
             if (emp.getPoliticasGarantia() != null) txtMensajeGarantia.setText(emp.getPoliticasGarantia());
+            if (emp.getMensajeTicketCambio() != null) txtMensajeCambio.setText(emp.getMensajeTicketCambio());
+            if (emp.getMensajeTicketReclamo() != null) txtMensajeReclamo.setText(emp.getMensajeTicketReclamo());
             
             if (emp.getLogoEmpresaRuta() != null) txtRutaLogo.setText(emp.getLogoEmpresaRuta());
         }
@@ -151,6 +165,8 @@ public class PanelConfiguracionImpresion extends JPanel {
         emp.setMensajeTicketEntrega(txtMensajeEntrega.getText().trim());
         emp.setMensajeTicketPieCotizacion(txtMensajeCotizacion.getText().trim());
         emp.setPoliticasGarantia(txtMensajeGarantia.getText().trim());
+        emp.setMensajeTicketCambio(txtMensajeCambio.getText().trim());
+        emp.setMensajeTicketReclamo(txtMensajeReclamo.getText().trim());
         
         emp.setLogoEmpresaRuta(txtRutaLogo.getText().trim());
 

@@ -30,6 +30,10 @@ public class PanelFormularioCliente extends JPanel {
     private JButton btnGuardar;
     private JButton btnCancelar;
 
+    public JDialog getDialogoPadre() {
+        return dialogPadre;
+    }
+
     public PanelFormularioCliente(JDialog dialogPadre, PanelGestionClientes panelPadre, Cliente cliente) {
         this.dialogPadre = dialogPadre;
         this.panelPadre = panelPadre;

@@ -20,6 +20,8 @@ public class Empresa {
     private String mensajeTicketPieRecibo;
     private String mensajeTicketEntrega;
     private String mensajeTicketPieCotizacion;
+    private String mensajeTicketCambio;
+    private String mensajeTicketReclamo;
     private String logoEmpresaRuta;
     private String politicasGarantia;
 
@@ -83,4 +85,10 @@ public class Empresa {
     
     public String getPoliticasGarantia() { return politicasGarantia; }
     public void setPoliticasGarantia(String politicasGarantia) { this.politicasGarantia = politicasGarantia; }
+
+    public String getMensajeTicketCambio() { return mensajeTicketCambio; }
+    public void setMensajeTicketCambio(String mensajeTicketCambio) { this.mensajeTicketCambio = mensajeTicketCambio; }
+
+    public String getMensajeTicketReclamo() { return mensajeTicketReclamo; }
+    public void setMensajeTicketReclamo(String mensajeTicketReclamo) { this.mensajeTicketReclamo = mensajeTicketReclamo; }
 }
