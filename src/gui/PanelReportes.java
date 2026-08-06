@@ -124,6 +124,8 @@ public class PanelReportes extends JPanel {
             dpFechaHasta.setDateFormatString("yyyy-MM-dd");
             aplicarEstiloDateChooser(dpFechaHasta);
             panelFiltros.add(dpFechaHasta);
+
+            configurarRestriccionFechas();
         }
         // Inventario y Alertas no necesitan filtros extras por ahora
 
@@ -132,6 +134,110 @@ public class PanelReportes extends JPanel {
         btnGenerarPDF.setEnabled(false);
         modeloTabla.setRowCount(0);
         modeloTabla.setColumnCount(0);
+    }
+
+    private void configurarRestriccionFechas() {
+        if (dpFechaDesde == null || dpFechaHasta == null) return;
+
+        // Establecer fecha mínima seleccionable en fecha hasta
+        Date fechaInicial = dpFechaDesde.getDate();
+        if (fechaInicial != null) {
+            dpFechaHasta.setMinSelectableDate(truncarInicioDia(fechaInicial));
+        }
+
+        // Listener en dpFechaDesde para actualizar el límite mínimo de dpFechaHasta
+        dpFechaDesde.getDateEditor().addPropertyChangeListener("date", evt -> {
+            Date nuevaDesde = dpFechaDesde.getDate();
+            if (nuevaDesde != null) {
+                Date minDate = truncarInicioDia(nuevaDesde);
+                dpFechaHasta.setMinSelectableDate(minDate);
+                Date actualHasta = dpFechaHasta.getDate();
+                if (actualHasta != null && truncarInicioDia(actualHasta).before(minDate)) {
+                    dpFechaHasta.setDate(nuevaDesde);
+                }
+            }
+        });
+
+        // Listener en dpFechaHasta para evitar fechas anteriores a dpFechaDesde
+        dpFechaHasta.getDateEditor().addPropertyChangeListener("date", evt -> {
+            Date desde = dpFechaDesde.getDate();
+            Date hasta = dpFechaHasta.getDate();
+            if (desde != null && hasta != null) {
+                Date minDate = truncarInicioDia(desde);
+                if (truncarInicioDia(hasta).before(minDate)) {
+                    JOptionPane.showMessageDialog(PanelReportes.this,
+                            "La fecha final ('Hasta') no puede ser menor que la primera fecha ('Desde').",
+                            "Fecha Inválida",
+                            JOptionPane.WARNING_MESSAGE);
+                    dpFechaHasta.setDate(desde);
+                }
+            }
+        });
+
+        // Validación al perder el foco al escribir manualmente en dpFechaHasta
+        if (dpFechaHasta.getDateEditor() instanceof com.toedter.calendar.JTextFieldDateEditor) {
+            com.toedter.calendar.JTextFieldDateEditor editorHasta = (com.toedter.calendar.JTextFieldDateEditor) dpFechaHasta.getDateEditor();
+            editorHasta.addFocusListener(new java.awt.event.FocusAdapter() {
+                @Override
+                public void focusLost(java.awt.event.FocusEvent e) {
+                    Date desde = dpFechaDesde.getDate();
+                    Date hasta = dpFechaHasta.getDate();
+                    if (desde != null) {
+                        Date minDate = truncarInicioDia(desde);
+                        if (hasta != null && truncarInicioDia(hasta).before(minDate)) {
+                            JOptionPane.showMessageDialog(PanelReportes.this,
+                                    "La fecha final ('Hasta') no puede ser menor que la primera fecha ('Desde').\nSe ajustará automáticamente a la fecha inicial.",
+                                    "Fecha Inválida",
+                                    JOptionPane.WARNING_MESSAGE);
+                            dpFechaHasta.setDate(desde);
+                        } else if (hasta == null && !editorHasta.getText().trim().isEmpty()) {
+                            JOptionPane.showMessageDialog(PanelReportes.this,
+                                    "La fecha ingresada en 'Hasta' es inválida o menor a la fecha inicial ('Desde').\nSe restablecerá a la fecha inicial.",
+                                    "Fecha Inválida",
+                                    JOptionPane.WARNING_MESSAGE);
+                            dpFechaHasta.setDate(desde);
+                        }
+                    }
+                }
+            });
+        }
+
+        // Validación al perder el foco al escribir manualmente en dpFechaDesde
+        if (dpFechaDesde.getDateEditor() instanceof com.toedter.calendar.JTextFieldDateEditor) {
+            com.toedter.calendar.JTextFieldDateEditor editorDesde = (com.toedter.calendar.JTextFieldDateEditor) dpFechaDesde.getDateEditor();
+            editorDesde.addFocusListener(new java.awt.event.FocusAdapter() {
+                @Override
+                public void focusLost(java.awt.event.FocusEvent e) {
+                    Date desde = dpFechaDesde.getDate();
+                    if (desde != null) {
+                        Date minDate = truncarInicioDia(desde);
+                        dpFechaHasta.setMinSelectableDate(minDate);
+                        Date hasta = dpFechaHasta.getDate();
+                        if (hasta != null && truncarInicioDia(hasta).before(minDate)) {
+                            dpFechaHasta.setDate(desde);
+                        }
+                    } else if (!editorDesde.getText().trim().isEmpty()) {
+                        JOptionPane.showMessageDialog(PanelReportes.this,
+                                "La fecha ingresada en 'Desde' no es válida.\nSe restablecerá a la fecha actual.",
+                                "Fecha Inválida",
+                                JOptionPane.WARNING_MESSAGE);
+                        dpFechaDesde.setDate(new Date());
+                        dpFechaHasta.setMinSelectableDate(truncarInicioDia(dpFechaDesde.getDate()));
+                    }
+                }
+            });
+        }
+    }
+
+    private Date truncarInicioDia(Date fecha) {
+        if (fecha == null) return null;
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTime(fecha);
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        cal.set(java.util.Calendar.MINUTE, 0);
+        cal.set(java.util.Calendar.SECOND, 0);
+        cal.set(java.util.Calendar.MILLISECOND, 0);
+        return cal.getTime();
     }
 
     private void aplicarEstiloDateChooser(JDateChooser dateChooser) {
@@ -164,12 +270,27 @@ public class PanelReportes extends JPanel {
         int index = cmbTipoReporte.getSelectedIndex();
         
         if (index == 0) {
+            if (dpFechaDiaria == null || dpFechaDiaria.getDate() == null) {
+                JOptionPane.showMessageDialog(this, "Por favor, seleccione una fecha diaria válida.", "Fecha Inválida", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             String fecha = new SimpleDateFormat("yyyy-MM-dd").format(dpFechaDiaria.getDate());
             ultimasColumnas = new String[]{"ID Caja", "Fecha", "Saldo Inicial", "Ingresos", "Egresos", "Saldo Final", "Estado"};
             ultimosDatos = reportesDAO.obtenerReporteCajaDiario(fecha);
             ultimoTitulo = "Reporte Diario de Caja - " + fecha;
         } 
         else if (index == 1) {
+            if (dpFechaDesde == null || dpFechaDesde.getDate() == null || dpFechaHasta == null || dpFechaHasta.getDate() == null) {
+                JOptionPane.showMessageDialog(this, "Por favor, seleccione un rango de fechas válido.", "Fecha Inválida", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            Date fDesdeDate = truncarInicioDia(dpFechaDesde.getDate());
+            Date fHastaDate = truncarInicioDia(dpFechaHasta.getDate());
+            if (fHastaDate.before(fDesdeDate)) {
+                JOptionPane.showMessageDialog(this, "La fecha final ('Hasta') no puede ser menor que la primera fecha ('Desde').", "Rango de Fechas Inválido", JOptionPane.WARNING_MESSAGE);
+                dpFechaHasta.setDate(dpFechaDesde.getDate());
+                return;
+            }
             String fDesde = new SimpleDateFormat("yyyy-MM-dd").format(dpFechaDesde.getDate());
             String fHasta = new SimpleDateFormat("yyyy-MM-dd").format(dpFechaHasta.getDate());
             ultimasColumnas = new String[]{"Fecha", "Ticket", "Tipo Venta", "Producto", "Cantidad", "Subtotal (L.)"};
