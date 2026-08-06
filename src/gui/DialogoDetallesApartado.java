@@ -40,15 +40,22 @@ public class DialogoDetallesApartado extends JDialog {
         setSize(700, 550);
         setLocationRelativeTo(getParent());
         setLayout(new BorderLayout(10, 10));
-        getContentPane().setBackground(new Color(245, 247, 250));
+        getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
 
         // Cabecera info
         JPanel pnlInfo = new JPanel(new GridLayout(3, 2, 10, 10));
-        pnlInfo.setBackground(Color.WHITE);
+        pnlInfo.setBackground(utilidades.EfectosUI.COLOR_SIDEBAR_PASTEL);
         pnlInfo.setBorder(BorderFactory.createCompoundBorder(
+<<<<<<< HEAD
                 BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 222, 225)),
                 BorderFactory.createEmptyBorder(15, 20, 15, 20)));
 
+=======
+            BorderFactory.createMatteBorder(0, 0, 1, 0, utilidades.EfectosUI.COLOR_BORDE),
+            BorderFactory.createEmptyBorder(15, 20, 15, 20)
+        ));
+        
+>>>>>>> origin/parte-muoz
         Font fBold = new Font("Segoe UI", Font.BOLD, 14);
         Font fPlain = new Font("Segoe UI", Font.PLAIN, 14);
 

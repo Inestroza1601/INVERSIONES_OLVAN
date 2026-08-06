@@ -20,6 +20,8 @@ public class PanelConfiguracionImpresion extends JPanel {
     private JTextArea txtMensajeEntrega;
     private JTextArea txtMensajeCotizacion;
     private JTextArea txtMensajeGarantia;
+    private JTextArea txtMensajeCambio;
+    private JTextArea txtMensajeReclamo;
     private JTextField txtRutaLogo;
     private Empresa empresaActiva;
     private JPanel panelTarjetas;
@@ -59,15 +61,23 @@ public class PanelConfiguracionImpresion extends JPanel {
         txtMensajeRecibo = crearTextAreaEditable("Este es un comprobante de pago.");
         txtMensajeEntrega = crearTextAreaEditable("Revise su equipo antes de salir.");
         txtMensajeCotizacion = crearTextAreaEditable("Cotización válida por 15 días.");
+<<<<<<< HEAD
         txtMensajeGarantia = crearTextAreaEditable(
                 "Conserve este documento. La garantía no aplica por daños físicos, humedad, exposición a líquidos o manipulación por terceros.");
         txtRutaLogo = new JTextField();
+=======
+        txtMensajeGarantia = crearTextAreaEditable("Conserve este documento. La garantía no aplica por daños físicos, humedad, exposición a líquidos o manipulación por terceros.");
+        txtMensajeCambio = crearTextAreaEditable("Este comprobante avala el cambio de su producto por garantía.");
+        txtMensajeReclamo = crearTextAreaEditable("Su reclamo de garantía ha sido recibido y será procesado. Gracias.");
+        txtRutaLogo = new JTextField(); 
+>>>>>>> origin/parte-muoz
 
         CardLayout cardLayout = new CardLayout();
         panelTarjetas = new JPanel(cardLayout);
         panelTarjetas.setBackground(new Color(255, 255, 255)); // Blanco Puro
         panelTarjetas.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225), 1, true)); // Gris muy claro
 
+<<<<<<< HEAD
         panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: FACTURA", txtMensajeFactura),
                 "Factura");
         panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: RECIBO", txtMensajeRecibo),
@@ -80,6 +90,15 @@ public class PanelConfiguracionImpresion extends JPanel {
         panelTarjetas.add(
                 utilidades.GeneradorTickets.crearTicketVistaPrevia("POLÍTICAS DE GARANTÍA", txtMensajeGarantia),
                 "Garantia");
+=======
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: FACTURA", txtMensajeFactura), "Factura");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: RECIBO", txtMensajeRecibo), "Recibo");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: ENTREGA", txtMensajeEntrega), "Entrega");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: COTIZACIÓN", txtMensajeCotizacion), "Cotizacion");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("POLÍTICAS DE GARANTÍA", txtMensajeGarantia), "Garantia");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("COMPROBANTE DE CAMBIO", txtMensajeCambio), "Cambio");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("RECIBO DE RECLAMO", txtMensajeReclamo), "Reclamo");
+>>>>>>> origin/parte-muoz
 
         // --- PANEL INFERIOR (Botones de Control) ---
         JPanel panelBotonesControl = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 15));
@@ -90,12 +109,20 @@ public class PanelConfiguracionImpresion extends JPanel {
         JButton btnEntrega = crearBotonEstiloPestana("Entrega");
         JButton btnCotizacion = crearBotonEstiloPestana("Cotización");
         JButton btnGarantia = crearBotonEstiloPestana("Garantías");
+        JButton btnCambio = crearBotonEstiloPestana("Cambio");
+        JButton btnReclamo = crearBotonEstiloPestana("Reclamo");
 
         btnFactura.addActionListener(e -> cardLayout.show(panelTarjetas, "Factura"));
         btnRecibo.addActionListener(e -> cardLayout.show(panelTarjetas, "Recibo"));
         btnEntrega.addActionListener(e -> cardLayout.show(panelTarjetas, "Entrega"));
         btnCotizacion.addActionListener(e -> cardLayout.show(panelTarjetas, "Cotizacion"));
+<<<<<<< HEAD
         btnGarantia.addActionListener(e -> cardLayout.show(panelTarjetas, "Garantia"));
+=======
+        btnGarantia.addActionListener(e -> cardLayout.show(panelTarjetas, "Garantia")); 
+        btnCambio.addActionListener(e -> cardLayout.show(panelTarjetas, "Cambio")); 
+        btnReclamo.addActionListener(e -> cardLayout.show(panelTarjetas, "Reclamo")); 
+>>>>>>> origin/parte-muoz
 
         JButton btnLogo = crearBotonEstiloPestana("Cargar Logo");
         btnLogo.setBackground(new Color(39, 174, 96)); // Verde Menta
@@ -117,8 +144,14 @@ public class PanelConfiguracionImpresion extends JPanel {
         panelBotonesControl.add(btnEntrega);
         panelBotonesControl.add(btnCotizacion);
         panelBotonesControl.add(btnGarantia);
+<<<<<<< HEAD
         panelBotonesControl.add(btnLogo);
+=======
+        panelBotonesControl.add(btnCambio);
+        panelBotonesControl.add(btnReclamo);
+>>>>>>> origin/parte-muoz
         panelBotonesControl.add(lblSeparador);
+        panelBotonesControl.add(btnLogo);
         panelBotonesControl.add(btnImpresoras);
 
         this.add(panelTarjetas, BorderLayout.CENTER);
@@ -132,6 +165,7 @@ public class PanelConfiguracionImpresion extends JPanel {
     private void cargarDatosActuales() {
         Empresa emp = SesionGlobal.getEmpresaActual();
         if (emp != null) {
+<<<<<<< HEAD
             if (emp.getMensajeTicketPieFactura() != null)
                 txtMensajeFactura.setText(emp.getMensajeTicketPieFactura());
             if (emp.getMensajeTicketPieRecibo() != null)
@@ -145,6 +179,17 @@ public class PanelConfiguracionImpresion extends JPanel {
 
             if (emp.getLogoEmpresaRuta() != null)
                 txtRutaLogo.setText(emp.getLogoEmpresaRuta());
+=======
+            if (emp.getMensajeTicketPieFactura() != null) txtMensajeFactura.setText(emp.getMensajeTicketPieFactura());
+            if (emp.getMensajeTicketPieRecibo() != null) txtMensajeRecibo.setText(emp.getMensajeTicketPieRecibo());
+            if (emp.getMensajeTicketEntrega() != null) txtMensajeEntrega.setText(emp.getMensajeTicketEntrega());
+            if (emp.getMensajeTicketPieCotizacion() != null) txtMensajeCotizacion.setText(emp.getMensajeTicketPieCotizacion());
+            if (emp.getPoliticasGarantia() != null) txtMensajeGarantia.setText(emp.getPoliticasGarantia());
+            if (emp.getMensajeTicketCambio() != null) txtMensajeCambio.setText(emp.getMensajeTicketCambio());
+            if (emp.getMensajeTicketReclamo() != null) txtMensajeReclamo.setText(emp.getMensajeTicketReclamo());
+            
+            if (emp.getLogoEmpresaRuta() != null) txtRutaLogo.setText(emp.getLogoEmpresaRuta());
+>>>>>>> origin/parte-muoz
         }
     }
 
@@ -168,7 +213,13 @@ public class PanelConfiguracionImpresion extends JPanel {
         emp.setMensajeTicketEntrega(txtMensajeEntrega.getText().trim());
         emp.setMensajeTicketPieCotizacion(txtMensajeCotizacion.getText().trim());
         emp.setPoliticasGarantia(txtMensajeGarantia.getText().trim());
+<<<<<<< HEAD
 
+=======
+        emp.setMensajeTicketCambio(txtMensajeCambio.getText().trim());
+        emp.setMensajeTicketReclamo(txtMensajeReclamo.getText().trim());
+        
+>>>>>>> origin/parte-muoz
         emp.setLogoEmpresaRuta(txtRutaLogo.getText().trim());
 
         EmpresaDAO dao = new EmpresaDAO();
@@ -232,6 +283,7 @@ public class PanelConfiguracionImpresion extends JPanel {
 
     private JButton crearBotonEstiloPestana(String texto) {
         JButton btn = new JButton(texto);
+<<<<<<< HEAD
         btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btn.setBackground(new Color(255, 255, 255));
         btn.setForeground(new Color(45, 45, 45));
@@ -239,6 +291,16 @@ public class PanelConfiguracionImpresion extends JPanel {
         btn.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(220, 222, 225)),
                 BorderFactory.createEmptyBorder(8, 16, 8, 16)));
+=======
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btn.setBackground(new Color(255, 255, 255)); 
+        btn.setForeground(new Color(45, 45, 45)); 
+        btn.setFocusPainted(false);
+        btn.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(220, 222, 225)),
+            BorderFactory.createEmptyBorder(14, 22, 14, 22)
+        ));
+>>>>>>> origin/parte-muoz
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btn.putClientProperty("JButton.buttonType", "roundRect");
         return btn;

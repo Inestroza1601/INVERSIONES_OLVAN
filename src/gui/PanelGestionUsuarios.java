@@ -37,13 +37,13 @@ public class PanelGestionUsuarios extends JPanel {
     private void iniciarDiseno() {
         this.removeAll();
         this.setLayout(new BorderLayout(15, 15));
-        this.setBackground(new Color(240, 242, 245)); // Gris Nube
+        this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); // Verde Vintage
         this.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Título Superior
         JLabel lblTitulo = new JLabel("Gestión y Roles de Usuarios");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        lblTitulo.setForeground(new Color(45, 45, 45)); // Gris Oscuro
+        lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         this.add(lblTitulo, BorderLayout.NORTH);
 
         this.add(crearPanelFormulario(), BorderLayout.WEST);
@@ -91,7 +91,11 @@ public class PanelGestionUsuarios extends JPanel {
 
         // --- 🚀 COMBOBOX Y BOTÓN NUEVO ROL (UNIFICADO) ---
         cmbRol = new JComboBox<>();
+<<<<<<< HEAD
         cmbRol.setEditable(true);
+=======
+        // cmbRol.setEditable(true); // Deshabilitado para que solo se pueda seleccionar
+>>>>>>> origin/parte-muoz
 
         JPanel panelContenedorRol = new JPanel(new BorderLayout(5, 0));
         panelContenedorRol.setOpaque(false);
@@ -301,9 +305,24 @@ public class PanelGestionUsuarios extends JPanel {
         txtPassword.setText(""); // Dejamos en blanco por seguridad
 
         btnGuardar.setText("Actualizar");
+<<<<<<< HEAD
         btnGuardar.setBackground(new Color(39, 174, 96)); // Verde Menta
         btnEliminar.setVisible(true);
 
+=======
+        btnGuardar.setBackground(new Color(39, 174, 96)); // Verde Menta 
+        
+        String estado = tablaUsuarios.getValueAt(fila, 5).toString();
+        if (estado.equals("Activo")) {
+            btnEliminar.setText("Desactivar");
+            btnEliminar.setBackground(new Color(227, 0, 15)); // Rojo
+        } else {
+            btnEliminar.setText("Activar");
+            btnEliminar.setBackground(new Color(39, 174, 96)); // Verde
+        }
+        btnEliminar.setVisible(true);
+        
+>>>>>>> origin/parte-muoz
         panelForm.revalidate();
         panelForm.repaint();
     }
@@ -332,6 +351,11 @@ public class PanelGestionUsuarios extends JPanel {
         if (txtNombre.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "El nombre del usuario es obligatorio.", "Advertencia",
                     JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (chkAccesoSistema.isSelected() && txtEmail.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El correo electrónico es obligatorio para usuarios con acceso al sistema.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -379,7 +403,12 @@ public class PanelGestionUsuarios extends JPanel {
                 // Si ya tenía acceso y deja la caja vacía, el DAO conserva la clave anterior
                 u.setPasswordHash("");
             } else {
-                // Si escribió una clave nueva, la encriptamos
+                // Validar que la contraseña no se repita con la de otro usuario
+                if (dao.existePassword(passEscrita)) {
+                    JOptionPane.showMessageDialog(this, "Contraseña no admitida por falta de seguridad. Ingrese una distinta.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                // Si escribió una clave nueva y es válida, la encriptamos
                 u.setPasswordHash(Seguridad.encriptarSHA256(passEscrita));
             }
         } else {
@@ -416,6 +445,7 @@ public class PanelGestionUsuarios extends JPanel {
 
         try {
             int id = Integer.parseInt(idString);
+<<<<<<< HEAD
 
             if (JOptionPane.showConfirmDialog(this, "¿Está seguro de desactivar ID " + id + "?", "Confirmar",
                     JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
@@ -424,6 +454,26 @@ public class PanelGestionUsuarios extends JPanel {
                     JOptionPane.showMessageDialog(this, "Usuario desactivado.");
                     limpiarFormulario();
                     cargarTabla();
+=======
+            String estado = tablaUsuarios.getValueAt(filaSelec, 5).toString();
+            UsuarioDAO dao = new UsuarioDAO();
+            
+            if (estado.equals("Activo")) {
+                if (JOptionPane.showConfirmDialog(this, "¿Está seguro de desactivar ID " + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    if (dao.desactivarUsuario(id)) {
+                        JOptionPane.showMessageDialog(this, "Usuario desactivado.");
+                        limpiarFormulario();
+                        cargarTabla(); 
+                    }
+                }
+            } else {
+                if (JOptionPane.showConfirmDialog(this, "¿Está seguro de activar ID " + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    if (dao.activarUsuario(id)) {
+                        JOptionPane.showMessageDialog(this, "Usuario activado.");
+                        limpiarFormulario();
+                        cargarTabla(); 
+                    }
+>>>>>>> origin/parte-muoz
                 }
             }
         } catch (NumberFormatException e) {

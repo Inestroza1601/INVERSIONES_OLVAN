@@ -18,10 +18,16 @@ public class PanelInventario extends JPanel {
     private void iniciarDiseno() {
         this.removeAll();
         this.setLayout(new BorderLayout());
-        this.setBackground(new Color(240, 242, 245)); // Gris Nube (Fondo principal)
+        this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
 
-        // 1. Crear el Sub-Menú superior
+        // 1. Crear el contenedor central (la tabla/sub-panel sube arriba del todo)
+        panelContenedorInventario = new JPanel();
+        panelContenedorInventario.setLayout(new BorderLayout());
+        panelContenedorInventario.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
+
+        // 2. Barra de botones en la parte inferior (elevados)
         panelSubMenu = new JPanel();
+<<<<<<< HEAD
         panelSubMenu.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0)); // Quitamos los márgenes para que parezcan
                                                                        // pestañas
         panelSubMenu.setBackground(new Color(255, 255, 255)); // Blanco puro para el menú
@@ -37,50 +43,69 @@ public class PanelInventario extends JPanel {
         int rolId = (utilidades.SesionGlobal.getUsuarioActual() != null)
                 ? utilidades.SesionGlobal.getUsuarioActual().getIdRol()
                 : 1;
+=======
+        panelSubMenu.setLayout(new FlowLayout(FlowLayout.RIGHT, 12, 10));
+        panelSubMenu.setBackground(new Color(213, 233, 222));
+        panelSubMenu.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(190, 215, 200)),
+                BorderFactory.createEmptyBorder(10, 12, 20, 12)
+        ));
+
+        // 3. Botones del sub-menú (verdes vintage, mismo tamaño)
+        btnBuscarProducto = utilidades.EfectosUI.crearBotonVerde("Buscar Producto / Inventario");
+        btnCrearProducto = utilidades.EfectosUI.crearBotonVerde("Crear Producto");
+        btnInventarioDefectuoso = utilidades.EfectosUI.crearBotonVerde("Inventario Defectuoso");
+
+        Dimension tamBoton = new Dimension(260, 50);
+        btnBuscarProducto.setPreferredSize(tamBoton);
+        btnCrearProducto.setPreferredSize(tamBoton);
+        btnInventarioDefectuoso.setPreferredSize(tamBoton);
+        btnBuscarProducto.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btnCrearProducto.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btnInventarioDefectuoso.setFont(new Font("Segoe UI", Font.BOLD, 16));
+
+        panelSubMenu.add(btnBuscarProducto);
+        int rolId = (utilidades.SesionGlobal.getUsuarioActual() != null) ? utilidades.SesionGlobal.getUsuarioActual().getIdRol() : 1;
+>>>>>>> origin/parte-muoz
         if (rolId != 3) {
             panelSubMenu.add(btnCrearProducto);
             panelSubMenu.add(btnInventarioDefectuoso);
         }
 
-        // 3. Crear el contenedor central (VACÍO, sin el JLabel)
-        panelContenedorInventario = new JPanel();
-        panelContenedorInventario.setLayout(new BorderLayout());
-        panelContenedorInventario.setBackground(new Color(240, 242, 245)); // Gris Nube
+        this.add(panelContenedorInventario, BorderLayout.CENTER);
+        this.add(panelSubMenu, BorderLayout.SOUTH);  // Botones abajo (con elevación)
 
+<<<<<<< HEAD
         this.add(panelSubMenu, BorderLayout.NORTH);
         this.add(panelContenedorInventario, BorderLayout.CENTER);
+=======
+        // 4. Configurar los Eventos con Carga Asíncrona
+        btnBuscarProducto.addActionListener(e -> {
+            abrirSubPanelAsync(() -> new PanelBuscarProducto());
+        });
+>>>>>>> origin/parte-muoz
 
-        // 4. Configurar los Eventos
         btnCrearProducto.addActionListener(e -> {
-            mostrarSubPanel(new PanelCrearProducto());
+            abrirSubPanelAsync(() -> new PanelCrearProducto());
         });
 
         btnInventarioDefectuoso.addActionListener(e -> {
-            mostrarSubPanel(new PanelInventarioDefectuoso());
+            abrirSubPanelAsync(() -> new PanelInventarioDefectuoso());
         });
 
-        btnBuscarProducto.addActionListener(e -> {
-            mostrarSubPanel(new PanelBuscarProducto());
-        });
-
-        // 5. LA MAGIA: Hacemos clic automático en "Buscar" al abrir el módulo
-        SwingUtilities.invokeLater(() -> {
-            btnBuscarProducto.doClick();
-        });
+        abrirSubPanelAsync(() -> new PanelBuscarProducto());
     }
 
-    // Nuevo diseño de botones tipo "Tab" web adaptado a paleta clara
-    private JButton crearBotonSubMenu(String texto) {
-        JButton boton = new JButton(texto);
-        boton.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        boton.setBackground(new Color(255, 255, 255)); // Blanco Puro
-        boton.setForeground(new Color(140, 145, 150)); // Gris Suave (Inactivo)
-        boton.setFocusPainted(false);
-        boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        boton.setPreferredSize(new Dimension(200, 45)); // Más altos y anchos
-        boton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0)); // Sin borde
-        boton.putClientProperty("JButton.buttonType", "borderless"); // Quita el diseño por defecto de FlatLaf
+    public void abrirSubPanelAsync(java.util.function.Supplier<JPanel> panelSupplier) {
+        panelContenedorInventario.removeAll();
+        
+        PanelCargaOverlay loader = new PanelCargaOverlay("Cargando inventario...");
+        panelContenedorInventario.add(loader, BorderLayout.CENTER);
+        panelContenedorInventario.revalidate();
+        panelContenedorInventario.repaint();
+        loader.iniciarAnimacion();
 
+<<<<<<< HEAD
         // Efecto Hover (Se ilumina al pasar el mouse)
         boton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -97,8 +122,34 @@ public class PanelInventario extends JPanel {
                 boton.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
             }
         });
+=======
+        SwingWorker<JPanel, Void> worker = new SwingWorker<JPanel, Void>() {
+            @Override
+            protected JPanel doInBackground() throws Exception {
+                return panelSupplier.get();
+            }
+>>>>>>> origin/parte-muoz
 
-        return boton;
+            @Override
+            protected void done() {
+                try {
+                    JPanel nuevoPanel = get();
+                    loader.detenerAnimacion();
+                    mostrarSubPanel(nuevoPanel);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    loader.detenerAnimacion();
+                    panelContenedorInventario.removeAll();
+                    JLabel lblError = new JLabel("Error al cargar el módulo: " + e.getMessage());
+                    lblError.setHorizontalAlignment(SwingConstants.CENTER);
+                    lblError.setForeground(Color.RED);
+                    panelContenedorInventario.add(lblError, BorderLayout.CENTER);
+                    panelContenedorInventario.revalidate();
+                    panelContenedorInventario.repaint();
+                }
+            }
+        };
+        worker.execute();
     }
 
     public void mostrarSubPanel(JPanel nuevoPanel) {

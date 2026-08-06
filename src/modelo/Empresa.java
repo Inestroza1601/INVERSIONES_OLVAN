@@ -20,6 +20,8 @@ public class Empresa {
     private String mensajeTicketPieRecibo;
     private String mensajeTicketEntrega;
     private String mensajeTicketPieCotizacion;
+    private String mensajeTicketCambio;
+    private String mensajeTicketReclamo;
     private String logoEmpresaRuta;
     private String politicasGarantia;
 
@@ -92,78 +94,6 @@ public class Empresa {
         this.numeroTelefono = numeroTelefono;
     }
 
-    public String getTelefonoSecundario() {
-        return telefonoSecundario;
-    }
-
-    public void setTelefonoSecundario(String telefonoSecundario) {
-        this.telefonoSecundario = telefonoSecundario;
-    }
-
-    public String getWhatsapp() {
-        return whatsapp;
-    }
-
-    public void setWhatsapp(String whatsapp) {
-        this.whatsapp = whatsapp;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getWeb() {
-        return web;
-    }
-
-    public void setWeb(String web) {
-        this.web = web;
-    }
-
-    public String getFacebook() {
-        return facebook;
-    }
-
-    public void setFacebook(String facebook) {
-        this.facebook = facebook;
-    }
-
-    public String getMensajeTicketPieFactura() {
-        return mensajeTicketPieFactura;
-    }
-
-    public void setMensajeTicketPieFactura(String mensajeTicketPieFactura) {
-        this.mensajeTicketPieFactura = mensajeTicketPieFactura;
-    }
-
-    public String getMensajeTicketPieRecibo() {
-        return mensajeTicketPieRecibo;
-    }
-
-    public void setMensajeTicketPieRecibo(String mensajeTicketPieRecibo) {
-        this.mensajeTicketPieRecibo = mensajeTicketPieRecibo;
-    }
-
-    public String getMensajeTicketEntrega() {
-        return mensajeTicketEntrega;
-    }
-
-    public void setMensajeTicketEntrega(String mensajeTicketEntrega) {
-        this.mensajeTicketEntrega = mensajeTicketEntrega;
-    }
-
-    public String getMensajeTicketPieCotizacion() {
-        return mensajeTicketPieCotizacion;
-    }
-
-    public void setMensajeTicketPieCotizacion(String mensajeTicketPieCotizacion) {
-        this.mensajeTicketPieCotizacion = mensajeTicketPieCotizacion;
-    }
-
     public String getLogoEmpresaRuta() {
         return logoEmpresaRuta;
     }
@@ -178,5 +108,21 @@ public class Empresa {
 
     public void setPoliticasGarantia(String politicasGarantia) {
         this.politicasGarantia = politicasGarantia;
+    }
+
+    public String getMensajeTicketCambio() {
+        return mensajeTicketCambio;
+    }
+
+    public void setMensajeTicketCambio(String mensajeTicketCambio) {
+        this.mensajeTicketCambio = mensajeTicketCambio;
+    }
+
+    public String getMensajeTicketReclamo() {
+        return mensajeTicketReclamo;
+    }
+
+    public void setMensajeTicketReclamo(String mensajeTicketReclamo) {
+        this.mensajeTicketReclamo = mensajeTicketReclamo;
     }
 }

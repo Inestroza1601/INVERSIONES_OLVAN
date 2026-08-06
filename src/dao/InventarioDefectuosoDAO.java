@@ -19,10 +19,14 @@ public class InventarioDefectuosoDAO {
     public List<Map<String, Object>> obtenerInventarioDefectuosoAgrupado() {
         List<Map<String, Object>> lista = new ArrayList<>();
         String sql = "SELECT d.id_producto, i.nombre_producto, i.codigo_barras_producto, d.estado_defecto, SUM(d.cantidad) as cantidad_total, "
-                + "(SELECT TOP 1 v.foto_garantia FROM INVENTARIO_DEFECTUOSO d2 INNER JOIN DETALLES_VENTA v ON d2.id_detalle_venta = v.id_detalle_venta WHERE d2.id_producto = d.id_producto AND d2.estado_defecto = d.estado_defecto ORDER BY d2.fecha_ingreso DESC) as foto "
+                + "c.nombre_cliente, c.identidad_cliente, "
+                + "(SELECT TOP 1 v.foto_garantia FROM INVENTARIO_DEFECTUOSO d2 LEFT JOIN DETALLES_VENTA v ON d2.id_detalle_venta = v.id_detalle_venta WHERE d2.id_producto = d.id_producto AND d2.estado_defecto = d.estado_defecto ORDER BY d2.fecha_ingreso DESC) as foto "
                 + "FROM INVENTARIO_DEFECTUOSO d "
                 + "INNER JOIN INVENTARIO i ON d.id_producto = i.id_producto "
-                + "GROUP BY d.id_producto, i.nombre_producto, i.codigo_barras_producto, d.estado_defecto "
+                + "LEFT JOIN DETALLES_VENTA dv ON d.id_detalle_venta = dv.id_detalle_venta "
+                + "LEFT JOIN VENTAS ve ON dv.id_ventas = ve.id_ventas "
+                + "LEFT JOIN CLIENTES c ON ve.id_cliente_venta = c.id_cliente "
+                + "GROUP BY d.id_producto, i.nombre_producto, i.codigo_barras_producto, d.estado_defecto, c.nombre_cliente, c.identidad_cliente "
                 + "ORDER BY i.nombre_producto, d.estado_defecto";
 
         try (Connection con = factory.getConexion();
@@ -37,6 +41,18 @@ public class InventarioDefectuosoDAO {
                 fila.put("estado_defecto", rs.getString("estado_defecto"));
                 fila.put("cantidad", rs.getInt("cantidad_total"));
                 fila.put("foto", rs.getString("foto"));
+
+                String estado = rs.getString("estado_defecto");
+                String cliente = rs.getString("nombre_cliente");
+
+                if (estado != null && estado.contains("Rep. Cliente")) {
+                    fila.put("cliente", cliente != null ? cliente : "N/A");
+                } else {
+                    fila.put("cliente", "Inversiones Olvan (Empresa)");
+                }
+
+                String identidad = rs.getString("identidad_cliente");
+                fila.put("identidad", identidad != null ? identidad : "");
                 lista.add(fila);
             }
         } catch (Exception e) {

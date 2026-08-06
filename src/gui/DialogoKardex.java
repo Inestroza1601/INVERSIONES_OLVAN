@@ -27,32 +27,48 @@ public class DialogoKardex extends JDialog {
         this.setSize(750, 500);
         this.setLocationRelativeTo(getOwner());
         this.setLayout(new BorderLayout());
-        this.getContentPane().setBackground(new Color(240, 242, 245)); // Gris Nube
+        this.getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
 
         // --- PANEL SUPERIOR ---
         JPanel pnlTop = new JPanel(new BorderLayout());
-        pnlTop.setBackground(new Color(255, 255, 255)); // Blanco puro
+        pnlTop.setBackground(utilidades.EfectosUI.COLOR_SIDEBAR_PASTEL);
         pnlTop.setBorder(BorderFactory.createCompoundBorder(
+<<<<<<< HEAD
                 BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 222, 225)), // Borde gris claro inferior
                 BorderFactory.createEmptyBorder(15, 20, 15, 20)));
+=======
+            BorderFactory.createMatteBorder(0, 0, 1, 0, utilidades.EfectosUI.COLOR_BORDE),
+            BorderFactory.createEmptyBorder(15, 20, 15, 20)
+        ));
+>>>>>>> origin/parte-muoz
 
         JPanel pnlInfo = new JPanel(new GridLayout(2, 1));
         pnlInfo.setOpaque(false);
         JLabel lblNombre = new JLabel("Producto: " + productoActual.getNombreProducto());
         lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 18));
+<<<<<<< HEAD
         lblNombre.setForeground(new Color(45, 45, 45)); // Gris oscuro
 
+=======
+        lblNombre.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
+        
+>>>>>>> origin/parte-muoz
         lblStockDinamico = new JLabel("Stock Actual: " + productoActual.getStockProducto() + " unidades");
         lblStockDinamico.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        lblStockDinamico.setForeground(new Color(140, 145, 150)); // Gris suave
+        lblStockDinamico.setForeground(utilidades.EfectosUI.COLOR_TEXTO_SUBTITULO);
 
         pnlInfo.add(lblNombre);
         pnlInfo.add(lblStockDinamico);
+<<<<<<< HEAD
 
         JButton btnNuevoMov = new JButton("+ Nuevo Movimiento");
         btnNuevoMov.setBackground(new Color(39, 174, 96)); // Verde Menta
         btnNuevoMov.setForeground(Color.WHITE);
         btnNuevoMov.setFocusPainted(false);
+=======
+        
+        JButton btnNuevoMov = utilidades.EfectosUI.crearBotonVerde("+ Nuevo Movimiento");
+>>>>>>> origin/parte-muoz
         btnNuevoMov.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnNuevoMov.addActionListener(e -> abrirFormularioMovimiento());
 
@@ -73,11 +89,19 @@ public class DialogoKardex extends JDialog {
         tablaHistorial.setForeground(new Color(45, 45, 45)); // Gris oscuro
         tablaHistorial.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         tablaHistorial.setRowHeight(35);
+<<<<<<< HEAD
         tablaHistorial.getTableHeader().setBackground(new Color(240, 242, 245)); // Gris Nube
         tablaHistorial.getTableHeader().setForeground(new Color(100, 100, 100)); // Gris intermedio
         tablaHistorial.setSelectionBackground(new Color(230, 235, 240)); // Selección gris/azul suave
         tablaHistorial.setSelectionForeground(new Color(45, 45, 45));
 
+=======
+        tablaHistorial.getTableHeader().setBackground(utilidades.EfectosUI.COLOR_SIDEBAR_PASTEL);
+        tablaHistorial.getTableHeader().setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
+        tablaHistorial.setSelectionBackground(new Color(205, 235, 218));
+        tablaHistorial.setSelectionForeground(Color.BLACK);
+        
+>>>>>>> origin/parte-muoz
         // --- LÓGICA DE CURSORES (MANITA) SOBRE REFERENCIA DE VENTA ---
         tablaHistorial.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             @Override
@@ -172,7 +196,7 @@ public class DialogoKardex extends JDialog {
         previewDialog.setSize(350, 650);
         previewDialog.setLocationRelativeTo(this);
         previewDialog.setLayout(new BorderLayout(10, 10));
-        previewDialog.getContentPane().setBackground(new Color(240, 242, 245)); // Gris Nube
+        previewDialog.getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
 
         // Pasamos la fecha histórica exacta a la previsualización del ticket en
         // pantalla
@@ -191,9 +215,7 @@ public class DialogoKardex extends JDialog {
         btnCerrar.setForeground(Color.WHITE);
         btnCerrar.addActionListener(ex -> previewDialog.dispose());
 
-        JButton btnImprimir = new JButton("🖨 Imprimir Copia");
-        btnImprimir.setBackground(new Color(39, 174, 96)); // Verde Menta
-        btnImprimir.setForeground(Color.WHITE);
+        JButton btnImprimir = utilidades.EfectosUI.crearBotonVerde("Imprimir Copia");
         btnImprimir.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnImprimir.addActionListener(ex -> {
             try {

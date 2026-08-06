@@ -128,7 +128,7 @@ public class InventarioDAO {
 
     public java.util.List<Producto> listarProductosActivos() {
         java.util.List<Producto> lista = new java.util.ArrayList<>();
-        String sql = "SELECT * FROM INVENTARIO WHERE eliminado_producto = 0 ORDER BY nombre_producto ASC";
+        String sql = "SELECT * FROM INVENTARIO WHERE eliminado_producto = 0 ORDER BY CASE WHEN stock_producto > 0 THEN 0 ELSE 1 END ASC, id_producto ASC";
 
         try (Connection con = factory.getConexion();
                 PreparedStatement ps = con.prepareStatement(sql);

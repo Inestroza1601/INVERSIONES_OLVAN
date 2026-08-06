@@ -27,7 +27,7 @@ public class DialogoMovimientoKardex extends JDialog {
         this.setSize(400, 480);
         this.setLocationRelativeTo(getOwner());
         this.setLayout(new BorderLayout());
-        this.getContentPane().setBackground(new Color(240, 242, 245)); // Gris Nube
+        this.getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
 
         JPanel pnlForm = new JPanel(new GridBagLayout());
         pnlForm.setBackground(new Color(255, 255, 255)); // Blanco puro
@@ -39,6 +39,7 @@ public class DialogoMovimientoKardex extends JDialog {
         gbc.weightx = 1.0;
 
         // Tipo de Movimiento
+<<<<<<< HEAD
         JLabel lblTipo = new JLabel("Tipo de Movimiento:");
         lblTipo.setForeground(new Color(45, 45, 45)); // Gris Oscuro
         rbAgregar = new JRadioButton("Entrada (+)");
@@ -99,10 +100,42 @@ public class DialogoMovimientoKardex extends JDialog {
         pnlForm.add(lblObs, gbc);
         gbc.gridy = 5;
         pnlForm.add(scrollObs, gbc);
+=======
+        JLabel lblTipo = new JLabel("Tipo de Movimiento:"); lblTipo.setForeground(new Color(45, 45, 45)); // Gris Oscuro
+        rbAgregar = new JRadioButton("Entrada (+)"); rbAgregar.setForeground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO); rbAgregar.setBackground(new Color(255, 255, 255));
+        rbDisminuir = new JRadioButton("Salida (-)"); rbDisminuir.setForeground(new Color(227, 0, 15)); rbDisminuir.setBackground(new Color(255, 255, 255));
+        ButtonGroup bg = new ButtonGroup(); bg.add(rbAgregar); bg.add(rbDisminuir); rbAgregar.setSelected(true);
+        JPanel pnlRadios = new JPanel(new FlowLayout(FlowLayout.LEFT)); pnlRadios.setOpaque(false); pnlRadios.add(rbAgregar); pnlRadios.add(rbDisminuir);
+        
+        gbc.gridy = 0; pnlForm.add(lblTipo, gbc);
+        gbc.gridy = 1; pnlForm.add(pnlRadios, gbc);
+
+        // Cantidad
+        JLabel lblCantidad = new JLabel("Cantidad:"); lblCantidad.setForeground(new Color(45, 45, 45));
+        txtCantidad = new JTextField(); txtCantidad.setBackground(new Color(250, 250, 250)); txtCantidad.setForeground(new Color(45, 45, 45)); txtCantidad.setCaretColor(new Color(45, 45, 45));
+        txtCantidad.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(180, 208, 192)), BorderFactory.createEmptyBorder(8, 10, 8, 10)));
+        txtCantidad.addKeyListener(new KeyAdapter() { @Override public void keyTyped(KeyEvent e) { if (!Character.isDigit(e.getKeyChar())) e.consume(); } });
+        
+        gbc.gridy = 2; pnlForm.add(lblCantidad, gbc);
+        gbc.gridy = 3; pnlForm.add(txtCantidad, gbc);
+
+        // Observación
+        JLabel lblObs = new JLabel("Motivo u Observación:"); lblObs.setForeground(new Color(45, 45, 45));
+        txtObservacion = new JTextArea(4, 20); 
+        txtObservacion.setText("Ajuste manual del kardex");
+        txtObservacion.setBackground(new Color(250, 250, 250)); 
+        txtObservacion.setForeground(new Color(45, 45, 45)); 
+        txtObservacion.setCaretColor(new Color(45, 45, 45));
+        JScrollPane scrollObs = new JScrollPane(txtObservacion); scrollObs.setBorder(BorderFactory.createLineBorder(new Color(180, 208, 192)));
+        
+        gbc.gridy = 4; pnlForm.add(lblObs, gbc);
+        gbc.gridy = 5; pnlForm.add(scrollObs, gbc);
+>>>>>>> origin/parte-muoz
 
         this.add(pnlForm, BorderLayout.CENTER);
 
         // Botones
+<<<<<<< HEAD
         JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
         pnlBotones.setBackground(new Color(240, 242, 245)); // Gris Nube
         JButton btnCancelar = new JButton("Cancelar");
@@ -112,6 +145,11 @@ public class DialogoMovimientoKardex extends JDialog {
         JButton btnGuardar = new JButton("Firmar Movimiento");
         btnGuardar.setBackground(new Color(39, 174, 96));
         btnGuardar.setForeground(Color.WHITE); // Verde Menta
+=======
+        JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15)); pnlBotones.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
+        JButton btnCancelar = new JButton("Cancelar"); btnCancelar.setBackground(new Color(140, 145, 150)); btnCancelar.setForeground(Color.WHITE); btnCancelar.addActionListener(e -> this.dispose());
+        JButton btnGuardar = utilidades.EfectosUI.crearBotonVerde("Firmar Movimiento");
+>>>>>>> origin/parte-muoz
         btnGuardar.addActionListener(e -> firmarYGuardar());
 
         pnlBotones.add(btnCancelar);

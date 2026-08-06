@@ -330,15 +330,104 @@ const App = {
         const existing = document.getElementById('image-preview-modal');
         if (existing) existing.remove();
 
-        const modalHtml = `
-            <div class="modal-backdrop" id="image-preview-modal" style="display:flex; z-index:999999; background:rgba(0,0,0,0.85); align-items:center; justify-content:center;" onclick="document.getElementById('image-preview-modal').remove()">
-                <div style="position:relative; max-width:90%; max-height:90%; display:flex; flex-direction:column; align-items:center;">
-                    <img src="${src}" style="max-width:90vw; max-height:85vh; object-fit:contain; border-radius:8px; border:4px solid #fff; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
-                    <div style="position:absolute; top:-35px; right:0; color:#fff; font-size:2rem; cursor:pointer; font-weight:bold; line-height:1;">&times;</div>
+        const images = src ? src.split('|') : [];
+        if (images.length === 0) return;
+        
+        let currentIndex = 0;
+
+        const keydownHandler = (e) => {
+            if (e.key === 'ArrowLeft') {
+                currentIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1;
+                initModal();
+            } else if (e.key === 'ArrowRight') {
+                currentIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0;
+                initModal();
+            } else if (e.key === 'Escape') {
+                closeModal();
+            }
+        };
+
+        const closeModal = () => {
+            const el = document.getElementById('image-preview-modal');
+            if (el) el.remove();
+            document.removeEventListener('keydown', keydownHandler);
+        };
+
+        const renderModalContent = () => {
+            const currentImg = images[currentIndex];
+            let navHtml = '';
+            let thumbnailsHtml = '';
+            if (images.length > 1) {
+                navHtml = `
+                    <div style="display:flex; justify-content:space-between; width:100%; position:absolute; top:50%; transform:translateY(-50%); pointer-events:none; padding:0 10px; box-sizing:border-box;">
+                        <button id="prev-img-preview" style="pointer-events:auto; background:rgba(0,0,0,0.6); color:#fff; border:none; border-radius:50%; width:44px; height:44px; font-size:1.5rem; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 10px rgba(0,0,0,0.3); transition:background 0.2s;"><i class="fas fa-chevron-left"></i></button>
+                        <button id="next-img-preview" style="pointer-events:auto; background:rgba(0,0,0,0.6); color:#fff; border:none; border-radius:50%; width:44px; height:44px; font-size:1.5rem; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 10px rgba(0,0,0,0.3); transition:background 0.2s;"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div style="color:#fff; margin-top:10px; font-weight:600; text-shadow:0 2px 5px rgba(0,0,0,0.5); font-size:0.9rem;">
+                        ${currentIndex + 1} de ${images.length}
+                    </div>
+                `;
+
+                thumbnailsHtml = `
+                    <div style="display:flex; gap:8px; margin-top:15px; justify-content:center; flex-wrap:wrap; pointer-events:auto;">
+                        ${images.map((img, idx) => `
+                            <img src="${img}" class="preview-thumb-item" data-index="${idx}" style="width:48px; height:48px; object-fit:contain; background:#f8fafc; border-radius:4px; border:2px solid ${idx === currentIndex ? '#27ae60' : 'rgba(255,255,255,0.3)'}; cursor:pointer; opacity:${idx === currentIndex ? '1' : '0.6'}; transition:all 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="if(${idx} !== currentIndex) this.style.opacity='0.6'">
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="modal-backdrop" id="image-preview-modal" style="display:flex; z-index:999999; background:rgba(0,0,0,0.85); align-items:center; justify-content:center;" onclick="if(event.target.id === 'image-preview-modal') window.App.closeImagePreviewModal()">
+                    <div style="position:relative; max-width:90%; max-height:90%; display:flex; flex-direction:column; align-items:center; width: 600px;">
+                        <img src="${currentImg}" style="max-width:90vw; max-height:72vh; width:100%; object-fit:contain; border-radius:8px; border:4px solid #fff; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+                        <div style="position:absolute; top:-35px; right:0; color:#fff; font-size:2rem; cursor:pointer; font-weight:bold; line-height:1;" onclick="window.App.closeImagePreviewModal()">&times;</div>
+                        ${navHtml}
+                        ${thumbnailsHtml}
+                    </div>
                 </div>
-            </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
+            `;
+        };
+
+        const initModal = () => {
+            const old = document.getElementById('image-preview-modal');
+            if (old) old.remove();
+
+            const temp = document.createElement('div');
+            temp.innerHTML = renderModalContent();
+            const modalEl = temp.firstElementChild;
+            document.body.appendChild(modalEl);
+
+            if (images.length > 1) {
+                document.getElementById('prev-img-preview').onclick = (e) => {
+                    e.stopPropagation();
+                    currentIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1;
+                    initModal();
+                };
+                document.getElementById('next-img-preview').onclick = (e) => {
+                    e.stopPropagation();
+                    currentIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0;
+                    initModal();
+                };
+
+                const thumbs = document.querySelectorAll('.preview-thumb-item');
+                thumbs.forEach(thumb => {
+                    thumb.onclick = (e) => {
+                        e.stopPropagation();
+                        currentIndex = parseInt(thumb.getAttribute('data-index'));
+                        initModal();
+                    };
+                });
+            }
+        };
+
+        // Export to global scope
+        window.App.closeImagePreviewModal = closeModal;
+
+        // Add keyboard listener
+        document.addEventListener('keydown', keydownHandler);
+
+        initModal();
     },
 
     confirm(message, callbackOnConfirm, callbackOnCancel = null) {

@@ -411,7 +411,7 @@ if (!isset($_SESSION['user_id'])) exit;
 
         cart.forEach((item, idx) => {
             sumSubtotal += item.subtotal_fila;
-            const img = item.ruta_imagen ? item.ruta_imagen : 'https://cdn-icons-png.flaticon.com/512/869/869045.png';
+            const img = item.ruta_imagen ? item.ruta_imagen.split('|')[0] : 'https://cdn-icons-png.flaticon.com/512/869/869045.png';
             
             // IMEI Input Row if required
             let imeiRow = '';
@@ -637,10 +637,11 @@ if (!isset($_SESSION['user_id'])) exit;
         });
 
         filtered.forEach(p => {
-            const img = p.ruta_imagen_producto ? p.ruta_imagen_producto : 'https://cdn-icons-png.flaticon.com/512/869/869045.png';
+            const imgFull = p.ruta_imagen_producto ? p.ruta_imagen_producto : 'https://cdn-icons-png.flaticon.com/512/869/869045.png';
+            const imgFirst = p.ruta_imagen_producto ? p.ruta_imagen_producto.split('|')[0] : 'https://cdn-icons-png.flaticon.com/512/869/869045.png';
             tbody.insertAdjacentHTML('beforeend', `
                 <tr>
-                    <td><img src="${img}" style="width:36px; height:36px; object-fit:cover; border-radius:4px; cursor:pointer;" onclick="App.showImagePreview('${img}')" onerror="this.src='https://cdn-icons-png.flaticon.com/512/869/869045.png'"></td>
+                    <td><img src="${imgFirst}" style="width:36px; height:36px; object-fit:contain; background:#f8fafc; border-radius:4px; cursor:pointer;" onclick="App.showImagePreview('${imgFull}')" onerror="this.src='https://cdn-icons-png.flaticon.com/512/869/869045.png'"></td>
                     <td>${p.codigo_barras_producto || 'N/A'}</td>
                     <td>${p.nombre_producto}</td>
                     <td class="bold">L ${parseFloat(p.precio_venta_producto).toFixed(2)}</td>

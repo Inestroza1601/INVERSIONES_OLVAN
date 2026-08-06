@@ -16,7 +16,7 @@ public class Producto {
     private boolean eliminado; // 0 = Activo, 1 = Eliminado (Soft Delete)
     private int diasGarantia;
     private boolean requiereSerie;
-    private boolean incluyeImpuesto = true;
+    private boolean incluyeImpuesto;
 
     public Producto() {
     }
@@ -72,66 +72,6 @@ public class Producto {
 
     public double getPrecioCompra() {
         return precioCompra;
-    }
-
-    public void setPrecioCompra(double precioCompra) {
-        this.precioCompra = precioCompra;
-    }
-
-    public double getPrecioVenta() {
-        return precioVenta;
-    }
-
-    public void setPrecioVenta(double precioVenta) {
-        this.precioVenta = precioVenta;
-    }
-
-    public double getPrecioMayorista() {
-        return precioMayorista;
-    }
-
-    public void setPrecioMayorista(double precioMayorista) {
-        this.precioMayorista = precioMayorista;
-    }
-
-    public int getStockMinimo() {
-        return stockMinimo;
-    }
-
-    public void setStockMinimo(int stockMinimo) {
-        this.stockMinimo = stockMinimo;
-    }
-
-    public int getStockProducto() {
-        return stockProducto;
-    }
-
-    public void setStockProducto(int stockProducto) {
-        this.stockProducto = stockProducto;
-    }
-
-    public String getRutaImagen() {
-        return rutaImagen;
-    }
-
-    public void setRutaImagen(String rutaImagen) {
-        this.rutaImagen = rutaImagen;
-    }
-
-    public boolean isEliminado() {
-        return eliminado;
-    }
-
-    public void setEliminado(boolean eliminado) {
-        this.eliminado = eliminado;
-    }
-
-    public int getDiasGarantia() {
-        return diasGarantia;
-    }
-
-    public void setDiasGarantia(int diasGarantia) {
-        this.diasGarantia = diasGarantia;
     }
 
     public boolean isRequiereSerie() {

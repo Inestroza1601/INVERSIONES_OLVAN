@@ -31,7 +31,7 @@ public class PanelApartados extends JPanel {
 
     private void iniciarDiseno() {
         this.setLayout(new BorderLayout(20, 20));
-        this.setBackground(new Color(240, 242, 245)); // Gris Nube
+        this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); // Verde Vintage
         this.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
         // Cabecera
@@ -40,7 +40,7 @@ public class PanelApartados extends JPanel {
 
         JLabel lblTitulo = new JLabel("Módulo de Apartados y Abonos");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        lblTitulo.setForeground(new Color(45, 45, 45));
+        lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         pnlCabecera.add(lblTitulo, BorderLayout.WEST);
 
         JPanel pnlBuscar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
@@ -57,6 +57,7 @@ public class PanelApartados extends JPanel {
         chkMostrarEntregados = new JCheckBox("Mostrar Entregados/Cancelados");
         chkMostrarEntregados.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         chkMostrarEntregados.setOpaque(false);
+        chkMostrarEntregados.setForeground(utilidades.EfectosUI.COLOR_TEXTO_OSCURO);
         chkMostrarEntregados.setSelected(false);
         chkMostrarEntregados.addActionListener(e -> cargarApartados());
         pnlBuscar.add(chkMostrarEntregados);
@@ -111,44 +112,44 @@ public class PanelApartados extends JPanel {
         this.add(scroll, BorderLayout.CENTER);
 
         // Botonera Lateral/Inferior
-        JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
+        JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
         pnlBotones.setOpaque(false);
 
         JButton btnDetalles = new JButton("Ver Detalles", new IconoBoton(1));
         btnDetalles.setBackground(Color.WHITE);
         btnDetalles.setForeground(new Color(45, 45, 45));
-        btnDetalles.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnDetalles.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnDetalles.setFocusPainted(false);
         btnDetalles.setIconTextGap(8);
-        btnDetalles.setPreferredSize(new Dimension(140, 38));
+        btnDetalles.setPreferredSize(new Dimension(170, 50));
         btnDetalles.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)));
         btnDetalles.addActionListener(e -> verDetallesApartado());
 
         JButton btnAbonar = new JButton("Registrar Abono", new IconoBoton(2));
         btnAbonar.setBackground(new Color(39, 174, 96)); // Verde Menta
         btnAbonar.setForeground(Color.WHITE);
-        btnAbonar.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnAbonar.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnAbonar.setFocusPainted(false);
         btnAbonar.setIconTextGap(8);
-        btnAbonar.setPreferredSize(new Dimension(160, 38));
+        btnAbonar.setPreferredSize(new Dimension(210, 50));
         btnAbonar.addActionListener(e -> registrarAbonoRapido());
 
         JButton btnEntregar = new JButton("Entregar Artículos", new IconoBoton(3));
         btnEntregar.setBackground(new Color(41, 128, 185)); // Azul
         btnEntregar.setForeground(Color.WHITE);
-        btnEntregar.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnEntregar.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnEntregar.setFocusPainted(false);
         btnEntregar.setIconTextGap(8);
-        btnEntregar.setPreferredSize(new Dimension(175, 38));
+        btnEntregar.setPreferredSize(new Dimension(230, 50));
         btnEntregar.addActionListener(e -> entregarArticulos());
 
         JButton btnCancelar = new JButton("Cancelar Apartado", new IconoBoton(4));
         btnCancelar.setBackground(new Color(227, 0, 15)); // Rojo Logo
         btnCancelar.setForeground(Color.WHITE);
-        btnCancelar.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnCancelar.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnCancelar.setFocusPainted(false);
         btnCancelar.setIconTextGap(8);
-        btnCancelar.setPreferredSize(new Dimension(175, 38));
+        btnCancelar.setPreferredSize(new Dimension(230, 50));
         btnCancelar.addActionListener(e -> cancelarApartadoCompleto());
 
         // Restringir botón de cancelar si es cajero
@@ -266,12 +267,29 @@ public class PanelApartados extends JPanel {
         }
 
         Window parent = SwingUtilities.getWindowAncestor(this);
-        DialogoRegistrarAbono dialog = new DialogoRegistrarAbono((Frame) parent, id);
-        dialog.setVisible(true);
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-        if (dialog.isExito()) {
-            cargarApartados();
-        }
+        SwingWorker<DialogoRegistrarAbono, Void> worker = new SwingWorker<DialogoRegistrarAbono, Void>() {
+            @Override
+            protected DialogoRegistrarAbono doInBackground() throws Exception {
+                return new DialogoRegistrarAbono((Frame) parent, id);
+            }
+            @Override
+            protected void done() {
+                setCursor(Cursor.getDefaultCursor());
+                try {
+                    DialogoRegistrarAbono dialog = get();
+                    dialog.setVisible(true);
+                    if (dialog.isExito()) {
+                        cargarApartados();
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(PanelApartados.this, "Error al abrir la ventana: " + ex.getMessage());
+                }
+            }
+        };
+        worker.execute();
     }
 
     private void entregarArticulos() {
@@ -306,23 +324,42 @@ public class PanelApartados extends JPanel {
             return;
         }
 
-        JCheckBox chkISV = new JCheckBox("Calcular y aplicar 15% de Impuesto (ISV) a esta venta", true);
         Object[] msj = {
+<<<<<<< HEAD
                 "¿Confirmar que la mercancía ha sido entregada físicamente al cliente?",
                 "Esta acción registrará oficialmente los ingresos en el Historial de Ventas.",
                 " ",
                 chkISV
+=======
+            "¿Confirmar que la mercancía ha sido entregada físicamente al cliente?",
+            "Esta acción registrará oficialmente los ingresos en el Historial de Ventas."
+>>>>>>> origin/parte-muoz
         };
         int opt = JOptionPane.showConfirmDialog(this, msj, "Entregar Apartado y Registrar Venta",
                 JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
 
         if (opt == JOptionPane.YES_OPTION) {
+<<<<<<< HEAD
             int idUser = utilidades.SesionGlobal.getUsuarioActual() != null
                     ? utilidades.SesionGlobal.getUsuarioActual().getIdUsuario()
                     : 1;
             if (dao.entregarApartadoYGenerarVenta(id, idUser, chkISV.isSelected())) {
                 JOptionPane.showMessageDialog(this, "Apartado completado, entregado y Venta registrada exitosamente.",
                         "Éxito", JOptionPane.INFORMATION_MESSAGE);
+=======
+            int idUser = utilidades.SesionGlobal.getUsuarioActual() != null ? utilidades.SesionGlobal.getUsuarioActual().getIdUsuario() : 1;
+            int idVentaGenerada = dao.entregarApartadoYGenerarVenta(id, idUser, false);
+            if (idVentaGenerada > 0) {
+                try {
+                    java.io.File pdf = utilidades.GeneradorTickets.generarFactura(idVentaGenerada);
+                    if (java.awt.Desktop.isDesktopSupported()) {
+                        java.awt.Desktop.getDesktop().open(pdf);
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                JOptionPane.showMessageDialog(this, "Apartado completado, entregado y Comprobante registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+>>>>>>> origin/parte-muoz
                 cargarApartados();
             } else {
                 JOptionPane.showMessageDialog(this, "Error de base de datos al entregar apartado y generar venta.",
@@ -395,8 +432,25 @@ public class PanelApartados extends JPanel {
         int id = (int) tablaApartados.getValueAt(selectedRow, 0);
 
         Window parent = SwingUtilities.getWindowAncestor(this);
-        DialogoDetallesApartado dialog = new DialogoDetallesApartado((Frame) parent, id);
-        dialog.setVisible(true);
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+        SwingWorker<DialogoDetallesApartado, Void> worker = new SwingWorker<DialogoDetallesApartado, Void>() {
+            @Override
+            protected DialogoDetallesApartado doInBackground() throws Exception {
+                return new DialogoDetallesApartado((Frame) parent, id);
+            }
+            @Override
+            protected void done() {
+                setCursor(Cursor.getDefaultCursor());
+                try {
+                    get().setVisible(true);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(PanelApartados.this, "Error al abrir detalles: " + ex.getMessage());
+                }
+            }
+        };
+        worker.execute();
     }
 
     // Clase interna para dibujar iconos vectoriales de los botones sin usar emojis

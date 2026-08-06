@@ -50,23 +50,37 @@ public class ServidorFotos extends NanoHTTPD {
         sb.append("        <h2>Escaner de Fotos</h2>\n");
         sb.append("        <p>Por favor, adjunta la foto requerida por el sistema.</p>\n");
         sb.append("        <div class=\"file-upload\">\n");
+<<<<<<< HEAD
         sb.append("            <button type=\"button\" class=\"btn btn-camera\">📷 Abrir Cámara</button>\n");
         sb.append(
                 "            <input type=\"file\" accept=\"image/*\" capture=\"environment\" class=\"foto-input\" required>\n");
+=======
+        sb.append("            <button type=\"button\" class=\"btn btn-camera\">Abrir Cámara</button>\n");
+        sb.append("            <input type=\"file\" accept=\"image/*\" capture=\"environment\" class=\"foto-input\" required>\n");
+>>>>>>> origin/parte-muoz
         sb.append("        </div>\n");
 
         if (mostrarGaleria) {
             sb.append("        <div class=\"file-upload\">\n");
+<<<<<<< HEAD
             sb.append(
                     "            <button type=\"button\" class=\"btn\" style=\"background:#2ecc71;\">🖼️ Abrir Galería</button>\n");
+=======
+            sb.append("            <button type=\"button\" class=\"btn\" style=\"background:#2ecc71;\">Abrir Galería</button>\n");
+>>>>>>> origin/parte-muoz
             sb.append("            <input type=\"file\" accept=\"image/*\" class=\"foto-input\" required>\n");
             sb.append("        </div>\n");
         }
 
         sb.append("        <img id=\"preview\" src=\"\" alt=\"Vista Previa\">\n");
+<<<<<<< HEAD
         sb.append("        <div id=\"loading\">Procesando y subiendo imagen... ⏳</div>\n");
         sb.append(
                 "        <button type=\"button\" class=\"btn\" id=\"btnSubmit\" style=\"display:none;\">Subir al Sistema</button>\n");
+=======
+        sb.append("        <div id=\"loading\">Procesando y subiendo imagen...</div>\n");
+        sb.append("        <button type=\"button\" class=\"btn\" id=\"btnSubmit\" style=\"display:none;\">Subir al Sistema</button>\n");
+>>>>>>> origin/parte-muoz
         sb.append("    </div>\n");
         sb.append("    <script>\n");
         sb.append("        const fotoInputs = document.querySelectorAll('.foto-input');\n");
@@ -122,8 +136,12 @@ public class ServidorFotos extends NanoHTTPD {
         sb.append("                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },\n");
         sb.append("                    body: 'fotoBase64=' + encodeURIComponent(finalBase64)\n");
         sb.append("                }).then(response => response.text()).then(text => {\n");
+<<<<<<< HEAD
         sb.append(
                 "                    mainContainer.innerHTML = '<h2>¡Foto enviada con éxito! ✅</h2><p>Ya puedes cerrar esta ventana y regresar a la computadora.</p>';\n");
+=======
+        sb.append("                    mainContainer.innerHTML = '<h2>¡Foto enviada con éxito!</h2><p>Ya puedes cerrar esta ventana y regresar a la computadora.</p>';\n");
+>>>>>>> origin/parte-muoz
         sb.append("                }).catch(err => {\n");
         sb.append("                    alert('Error al subir la foto: ' + err);\n");
         sb.append("                    btnSubmit.style.display = 'block';\n");

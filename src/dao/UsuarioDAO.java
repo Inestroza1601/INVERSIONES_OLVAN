@@ -55,6 +55,21 @@ public class UsuarioDAO {
         }
     }
 
+    public boolean activarUsuario(int idUsuario) {
+        String sql = "UPDATE USUARIOS SET estado_usuario = 1 WHERE id_usuario = ?";
+        
+        try (Connection con = factory.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+             
+            ps.setInt(1, idUsuario); 
+            return ps.executeUpdate() > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Error al activar usuario: " + e.getMessage());
+            return false;
+        }
+    }
+
     // 3. OBTENER TODOS PARA LA TABLA
     public List<Usuario> listarUsuarios() {
         List<Usuario> lista = new ArrayList<>();
@@ -235,6 +250,25 @@ public class UsuarioDAO {
             System.err.println("Error al actualizar password: " + e.getMessage());
             return false;
         }
+    }
+
+    // =========================================================
+    // VALIDACION DE SEGURIDAD
+    // =========================================================
+
+    public boolean existePassword(String passwordPlana) {
+        String hash = utilidades.Seguridad.encriptarSHA256(passwordPlana);
+        String sql = "SELECT 1 FROM USUARIOS WHERE password_hash = ?";
+        try (Connection con = factory.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, hash);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next(); // Retorna true si hay un hash igual
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al verificar password: " + e.getMessage());
+        }
+        return false;
     }
 
     // =========================================================

@@ -28,7 +28,7 @@ public class PanelGestionClientes extends JPanel {
     private void iniciarDiseno() {
         this.removeAll();
         this.setLayout(new BorderLayout(20, 20));
-        this.setBackground(new Color(240, 242, 245)); // Gris Nube
+        this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); // Verde Vintage
         this.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
         // --- 1. PANEL SUPERIOR (Título, Búsqueda y Botón Nuevo) ---
@@ -37,7 +37,7 @@ public class PanelGestionClientes extends JPanel {
 
         JLabel lblTitulo = new JLabel("Directorio de Clientes");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        lblTitulo.setForeground(new Color(45, 45, 45)); // Gris Oscuro
+        lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
 
         // El buscador lo metemos en un panel central para que no se estire a lo loco
         JPanel panelCentro = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
@@ -50,13 +50,14 @@ public class PanelGestionClientes extends JPanel {
 
         btnNuevoCliente = new JButton("+ Nuevo Cliente");
         btnNuevoCliente.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        btnNuevoCliente.setBackground(new Color(39, 174, 96)); // Verde Menta
-        btnNuevoCliente.setForeground(Color.WHITE);
-        btnNuevoCliente.setFocusPainted(false);
         btnNuevoCliente.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        btnNuevoCliente.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnNuevoCliente.putClientProperty("JButton.buttonType", "roundRect");
+<<<<<<< HEAD
 
+=======
+        utilidades.EfectosUI.aplicarEfectoHover(btnNuevoCliente, utilidades.EfectosUI.COLOR_VERDE_PRIMARIO, utilidades.EfectosUI.COLOR_VERDE_HOVER, Color.WHITE, Color.WHITE);
+        
+>>>>>>> origin/parte-muoz
         btnNuevoCliente.addActionListener(e -> abrirFormularioCliente(null));
 
         // Asignamos cada cosa a su esquina para que nunca choquen
@@ -82,16 +83,16 @@ public class PanelGestionClientes extends JPanel {
         tablaClientes.setIntercellSpacing(new Dimension(0, 0));
         tablaClientes.setRowHeight(55);
         tablaClientes.setBackground(new Color(255, 255, 255)); // Blanco Puro
-        tablaClientes.setForeground(new Color(45, 45, 45)); // Gris Oscuro
+        tablaClientes.setForeground(new Color(30, 41, 59));
         tablaClientes.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        tablaClientes.setSelectionBackground(new Color(230, 235, 240)); // Gris/Azul muy suave para selección
-        tablaClientes.setSelectionForeground(new Color(45, 45, 45));
+        tablaClientes.setSelectionBackground(new Color(209, 250, 229)); // Menta luminosa
+        tablaClientes.setSelectionForeground(new Color(6, 95, 70));
 
         tablaClientes.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-        tablaClientes.getTableHeader().setBackground(new Color(240, 242, 245)); // Gris Nube
-        tablaClientes.getTableHeader().setForeground(new Color(100, 100, 100)); // Gris intermedio
-        tablaClientes.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 222, 225)));
-        tablaClientes.getTableHeader().setPreferredSize(new Dimension(0, 40));
+        tablaClientes.getTableHeader().setBackground(new Color(236, 253, 245)); // Verde Menta fresca
+        tablaClientes.getTableHeader().setForeground(new Color(6, 95, 70));     // Verde Esmeralda Oscuro
+        tablaClientes.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(16, 185, 129)));
+        tablaClientes.getTableHeader().setPreferredSize(new Dimension(0, 42));
 
         // Ocultar ID (0), NombreRaw (6) y ApellidoRaw (7)
         ocultarColumna(0);
@@ -186,6 +187,7 @@ public class PanelGestionClientes extends JPanel {
         Window ventanaPadre = SwingUtilities.getWindowAncestor(this);
         JDialog dialog = new JDialog((Frame) ventanaPadre, "Cliente", true);
         dialog.setUndecorated(true);
+<<<<<<< HEAD
         dialog.setBackground(new Color(0, 0, 0, 0));
 
         PanelFormularioCliente panelFormulario = new PanelFormularioCliente(dialog, this, cliente);
@@ -194,6 +196,38 @@ public class PanelGestionClientes extends JPanel {
         dialog.pack();
         dialog.setLocationRelativeTo(ventanaPadre);
         dialog.setVisible(true);
+=======
+        dialog.setBackground(new Color(0, 0, 0, 0)); 
+        
+        // Estado visual de carga (Cursor)
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        if (btnNuevoCliente != null) btnNuevoCliente.setEnabled(false);
+
+        SwingWorker<PanelFormularioCliente, Void> worker = new SwingWorker<PanelFormularioCliente, Void>() {
+            @Override
+            protected PanelFormularioCliente doInBackground() throws Exception {
+                // Instancia el panel en segundo plano (las DB queries corren aquí)
+                return new PanelFormularioCliente(dialog, PanelGestionClientes.this, cliente);
+            }
+
+            @Override
+            protected void done() {
+                setCursor(Cursor.getDefaultCursor());
+                if (btnNuevoCliente != null) btnNuevoCliente.setEnabled(true);
+                try {
+                    PanelFormularioCliente panelFormulario = get();
+                    dialog.add(panelFormulario);
+                    dialog.pack();
+                    dialog.setLocationRelativeTo(ventanaPadre);
+                    dialog.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(PanelGestionClientes.this, "Error al abrir el formulario: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        };
+        worker.execute();
+>>>>>>> origin/parte-muoz
     }
 
     // =========================================================================
