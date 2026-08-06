@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="drivers/jfreechart-1.5.3.jar"/>
 	<classpathentry kind="lib" path="drivers/mssql-jdbc-12.4.2.jre11.jar"/>
 	<classpathentry kind="lib" path="drivers/nanohttpd-2.3.1.jar"/>
+	<classpathentry kind="lib" path="drivers/jcalendar-1.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

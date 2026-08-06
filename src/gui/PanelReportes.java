@@ -5,6 +5,7 @@ import utilidades.GeneradorReportesPDF;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import com.toedter.calendar.JDateChooser;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,9 +20,9 @@ public class PanelReportes extends JPanel {
     private DefaultTableModel modeloTabla;
 
     // Filtros específicos
-    private JTextField txtFechaDiaria;
-    private JTextField txtFechaDesde;
-    private JTextField txtFechaHasta;
+    private JDateChooser dpFechaDiaria;
+    private JDateChooser dpFechaDesde;
+    private JDateChooser dpFechaHasta;
 
     private ReportesDAO reportesDAO;
     private List<Object[]> ultimosDatos;
@@ -105,18 +106,24 @@ public class PanelReportes extends JPanel {
         int index = cmbTipoReporte.getSelectedIndex();
         
         if (index == 0) { // Caja Diario
-            panelFiltros.add(new JLabel("Fecha (YYYY-MM-DD):"));
-            txtFechaDiaria = new JTextField(new SimpleDateFormat("yyyy-MM-dd").format(new Date()), 10);
-            panelFiltros.add(txtFechaDiaria);
+            panelFiltros.add(new JLabel("Fecha:"));
+            dpFechaDiaria = new JDateChooser(new Date());
+            dpFechaDiaria.setDateFormatString("yyyy-MM-dd");
+            aplicarEstiloDateChooser(dpFechaDiaria);
+            panelFiltros.add(dpFechaDiaria);
         } 
         else if (index == 1) { // Detallado Ventas
-            panelFiltros.add(new JLabel("Desde (YYYY-MM-DD):"));
-            txtFechaDesde = new JTextField(new SimpleDateFormat("yyyy-MM-01").format(new Date()), 8);
-            panelFiltros.add(txtFechaDesde);
+            panelFiltros.add(new JLabel("Desde:"));
+            dpFechaDesde = new JDateChooser(new Date());
+            dpFechaDesde.setDateFormatString("yyyy-MM-dd");
+            aplicarEstiloDateChooser(dpFechaDesde);
+            panelFiltros.add(dpFechaDesde);
             
             panelFiltros.add(new JLabel("Hasta:"));
-            txtFechaHasta = new JTextField(new SimpleDateFormat("yyyy-MM-dd").format(new Date()), 8);
-            panelFiltros.add(txtFechaHasta);
+            dpFechaHasta = new JDateChooser(new Date());
+            dpFechaHasta.setDateFormatString("yyyy-MM-dd");
+            aplicarEstiloDateChooser(dpFechaHasta);
+            panelFiltros.add(dpFechaHasta);
         }
         // Inventario y Alertas no necesitan filtros extras por ahora
 
@@ -127,18 +134,44 @@ public class PanelReportes extends JPanel {
         modeloTabla.setColumnCount(0);
     }
 
+    private void aplicarEstiloDateChooser(JDateChooser dateChooser) {
+        // Estilo general
+        dateChooser.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        dateChooser.setBackground(Color.WHITE);
+
+        // Estilo del campo de texto
+        com.toedter.calendar.JTextFieldDateEditor editor = (com.toedter.calendar.JTextFieldDateEditor) dateChooser.getDateEditor();
+        editor.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        editor.setBackground(Color.WHITE);
+        editor.setForeground(utilidades.EfectosUI.COLOR_TEXTO_OSCURO);
+        editor.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(utilidades.EfectosUI.COLOR_BORDE, 1),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+
+        // Estilo del botón del calendario
+        JButton boton = dateChooser.getCalendarButton();
+        boton.setBackground(Color.WHITE);
+        boton.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(utilidades.EfectosUI.COLOR_BORDE, 1),
+                BorderFactory.createEmptyBorder(2, 5, 2, 5)
+        ));
+        boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        utilidades.EfectosUI.aplicarEfectoHover(boton, Color.WHITE, utilidades.EfectosUI.COLOR_VERDE_CLARO, utilidades.EfectosUI.COLOR_TEXTO_OSCURO, Color.BLACK);
+    }
+
     private void previsualizarReporte() {
         int index = cmbTipoReporte.getSelectedIndex();
         
         if (index == 0) {
-            String fecha = txtFechaDiaria.getText().trim();
+            String fecha = new SimpleDateFormat("yyyy-MM-dd").format(dpFechaDiaria.getDate());
             ultimasColumnas = new String[]{"ID Caja", "Fecha", "Saldo Inicial", "Ingresos", "Egresos", "Saldo Final", "Estado"};
             ultimosDatos = reportesDAO.obtenerReporteCajaDiario(fecha);
             ultimoTitulo = "Reporte Diario de Caja - " + fecha;
         } 
         else if (index == 1) {
-            String fDesde = txtFechaDesde.getText().trim();
-            String fHasta = txtFechaHasta.getText().trim();
+            String fDesde = new SimpleDateFormat("yyyy-MM-dd").format(dpFechaDesde.getDate());
+            String fHasta = new SimpleDateFormat("yyyy-MM-dd").format(dpFechaHasta.getDate());
             ultimasColumnas = new String[]{"Fecha", "Ticket", "Tipo Venta", "Producto", "Cantidad", "Subtotal (L.)"};
             ultimosDatos = reportesDAO.obtenerReporteDetalladoVentas(fDesde, fHasta);
             ultimoTitulo = "Reporte Detallado de Ventas (" + fDesde + " al " + fHasta + ")";
