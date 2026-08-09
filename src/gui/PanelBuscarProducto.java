@@ -24,8 +24,8 @@ public class PanelBuscarProducto extends JPanel {
     private TableRowSorter<DefaultTableModel> sorter;
     
     // Caché y estado para Lazy Loading con Shimmer
-    private java.util.Map<String, ImageIcon> cacheImagenes = new java.util.concurrent.ConcurrentHashMap<>();
-    private java.util.Set<String> imagenesEnProceso = java.util.Collections.synchronizedSet(new java.util.HashSet<>());
+    private java.util.Map<Integer, ImageIcon> cacheImagenes = new java.util.concurrent.ConcurrentHashMap<>();
+    private java.util.Set<Integer> imagenesEnProceso = java.util.Collections.synchronizedSet(new java.util.HashSet<>());
     private float animacionShimmerPhase = 0f;
     private Timer timerShimmer;
 
@@ -146,13 +146,8 @@ public class PanelBuscarProducto extends JPanel {
                     // 1. Lógica para hacer ZOOM a la foto (Clic Izquierdo en Columna 1)
                     if (columna == 1 && SwingUtilities.isLeftMouseButton(e)) {
                         int filaModelo = tablaInventario.convertRowIndexToModel(fila);
-                        String rutaImagen = (String) modeloTabla.getValueAt(filaModelo, 1);
-                        if (rutaImagen == null || rutaImagen.isEmpty()) {
-                            if (SesionGlobal.getEmpresaActual() != null && SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
-                                rutaImagen = SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
-                            }
-                        }
-                        mostrarZoomImagen(rutaImagen);
+                        int idProducto = (int) modeloTabla.getValueAt(filaModelo, 0);
+                        mostrarZoomImagen(idProducto);
                     }
                     
                     // 2. Lógica del Menú Estilo Windows (Doble Clic Izquierdo O Clic Derecho)
@@ -211,23 +206,17 @@ public class PanelBuscarProducto extends JPanel {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             
-            String imgValOriginal = (value != null) ? value.toString() : null;
-            if (imgValOriginal == null || imgValOriginal.trim().isEmpty()) {
-                if (SesionGlobal.getEmpresaActual() != null && SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
-                    imgValOriginal = SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
-                }
-            }
-            
-            final String imgVal = imgValOriginal;
+            int filaModelo = table.convertRowIndexToModel(row);
+            int idProducto = (int) table.getModel().getValueAt(filaModelo, 0);
             
             // Si ya está en caché, retornamos el JLabel normal
-            if (imgVal != null && cacheImagenes.containsKey(imgVal)) {
+            if (cacheImagenes.containsKey(idProducto)) {
                 JLabel label = new JLabel();
                 label.setHorizontalAlignment(SwingConstants.CENTER);
                 label.setOpaque(true);
                 label.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
                 
-                ImageIcon icon = cacheImagenes.get(imgVal);
+                ImageIcon icon = cacheImagenes.get(idProducto);
                 if (icon != null && icon.getIconWidth() > 0) {
                     label.setIcon(icon);
                 } else {
@@ -238,13 +227,20 @@ public class PanelBuscarProducto extends JPanel {
             }
 
             // Si NO está en caché, iniciamos SwingWorker y retornamos panel animado
-            if (imgVal != null && !imagenesEnProceso.contains(imgVal)) {
-                imagenesEnProceso.add(imgVal);
+            if (!imagenesEnProceso.contains(idProducto)) {
+                imagenesEnProceso.add(idProducto);
                 
                 SwingWorker<ImageIcon, Void> worker = new SwingWorker<>() {
                     @Override
                     protected ImageIcon doInBackground() throws Exception {
-                        // Extraer solo la primera imagen si hay varias
+                        String imgVal = new InventarioDAO().obtenerRutaImagenBase64(idProducto);
+                        if (imgVal == null || imgVal.trim().isEmpty()) {
+                            if (SesionGlobal.getEmpresaActual() != null && SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
+                                imgVal = SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
+                            }
+                        }
+                        if (imgVal == null || imgVal.trim().isEmpty()) return null;
+                        
                         String valProcesar = imgVal;
                         if (valProcesar.contains("|")) {
                             valProcesar = valProcesar.split("\\|")[0];
@@ -256,11 +252,11 @@ public class PanelBuscarProducto extends JPanel {
                         try {
                             ImageIcon icon = get();
                             // Guardamos null-safe
-                            cacheImagenes.put(imgVal, icon != null ? icon : new ImageIcon()); 
+                            cacheImagenes.put(idProducto, icon != null ? icon : new ImageIcon()); 
                         } catch (Exception ex) {
-                            cacheImagenes.put(imgVal, new ImageIcon());
+                            cacheImagenes.put(idProducto, new ImageIcon());
                         } finally {
-                            imagenesEnProceso.remove(imgVal);
+                            imagenesEnProceso.remove(idProducto);
                             table.repaint();
                         }
                     }
@@ -304,7 +300,8 @@ public class PanelBuscarProducto extends JPanel {
         }
     }
     
-    private void mostrarZoomImagen(String imgVal) {
+    private void mostrarZoomImagen(int idProducto) {
+        String imgVal = new InventarioDAO().obtenerRutaImagenBase64(idProducto);
         if (imgVal == null || imgVal.trim().isEmpty()) {
             if (SesionGlobal.getEmpresaActual() != null && SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
                 imgVal = SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();

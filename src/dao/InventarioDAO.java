@@ -124,7 +124,7 @@ public class InventarioDAO {
 
     public java.util.List<Producto> listarProductosActivos() {
         java.util.List<Producto> lista = new java.util.ArrayList<>();
-        String sql = "SELECT * FROM INVENTARIO WHERE eliminado_producto = 0 ORDER BY CASE WHEN stock_producto > 0 THEN 0 ELSE 1 END ASC, id_producto ASC";
+        String sql = "SELECT id_producto, codigo_barras_producto, nombre_producto, precio_compra_producto, precio_venta_producto, precio_mayorista_producto, stock_producto, dias_garantia, requiere_serie, incluye_impuesto FROM INVENTARIO WHERE eliminado_producto = 0 ORDER BY CASE WHEN stock_producto > 0 THEN 0 ELSE 1 END ASC, id_producto ASC";
 
         try (Connection con = factory.getConexion();
              PreparedStatement ps = con.prepareStatement(sql);
@@ -139,7 +139,7 @@ public class InventarioDAO {
                 p.setPrecioVenta(rs.getDouble("precio_venta_producto"));
                 p.setPrecioMayorista(rs.getDouble("precio_mayorista_producto"));
                 p.setStockProducto(rs.getInt("stock_producto"));
-                p.setRutaImagen(rs.getString("ruta_imagen_producto"));
+                p.setRutaImagen(null);
                 
                 // --- LAS DOS LÍNEAS QUE FALTABAN AQUÍ ---
                 p.setDiasGarantia(rs.getInt("dias_garantia"));
@@ -153,6 +153,21 @@ public class InventarioDAO {
             System.err.println("Error al listar inventario: " + e.getMessage());
         }
         return lista;
+    }
+
+    public String obtenerRutaImagenBase64(int idProducto) {
+        String sql = "SELECT ruta_imagen_producto FROM INVENTARIO WHERE id_producto = ?";
+        try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idProducto);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("ruta_imagen_producto");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener imagen del producto: " + e.getMessage());
+        }
+        return null;
     }
 
     public boolean eliminarProductoLogico(int idProducto) {
