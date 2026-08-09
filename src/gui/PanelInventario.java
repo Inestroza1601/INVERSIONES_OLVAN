@@ -48,8 +48,9 @@ public class PanelInventario extends JPanel {
         btnInventarioDefectuoso.setFont(new Font("Segoe UI", Font.BOLD, 16));
 
         panelSubMenu.add(btnBuscarProducto);
-        int rolId = (utilidades.SesionGlobal.getUsuarioActual() != null) ? utilidades.SesionGlobal.getUsuarioActual().getIdRol() : 1;
-        if (rolId != 3) {
+        modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
+        // Control RBAC: Solo usuarios con permiso para eliminar/gestionar pueden crear o ver defectuosos
+        if (uAct == null || uAct.tienePermiso("ELIMINAR_PRODUCTOS")) {
             panelSubMenu.add(btnCrearProducto);
             panelSubMenu.add(btnInventarioDefectuoso);
         }

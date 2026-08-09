@@ -188,16 +188,28 @@ public class DialogoDetallesApartado extends JDialog {
         double monto = Double.parseDouble(montoStr.replace("L ", "").replace(",", "").trim());
         String metodo = (String) tablaAbonos.getValueAt(row, 3);
         
+        // Buscar el abono original para obtener su saldo histórico
+        modelo.AbonoApartado abonoOrig = null;
+        for (modelo.AbonoApartado ab : abonos) {
+            if (ab.getIdAbono() == idAbono) {
+                abonoOrig = ab;
+                break;
+            }
+        }
+        
+        if (abonoOrig == null) {
+            JOptionPane.showMessageDialog(this, "Error: No se encontró la información histórica del abono.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         try {
             String ruta = System.getProperty("user.home") + "/Ticket_Reimpresion_Abono_" + idAbono + "_" + System.currentTimeMillis() + ".pdf";
-            // Nota: Aquí se asume saldo actual del apartado, idealmente se debería calcular el saldo histórico.
-            // Para reimpresión básica, pasaremos el saldo actual, pero lo ideal es guardarlo por historial.
             utilidades.GeneradorTickets.generarTicketAbonoPDF(
                 ruta,
                 ap.getNombreCliente() + " " + (ap.getApellidoCliente() != null ? ap.getApellidoCliente() : ""),
                 fecha,
                 monto,
-                ap.getSaldoPendiente(), // Saldo actual de la cuenta
+                abonoOrig.getSaldoHistorico(), 
                 metodo,
                 null,
                 null,

@@ -1086,7 +1086,7 @@ public class GeneradorTickets {
         documento.close();
     }
     
-    public void imprimirTicketCambio(int idDetalleOriginal, modelo.Producto productoSustituto, double precioOriginal) {
+    public static void generarTicketCambioPDF(int idDetalleOriginal, modelo.Producto productoSustituto, double precioOriginal) {
         try {
             java.io.File dir = new java.io.File("reportes");
             if (!dir.exists()) dir.mkdirs();
@@ -1199,7 +1199,7 @@ public class GeneradorTickets {
         }
     }
 
-    public static void imprimirTicketGarantia(int idDetalleOriginal, String resolucion, String observacion) {
+    public static void generarTicketGarantiaPDF(int idDetalleOriginal, String resolucion, String observacion) {
         try {
             java.io.File dir = new java.io.File("reportes");
             if (!dir.exists()) dir.mkdirs();
@@ -1283,7 +1283,7 @@ public class GeneradorTickets {
         }
     }
 
-    public static void imprimirTicketEntregaReparacion(String nombreProducto, String observacion) {
+    public static void generarTicketEntregaReparacionPDF(String nombreProducto, String observacion) {
         try {
             java.io.File dir = new java.io.File("reportes");
             if (!dir.exists()) dir.mkdirs();

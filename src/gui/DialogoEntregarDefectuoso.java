@@ -152,7 +152,7 @@ public class DialogoEntregarDefectuoso extends JDialog {
 
         if (dao.entregarCliente(idProducto, estadoActual)) {
             this.exito = true;
-            GeneradorTickets.imprimirTicketEntregaReparacion(nombreProducto, obs);
+            GeneradorTickets.generarTicketEntregaReparacionPDF(nombreProducto, obs);
             dispose();
         } else {
             JOptionPane.showMessageDialog(this, "Ocurrió un error al procesar la entrega.", "Error", JOptionPane.ERROR_MESSAGE);

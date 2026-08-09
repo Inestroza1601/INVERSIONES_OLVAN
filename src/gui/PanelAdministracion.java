@@ -42,18 +42,23 @@ public class PanelAdministracion extends JPanel {
         // 3. Botones del sub-menú (mismo tamaño)
         btnDatosEmpresa = utilidades.EfectosUI.crearBotonVerde("Datos de Empresa");
         btnUsuarios = utilidades.EfectosUI.crearBotonVerde("Gestion de Usuarios");
+        JButton btnRoles = utilidades.EfectosUI.crearBotonVerde("Gestión de Permisos");
         btnReportes = utilidades.EfectosUI.crearBotonVerde("Generación de Reportes");
 
-        Dimension tamBoton = new Dimension(250, 50);
+        Dimension tamBoton = new Dimension(220, 50); // Reducido un poco para caber los 4
         btnDatosEmpresa.setPreferredSize(tamBoton);
         btnUsuarios.setPreferredSize(tamBoton);
+        btnRoles.setPreferredSize(tamBoton);
         btnReportes.setPreferredSize(tamBoton);
-        btnDatosEmpresa.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        btnUsuarios.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        btnReportes.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        
+        btnDatosEmpresa.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        btnUsuarios.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        btnRoles.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        btnReportes.setFont(new Font("Segoe UI", Font.BOLD, 15));
 
         panelSubMenu.add(btnDatosEmpresa);
         panelSubMenu.add(btnUsuarios);
+        panelSubMenu.add(btnRoles);
         panelSubMenu.add(btnReportes);
 
         this.add(panelContenedorAdmon, BorderLayout.CENTER);
@@ -66,6 +71,10 @@ public class PanelAdministracion extends JPanel {
 
         btnUsuarios.addActionListener(e -> {
             abrirSubPanelAsync(() -> new PanelGestionUsuarios());
+        });
+
+        btnRoles.addActionListener(e -> {
+            abrirSubPanelAsync(() -> new PanelGestionRoles());
         });
 
         btnReportes.addActionListener(e -> {

@@ -145,10 +145,11 @@ public class PanelApartados extends JPanel {
         btnCancelar.setPreferredSize(new Dimension(230, 50));
         btnCancelar.addActionListener(e -> cancelarApartadoCompleto());
 
-        // Restringir botón de cancelar si es cajero
-        int rolId = SesionGlobal.getUsuarioActual() != null ? SesionGlobal.getUsuarioActual().getIdRol() : 3;
-        if (rolId == 3) {
-            btnCancelar.setVisible(false);
+        // Restringir botón de cancelar según permisos
+        modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
+        if (uAct != null && !uAct.tienePermiso("CANCELAR_VENTAS")) {
+            btnCancelar.setEnabled(false);
+            btnCancelar.setToolTipText("No tienes permiso para cancelar apartados.");
         }
 
         pnlBotones.add(btnDetalles);

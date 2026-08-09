@@ -313,7 +313,7 @@ public class DialogoReclamarGarantia extends JDialog {
                 if (dao.procesarCambioGarantia(idDetalle, productoSustituto.getIdProducto(), productoSustituto.getPrecioVenta(), idUsuario, txtObservacion.getText(), fotoBase64, cmbResolucion.getSelectedItem().toString(), chkReintegro.isSelected())) {
                     this.exito = true;
                     // Generar Ticket
-                    new utilidades.GeneradorTickets().imprimirTicketCambio(idDetalle, productoSustituto, dao.obtenerPrecioOriginal(idDetalle));
+                    utilidades.GeneradorTickets.generarTicketCambioPDF(idDetalle, productoSustituto, dao.obtenerPrecioOriginal(idDetalle));
                     this.dispose();
                 } else {
                     JOptionPane.showMessageDialog(this, "Hubo un error al aplicar el reclamo.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -324,7 +324,7 @@ public class DialogoReclamarGarantia extends JDialog {
                 if (dao.aplicarReclamo(idDetalle, txtObservacion.getText(), fotoBase64, cmbResolucion.getSelectedItem().toString(), chkReintegro.isSelected(), idUsuario)) {
                     this.exito = true;
                     // Generar Ticket de Garantia
-                    utilidades.GeneradorTickets.imprimirTicketGarantia(idDetalle, cmbResolucion.getSelectedItem().toString(), txtObservacion.getText());
+                    utilidades.GeneradorTickets.generarTicketGarantiaPDF(idDetalle, cmbResolucion.getSelectedItem().toString(), txtObservacion.getText());
                     this.dispose();
                 } else {
                     JOptionPane.showMessageDialog(this, "Hubo un error al aplicar el reclamo.", "Error", JOptionPane.ERROR_MESSAGE);

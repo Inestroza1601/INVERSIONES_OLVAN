@@ -112,34 +112,55 @@ public class MenuPrincipal extends JFrame {
         btnEstadisticas = crearBotonWebAnimado("Estadísticas", new IconoMenu(7), false);
         btnCerrarSesion = crearBotonWebAnimado("Cerrar Sesión", new IconoMenu(6), true);
 
-        int rolId = (utilidades.SesionGlobal.getUsuarioActual() != null)
-                ? utilidades.SesionGlobal.getUsuarioActual().getIdRol()
-                : 1;
+        modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
+        
+        boolean pAdmin       = (uAct == null) ? true : uAct.tienePermiso("ACCESO_ADMINISTRACION");
+        boolean pClientes    = (uAct == null) ? true : uAct.tienePermiso("ACCESO_CLIENTES");
+        boolean pInventario  = (uAct == null) ? true : uAct.tienePermiso("ACCESO_INVENTARIO");
+        boolean pPOS         = (uAct == null) ? true : uAct.tienePermiso("ACCESO_POS");
+        boolean pCaja        = (uAct == null) ? true : uAct.tienePermiso("ACCESO_CAJA");
+        boolean pApartados   = (uAct == null) ? true : uAct.tienePermiso("ACCESO_APARTADOS");
+        boolean pVentas      = (uAct == null) ? true : uAct.tienePermiso("ACCESO_VENTAS");
+        boolean pGarantias   = (uAct == null) ? true : uAct.tienePermiso("ACCESO_GARANTIAS");
+        boolean pEstadisticas= (uAct == null) ? true : uAct.tienePermiso("ACCESO_ESTADISTICAS");
 
         panelLateralIzquierdo.add(lblEmpresa);
         panelLateralIzquierdo.add(lblOnline);
         panelLateralIzquierdo.add(lblMenu);
         panelLateralIzquierdo.add(Box.createVerticalStrut(4));
 
-        if (rolId != 3) {
+        if (pAdmin) {
             panelLateralIzquierdo.add(btnAdministracion);
             panelLateralIzquierdo.add(Box.createVerticalStrut(4));
         }
-        panelLateralIzquierdo.add(btnClientes);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
-        panelLateralIzquierdo.add(btnInventario);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
-        panelLateralIzquierdo.add(btnPuntoVenta);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
-        panelLateralIzquierdo.add(btnControlCaja);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
-        panelLateralIzquierdo.add(btnApartados);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
-        panelLateralIzquierdo.add(btnHistorialVentas);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
-        panelLateralIzquierdo.add(btnGarantias);
-
-        if (rolId != 3) {
+        if (pClientes) {
+            panelLateralIzquierdo.add(btnClientes);
+            panelLateralIzquierdo.add(Box.createVerticalStrut(4));
+        }
+        if (pInventario) {
+            panelLateralIzquierdo.add(btnInventario);
+            panelLateralIzquierdo.add(Box.createVerticalStrut(4));
+        }
+        if (pPOS) {
+            panelLateralIzquierdo.add(btnPuntoVenta);
+            panelLateralIzquierdo.add(Box.createVerticalStrut(4));
+        }
+        if (pCaja) {
+            panelLateralIzquierdo.add(btnControlCaja);
+            panelLateralIzquierdo.add(Box.createVerticalStrut(4));
+        }
+        if (pApartados) {
+            panelLateralIzquierdo.add(btnApartados);
+            panelLateralIzquierdo.add(Box.createVerticalStrut(4));
+        }
+        if (pVentas) {
+            panelLateralIzquierdo.add(btnHistorialVentas);
+            panelLateralIzquierdo.add(Box.createVerticalStrut(4));
+        }
+        if (pGarantias) {
+            panelLateralIzquierdo.add(btnGarantias);
+        }
+        if (pEstadisticas) {
             panelLateralIzquierdo.add(Box.createVerticalStrut(4));
             panelLateralIzquierdo.add(btnEstadisticas);
         }
@@ -152,12 +173,15 @@ public class MenuPrincipal extends JFrame {
         panelCentral.setLayout(new BorderLayout());
         panelCentral.setBackground(COLOR_FONDO_APP);
 
-        if (rolId == 3) {
-            abrirPanelAsync(() -> new PanelPuntoVenta());
-            marcarBotonActivo(btnPuntoVenta, false);
-        } else {
+        if (pEstadisticas) {
             abrirPanelAsync(() -> new PanelEstadisticas());
             marcarBotonActivo(btnEstadisticas, false);
+        } else if (pPOS) {
+            abrirPanelAsync(() -> new PanelPuntoVenta());
+            marcarBotonActivo(btnPuntoVenta, false);
+        } else if (pInventario) {
+            abrirPanelAsync(() -> new PanelInventario());
+            marcarBotonActivo(btnInventario, false);
         }
 
         panelApp.add(panelLateralIzquierdo, BorderLayout.WEST);

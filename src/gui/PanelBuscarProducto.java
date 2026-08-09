@@ -385,7 +385,14 @@ public class PanelBuscarProducto extends JPanel {
         JMenuItem itemEliminar = crearMenuItem("Eliminar Producto", new Color(227, 0, 15), new IconoBasurero()); // Rojo Logo
 
         itemEditar.addActionListener(e -> editarProductoSeleccionado(filaVista));
-        itemEliminar.addActionListener(e -> eliminarProductoSeleccionado(filaVista));
+        
+        modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
+        if (uAct != null && !uAct.tienePermiso("ELIMINAR_PRODUCTOS")) {
+            itemEliminar.setEnabled(false);
+            itemEliminar.setToolTipText("No tienes permiso para eliminar productos.");
+        } else {
+            itemEliminar.addActionListener(e -> eliminarProductoSeleccionado(filaVista));
+        }
 
         menu.add(itemEditar);
         menu.addSeparator(); 

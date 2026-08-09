@@ -21,8 +21,8 @@ public class ApartadoDAO {
         
         String sqlDetalle = "INSERT INTO DETALLES_APARTADO (id_apartado, id_producto, descripcion_apartado, cantidad_apartado, precio_unitario_apartado, subtotal_apartado, identificador_serie) VALUES (?, ?, ?, ?, ?, ?, ?)";
         
-        String sqlAbono = "INSERT INTO ABONOS_APARTADO (id_apartado, id_usuario, id_metodo_pago, fecha_abono, monto_abono, referencia_pago, banco_pago) "
-                        + "VALUES (?, ?, ?, GETDATE(), ?, ?, ?)";
+        String sqlAbono = "INSERT INTO ABONOS_APARTADO (id_apartado, id_usuario, id_metodo_pago, fecha_abono, monto_abono, referencia_pago, banco_pago, total_historico, saldo_historico) "
+                        + "VALUES (?, ?, ?, GETDATE(), ?, ?, ?, ?, ?)";
         
         String sqlStockActual = "SELECT stock_producto FROM INVENTARIO WHERE id_producto = ?";
         String sqlStockUpdate = "UPDATE INVENTARIO SET stock_producto = ? WHERE id_producto = ?";
@@ -68,6 +68,8 @@ public class ApartadoDAO {
                     psAbono.setDouble(4, a.getAbonoInicial());
                     psAbono.setString(5, a.getReferenciaPago());
                     psAbono.setString(6, a.getBancoPago());
+                    psAbono.setDouble(7, a.getTotalApartado());
+                    psAbono.setDouble(8, saldoPendiente);
                     psAbono.executeUpdate();
                 }
             }
@@ -230,10 +232,11 @@ public class ApartadoDAO {
     }
 
     public List<AbonoApartado> listarAbonos(int idApartado) {
-        List<AbonoApartado> lista = new ArrayList<>();
-        String sql = "SELECT ab.*, m.nombre_metodo, u.nombre_usuario "
+        List<AbonoApartado> abonos = new ArrayList<>();
+        String sql = "SELECT ab.id_abono, ab.id_apartado, ab.fecha_abono, ab.monto_abono, ab.referencia_pago, ab.banco_pago, "
+                   + "ab.id_metodo_pago, ab.id_usuario, mp.nombre_metodo, u.nombre_usuario, ab.total_historico, ab.saldo_historico "
                    + "FROM ABONOS_APARTADO ab "
-                   + "LEFT JOIN METODOS_PAGO m ON ab.id_metodo_pago = m.id_metodo_pago "
+                   + "LEFT JOIN METODOS_PAGO mp ON ab.id_metodo_pago = mp.id_metodo_pago "
                    + "LEFT JOIN USUARIOS u ON ab.id_usuario = u.id_usuario "
                    + "WHERE ab.id_apartado = ? "
                    + "ORDER BY ab.fecha_abono ASC";
@@ -242,29 +245,31 @@ public class ApartadoDAO {
             ps.setInt(1, idApartado);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    AbonoApartado a = new AbonoApartado();
-                    a.setIdAbono(rs.getInt("id_abono"));
-                    a.setIdApartado(rs.getInt("id_apartado"));
-                    a.setFechaAbono(rs.getTimestamp("fecha_abono"));
-                    a.setMontoAbono(rs.getDouble("monto_abono"));
-                    a.setIdMetodoPago(rs.getInt("id_metodo_pago"));
-                    a.setIdUsuario(rs.getInt("id_usuario"));
-                    a.setReferenciaPago(rs.getString("referencia_pago"));
-                    a.setBancoPago(rs.getString("banco_pago"));
-                    a.setNombreMetodo(rs.getString("nombre_metodo"));
-                    a.setNombreUsuario(rs.getString("nombre_usuario"));
-                    lista.add(a);
+                    AbonoApartado ab = new AbonoApartado();
+                    ab.setIdAbono(rs.getInt("id_abono"));
+                    ab.setIdApartado(rs.getInt("id_apartado"));
+                    ab.setFechaAbono(rs.getTimestamp("fecha_abono"));
+                    ab.setMontoAbono(rs.getDouble("monto_abono"));
+                    ab.setIdMetodoPago(rs.getInt("id_metodo_pago"));
+                    ab.setIdUsuario(rs.getInt("id_usuario"));
+                    ab.setReferenciaPago(rs.getString("referencia_pago"));
+                    ab.setBancoPago(rs.getString("banco_pago"));
+                    ab.setNombreMetodo(rs.getString("nombre_metodo"));
+                    ab.setNombreUsuario(rs.getString("nombre_usuario"));
+                    ab.setTotalHistorico(rs.getDouble("total_historico"));
+                    ab.setSaldoHistorico(rs.getDouble("saldo_historico"));
+                    abonos.add(ab);
                 }
             }
         } catch (SQLException e) {
             System.err.println("Error al listar abonos del apartado: " + e.getMessage());
         }
-        return lista;
+        return abonos;
     }
 
     public boolean registrarAbono(int idApartado, double monto, int idMetodo, int idUsuario, String referencia, String banco) {
-        String sqlAbono = "INSERT INTO ABONOS_APARTADO (id_apartado, id_usuario, id_metodo_pago, fecha_abono, monto_abono, referencia_pago, banco_pago) "
-                        + "VALUES (?, ?, ?, GETDATE(), ?, ?, ?)";
+        String sqlAbono = "INSERT INTO ABONOS_APARTADO (id_apartado, id_usuario, id_metodo_pago, fecha_abono, monto_abono, referencia_pago, banco_pago, total_historico, saldo_historico) "
+                        + "VALUES (?, ?, ?, GETDATE(), ?, ?, ?, ?, ?)";
         String sqlApartado = "SELECT saldo_pendiente, total_apartado FROM APARTADOS WHERE id_apartado = ?";
         String sqlUpdate = "UPDATE APARTADOS SET saldo_pendiente = ?, estado_apartado = ? WHERE id_apartado = ?";
 
@@ -274,11 +279,13 @@ public class ApartadoDAO {
             con.setAutoCommit(false);
 
             double saldo = 0;
+            double totalApartado = 0;
             try (PreparedStatement psAp = con.prepareStatement(sqlApartado)) {
                 psAp.setInt(1, idApartado);
                 try (ResultSet rs = psAp.executeQuery()) {
                     if (rs.next()) {
                         saldo = rs.getDouble("saldo_pendiente");
+                        totalApartado = rs.getDouble("total_apartado");
                     }
                 }
             }
@@ -295,6 +302,8 @@ public class ApartadoDAO {
                 psAb.setDouble(4, monto);
                 psAb.setString(5, referencia);
                 psAb.setString(6, banco);
+                psAb.setDouble(7, totalApartado);
+                psAb.setDouble(8, nuevoSaldo);
                 psAb.executeUpdate();
             }
 

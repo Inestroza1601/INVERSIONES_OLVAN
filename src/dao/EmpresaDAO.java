@@ -158,21 +158,4 @@ public class EmpresaDAO {
             return false;
         }
     }
-    
-    public java.util.List<Empresa> listarTodas() {
-        java.util.List<Empresa> lista = new java.util.ArrayList<>();
-        String sql = "SELECT * FROM EMPRESA ORDER BY id_empresa ASC";
-        
-        try (Connection con = factory.getConexion();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            
-            while (rs.next()) {
-                lista.add(mapearEmpresa(rs)); // Reutiliza el método mapearEmpresa que te dejé en la respuesta anterior
-            }
-        } catch (SQLException e) {
-            System.err.println("Error al listar empresas: " + e.getMessage());
-        }
-        return lista; 
-    }
 }

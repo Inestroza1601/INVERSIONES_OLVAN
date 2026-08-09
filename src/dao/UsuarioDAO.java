@@ -151,6 +151,10 @@ public class UsuarioDAO {
                     u.setPasswordHash(rs.getString("password_hash"));
                     u.setEstadoUsuario(rs.getBoolean("estado_usuario"));
                     u.setEmailUsuario(rs.getString("email_usuario"));
+                    
+                    // Cargar permisos RBAC
+                    u.setPermisos(cargarPermisosRol(u.getIdRol()));
+                    
                     return u;
                 }
             }
@@ -158,6 +162,27 @@ public class UsuarioDAO {
             System.err.println("Error al autenticar usuario: " + e.getMessage());
         }
         return null;
+    }
+    
+    // Método auxiliar para cargar permisos de un rol
+    public List<String> cargarPermisosRol(int idRol) {
+        List<String> permisos = new ArrayList<>();
+        // Si el esquema de RBAC aún no existe en la BD (ej. script no ejecutado), atrapamos el error y devolvemos lista vacía (o acceso total si es admin).
+        String sql = "SELECT p.nombre_permiso FROM PERMISOS p " +
+                     "INNER JOIN ROL_PERMISOS rp ON p.id_permiso = rp.id_permiso " +
+                     "WHERE rp.id_rol = ?";
+        try (Connection con = factory.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idRol);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    permisos.add(rs.getString("nombre_permiso").toUpperCase());
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Aviso: No se pudieron cargar permisos (¿Tablas RBAC creadas?): " + e.getMessage());
+        }
+        return permisos;
     }
     
     // =========================================================
@@ -327,5 +352,67 @@ public class UsuarioDAO {
         }
 
         return idRol;
+    }
+    
+    // Obtener lista completa de objetos Rol
+    public List<modelo.Rol> obtenerTodosLosRoles() {
+        List<modelo.Rol> roles = new ArrayList<>();
+        String sql = "SELECT id_rol, nombre_rol FROM ROLES_USUARIO ORDER BY id_rol ASC";
+        try (Connection con = factory.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                roles.add(new modelo.Rol(rs.getInt("id_rol"), rs.getString("nombre_rol")));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al listar roles completos: " + e.getMessage());
+        }
+        return roles;
+    }
+    
+    // Guardar permisos seleccionados para un rol
+    public boolean guardarPermisosRol(int idRol, List<String> permisos) {
+        Connection con = null;
+        PreparedStatement psDelete = null;
+        PreparedStatement psInsert = null;
+        
+        try {
+            con = factory.getConexion();
+            con.setAutoCommit(false); // Transacción
+            
+            // 1. Eliminar todos los permisos actuales
+            String sqlDelete = "DELETE FROM ROL_PERMISOS WHERE id_rol = ?";
+            psDelete = con.prepareStatement(sqlDelete);
+            psDelete.setInt(1, idRol);
+            psDelete.executeUpdate();
+            
+            // 2. Insertar los nuevos permisos
+            if (permisos != null && !permisos.isEmpty()) {
+                String sqlInsert = "INSERT INTO ROL_PERMISOS (id_rol, id_permiso) " +
+                                   "VALUES (?, (SELECT id_permiso FROM PERMISOS WHERE UPPER(nombre_permiso) = UPPER(?)))";
+                psInsert = con.prepareStatement(sqlInsert);
+                
+                for (String p : permisos) {
+                    psInsert.setInt(1, idRol);
+                    psInsert.setString(2, p);
+                    psInsert.addBatch();
+                }
+                psInsert.executeBatch();
+            }
+            
+            con.commit();
+            return true;
+            
+        } catch (SQLException e) {
+            System.err.println("Error al guardar permisos de rol: " + e.getMessage());
+            if (con != null) {
+                try { con.rollback(); } catch (SQLException ex) { }
+            }
+            return false;
+        } finally {
+            try { if (psDelete != null) psDelete.close(); } catch (Exception e) {}
+            try { if (psInsert != null) psInsert.close(); } catch (Exception e) {}
+            try { if (con != null) { con.setAutoCommit(true); con.close(); } } catch (Exception e) {}
+        }
     }
 }
