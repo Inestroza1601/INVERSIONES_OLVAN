@@ -20,13 +20,16 @@ public class DialogoEntregarDefectuoso extends JDialog {
     private JTextArea txtObservaciones;
     private JButton btnConfirmar;
     private JButton btnCancelar;
+    private String nombreCliente;
+    private int idDefectuoso;
 
-    public DialogoEntregarDefectuoso(Window owner, int idProducto, String nombreProducto, String estadoActual, String cliente) {
+    public DialogoEntregarDefectuoso(Window owner, int idProducto, String nombreProducto, String estadoActual, String nombreCliente, int idDefectuoso) {
         super(owner, "Entregar Producto Reparado", ModalityType.APPLICATION_MODAL);
         this.idProducto = idProducto;
         this.nombreProducto = nombreProducto;
         this.estadoActual = estadoActual;
-        this.cliente = cliente;
+        this.nombreCliente = nombreCliente;
+        this.idDefectuoso = idDefectuoso;
         this.dao = new InventarioDefectuosoDAO();
 
         iniciarDiseno();
@@ -69,7 +72,7 @@ public class DialogoEntregarDefectuoso extends JDialog {
         lblHistorial.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         lblHistorial.setAlignmentX(Component.LEFT_ALIGNMENT);
         
-        java.util.List<java.util.Map<String, Object>> detalles = dao.obtenerDetallesPorProductoYEstado(idProducto, estadoActual);
+        java.util.List<java.util.Map<String, Object>> detalles = dao.obtenerDetallesPorProductoYEstado(idProducto, estadoActual, nombreCliente, idDefectuoso);
         StringBuilder timeline = new StringBuilder("<html><div style='font-size:12px; color:#1e4d38; margin-bottom:10px;'>");
         if (!detalles.isEmpty()) {
             java.util.Map<String, Object> d = detalles.get(0);
@@ -150,7 +153,7 @@ public class DialogoEntregarDefectuoso extends JDialog {
             obs = "Ninguna observación adicional.";
         }
 
-        if (dao.entregarCliente(idProducto, estadoActual)) {
+        if (dao.entregarCliente(idProducto, estadoActual, nombreCliente, idDefectuoso)) {
             this.exito = true;
             GeneradorTickets.generarTicketEntregaReparacionPDF(nombreProducto, obs);
             dispose();

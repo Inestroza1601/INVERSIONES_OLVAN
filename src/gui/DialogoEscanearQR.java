@@ -17,17 +17,17 @@ public class DialogoEscanearQR extends JDialog {
     private JLabel lblQR;
     private JLabel lblInstrucciones;
 
-    public DialogoEscanearQR(Frame parent, boolean mostrarGaleria, Consumer<String> onFotoRecibida) {
+    public DialogoEscanearQR(Frame parent, boolean mostrarGaleria, int maxFotos, Consumer<String> onFotoRecibida) {
         super(parent, "Escanear Código QR", true);
         this.onFotoRecibida = onFotoRecibida;
-        iniciarServidor(mostrarGaleria);
+        iniciarServidor(mostrarGaleria, maxFotos);
         iniciarDiseno();
     }
 
-    private void iniciarServidor(boolean mostrarGaleria) {
+    private void iniciarServidor(boolean mostrarGaleria, int maxFotos) {
         try {
             int puerto = 8080; // Podríamos usar un puerto aleatorio también
-            servidor = new ServidorFotos(puerto, mostrarGaleria, base64 -> {
+            servidor = new ServidorFotos(puerto, mostrarGaleria, maxFotos, base64 -> {
                 // Al recibir la foto, la pasamos al Consumer y cerramos el diálogo
                 SwingUtilities.invokeLater(() -> {
                     onFotoRecibida.accept(base64);

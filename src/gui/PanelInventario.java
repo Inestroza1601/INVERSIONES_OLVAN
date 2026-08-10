@@ -11,6 +11,20 @@ public class PanelInventario extends JPanel {
     private JButton btnInventarioDefectuoso;
     private JPanel panelContenedorInventario;
 
+    private JButton botonActivo = null;
+
+    private void cambiarBotonActivo(JButton nuevoBoton) {
+        if (botonActivo != null) {
+            botonActivo.setEnabled(true);
+            botonActivo.setBackground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO); // Restaurar original
+        }
+        botonActivo = nuevoBoton;
+        if (botonActivo != null) {
+            botonActivo.setEnabled(false);
+            botonActivo.setBackground(Color.GRAY); // Color de estado activo/seleccionado
+        }
+    }
+
     public PanelInventario() {
         iniciarDiseno();
     }
@@ -63,17 +77,21 @@ public class PanelInventario extends JPanel {
 
         // 4. Configurar los Eventos con Carga Asíncrona
         btnBuscarProducto.addActionListener(e -> {
+            cambiarBotonActivo(btnBuscarProducto);
             abrirSubPanelAsync(() -> new PanelBuscarProducto());
         });
 
         btnCrearProducto.addActionListener(e -> {
+            cambiarBotonActivo(btnCrearProducto);
             abrirSubPanelAsync(() -> new PanelCrearProducto());
         });
 
         btnInventarioDefectuoso.addActionListener(e -> {
+            cambiarBotonActivo(btnInventarioDefectuoso);
             abrirSubPanelAsync(() -> new PanelInventarioDefectuoso());
         });
 
+        cambiarBotonActivo(btnBuscarProducto);
         abrirSubPanelAsync(() -> new PanelBuscarProducto());
     }
 

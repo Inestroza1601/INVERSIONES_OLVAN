@@ -396,7 +396,7 @@ public class DialogoReclamarGarantia extends JDialog {
         btnTomarFotoQR.setForeground(Color.WHITE);
         btnTomarFotoQR.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnTomarFotoQR.addActionListener(e -> {
-            new DialogoEscanearQR((Frame) SwingUtilities.getWindowAncestor(this), false, b64 -> {
+            new DialogoEscanearQR((Frame) SwingUtilities.getWindowAncestor(this), false, 4, b64 -> {
                 setPreviewBase64(b64);
                 JOptionPane.showMessageDialog(this, "Foto capturada y adjuntada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             }).setVisible(true);

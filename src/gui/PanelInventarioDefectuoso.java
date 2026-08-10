@@ -20,9 +20,29 @@ public class PanelInventarioDefectuoso extends JPanel {
     private DefaultTableModel modeloTabla;
     private TableRowSorter<DefaultTableModel> sorter;
     private InventarioDefectuosoDAO dao;
+    
+    // Variables para Carga Diferida (Lazy Loading) y Shimmer
+    private java.util.Map<Integer, ImageIcon> cacheImagenes = new java.util.concurrent.ConcurrentHashMap<>();
+    private java.util.Set<Integer> imagenesEnProceso = java.util.Collections.synchronizedSet(new java.util.HashSet<>());
+    private float animacionShimmerPhase = 0f;
+    private javax.swing.Timer timerShimmer;
 
     public PanelInventarioDefectuoso() {
-        dao = new InventarioDefectuosoDAO();
+        this.setLayout(new BorderLayout());
+        this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
+        this.dao = new InventarioDefectuosoDAO();
+
+        timerShimmer = new javax.swing.Timer(50, e -> {
+            animacionShimmerPhase += 0.1f;
+            if (animacionShimmerPhase > 2f) animacionShimmerPhase = 0f;
+            if (!imagenesEnProceso.isEmpty()) {
+                if (tablaDefectuosos != null) {
+                    tablaDefectuosos.repaint();
+                }
+            }
+        });
+        timerShimmer.start();
+
         iniciarDiseno();
         cargarDatos();
     }
@@ -58,8 +78,8 @@ public class PanelInventarioDefectuoso extends JPanel {
         panelCabecera.add(pnlBusqueda, BorderLayout.EAST);
 
         // Tabla
-        String[] columnas = { "ID Producto", "Imagen", "Código de Barras", "Nombre del Producto", "Cliente", "Estado",
-                "Cantidad Defectuosa", "Identidad" };
+        String[] columnas = { "ID Producto", "Imagen", "Código Inv. Defectuoso", "Nombre del Producto", "Cliente", "Estado",
+                "Cantidad Defectuosa", "Identidad", "ID Defectuoso" };
         modeloTabla = new DefaultTableModel(null, columnas) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -67,10 +87,8 @@ public class PanelInventarioDefectuoso extends JPanel {
             }
 
             @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                if (columnIndex == 1)
-                    return ImageIcon.class;
-                return super.getColumnClass(columnIndex);
+            public Class<?> getColumnClass(int column) {
+                return super.getColumnClass(column);
             }
         };
 
@@ -129,6 +147,8 @@ public class PanelInventarioDefectuoso extends JPanel {
             }
         });
 
+        tablaDefectuosos.getColumnModel().getColumn(1).setCellRenderer(new ImagenMiniaturaRenderer());
+
         // Ocultar ID Producto e Identidad visualmente
         tablaDefectuosos.getColumnModel().getColumn(0).setMinWidth(0);
         tablaDefectuosos.getColumnModel().getColumn(0).setMaxWidth(0);
@@ -136,7 +156,11 @@ public class PanelInventarioDefectuoso extends JPanel {
 
         tablaDefectuosos.getColumnModel().getColumn(7).setMinWidth(0);
         tablaDefectuosos.getColumnModel().getColumn(7).setMaxWidth(0);
-        tablaDefectuosos.getColumnModel().getColumn(7).setWidth(0);
+        tablaDefectuosos.getColumnModel().getColumn(7).setPreferredWidth(0);
+
+        tablaDefectuosos.getColumnModel().getColumn(8).setMinWidth(0);
+        tablaDefectuosos.getColumnModel().getColumn(8).setMaxWidth(0);
+        tablaDefectuosos.getColumnModel().getColumn(8).setPreferredWidth(0);
 
         // Ajustar ancho de columnas
         tablaDefectuosos.getColumnModel().getColumn(1).setPreferredWidth(80);
@@ -183,21 +207,30 @@ public class PanelInventarioDefectuoso extends JPanel {
     }
 
     private void cargarDatos() {
+        setCursor(new Cursor(Cursor.WAIT_CURSOR));
         modeloTabla.setRowCount(0);
-        List<Map<String, Object>> lista = dao.obtenerInventarioDefectuosoAgrupado();
-        for (Map<String, Object> fila : lista) {
-            ImageIcon iconPreview = obtenerImagenDesdeBase64((String) fila.get("foto"), 50, 50);
-
-            modeloTabla.addRow(new Object[] {
-                    fila.get("id_producto"),
-                    iconPreview,
-                    fila.get("codigo_barras"),
-                    fila.get("nombre_producto"),
-                    fila.get("cliente"),
-                    fila.get("estado_defecto"),
-                    fila.get("cantidad"),
-                    fila.get("identidad")
-            });
+        
+        try {
+            List<Map<String, Object>> lista = dao.obtenerInventarioDefectuosoAgrupado();
+            for (Map<String, Object> fila : lista) {
+                String b64Foto = (String) fila.get("foto");
+    
+                modeloTabla.addRow(new Object[] {
+                        fila.get("id_producto"),
+                        b64Foto, // Pasa el string a la tabla, el Renderer se encarga
+                        fila.get("codigo_barras"),
+                        fila.get("nombre_producto"),
+                        fila.get("cliente") != null ? fila.get("cliente") : "INVERSIONES OLVAN (Empresa)",
+                        fila.get("estado_defecto"),
+                        fila.get("cantidad"),
+                        fila.get("identidad") != null ? fila.get("identidad") : "",
+                        fila.get("id_inventarioDefectuoso")
+                });
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         }
     }
 
@@ -217,8 +250,8 @@ public class PanelInventarioDefectuoso extends JPanel {
                 new IconoBasura());
 
         itemDetalles.addActionListener(e -> accionVerDetalles());
-        itemEnviar.addActionListener(e -> accionCambiarEstado("Enviado a Proveedor", "ENVIO MERMA A PROVEEDOR"));
-        itemDesechar.addActionListener(e -> accionCambiarEstado("Desechado", "DESECHO DE MERMA"));
+        itemEnviar.addActionListener(e -> accionCambiarEstado("Enviado a Proveedor", "ENVIO PRODUCTO DEFECTUOSO A PROVEEDOR"));
+        itemDesechar.addActionListener(e -> accionCambiarEstado("Desechado", "DESECHO DE PRODUCTO DEFECTUOSO"));
         itemReingresar.addActionListener(e -> accionReingresar());
         itemEntregarCliente.addActionListener(e -> accionEntregarCliente());
 
@@ -276,6 +309,90 @@ public class PanelInventarioDefectuoso extends JPanel {
         });
     }
 
+     // --- Clases Internas y Componentes UI ---
+    
+    private class ImagenMiniaturaRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            
+            int filaModelo = table.convertRowIndexToModel(row);
+            int idDefectuoso = (int) table.getModel().getValueAt(filaModelo, 8);
+            String b64 = (String) value;
+            
+            if (cacheImagenes.containsKey(idDefectuoso)) {
+                JLabel label = new JLabel(); 
+                label.setHorizontalAlignment(SwingConstants.CENTER); 
+                label.setOpaque(true); 
+                label.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+                
+                ImageIcon icon = cacheImagenes.get(idDefectuoso);
+                if (icon != null && icon.getIconWidth() > 0) {
+                    label.setIcon(icon);
+                } else {
+                    label.setText("Sin Img");
+                    label.setForeground(Color.GRAY);
+                    label.setFont(new Font("Segoe UI", Font.ITALIC, 11));
+                }
+                return label;
+            }
+            
+            if (!imagenesEnProceso.contains(idDefectuoso)) {
+                imagenesEnProceso.add(idDefectuoso);
+                
+                SwingWorker<ImageIcon, Void> worker = new SwingWorker<ImageIcon, Void>() {
+                    @Override
+                    protected ImageIcon doInBackground() throws Exception {
+                        return obtenerImagenDesdeBase64(b64, 50, 50);
+                    }
+                    @Override
+                    protected void done() {
+                        try {
+                            ImageIcon icon = get();
+                            cacheImagenes.put(idDefectuoso, icon != null ? icon : new ImageIcon()); 
+                        } catch (Exception ex) {
+                            cacheImagenes.put(idDefectuoso, new ImageIcon());
+                        } finally {
+                            imagenesEnProceso.remove(idDefectuoso);
+                            table.repaint();
+                        }
+                    }
+                };
+                worker.execute();
+            }
+            
+            JPanel panelShimmer = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    Graphics2D g2 = (Graphics2D) g;
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    
+                    Color baseColor = new Color(240, 242, 245);
+                    Color shineColor = new Color(255, 255, 255, 200);
+                    
+                    int width = getWidth();
+                    int height = getHeight();
+                    
+                    g2.setColor(baseColor);
+                    g2.fillRoundRect(5, 5, width - 10, height - 10, 8, 8);
+                    
+                    GradientPaint shimmer = new GradientPaint(
+                        -width + (width * 2 * animacionShimmerPhase), 0,
+                        new Color(255,255,255,0),
+                        -width + (width * 2 * animacionShimmerPhase) + (width / 2), 0,
+                        shineColor,
+                        true
+                    );
+                    
+                    g2.setPaint(shimmer);
+                    g2.fillRoundRect(5, 5, width - 10, height - 10, 8, 8);
+                }
+            };
+            panelShimmer.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+            return panelShimmer;
+        }
+    }
+
     private JMenuItem crearMenuItem(String texto, Color colorHover, Icon icono) {
         JMenuItem item = new JMenuItem(texto);
         item.setIcon(icono);
@@ -307,9 +424,11 @@ public class PanelInventarioDefectuoso extends JPanel {
 
         int idProducto = (int) modeloTabla.getValueAt(fila, 0);
         String producto = modeloTabla.getValueAt(fila, 3).toString();
+        String cliente = modeloTabla.getValueAt(fila, 4).toString();
         String estado = modeloTabla.getValueAt(fila, 5).toString();
+        int idDefectuoso = (int) modeloTabla.getValueAt(fila, 8);
 
-        List<Map<String, Object>> detalles = dao.obtenerDetallesPorProductoYEstado(idProducto, estado);
+        List<Map<String, Object>> detalles = dao.obtenerDetallesPorProductoYEstado(idProducto, estado, cliente, idDefectuoso);
 
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Detalles de Producto Defectuoso",
                 true);
@@ -359,9 +478,9 @@ public class PanelInventarioDefectuoso extends JPanel {
             pnlInfo.setLayout(new BoxLayout(pnlInfo, BoxLayout.Y_AXIS));
             pnlInfo.setBackground(Color.WHITE);
             
-            String cliente = (String) d.get("cliente");
-            if (estado.contains("Rep. Cliente") && cliente != null && !cliente.isEmpty()) {
-                pnlInfo.add(crearEtiquetaDetalle("Cliente Propietario", cliente));
+            String nombreClienteDB = (String) d.get("cliente");
+            if (estado.contains("Rep. Cliente") && nombreClienteDB != null && !nombreClienteDB.isEmpty()) {
+                pnlInfo.add(crearEtiquetaDetalle("Cliente Propietario", nombreClienteDB));
                 pnlInfo.add(Box.createVerticalStrut(15));
             } else {
                 pnlInfo.add(crearEtiquetaDetalle("Propietario", "Inversiones Olvan (Empresa)"));
@@ -502,61 +621,67 @@ public class PanelInventarioDefectuoso extends JPanel {
 
         int idProducto = (int) modeloTabla.getValueAt(fila, 0);
         String producto = modeloTabla.getValueAt(fila, 3).toString();
+        String cliente = modeloTabla.getValueAt(fila, 4).toString();
+        int idDefectuoso = (int) modeloTabla.getValueAt(fila, 8);
 
         int confirm = JOptionPane.showConfirmDialog(this,
-                "¿Estás seguro de marcar las mermas de '" + producto + "' como '" + nuevoEstado + "'?",
-                "Confirmar Acción", JOptionPane.YES_NO_OPTION);
+                "¿Estás seguro de marcar los productos defectuosos '" + producto + "' como '" + nuevoEstado + "'?",
+                "Confirmar Cambio de Estado", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (confirm == JOptionPane.YES_OPTION) {
             int idUsuario = SesionGlobal.getUsuarioActual() != null ? SesionGlobal.getUsuarioActual().getIdUsuario()
                     : 1;
-            if (dao.cambiarEstadoMermas(idProducto, estadoActual, nuevoEstado, idUsuario, kardexRef)) {
+            if (dao.cambiarEstadoMermas(idProducto, estadoActual, nuevoEstado, idUsuario, kardexRef, cliente, idDefectuoso)) {
                 JOptionPane.showMessageDialog(this, "Estado actualizado con éxito.", "Éxito",
                         JOptionPane.INFORMATION_MESSAGE);
                 cargarDatos();
             } else {
-                JOptionPane.showMessageDialog(this, "Error al actualizar el estado.", "Error",
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error al actualizar estado.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
     private void accionReingresar() {
-        int filaView = tablaDefectuosos.getSelectedRow();
-        if (filaView == -1)
+        int fila = tablaDefectuosos.getSelectedRow();
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione un producto para reingresar al inventario normal.");
             return;
-            
-        int fila = tablaDefectuosos.convertRowIndexToModel(filaView);
+        }
 
         int idProducto = (int) modeloTabla.getValueAt(fila, 0);
         String producto = modeloTabla.getValueAt(fila, 3).toString();
+        String cliente = modeloTabla.getValueAt(fila, 4).toString();
         String estadoActual = modeloTabla.getValueAt(fila, 5).toString();
         int cant = (int) modeloTabla.getValueAt(fila, 6);
+        int idDefectuoso = (int) modeloTabla.getValueAt(fila, 8);
 
         int confirm = JOptionPane.showConfirmDialog(this,
                 "Esta acción sacará " + cant + " unidad(es) de '" + producto
-                        + "' de Mermas y las agregará al Inventario Normal para la venta.\n\n¿Deseas continuar?",
-                "Reingresar al Inventario", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                        + "' del Inventario Defectuoso y las agregará al Inventario Normal para la venta.\n\n¿Deseas continuar?",
+                "Confirmar Reingreso", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (confirm == JOptionPane.YES_OPTION) {
-            String observacion = JOptionPane.showInputDialog(this, "Ingrese el motivo u observación técnica del reingreso:", "Observación Requerida", JOptionPane.PLAIN_MESSAGE);
-            if (observacion == null || observacion.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Debe ingresar una observación para poder reingresar la mercancía.", "Campo Obligatorio", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+            String observacion = JOptionPane.showInputDialog(this,
+                    "Ingrese una observación o motivo para el reingreso:",
+                    "Reingresar Producto", JOptionPane.QUESTION_MESSAGE);
 
-            int idUsuario = SesionGlobal.getUsuarioActual() != null ? SesionGlobal.getUsuarioActual().getIdUsuario() : 1;
-            try {
-                if (dao.reingresarInventario(idProducto, estadoActual, idUsuario, observacion.trim())) {
-                    JOptionPane.showMessageDialog(this, "Productos reingresados exitosamente.", "Éxito",
-                            JOptionPane.INFORMATION_MESSAGE);
-                    cargarDatos();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Error al reingresar los productos.", "Error",
-                            JOptionPane.ERROR_MESSAGE);
+            if (observacion != null && !observacion.trim().isEmpty()) {
+                int idUsuario = SesionGlobal.getUsuarioActual() != null ? SesionGlobal.getUsuarioActual().getIdUsuario()
+                        : 1;
+                try {
+                    if (dao.reingresarInventario(idProducto, estadoActual, idUsuario, observacion.trim(), cliente, idDefectuoso)) {
+                        JOptionPane.showMessageDialog(this, "Productos reingresados exitosamente.", "Éxito",
+                                JOptionPane.INFORMATION_MESSAGE);
+                        cargarDatos();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Error al reingresar los productos.", "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (java.sql.SQLException ex) {
+                    JOptionPane.showMessageDialog(this, "Error de base de datos:\n" + ex.getMessage(), "Fallo", JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (java.sql.SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Error de base de datos:\n" + ex.getMessage(), "Fallo", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Debe ingresar una observación para poder reingresar la mercancía.", "Campo Obligatorio", JOptionPane.WARNING_MESSAGE);
             }
         }
     }
@@ -572,6 +697,7 @@ public class PanelInventarioDefectuoso extends JPanel {
         String producto = modeloTabla.getValueAt(fila, 3).toString();
         String cliente = modeloTabla.getValueAt(fila, 4).toString();
         String estadoActual = modeloTabla.getValueAt(fila, 5).toString();
+        int idDefectuoso = (int) modeloTabla.getValueAt(fila, 8);
 
         Window owner = SwingUtilities.getWindowAncestor(this);
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -579,7 +705,7 @@ public class PanelInventarioDefectuoso extends JPanel {
         SwingWorker<DialogoEntregarDefectuoso, Void> worker = new SwingWorker<DialogoEntregarDefectuoso, Void>() {
             @Override
             protected DialogoEntregarDefectuoso doInBackground() throws Exception {
-                return new DialogoEntregarDefectuoso(owner, idProducto, producto, estadoActual, cliente);
+                return new DialogoEntregarDefectuoso(owner, idProducto, producto, estadoActual, cliente, idDefectuoso);
             }
             @Override
             protected void done() {

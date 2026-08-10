@@ -1,4 +1,4 @@
-package gui;
+﻿package gui;
 
 import dao.InventarioDAO;
 import dao.CatalogosDAO;
@@ -196,7 +196,7 @@ public class PanelCrearProducto extends JPanel {
         ));
         pnlImagen.setPreferredSize(new Dimension(250, 0)); 
 
-        JLabel lblTituloImg = new JLabel("Fotografías (Máx 7)");
+        JLabel lblTituloImg = new JLabel("Fotografías (Máx 4)");
         lblTituloImg.setForeground(new Color(45, 45, 45)); // Gris Oscuro
         lblTituloImg.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblTituloImg.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -288,17 +288,24 @@ public class PanelCrearProducto extends JPanel {
         btnTomarFoto.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnTomarFoto.setMaximumSize(new Dimension(150, 35));
         btnTomarFoto.addActionListener(e -> {
-            if (imagenesSeleccionadas.size() >= 7) {
-                JOptionPane.showMessageDialog(this, "Límite de 7 imágenes alcanzado.", "Límite Excedido", JOptionPane.WARNING_MESSAGE);
+            if (imagenesSeleccionadas.size() >= 4) {
+                JOptionPane.showMessageDialog(this, "Límite de 4 imágenes alcanzado.", "Límite Excedido", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             Window window = SwingUtilities.getWindowAncestor(PanelCrearProducto.this);
             Frame frame = (window instanceof Frame) ? (Frame) window : null;
-            new DialogoEscanearQR(frame, true, b64 -> {
-                imagenesSeleccionadas.add(b64);
-                indiceImagenActual = imagenesSeleccionadas.size() - 1;
-                actualizarVistaPreviaImagen();
-                JOptionPane.showMessageDialog(this, "Foto capturada y adjuntada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            new DialogoEscanearQR(frame, true, 4, b64Str -> {
+                if (b64Str != null && !b64Str.isEmpty()) {
+                    String[] parts = b64Str.split("\\|");
+                    for (String p : parts) {
+                        if (imagenesSeleccionadas.size() < 4) {
+                            imagenesSeleccionadas.add(p);
+                        }
+                    }
+                    indiceImagenActual = imagenesSeleccionadas.size() - 1;
+                    actualizarVistaPreviaImagen();
+                    JOptionPane.showMessageDialog(this, "Foto(s) capturada(s) exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                }
             }).setVisible(true);
         });
 
@@ -374,7 +381,7 @@ public class PanelCrearProducto extends JPanel {
     }
 
     // =========================================================
-    // LÓGICA: RESTRICCIONES DE TECLADO
+    // LÃ“GICA: RESTRICCIONES DE TECLADO
     // =========================================================
     private void aplicarRestriccionesNumericas() {
         permitirSoloNumeros(txtPrecioCompra, true);
@@ -400,7 +407,7 @@ public class PanelCrearProducto extends JPanel {
     }
 
     // =========================================================
-    // LÓGICA DE GUARDADO EN BASE DE DATOS
+    // LÃ“GICA DE GUARDADO EN BASE DE DATOS
     // =========================================================
     private void cargarDatosCombos() {
         CatalogosDAO dao = new CatalogosDAO();
@@ -719,8 +726,8 @@ public class PanelCrearProducto extends JPanel {
     }
 
     private void seleccionarImagen() {
-        if (imagenesSeleccionadas.size() >= 7) {
-            JOptionPane.showMessageDialog(this, "Límite de 7 imágenes alcanzado.", "Límite Excedido", JOptionPane.WARNING_MESSAGE);
+        if (imagenesSeleccionadas.size() >= 4) {
+            JOptionPane.showMessageDialog(this, "Límite de 4 imágenes alcanzado.", "Límite Excedido", JOptionPane.WARNING_MESSAGE);
             return;
         }
         JFileChooser fileChooser = new JFileChooser();
@@ -745,8 +752,8 @@ public class PanelCrearProducto extends JPanel {
     }
 
     private void cargarImagenDesdeURL() {
-        if (imagenesSeleccionadas.size() >= 7) {
-            JOptionPane.showMessageDialog(this, "Límite de 7 imágenes alcanzado.", "Límite Excedido", JOptionPane.WARNING_MESSAGE);
+        if (imagenesSeleccionadas.size() >= 4) {
+            JOptionPane.showMessageDialog(this, "Límite de 4 imágenes alcanzado.", "Límite Excedido", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -775,7 +782,7 @@ public class PanelCrearProducto extends JPanel {
                     JOptionPane.showMessageDialog(PanelCrearProducto.this, "Imagen descargada y adjuntada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(PanelCrearProducto.this, "⚠️ No se pudo descargar la imagen.\nVerifique que la URL sea válida o que tenga conexión a internet (No WiFi).", "Error de Conexión", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(PanelCrearProducto.this, "âš ï¸ No se pudo descargar la imagen.\nVerifique que la URL sea válida o que tenga conexión a internet (No WiFi).", "Error de Conexión", JOptionPane.WARNING_MESSAGE);
                 }
             }
         };
@@ -961,3 +968,6 @@ public class PanelCrearProducto extends JPanel {
         @Override public int getIconHeight() { return 20; }
     }
 }
+
+
+

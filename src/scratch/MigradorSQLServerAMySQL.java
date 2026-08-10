@@ -1,3 +1,5 @@
+package scratch;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.sql.Connection;

@@ -18,15 +18,14 @@ public class InventarioDefectuosoDAO {
 
     public List<Map<String, Object>> obtenerInventarioDefectuosoAgrupado() {
         List<Map<String, Object>> lista = new ArrayList<>();
-        String sql = "SELECT d.id_producto, i.nombre_producto, i.codigo_barras_producto, d.estado_defecto, SUM(d.cantidad) as cantidad_total, "
-                   + "c.nombre_cliente, c.identidad_cliente, "
-                   + "(SELECT TOP 1 v.foto_garantia FROM INVENTARIO_DEFECTUOSO d2 LEFT JOIN DETALLES_VENTA v ON d2.id_detalle_venta = v.id_detalle_venta WHERE d2.id_producto = d.id_producto AND d2.estado_defecto = d.estado_defecto ORDER BY d2.fecha_ingreso DESC) as foto "
+        String sql = "SELECT MIN(d.id_inventarioDefectuoso) as id_inventarioDefectuoso, d.id_producto, i.nombre_producto, i.codigo_barras_producto, d.estado_defecto, SUM(d.cantidad) as cantidad_total, "
+                   + "c.nombre_cliente, c.identidad_cliente, MAX(dv.foto_garantia) as foto "
                    + "FROM INVENTARIO_DEFECTUOSO d "
                    + "INNER JOIN INVENTARIO i ON d.id_producto = i.id_producto "
                    + "LEFT JOIN DETALLES_VENTA dv ON d.id_detalle_venta = dv.id_detalle_venta "
                    + "LEFT JOIN VENTAS ve ON dv.id_ventas = ve.id_ventas "
                    + "LEFT JOIN CLIENTES c ON ve.id_cliente_venta = c.id_cliente "
-                   + "GROUP BY d.id_producto, i.nombre_producto, i.codigo_barras_producto, d.estado_defecto, c.nombre_cliente, c.identidad_cliente "
+                   + "GROUP BY d.id_producto, i.nombre_producto, i.codigo_barras_producto, d.estado_defecto, c.nombre_cliente, c.identidad_cliente, CASE WHEN c.nombre_cliente IS NULL THEN 0 ELSE d.id_inventarioDefectuoso END "
                    + "ORDER BY i.nombre_producto, d.estado_defecto";
         
         try (Connection con = factory.getConexion();
@@ -35,24 +34,26 @@ public class InventarioDefectuosoDAO {
              
             while (rs.next()) {
                 Map<String, Object> fila = new HashMap<>();
+                int idDefectuoso = rs.getInt("id_inventarioDefectuoso");
+                String nombreCliente = rs.getString("nombre_cliente");
+                
+                fila.put("id_inventarioDefectuoso", idDefectuoso);
                 fila.put("id_producto", rs.getInt("id_producto"));
-                fila.put("codigo_barras", rs.getString("codigo_barras_producto"));
+                
+                if (nombreCliente == null) {
+                    fila.put("codigo_barras", "INVD-LOTE");
+                } else {
+                    fila.put("codigo_barras", "INVD-" + String.format("%04d", idDefectuoso));
+                }
+                
                 fila.put("nombre_producto", rs.getString("nombre_producto"));
                 fila.put("estado_defecto", rs.getString("estado_defecto"));
                 fila.put("cantidad", rs.getInt("cantidad_total"));
                 fila.put("foto", rs.getString("foto"));
                 
-                String estado = rs.getString("estado_defecto");
-                String cliente = rs.getString("nombre_cliente");
+                fila.put("cliente", nombreCliente);
+                fila.put("identidad", rs.getString("identidad_cliente") != null ? rs.getString("identidad_cliente") : "");
                 
-                if (estado != null && estado.contains("Rep. Cliente")) {
-                    fila.put("cliente", cliente != null ? cliente : "N/A");
-                } else {
-                    fila.put("cliente", "Inversiones Olvan (Empresa)");
-                }
-                
-                String identidad = rs.getString("identidad_cliente");
-                fila.put("identidad", identidad != null ? identidad : "");
                 lista.add(fila);
             }
         } catch (Exception e) {
@@ -61,22 +62,37 @@ public class InventarioDefectuosoDAO {
         return lista;
     }
 
-    public List<Map<String, Object>> obtenerDetallesPorProductoYEstado(int idProducto, String estadoDefecto) {
+    public List<Map<String, Object>> obtenerDetallesPorProductoYEstado(int idProducto, String estadoDefecto, String nombreCliente, int idDefectuoso) {
         List<Map<String, Object>> lista = new ArrayList<>();
-        String sql = "SELECT d.id_inventarioDefectuoso, d.fecha_ingreso, d.motivo_danio, v.observacion_garantia, v.resolucion_garantia, v.foto_garantia, "
-                   + "d.fecha_envio_proveedor, d.fecha_recibido_proveedor, d.fecha_entregado_cliente, c.nombre_cliente "
-                   + "FROM INVENTARIO_DEFECTUOSO d "
-                   + "LEFT JOIN DETALLES_VENTA v ON d.id_detalle_venta = v.id_detalle_venta "
-                   + "LEFT JOIN VENTAS ve ON v.id_ventas = ve.id_ventas "
-                   + "LEFT JOIN CLIENTES c ON ve.id_cliente_venta = c.id_cliente "
-                   + "WHERE d.id_producto = ? AND d.estado_defecto = ? "
-                   + "ORDER BY d.fecha_ingreso DESC";
+        String sql;
+        if ("INVERSIONES OLVAN (Empresa)".equals(nombreCliente) || nombreCliente == null || "Desconocido".equals(nombreCliente)) {
+            sql = "SELECT d.id_inventarioDefectuoso, d.fecha_ingreso, d.motivo_danio, v.observacion_garantia, v.resolucion_garantia, v.foto_garantia, "
+                + "d.fecha_envio_proveedor, d.fecha_recibido_proveedor, d.fecha_entregado_cliente, c.nombre_cliente "
+                + "FROM INVENTARIO_DEFECTUOSO d "
+                + "LEFT JOIN DETALLES_VENTA v ON d.id_detalle_venta = v.id_detalle_venta "
+                + "LEFT JOIN VENTAS ve ON v.id_ventas = ve.id_ventas "
+                + "LEFT JOIN CLIENTES c ON ve.id_cliente_venta = c.id_cliente "
+                + "WHERE d.id_producto = ? AND d.estado_defecto = ? AND d.id_detalle_venta IS NULL "
+                + "ORDER BY d.fecha_ingreso DESC";
+        } else {
+            sql = "SELECT d.id_inventarioDefectuoso, d.fecha_ingreso, d.motivo_danio, v.observacion_garantia, v.resolucion_garantia, v.foto_garantia, "
+                + "d.fecha_envio_proveedor, d.fecha_recibido_proveedor, d.fecha_entregado_cliente, c.nombre_cliente "
+                + "FROM INVENTARIO_DEFECTUOSO d "
+                + "LEFT JOIN DETALLES_VENTA v ON d.id_detalle_venta = v.id_detalle_venta "
+                + "LEFT JOIN VENTAS ve ON v.id_ventas = ve.id_ventas "
+                + "LEFT JOIN CLIENTES c ON ve.id_cliente_venta = c.id_cliente "
+                + "WHERE d.id_inventarioDefectuoso = ?";
+        }
         
         try (Connection con = factory.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
              
-            ps.setInt(1, idProducto);
-            ps.setString(2, estadoDefecto);
+            if ("INVERSIONES OLVAN (Empresa)".equals(nombreCliente) || nombreCliente == null || "Desconocido".equals(nombreCliente)) {
+                ps.setInt(1, idProducto);
+                ps.setString(2, estadoDefecto);
+            } else {
+                ps.setInt(1, idDefectuoso);
+            }
             
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -104,14 +120,27 @@ public class InventarioDefectuosoDAO {
         return lista;
     }
 
-    public boolean cambiarEstadoMermas(int idProducto, String estadoActual, String nuevoEstado, int idUsuario, String kardexRef) {
-        String sqlUpdate = "UPDATE INVENTARIO_DEFECTUOSO SET estado_defecto = ?";
-        if (nuevoEstado.startsWith("Enviado a Proveedor")) {
-            sqlUpdate += ", fecha_envio_proveedor = GETDATE()";
-        } else if (nuevoEstado.startsWith("Recibido de Proveedor")) {
-            sqlUpdate += ", fecha_recibido_proveedor = GETDATE()";
+    public boolean cambiarEstadoMermas(int idProducto, String estadoActual, String nuevoEstado, int idUsuario, String kardexRef, String nombreCliente, int idDefectuoso) {
+        String sqlUpdate;
+        String sqlCount;
+        boolean isEmpresa = ("INVERSIONES OLVAN (Empresa)".equals(nombreCliente) || nombreCliente == null || "Desconocido".equals(nombreCliente));
+        
+        if (isEmpresa) {
+            sqlUpdate = "UPDATE INVENTARIO_DEFECTUOSO SET estado_defecto = ?";
+            if (nuevoEstado.startsWith("Enviado a Proveedor")) sqlUpdate += ", fecha_envio_proveedor = GETDATE()";
+            else if (nuevoEstado.startsWith("Recibido de Proveedor")) sqlUpdate += ", fecha_recibido_proveedor = GETDATE()";
+            sqlUpdate += " WHERE id_producto = ? AND estado_defecto = ? AND id_detalle_venta IS NULL";
+            
+            sqlCount = "SELECT SUM(cantidad) FROM INVENTARIO_DEFECTUOSO WHERE id_producto = ? AND estado_defecto = ? AND id_detalle_venta IS NULL";
+        } else {
+            sqlUpdate = "UPDATE INVENTARIO_DEFECTUOSO SET estado_defecto = ?";
+            if (nuevoEstado.startsWith("Enviado a Proveedor")) sqlUpdate += ", fecha_envio_proveedor = GETDATE()";
+            else if (nuevoEstado.startsWith("Recibido de Proveedor")) sqlUpdate += ", fecha_recibido_proveedor = GETDATE()";
+            sqlUpdate += " WHERE id_inventarioDefectuoso = ?";
+            
+            sqlCount = "SELECT cantidad FROM INVENTARIO_DEFECTUOSO WHERE id_inventarioDefectuoso = ?";
         }
-        sqlUpdate += " WHERE id_producto = ? AND estado_defecto = ?";
+        
         String sqlKardex = "INSERT INTO KARDEX (id_producto, id_usuario, fecha_movimiento_producto, tipo_movimiento_producto, cantidad_producto, stock_restante_producto, referencia_producto) VALUES (?, ?, GETDATE(), 'Salida', ?, ?, ?)";
         
         Connection con = null;
@@ -119,31 +148,35 @@ public class InventarioDefectuosoDAO {
             con = factory.getConexion();
             con.setAutoCommit(false);
             
-            // Cuantos se van a cambiar
             int cantidadAfectada = 0;
-            try(PreparedStatement psC = con.prepareStatement("SELECT SUM(cantidad) FROM INVENTARIO_DEFECTUOSO WHERE id_producto = ? AND estado_defecto = ?")){
-                psC.setInt(1, idProducto);
-                psC.setString(2, estadoActual);
+            try(PreparedStatement psC = con.prepareStatement(sqlCount)){
+                if (isEmpresa) {
+                    psC.setInt(1, idProducto);
+                    psC.setString(2, estadoActual);
+                } else {
+                    psC.setInt(1, idDefectuoso);
+                }
                 try(ResultSet rs = psC.executeQuery()){ if(rs.next()) cantidadAfectada = rs.getInt(1); }
             }
             
             if (cantidadAfectada > 0) {
-                // Actualizar Estado
                 try(PreparedStatement psU = con.prepareStatement(sqlUpdate)){
                     psU.setString(1, nuevoEstado);
-                    psU.setInt(2, idProducto);
-                    psU.setString(3, estadoActual);
+                    if (isEmpresa) {
+                        psU.setInt(2, idProducto);
+                        psU.setString(3, estadoActual);
+                    } else {
+                        psU.setInt(2, idDefectuoso);
+                    }
                     psU.executeUpdate();
                 }
                 
-                // Obtener stock normal para el Kardex
                 int stockReal = 0;
                 try(PreparedStatement psS = con.prepareStatement("SELECT stock_producto FROM INVENTARIO WHERE id_producto = ?")){
                     psS.setInt(1, idProducto);
                     try(ResultSet rs = psS.executeQuery()){ if(rs.next()) stockReal = rs.getInt(1); }
                 }
                 
-                // Kardex Log
                 try(PreparedStatement psK = con.prepareStatement(sqlKardex)){
                     psK.setInt(1, idProducto);
                     psK.setInt(2, idUsuario);
@@ -165,8 +198,19 @@ public class InventarioDefectuosoDAO {
         }
     }
 
-    public boolean reingresarInventario(int idProducto, String estadoActual, int idUsuario, String observacion) throws java.sql.SQLException {
-        String sqlDelete = "DELETE FROM INVENTARIO_DEFECTUOSO WHERE id_producto = ? AND estado_defecto = ?";
+    public boolean reingresarInventario(int idProducto, String estadoActual, int idUsuario, String observacion, String nombreCliente, int idDefectuoso) throws java.sql.SQLException {
+        String sqlDelete;
+        String sqlCount;
+        boolean isEmpresa = ("INVERSIONES OLVAN (Empresa)".equals(nombreCliente) || nombreCliente == null || "Desconocido".equals(nombreCliente));
+        
+        if (isEmpresa) {
+            sqlDelete = "DELETE FROM INVENTARIO_DEFECTUOSO WHERE id_producto = ? AND estado_defecto = ? AND id_detalle_venta IS NULL";
+            sqlCount = "SELECT SUM(cantidad) FROM INVENTARIO_DEFECTUOSO WHERE id_producto = ? AND estado_defecto = ? AND id_detalle_venta IS NULL";
+        } else {
+            sqlDelete = "DELETE FROM INVENTARIO_DEFECTUOSO WHERE id_inventarioDefectuoso = ?";
+            sqlCount = "SELECT cantidad FROM INVENTARIO_DEFECTUOSO WHERE id_inventarioDefectuoso = ?";
+        }
+        
         String sqlUpdateInv = "UPDATE INVENTARIO SET stock_producto = stock_producto + ? WHERE id_producto = ?";
         String sqlKardex = "INSERT INTO KARDEX (id_producto, id_usuario, fecha_movimiento_producto, tipo_movimiento_producto, cantidad_producto, stock_restante_producto, referencia_producto) VALUES (?, ?, GETDATE(), 'Entrada', ?, ?, ?)";
         
@@ -175,37 +219,40 @@ public class InventarioDefectuosoDAO {
             con = factory.getConexion();
             con.setAutoCommit(false);
             
-            // Cuantos se van a reingresar
             int cantidadAfectada = 0;
-            try(PreparedStatement psC = con.prepareStatement("SELECT SUM(cantidad) FROM INVENTARIO_DEFECTUOSO WHERE id_producto = ? AND estado_defecto = ?")){
-                psC.setInt(1, idProducto);
-                psC.setString(2, estadoActual);
+            try(PreparedStatement psC = con.prepareStatement(sqlCount)){
+                if (isEmpresa) {
+                    psC.setInt(1, idProducto);
+                    psC.setString(2, estadoActual);
+                } else {
+                    psC.setInt(1, idDefectuoso);
+                }
                 try(ResultSet rs = psC.executeQuery()){ if(rs.next()) cantidadAfectada = rs.getInt(1); }
             }
             
             if (cantidadAfectada > 0) {
-                // Sumar al inventario normal
                 try(PreparedStatement psU = con.prepareStatement(sqlUpdateInv)){
                     psU.setInt(1, cantidadAfectada);
                     psU.setInt(2, idProducto);
                     psU.executeUpdate();
                 }
                 
-                // Borrar de defectuosos
                 try(PreparedStatement psD = con.prepareStatement(sqlDelete)){
-                    psD.setInt(1, idProducto);
-                    psD.setString(2, estadoActual);
+                    if (isEmpresa) {
+                        psD.setInt(1, idProducto);
+                        psD.setString(2, estadoActual);
+                    } else {
+                        psD.setInt(1, idDefectuoso);
+                    }
                     psD.executeUpdate();
                 }
                 
-                // Obtener stock normal para el Kardex
                 int stockReal = 0;
                 try(PreparedStatement psS = con.prepareStatement("SELECT stock_producto FROM INVENTARIO WHERE id_producto = ?")){
                     psS.setInt(1, idProducto);
                     try(ResultSet rs = psS.executeQuery()){ if(rs.next()) stockReal = rs.getInt(1); }
                 }
                 
-                // Kardex Log
                 try(PreparedStatement psK = con.prepareStatement(sqlKardex)){
                     psK.setInt(1, idProducto);
                     psK.setInt(2, idUsuario);
@@ -226,8 +273,15 @@ public class InventarioDefectuosoDAO {
         }
     }
 
-    public boolean entregarCliente(int idProducto, String estadoActual) {
-        String sqlDelete = "DELETE FROM INVENTARIO_DEFECTUOSO WHERE id_producto = ? AND estado_defecto = ?";
+    public boolean entregarCliente(int idProducto, String estadoActual, String nombreCliente, int idDefectuoso) {
+        String sqlDelete;
+        boolean isEmpresa = ("INVERSIONES OLVAN (Empresa)".equals(nombreCliente) || nombreCliente == null || "Desconocido".equals(nombreCliente));
+        
+        if (isEmpresa) {
+            sqlDelete = "DELETE FROM INVENTARIO_DEFECTUOSO WHERE id_producto = ? AND estado_defecto = ? AND id_detalle_venta IS NULL";
+        } else {
+            sqlDelete = "DELETE FROM INVENTARIO_DEFECTUOSO WHERE id_inventarioDefectuoso = ?";
+        }
         
         Connection con = null;
         try {
@@ -235,8 +289,12 @@ public class InventarioDefectuosoDAO {
             con.setAutoCommit(false);
             
             try(PreparedStatement psD = con.prepareStatement(sqlDelete)){
-                psD.setInt(1, idProducto);
-                psD.setString(2, estadoActual);
+                if (isEmpresa) {
+                    psD.setInt(1, idProducto);
+                    psD.setString(2, estadoActual);
+                } else {
+                    psD.setInt(1, idDefectuoso);
+                }
                 psD.executeUpdate();
             }
             

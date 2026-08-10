@@ -77,7 +77,7 @@ public class DialogoVisorImagen extends JDialog {
             JPanel pnlNavegacion = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
             pnlNavegacion.setOpaque(false);
 
-            JButton btnPrev = new JButton("◀ Anterior");
+            JButton btnPrev = new JButton("Anterior", new IconoFlechaIzquierda());
             btnPrev.setFont(new Font("Segoe UI", Font.BOLD, 12));
             btnPrev.setBackground(new Color(60, 60, 60));
             btnPrev.setForeground(Color.WHITE);
@@ -97,7 +97,8 @@ public class DialogoVisorImagen extends JDialog {
             lblStatus.setFont(new Font("Segoe UI", Font.BOLD, 14));
             lblStatus.setPreferredSize(new Dimension(80, 30));
 
-            JButton btnNext = new JButton("Siguiente ▶");
+            JButton btnNext = new JButton("Siguiente", new IconoFlechaDerecha());
+            btnNext.setHorizontalTextPosition(SwingConstants.LEFT);
             btnNext.setFont(new Font("Segoe UI", Font.BOLD, 12));
             btnNext.setBackground(new Color(60, 60, 60));
             btnNext.setForeground(Color.WHITE);
@@ -230,5 +231,35 @@ public class DialogoVisorImagen extends JDialog {
             e.printStackTrace();
         }
         return null;
+    }
+
+    // --- CLASES PARA ICONOS ---
+    
+    private class IconoFlechaIzquierda implements Icon {
+        @Override public int getIconWidth() { return 16; }
+        @Override public int getIconHeight() { return 16; }
+        @Override public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(c.getForeground());
+            g2.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            g2.drawLine(x + 10, y + 4, x + 4, y + 8);
+            g2.drawLine(x + 4, y + 8, x + 10, y + 12);
+            g2.dispose();
+        }
+    }
+
+    private class IconoFlechaDerecha implements Icon {
+        @Override public int getIconWidth() { return 16; }
+        @Override public int getIconHeight() { return 16; }
+        @Override public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(c.getForeground());
+            g2.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            g2.drawLine(x + 6, y + 4, x + 12, y + 8);
+            g2.drawLine(x + 12, y + 8, x + 6, y + 12);
+            g2.dispose();
+        }
     }
 }
