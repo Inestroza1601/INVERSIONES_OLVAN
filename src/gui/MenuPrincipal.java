@@ -177,8 +177,10 @@ public class MenuPrincipal extends JFrame {
             abrirPanelAsync(() -> new PanelEstadisticas());
             marcarBotonActivo(btnEstadisticas, false);
         } else if (pPOS) {
-            abrirPanelAsync(() -> new PanelPuntoVenta());
-            marcarBotonActivo(btnPuntoVenta, false);
+            if(validarCajaPrevia()) {
+                abrirPanelAsync(() -> new PanelPuntoVenta());
+                marcarBotonActivo(btnPuntoVenta, false);
+            }
         } else if (pInventario) {
             abrirPanelAsync(() -> new PanelInventario());
             marcarBotonActivo(btnInventario, false);
@@ -195,7 +197,11 @@ public class MenuPrincipal extends JFrame {
         btnAdministracion.addActionListener(e -> abrirPanelAsync(() -> new PanelAdministracion()));
         btnClientes.addActionListener(e -> abrirPanelAsync(() -> new PanelGestionClientes()));
         btnInventario.addActionListener(e -> abrirPanelAsync(() -> new PanelInventario()));
-        btnPuntoVenta.addActionListener(e -> abrirPanelAsync(() -> new PanelPuntoVenta()));
+        btnPuntoVenta.addActionListener(e -> {
+            if (validarCajaPrevia()) {
+                abrirPanelAsync(() -> new PanelPuntoVenta());
+            }
+        });
         btnControlCaja.addActionListener(e -> abrirPanelAsync(() -> new PanelControlCaja()));
         btnApartados.addActionListener(e -> abrirPanelAsync(() -> new PanelApartados()));
         btnHistorialVentas.addActionListener(e -> abrirPanelAsync(() -> new PanelHistorialVentas()));
@@ -221,6 +227,19 @@ public class MenuPrincipal extends JFrame {
                 cardLayout.show(panelContenedor, "LOGIN");
             }
         });
+    }
+
+    private boolean validarCajaPrevia() {
+        try {
+            if (new dao.ControlCajaDAO().existeCajaAbiertaAnterior()) {
+                JOptionPane.showMessageDialog(this, "ATENCIÓN: Se ha detectado un turno de caja de una fecha anterior que aún NO se ha cerrado.\n\nPor favor, diríjase al módulo 'Control de Caja' y realice el cierre del turno anterior para evitar descuadres en sus finanzas antes de registrar nuevas ventas.", "Cierre de Caja Requerido", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+        } catch(java.sql.SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error al verificar el estado de la caja:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
     }
 
     // =========================================================================

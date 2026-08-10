@@ -15,7 +15,7 @@ public class ApartadoDAO {
         this.factory = new ConexionFactory();
     }
 
-    public boolean registrarApartado(Apartado a, List<DetalleApartado> detalles) {
+    public int registrarApartado(Apartado a, List<DetalleApartado> detalles) {
         String sqlApartado = "INSERT INTO APARTADOS (id_cliente_apartado, id_usuario, fecha_apartado, total_apartado, saldo_pendiente, estado_apartado, fecha_entrega) "
                            + "VALUES (?, ?, GETDATE(), ?, ?, ?, NULL)";
         
@@ -45,18 +45,19 @@ public class ApartadoDAO {
                 psApartado.setDouble(3, a.getTotalApartado());
                 psApartado.setDouble(4, saldoPendiente);
                 psApartado.setString(5, estado);
-                psApartado.executeUpdate();
-
-                try (ResultSet rsKeys = psApartado.getGeneratedKeys()) {
-                    if (rsKeys.next()) {
-                        idApartado = rsKeys.getInt(1);
+                int filasA = psApartado.executeUpdate();
+                if (filasA > 0) {
+                    try (ResultSet rsKeys = psApartado.getGeneratedKeys()) {
+                        if (rsKeys.next()) {
+                            idApartado = rsKeys.getInt(1);
+                        }
                     }
                 }
             }
 
             if (idApartado == 0) {
                 con.rollback();
-                return false;
+                return -1;
             }
 
             // Registrar el abono inicial en la tabla ABONOS_APARTADO si es mayor a 0
@@ -117,11 +118,11 @@ public class ApartadoDAO {
             }
 
             con.commit();
-            return true;
+            return idApartado;
         } catch (SQLException e) {
             if (con != null) try { con.rollback(); } catch (SQLException ex) {}
             System.err.println("Error al registrar apartado: " + e.getMessage());
-            return false;
+            return -1;
         } finally {
             if (con != null) try { con.setAutoCommit(true); con.close(); } catch (SQLException e) {}
         }

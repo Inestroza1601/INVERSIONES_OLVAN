@@ -170,15 +170,23 @@ public class InventarioDAO {
         return null;
     }
 
-    public boolean eliminarProductoLogico(int idProducto) {
+    public boolean eliminarProductoLogico(int idProducto) throws SQLException {
+        String sqlCheck = "SELECT COUNT(*) FROM DETALLES_APARTADO d INNER JOIN APARTADOS a ON d.id_apartado = a.id_apartado WHERE d.id_producto = ? AND a.estado_apartado = 'VIGENTE'";
+        try (Connection con = factory.getConexion();
+             PreparedStatement psCheck = con.prepareStatement(sqlCheck)) {
+            psCheck.setInt(1, idProducto);
+            try (ResultSet rs = psCheck.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    throw new SQLException("El producto está asociado a un apartado vigente y no puede ser eliminado.");
+                }
+            }
+        }
+
         String sql = "UPDATE INVENTARIO SET eliminado_producto = 1 WHERE id_producto = ?";
         try (Connection con = factory.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idProducto);
             return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.println("Error al eliminar producto: " + e.getMessage());
-            return false;
         }
     }
     

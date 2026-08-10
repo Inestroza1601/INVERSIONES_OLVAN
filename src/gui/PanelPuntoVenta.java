@@ -503,11 +503,12 @@ public class PanelPuntoVenta extends JPanel {
                 JOptionPane.showMessageDialog(this, "Debe seleccionar el Banco Emisor para autorizar esta transacción.", "Datos Incompletos", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            if (txtReferenciaPago.getText().trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Ingrese el número de Referencia, Voucher o ACH del pago.", "Datos Incompletos", JOptionPane.WARNING_MESSAGE);
+            String refStr = txtReferenciaPago.getText().trim();
+            if (!refStr.matches("^[a-zA-Z0-9]{4,}$")) {
+                JOptionPane.showMessageDialog(this, "El número de Referencia, Voucher o ACH debe contener al menos 4 caracteres alfanuméricos.", "Datos Inválidos", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            refPago = txtReferenciaPago.getText().trim();
+            refPago = refStr;
             bancoSeleccionado = cmbBanco.getSelectedItem().toString();
         }
 
@@ -569,15 +570,21 @@ public class PanelPuntoVenta extends JPanel {
             int opApartado = JOptionPane.showConfirmDialog(this, fields, "Detalles del Apartado", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (opApartado != JOptionPane.OK_OPTION) return;
 
+            double abono = 0;
+            int dias = 0;
             try {
-                double abono = Double.parseDouble(txtAbonoInicial.getText().trim());
-                int dias = Integer.parseInt(txtDiasPlazo.getText().trim());
+                abono = Double.parseDouble(txtAbonoInicial.getText().trim());
+                dias = Integer.parseInt(txtDiasPlazo.getText().trim());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Verifique los valores numéricos ingresados.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
-                if (abono < 0 || abono > granTotal) {
-                    JOptionPane.showMessageDialog(this, "El abono inicial debe ser menor o igual al total.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                if (dias <= 0) {
+            if (abono < 0 || abono > granTotal) {
+                JOptionPane.showMessageDialog(this, "El abono inicial debe ser menor o igual al total.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (dias <= 0) {
                     JOptionPane.showMessageDialog(this, "El plazo en días debe ser mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
@@ -632,48 +639,42 @@ public class PanelPuntoVenta extends JPanel {
                 }
 
                 ApartadoDAO apDAO = new ApartadoDAO();
-                if (apDAO.registrarApartado(a, detallesA)) {
+                int idApartadoGenerado = apDAO.registrarApartado(a, detallesA);
+                if (idApartadoGenerado > 0) {
                     // Generar PDF
                     txtReferenciaPago.setText(""); cmbBanco.setSelectedIndex(0); pnlCamposExtraPago.setVisible(false);
-                    JFileChooser chooser = new JFileChooser();
-                    chooser.setDialogTitle("Guardar Comprobante de Apartado");
-                    chooser.setSelectedFile(new File("Apartado_Nexar_" + System.currentTimeMillis() + ".pdf"));
+                    
+                    File dir = new File("reportes/apartados");
+                    if (!dir.exists()) dir.mkdirs();
+                    File archivoDestino = new File("reportes/apartados/Ticket_Apartado_" + idApartadoGenerado + ".pdf");
 
-                    if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-                        File archivoDestino = chooser.getSelectedFile();
-                        if (!archivoDestino.getName().toLowerCase().endsWith(".pdf")) archivoDestino = new File(archivoDestino.getAbsolutePath() + ".pdf");
+                    try {
+                        String fechaActual = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date());
+                        String fechaLim = new java.text.SimpleDateFormat("dd/MM/yyyy").format(a.getFechaLimite());
 
-                        try {
-                            String fechaActual = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date());
-                            String fechaLim = new java.text.SimpleDateFormat("dd/MM/yyyy").format(a.getFechaLimite());
-
-                            utilidades.GeneradorTickets.generarTicketApartadoPDF(
-                                archivoDestino.getAbsolutePath(),
-                                lblClienteSeleccionado.getText(),
-                                fechaActual,
-                                fechaLim,
-                                detallesPDF,
-                                granTotal,
-                                abono,
-                                a.getSaldoPendiente(),
-                                pago.nombre
-                            );
-                            JOptionPane.showMessageDialog(this, "Apartado registrado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                            if (Desktop.isDesktopSupported()) Desktop.getDesktop().open(archivoDestino);
-                        } catch (Exception ex) {
-                            JOptionPane.showMessageDialog(this, "El apartado se guardó, pero hubo un error al generar el PDF:\n" + ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
-                        }
+                        utilidades.GeneradorTickets.generarTicketApartadoPDF(
+                            archivoDestino.getAbsolutePath(),
+                            lblClienteSeleccionado.getText(),
+                            fechaActual,
+                            fechaLim,
+                            detallesPDF,
+                            granTotal,
+                            abono,
+                            a.getSaldoPendiente(),
+                            pago.nombre
+                        );
+                        JOptionPane.showMessageDialog(this, "Apartado registrado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                        if (Desktop.isDesktopSupported()) Desktop.getDesktop().open(archivoDestino);
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(this, "El apartado se guardó, pero hubo un error al generar el PDF:\n" + ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
                     }
 
                     modeloTablaVentas.setRowCount(0); recalcularTotales();
                     lblClienteSeleccionado.setText("CONSUMIDOR FINAL"); idClienteActual = 1;
+                    txtAbonoInicial.setText("");
                 } else {
                     JOptionPane.showMessageDialog(this, "Error crítico al guardar el apartado en la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Verifique los valores numéricos ingresados.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
             return;
         }
 
@@ -698,16 +699,15 @@ public class PanelPuntoVenta extends JPanel {
             });
         }
 
-        if (dao.procesarVentaCompleta(idClienteActual, idUsuarioAutorizado, pago.id, sumSubtotal, sumImpuesto, granTotal, refPago, bancoSeleccionado, detalles)) {
-            
-            txtReferenciaPago.setText(""); cmbBanco.setSelectedIndex(0); pnlCamposExtraPago.setVisible(false);
-            JFileChooser chooser = new JFileChooser();
-            chooser.setDialogTitle("Guardar e Imprimir Comprobante");
-            chooser.setSelectedFile(new File("Factura_Nexar_" + System.currentTimeMillis() + ".pdf"));
-
-            if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-                File archivoDestino = chooser.getSelectedFile();
-                if (!archivoDestino.getName().toLowerCase().endsWith(".pdf")) archivoDestino = new File(archivoDestino.getAbsolutePath() + ".pdf");
+        try {
+            int idVentaGenerada = dao.procesarVentaCompleta(idClienteActual, idUsuarioAutorizado, pago.id, sumSubtotal, sumImpuesto, granTotal, refPago, bancoSeleccionado, detalles);
+            if (idVentaGenerada > 0) {
+                
+                txtReferenciaPago.setText(""); cmbBanco.setSelectedIndex(0); pnlCamposExtraPago.setVisible(false);
+                
+                File dir = new File("reportes/ventas");
+                if (!dir.exists()) dir.mkdirs();
+                File archivoDestino = new File("reportes/ventas/Ticket_Venta_" + idVentaGenerada + ".pdf");
 
                try {
                     // Generamos la fecha exacta del momento en que se presiona el botón cobrar
@@ -727,13 +727,14 @@ public class PanelPuntoVenta extends JPanel {
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, "La venta se guardó, pero hubo un error al generar el PDF:\n" + ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
                 }
+
+                modeloTablaVentas.setRowCount(0); recalcularTotales();
+                lblClienteSeleccionado.setText("CONSUMIDOR FINAL"); idClienteActual = 1;
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al registrar la venta en la Base de Datos.", "Error", JOptionPane.ERROR_MESSAGE);
             }
-
-            modeloTablaVentas.setRowCount(0); recalcularTotales();
-            lblClienteSeleccionado.setText("CONSUMIDOR FINAL"); idClienteActual = 1;
-
-        } else {
-            JOptionPane.showMessageDialog(this, "Error crítico al guardar la venta en base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (java.sql.SQLException ex) {
+            JOptionPane.showMessageDialog(this, "No se pudo procesar la venta: \n" + ex.getMessage(), "Error de Base de Datos", JOptionPane.ERROR_MESSAGE);
         }
     }
 

@@ -40,6 +40,18 @@ public class ControlCajaDAO {
         return null;
     }
 
+    public boolean existeCajaAbiertaAnterior() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM CONTROL_CAJA WHERE estado_caja = 'ABIERTA' AND CAST(fecha_apertura AS DATE) < CAST(GETDATE() AS DATE)";
+        try (Connection con = factory.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        }
+        return false;
+    }
+
     public boolean abrirCaja(int idUsuario, double montoApertura, String cajeroTurno) {
         String sql = "INSERT INTO CONTROL_CAJA (id_usuario_apertura, fecha_apertura, monto_apertura, estado_caja, cajero_turno) "
                    + "VALUES (?, GETDATE(), ?, 'ABIERTA', ?)";
@@ -225,6 +237,10 @@ public class ControlCajaDAO {
                 resultado.put("monto_apertura", montoApertura);
                 resultado.put("cajero_turno", rsCaja.getString("cajero_turno"));
                 resultado.put("nombre_usuario_apertura", rsCaja.getString("nombre_usuario_apertura"));
+                if (rsCaja.getObject("monto_cierre_real") != null) {
+                    resultado.put("monto_cierre_real", rsCaja.getDouble("monto_cierre_real"));
+                }
+                resultado.put("observaciones", rsCaja.getString("observaciones"));
                 resultado.put("metodos", reportMethods);
                 resultado.put("efectivo_esperado", efectivoEsperado);
                 resultado.put("total_ventas_general", totalSalesAll);

@@ -23,7 +23,9 @@ public class GeneradorReportesPDF {
         // Obtener datos de la empresa
         EmpresaDAO empresaDAO = new EmpresaDAO();
         Empresa empresa = empresaDAO.obtenerDatos();
-        if (empresa == null) empresa = new Empresa();
+        if (empresa == null) {
+            empresa = new Empresa();
+        }
 
         // Crear documento y ruta
         Document documento = new Document(PageSize.A4.rotate()); // Horizontal para tablas anchas
@@ -58,7 +60,7 @@ public class GeneradorReportesPDF {
 
         // Datos de la empresa
         Paragraph infoEmpresa = new Paragraph();
-        infoEmpresa.add(new Chunk(empresa.getNombreEmpresa() != null ? empresa.getNombreEmpresa() : "MI EMPRESA\n", FUENTE_EMPRESA));
+        infoEmpresa.add(new Chunk(empresa.getNombreEmpresa() != null ? empresa.getNombreEmpresa() : "INVERSIONES OLVAN\n", FUENTE_EMPRESA));
         infoEmpresa.add(new Chunk("\nRTN: " + (empresa.getRtnEmpresa() != null ? empresa.getRtnEmpresa() : "N/A"), FUENTE_NORMAL));
         infoEmpresa.add(new Chunk("\nDirección: " + (empresa.getDireccionEmpresa() != null ? empresa.getDireccionEmpresa() : "N/A"), FUENTE_NORMAL));
         infoEmpresa.add(new Chunk("\nFecha de Emisión: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()), FUENTE_NORMAL));
