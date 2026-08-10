@@ -450,9 +450,13 @@ public class PanelBuscarProducto extends JPanel {
         int confirmacion = JOptionPane.showConfirmDialog(this, "¿Está seguro de eliminar el producto:\n" + nombre + "?", "Confirmar Eliminación", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (confirmacion == JOptionPane.YES_OPTION) {
             InventarioDAO dao = new InventarioDAO();
-            if (dao.eliminarProductoLogico(idProducto)) {
-                JOptionPane.showMessageDialog(this, "Producto eliminado exitosamente.");
-                cargarDatosDesdeBD();
+            try {
+                if (dao.eliminarProductoLogico(idProducto)) {
+                    JOptionPane.showMessageDialog(this, "Producto eliminado exitosamente.");
+                    cargarDatosDesdeBD();
+                }
+            } catch (java.sql.SQLException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Acción Denegada", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

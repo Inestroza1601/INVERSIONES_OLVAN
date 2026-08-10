@@ -251,19 +251,14 @@ public class PanelControlCaja extends JPanel {
             int idCaja = (int) tablaHistorial.getValueAt(row, 0);
             Map<String, Object> calcs = dao.obtenerCalculosTurno(idCaja);
             if (calcs != null) {
-                JFileChooser chooser = new JFileChooser();
-                chooser.setDialogTitle("Reimprimir Cierre #" + idCaja);
-                chooser.setSelectedFile(new java.io.File("Reimpresion_Cierre_Caja_" + idCaja + ".pdf"));
-                if (chooser.showSaveDialog(panel) == JFileChooser.APPROVE_OPTION) {
-                    java.io.File dest = chooser.getSelectedFile();
-                    if (!dest.getName().toLowerCase().endsWith(".pdf"))
-                        dest = new java.io.File(dest.getAbsolutePath() + ".pdf");
-                    try {
-                        utilidades.GeneradorTickets.generarTicketCierreCajaPDF(dest.getAbsolutePath(), calcs);
-                        if (java.awt.Desktop.isDesktopSupported()) java.awt.Desktop.getDesktop().open(dest);
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(panel, "Error al generar PDF: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    }
+                java.io.File dir = new java.io.File("reportes/cierres");
+                if (!dir.exists()) dir.mkdirs();
+                java.io.File dest = new java.io.File("reportes/cierres/Ticket_Cierre_" + idCaja + ".pdf");
+                try {
+                    utilidades.GeneradorTickets.generarTicketCierreCajaPDF(dest.getAbsolutePath(), calcs);
+                    if (java.awt.Desktop.isDesktopSupported()) java.awt.Desktop.getDesktop().open(dest);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(panel, "Error al generar PDF: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -362,27 +357,35 @@ public class PanelControlCaja extends JPanel {
 
         // Resumen calculado
         if (calcs != null) {
-            JPanel pnlResumen = new JPanel(new GridLayout(3, 1, 4, 4));
+            java.util.List<java.util.Map<String, Object>> metodos = (java.util.List<java.util.Map<String, Object>>) calcs.get("metodos");
+            int rows = (metodos != null ? metodos.size() : 0) + 2; // +1 for expected cash, +1 for note
+            JPanel pnlResumen = new JPanel(new GridLayout(rows, 1, 4, 4));
             pnlResumen.setOpaque(false);
             pnlResumen.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(180, 208, 192)),
                 BorderFactory.createEmptyBorder(10, 12, 10, 12)
             ));
-            double vTot = (double) calcs.get("total_ventas_general");
-            double aTot = (double) calcs.get("total_abonos_general");
-            double esp = (double) calcs.get("efectivo_esperado");
+            
+            if (metodos != null) {
+                for (java.util.Map<String, Object> m : metodos) {
+                    String nombre = (String) m.get("nombre_metodo");
+                    double total = (double) m.get("total_general");
+                    JLabel lblMetodo = new JLabel("Ingresos " + nombre + ": L " + String.format("%,.2f", total));
+                    lblMetodo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                    pnlResumen.add(lblMetodo);
+                }
+            }
 
-            JLabel rVentas = new JLabel("Ventas del Turno: L " + String.format("%,.2f", vTot));
-            rVentas.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-            JLabel rAbonos = new JLabel("Abonos del Turno: L " + String.format("%,.2f", aTot));
-            rAbonos.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-            JLabel rEsperado = new JLabel("Efectivo Esperado: L " + String.format("%,.2f", esp));
+            double esp = (double) calcs.get("efectivo_esperado");
+            JLabel rEsperado = new JLabel("Efectivo Esperado (Solo Efectivo): L " + String.format("%,.2f", esp));
             rEsperado.setFont(new Font("Segoe UI", Font.BOLD, 14));
             rEsperado.setForeground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO);
-
-            pnlResumen.add(rVentas);
-            pnlResumen.add(rAbonos);
             pnlResumen.add(rEsperado);
+
+            JLabel rNota = new JLabel("* Efectivo Esperado excluye transferencias y tarjetas.");
+            rNota.setFont(new Font("Segoe UI", Font.ITALIC, 11));
+            rNota.setForeground(Color.GRAY);
+            pnlResumen.add(rNota);
 
             gc.gridy = 0;
             pnlCuerpo.add(pnlResumen, gc);
@@ -475,19 +478,14 @@ public class PanelControlCaja extends JPanel {
                     JOptionPane.showMessageDialog(dlgCierre, "Caja cerrada y arqueo finalizado correctamente.", "Exito", JOptionPane.INFORMATION_MESSAGE);
                     Map<String, Object> calcsFinales = dao.obtenerCalculosTurno(activa.getIdCaja());
                     if (calcsFinales != null) {
-                        JFileChooser chooser = new JFileChooser();
-                        chooser.setDialogTitle("Guardar Ticket de Cierre");
-                        chooser.setSelectedFile(new java.io.File("Cierre_Caja_" + activa.getIdCaja() + ".pdf"));
-                        if (chooser.showSaveDialog(dlgCierre) == JFileChooser.APPROVE_OPTION) {
-                            java.io.File dest = chooser.getSelectedFile();
-                            if (!dest.getName().toLowerCase().endsWith(".pdf"))
-                                dest = new java.io.File(dest.getAbsolutePath() + ".pdf");
-                            try {
-                                utilidades.GeneradorTickets.generarTicketCierreCajaPDF(dest.getAbsolutePath(), calcsFinales);
-                                if (java.awt.Desktop.isDesktopSupported()) java.awt.Desktop.getDesktop().open(dest);
-                            } catch (Exception ex2) {
-                                JOptionPane.showMessageDialog(dlgCierre, "Error al generar PDF: " + ex2.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                            }
+                        java.io.File dir = new java.io.File("reportes/cierres");
+                        if (!dir.exists()) dir.mkdirs();
+                        java.io.File dest = new java.io.File("reportes/cierres/Cierre_Caja_" + activa.getIdCaja() + ".pdf");
+                        try {
+                            utilidades.GeneradorTickets.generarTicketCierreCajaPDF(dest.getAbsolutePath(), calcsFinales);
+                            if (java.awt.Desktop.isDesktopSupported()) java.awt.Desktop.getDesktop().open(dest);
+                        } catch (Exception ex2) {
+                            JOptionPane.showMessageDialog(dlgCierre, "Error al generar PDF: " + ex2.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                         }
                         mostrarReporteResumen(calcsFinales);
                     }

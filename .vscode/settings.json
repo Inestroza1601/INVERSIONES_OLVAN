@@ -12,5 +12,6 @@
     ],
     "java.project.sourcePaths": [
         "src"
-    ]
+    ],
+    "java.debug.settings.onBuildFailureProceed": true
 }

@@ -413,41 +413,32 @@ public class PanelHistorialVentas extends JPanel {
 
         List<Object[]> detalles = (List<Object[]>) venta.get("detalles");
 
-        JFileChooser chooser = new JFileChooser();
-        chooser.setDialogTitle("Reimprimir Ticket de Venta #" + idVenta);
-        chooser.setSelectedFile(new File("Reimpresion_Factura_" + idVenta + "_" + System.currentTimeMillis() + ".pdf"));
+        File dir = new File("reportes/ventas");
+        if (!dir.exists()) dir.mkdirs();
+        File archivoDestino = new File("reportes/ventas/Ticket_Venta_" + idVenta + ".pdf");
 
-        if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File archivoDestino = chooser.getSelectedFile();
-            if (!archivoDestino.getName().toLowerCase().endsWith(".pdf")) {
-                archivoDestino = new File(archivoDestino.getAbsolutePath() + ".pdf");
+        try {
+            boolean facturacionHabilitada = dao.empresaTieneFacturacionHabilitada(1);
+
+            GeneradorTickets.generarTicketVentaPDF(
+                    archivoDestino.getAbsolutePath(),
+                    (String) venta.get("cliente"),
+                    (String) venta.get("fecha"),
+                    detalles,
+                    (double) venta.get("subtotal"),
+                    (double) venta.get("isv"),
+                    (double) venta.get("total"),
+                    facturacionHabilitada,
+                    (String) venta.get("metodo"),
+                    (String) venta.get("ref"),
+                    (String) venta.get("banco"));
+
+            JOptionPane.showMessageDialog(this, "Reimpresión generada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(archivoDestino);
             }
-
-            try {
-                boolean facturacionHabilitada = dao.empresaTieneFacturacionHabilitada(1);
-
-                GeneradorTickets.generarTicketVentaPDF(
-                        archivoDestino.getAbsolutePath(),
-                        (String) venta.get("cliente"),
-                        (String) venta.get("fecha"),
-                        detalles,
-                        (double) venta.get("subtotal"),
-                        (double) venta.get("isv"),
-                        (double) venta.get("total"),
-                        facturacionHabilitada,
-                        (String) venta.get("metodo"),
-                        (String) venta.get("ref"),
-                        (String) venta.get("banco"));
-
-                JOptionPane.showMessageDialog(this, "Ticket reimpreso y generado con éxito.", "Éxito",
-                        JOptionPane.INFORMATION_MESSAGE);
-                if (Desktop.isDesktopSupported()) {
-                    Desktop.getDesktop().open(archivoDestino);
-                }
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Error al generar el PDF:\n" + ex.getMessage(), "Error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Hubo un error al generar el PDF:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

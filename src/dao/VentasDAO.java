@@ -103,7 +103,7 @@ public class VentasDAO {
         return -1; 
     }
 
-        public boolean procesarVentaCompleta(int idCliente, int idUsuario, int idMetodoPago, double subtotal, double impuesto, double total, String referenciaPago, String bancoPago, List<Object[]> detalles) {
+    public int procesarVentaCompleta(int idCliente, int idUsuario, int idMetodoPago, double subtotal, double impuesto, double total, String referenciaPago, String bancoPago, List<Object[]> detalles) throws SQLException {
         String sqlVenta = "INSERT INTO VENTAS (fecha_venta, id_cliente_venta, id_usuario, id_metodo_pago, subtotal_venta, impuesto_venta, total_venta, referencia_pago, banco_pago) VALUES (GETDATE(), ?, ?, ?, ?, ?, ?, ?, ?)";
         String sqlDetalle = "INSERT INTO DETALLES_VENTA (id_ventas, id_producto, descripcion_venta, cantidad_venta, precio_unitario_venta, subtotal_venta, identificador_serie, dias_garantia) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         String sqlStockActual = "SELECT stock_producto FROM INVENTARIO WHERE id_producto = ?";
@@ -119,75 +119,90 @@ public class VentasDAO {
             try (PreparedStatement psVenta = con.prepareStatement(sqlVenta, Statement.RETURN_GENERATED_KEYS)) {
                 psVenta.setInt(1, idCliente); psVenta.setInt(2, idUsuario); psVenta.setInt(3, idMetodoPago);
                 psVenta.setDouble(4, subtotal); psVenta.setDouble(5, impuesto); psVenta.setDouble(6, total);
-                psVenta.setDouble(6, total);
+                
                 if (referenciaPago == null || referenciaPago.trim().isEmpty()) psVenta.setNull(7, java.sql.Types.VARCHAR);
                 else psVenta.setString(7, referenciaPago.trim());
 
                 if (bancoPago == null || bancoPago.trim().equals("Seleccione Banco...")) psVenta.setNull(8, java.sql.Types.VARCHAR);
                 else psVenta.setString(8, bancoPago.trim());
-                psVenta.executeUpdate();
-                try (ResultSet rsKeys = psVenta.getGeneratedKeys()) { if (rsKeys.next()) idVentaGenerado = rsKeys.getInt(1); }
-            }
 
-            if (idVentaGenerado == 0) { con.rollback(); return false; }
-
-            try (PreparedStatement psDetalle = con.prepareStatement(sqlDetalle);
-                 PreparedStatement psStockActual = con.prepareStatement(sqlStockActual);
-                 PreparedStatement psStockUpdate = con.prepareStatement(sqlRestarStock);
-                 PreparedStatement psKardex = con.prepareStatement(sqlKardex)) {
-                
-                for (Object[] fila : detalles) {
-                    int idProd = (int) fila[0]; 
-                    String imei = (fila[1] != null) ? fila[1].toString() : ""; // Atrapamos el IMEI
-                    String nombre = (String) fila[2];
-                    int cantidad = (int) fila[3]; 
-                    double precio = (double) fila[4]; 
-                    double subtotFila = (double) fila[5];
-                    int diasGarantia = (fila.length > 6 && fila[6] != null) ? (int) fila[6] : 0; // Atrapamos la garantía
-
-                    psDetalle.setInt(1, idVentaGenerado); 
-                    psDetalle.setInt(2, idProd); 
-                    psDetalle.setString(3, nombre);
-                    psDetalle.setInt(4, cantidad); 
-                    psDetalle.setDouble(5, precio); 
-                    psDetalle.setDouble(6, subtotFila);
-           
-                    if (imei.isEmpty()) {
-                        psDetalle.setNull(7, java.sql.Types.VARCHAR);
-                    } else {
-                        psDetalle.setString(7, imei);
+                int filasVenta = psVenta.executeUpdate();
+                if (filasVenta == 0) throw new SQLException("Error al registrar la venta");
+                try (ResultSet rs = psVenta.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        idVentaGenerado = rs.getInt(1);
                     }
-                    
-                    psDetalle.setInt(8, diasGarantia);
-
-                    psDetalle.executeUpdate();
-
-                    int stockActual = 0;
-                    psStockActual.setInt(1, idProd);
-                    try (ResultSet rsStock = psStockActual.executeQuery()) { if (rsStock.next()) stockActual = rsStock.getInt("stock_producto"); }
-                    
-                    int stockRestante = stockActual - cantidad;
-                    if (stockRestante < 0) {
-                        con.rollback();
-                        throw new SQLException("Stock negativo no permitido. Producto: " + nombre);
-                    }
-
-                    psStockUpdate.setInt(1, stockRestante); psStockUpdate.setInt(2, idProd);
-                    psStockUpdate.executeUpdate();
-
-                    psKardex.setInt(1, idProd); 
-                    psKardex.setInt(2, idUsuario); 
-                    psKardex.setInt(3, cantidad); 
-                    psKardex.setInt(4, stockRestante);
-                    psKardex.setString(5, "Venta #" + idVentaGenerado);
-                    psKardex.executeUpdate();
-                    psKardex.executeUpdate();
                 }
             }
-            con.commit(); return true;
+
+            if (idVentaGenerado == 0) {
+                con.rollback();
+                return -1;
+            }
+
+            try (PreparedStatement psDetalle = con.prepareStatement(sqlDetalle);
+                 PreparedStatement psStockAct = con.prepareStatement(sqlStockActual);
+                 PreparedStatement psStockUpd = con.prepareStatement(sqlRestarStock);
+                 PreparedStatement psKardex = con.prepareStatement(sqlKardex)) {
+                
+                for (Object[] d : detalles) {
+                    int idProd = (int) d[0];
+                    String numSerie = (d[1] != null) ? d[1].toString() : "";
+                    String desc = (String) d[2];
+                    int cant = (int) d[3];
+                    double pre = (double) d[4];
+                    double sub = (double) d[5];
+                    int diasGar = (d.length > 6 && d[6] != null) ? (int) d[6] : 0;
+
+                    psDetalle.setInt(1, idVentaGenerado);
+                    psDetalle.setInt(2, idProd);
+                    psDetalle.setString(3, desc);
+                    psDetalle.setInt(4, cant);
+                    psDetalle.setDouble(5, pre);
+                    psDetalle.setDouble(6, sub);
+                    
+                    if (numSerie == null || numSerie.trim().isEmpty()) {
+                        psDetalle.setNull(7, java.sql.Types.VARCHAR);
+                    } else {
+                        psDetalle.setString(7, numSerie.trim());
+                    }
+                    
+                    psDetalle.setInt(8, diasGar);
+                    
+                    psDetalle.addBatch();
+
+                    psStockAct.setInt(1, idProd);
+                    int stockV = 0;
+                    try (ResultSet rsS = psStockAct.executeQuery()) {
+                        if (rsS.next()) stockV = rsS.getInt(1);
+                    }
+
+                    if (stockV < cant) {
+                        con.rollback();
+                        return -1; // Stock insuficiente
+                    }
+                    int nuevoStock = stockV - cant;
+
+                    psStockUpd.setInt(1, nuevoStock);
+                    psStockUpd.setInt(2, idProd);
+                    psStockUpd.addBatch();
+
+                    psKardex.setInt(1, idProd);
+                    psKardex.setInt(2, idUsuario);
+                    psKardex.setInt(3, cant);
+                    psKardex.setInt(4, nuevoStock);
+                    psKardex.setString(5, "Venta #" + idVentaGenerado);
+                    psKardex.addBatch();
+                }
+                psDetalle.executeBatch();
+                psStockUpd.executeBatch();
+                psKardex.executeBatch();
+            }
+            con.commit(); 
+            return idVentaGenerado;
         } catch (SQLException e) {
             if (con != null) try { con.rollback(); } catch (SQLException ex) { }
-            System.err.println("Error procesando venta y kardex: " + e.getMessage()); return false;
+            throw e;
         } finally {
             if (con != null) try { con.setAutoCommit(true); con.close(); } catch (SQLException e) { }
         }

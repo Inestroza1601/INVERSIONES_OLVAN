@@ -165,7 +165,7 @@ public class InventarioDefectuosoDAO {
         }
     }
 
-    public boolean reingresarInventario(int idProducto, String estadoActual, int idUsuario) {
+    public boolean reingresarInventario(int idProducto, String estadoActual, int idUsuario, String observacion) throws java.sql.SQLException {
         String sqlDelete = "DELETE FROM INVENTARIO_DEFECTUOSO WHERE id_producto = ? AND estado_defecto = ?";
         String sqlUpdateInv = "UPDATE INVENTARIO SET stock_producto = stock_producto + ? WHERE id_producto = ?";
         String sqlKardex = "INSERT INTO KARDEX (id_producto, id_usuario, fecha_movimiento_producto, tipo_movimiento_producto, cantidad_producto, stock_restante_producto, referencia_producto) VALUES (?, ?, GETDATE(), 'Entrada', ?, ?, ?)";
@@ -211,17 +211,16 @@ public class InventarioDefectuosoDAO {
                     psK.setInt(2, idUsuario);
                     psK.setInt(3, cantidadAfectada);
                     psK.setInt(4, stockReal);
-                    psK.setString(5, "RETORNO DE PROVEEDOR (MERMA)");
+                    psK.setString(5, "RETORNO MERMA: " + observacion);
                     psK.executeUpdate();
                 }
             }
             
             con.commit();
             return true;
-        } catch(Exception e) {
+        } catch(java.sql.SQLException e) {
             if(con != null) try{con.rollback();}catch(Exception ex){}
-            e.printStackTrace();
-            return false;
+            throw e;
         } finally {
             if(con != null) try{con.setAutoCommit(true); con.close();}catch(Exception ex){}
         }

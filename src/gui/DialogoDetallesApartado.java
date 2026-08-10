@@ -162,7 +162,9 @@ public class DialogoDetallesApartado extends JDialog {
     
     private void imprimirTicketGeneral() {
         try {
-            String ruta = System.getProperty("user.home") + "/Ticket_Apartado_" + idApartado + "_" + System.currentTimeMillis() + ".pdf";
+            java.io.File dir = new java.io.File("reportes/apartados");
+            if (!dir.exists()) dir.mkdirs();
+            String ruta = "reportes/apartados/Ticket_Apartado_" + idApartado + ".pdf";
             utilidades.GeneradorTickets.generarTicketApartadoPDF(
                 ruta,
                 ap.getNombreCliente() + " " + (ap.getApellidoCliente() != null ? ap.getApellidoCliente() : ""),
@@ -170,7 +172,8 @@ public class DialogoDetallesApartado extends JDialog {
                 ap.getTotalApartado(),
                 ap.getSaldoPendiente(),
                 idApartado,
-                detalles
+                detalles,
+                abonos
             );
             Desktop.getDesktop().open(new java.io.File(ruta));
         } catch (Exception ex) {
@@ -190,7 +193,10 @@ public class DialogoDetallesApartado extends JDialog {
         
         // Buscar el abono original para obtener su saldo histórico
         modelo.AbonoApartado abonoOrig = null;
+        double saldoDinamico = ap.getTotalApartado();
+        
         for (modelo.AbonoApartado ab : abonos) {
+            saldoDinamico -= ab.getMontoAbono();
             if (ab.getIdAbono() == idAbono) {
                 abonoOrig = ab;
                 break;
@@ -203,13 +209,15 @@ public class DialogoDetallesApartado extends JDialog {
         }
 
         try {
-            String ruta = System.getProperty("user.home") + "/Ticket_Reimpresion_Abono_" + idAbono + "_" + System.currentTimeMillis() + ".pdf";
+            java.io.File dir = new java.io.File("reportes/abonos");
+            if (!dir.exists()) dir.mkdirs();
+            String ruta = "reportes/abonos/Ticket_Abono_Apartado_" + idApartado + "_" + System.currentTimeMillis() + ".pdf";
             utilidades.GeneradorTickets.generarTicketAbonoPDF(
                 ruta,
                 ap.getNombreCliente() + " " + (ap.getApellidoCliente() != null ? ap.getApellidoCliente() : ""),
                 fecha,
                 monto,
-                abonoOrig.getSaldoHistorico(), 
+                saldoDinamico, 
                 metodo,
                 null,
                 null,

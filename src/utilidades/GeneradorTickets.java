@@ -62,7 +62,7 @@ public class GeneradorTickets {
 
         modelo.Empresa emp = utilidades.SesionGlobal.getEmpresaActual();
         
-        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORION STORE";
+        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
         String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
         String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
         
@@ -143,7 +143,7 @@ public class GeneradorTickets {
         modelo.Empresa emp = SesionGlobal.getEmpresaActual();
         
         // --- 1. EXTRACCIÓN EXACTA COMO EN EL PDF ---
-        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORION STORE";
+        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
         String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
         String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
         
@@ -250,7 +250,7 @@ public class GeneradorTickets {
 
         Empresa emp = SesionGlobal.getEmpresaActual();
         
-        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORIN STORE";
+        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
         String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
         String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
 
@@ -749,7 +749,7 @@ public class GeneradorTickets {
 
         Empresa emp = SesionGlobal.getEmpresaActual();
         
-        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORIN STORE";
+        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
         String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
         String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
 
@@ -851,7 +851,7 @@ public class GeneradorTickets {
         com.itextpdf.text.Font fTitulo = FontFactory.getFont(FontFactory.COURIER_BOLD, 12);
 
         modelo.Empresa emp = utilidades.SesionGlobal.getEmpresaActual();
-        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORION STORE";
+        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
         String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "";
 
         Paragraph header = new Paragraph();
@@ -870,19 +870,34 @@ public class GeneradorTickets {
             sb.append("Cierre:   ").append(sdf.format((java.util.Date) c.get("fecha_cierre"))).append("\n");
         }
         sb.append("-------------------------------\n");
-        sb.append(String.format("Ef. Inicial:   L %,8.2f\n", (double) c.get("monto_apertura")));
-        sb.append(String.format("Ventas Turno:  L %,8.2f\n", (double) c.get("total_ventas_general")));
-        sb.append(String.format("Abonos Recib:  L %,8.2f\n", (double) c.get("total_abonos_general")));
-        sb.append(String.format("Ef. Esperado:  L %,8.2f\n", (double) c.get("efectivo_esperado")));
+        sb.append(String.format("%-16s L %,8.2f\n", "Fondo Gaveta:", (double) c.get("monto_apertura")));
         
-        double real = c.get("monto_cierre_real") != null ? (double) c.get("monto_cierre_real") : 0.0;
-        double esperado = (double) c.get("efectivo_esperado");
-        sb.append(String.format("Ef. Real:      L %,8.2f\n", real));
-        sb.append(String.format("Diferencia:    L %,8.2f\n", real - esperado));
+        java.util.List<java.util.Map<String, Object>> metodos = (java.util.List<java.util.Map<String, Object>>) c.get("metodos");
+        if (metodos != null) {
+            for (java.util.Map<String, Object> m : metodos) {
+                String nombre = (String) m.get("nombre_metodo");
+                double total = (double) m.get("total_general");
+                if (nombre.length() > 16) nombre = nombre.substring(0, 16);
+                sb.append(String.format("%-16s L %,8.2f\n", nombre + ":", total));
+            }
+        }
         sb.append("-------------------------------\n");
-
         Paragraph body = new Paragraph(sb.toString(), fNormal);
         documento.add(body);
+
+        double esperado = (double) c.get("efectivo_esperado");
+        double real = c.get("monto_cierre_real") != null ? (double) c.get("monto_cierre_real") : 0.0;
+        double dif = real - esperado;
+
+        String textoDif = dif == 0 ? "CUADRE PERFECTO:" : (dif < 0 ? "FALTANTE EN CAJA:" : "SOBRANTE EN CAJA:");
+
+        Paragraph totales = new Paragraph(
+            String.format("%-18s L %,8.2f\n", "Efectivo Esperado:", esperado) +
+            String.format("%-18s L %,8.2f\n", "Efectivo Real:", real) +
+            String.format("%-18s L %,8.2f\n", textoDif, dif) +
+            "===============================\n\n", fBold);
+        totales.setAlignment(Element.ALIGN_RIGHT);
+        documento.add(totales);
 
         java.util.List<java.util.Map<String, Object>> prods = (java.util.List<java.util.Map<String, Object>>) c.get("productos_vendidos");
         if (prods != null && !prods.isEmpty()) {
@@ -905,14 +920,19 @@ public class GeneradorTickets {
             documento.add(obs);
         }
 
-        Paragraph pFirma = new Paragraph("________________________\nFirma del Cajero\n\n", fNormal);
+        Paragraph pFirma = new Paragraph(
+            "\n\n\n" +
+            "________________________\n" +
+            "Firma del Cajero\n\n\n\n" +
+            "________________________\n" +
+            "Firma Auditor/Gerente\n\n", fNormal);
         pFirma.setAlignment(Element.ALIGN_CENTER);
         documento.add(pFirma);
 
         documento.close();
     }
 
-    public static void generarTicketApartadoPDF(String rutaDestino, String cliente, String fecha, double total, double saldoPendiente, int idApartado, java.util.List<modelo.DetalleApartado> detalles) throws Exception {
+    public static void generarTicketApartadoPDF(String rutaDestino, String cliente, String fecha, double total, double saldoPendiente, int idApartado, java.util.List<modelo.DetalleApartado> detalles, java.util.List<modelo.AbonoApartado> abonosHistoricos) throws Exception {
         Rectangle tamanoTicket = new Rectangle(226, 800); // Formato de ticket térmico 80mm
         Document documento = new Document(tamanoTicket, 10, 10, 10, 10);
         PdfWriter writer = PdfWriter.getInstance(documento, new FileOutputStream(rutaDestino));
@@ -924,7 +944,7 @@ public class GeneradorTickets {
 
         Empresa emp = SesionGlobal.getEmpresaActual();
         
-        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORION STORE";
+        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
         String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
         String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
 
@@ -962,7 +982,7 @@ public class GeneradorTickets {
         documento.add(tituloDoc);
 
         StringBuilder sbInfo = new StringBuilder();
-        sbInfo.append("Apartado #").append(idApartado).append("\n");
+        sbInfo.append("APARTADO #").append(idApartado).append("\n");
         sbInfo.append("Fecha: ").append(fecha).append("\n");
         sbInfo.append("Cliente: ").append(cliente).append("\n");
         sbInfo.append("-------------------------------\n");
@@ -995,7 +1015,21 @@ public class GeneradorTickets {
         Paragraph pProds = new Paragraph(prods.toString(), fNormal);
         documento.add(pProds);
 
+        if (abonosHistoricos != null && !abonosHistoricos.isEmpty()) {
+            StringBuilder sbAbonos = new StringBuilder();
+            sbAbonos.append("HISTORIAL DE ABONOS\n");
+            sbAbonos.append("-------------------------------\n");
+            for (modelo.AbonoApartado ab : abonosHistoricos) {
+                String fechaAbono = new java.text.SimpleDateFormat("dd/MM/yy").format(ab.getFechaAbono());
+                sbAbonos.append(String.format("%-12s L %,15.2f\n", fechaAbono, ab.getMontoAbono()));
+            }
+            sbAbonos.append("-------------------------------\n");
+            Paragraph pAbonos = new Paragraph(sbAbonos.toString(), fNormal);
+            documento.add(pAbonos);
+        }
+
         Paragraph totales = new Paragraph(
+            String.format("%-15s L %,8.2f\n", "TOTAL ABONADO:", total - saldoPendiente) +
             String.format("%-15s L %,8.2f\n", "TOTAL APARTADO:", total) +
             String.format("%-15s L %,8.2f\n", "SALDO PENDIENTE:", saldoPendiente) +
             "\n===============================\n", fBold);
@@ -1003,7 +1037,7 @@ public class GeneradorTickets {
         documento.add(totales);
 
         String msjPie = emp != null && emp.getMensajeTicketPieRecibo() != null ? emp.getMensajeTicketPieRecibo() : "Conserve este ticket para reclamar su producto.";
-        Paragraph pie = new Paragraph(msjPie + "\n\n\n\n", fNormal);
+        Paragraph pie = new Paragraph(msjPie + "\n\n* POLÍTICA: No se aceptan reembolsos\nuna vez realizado el apartado.\n\n\n", fNormal);
         pie.setAlignment(Element.ALIGN_CENTER);
         documento.add(pie);
 
@@ -1022,7 +1056,7 @@ public class GeneradorTickets {
 
         Empresa emp = SesionGlobal.getEmpresaActual();
         
-        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORION STORE";
+        String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
         String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
         String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
 
@@ -1079,7 +1113,7 @@ public class GeneradorTickets {
         totales.setAlignment(Element.ALIGN_RIGHT);
         documento.add(totales);
 
-        Paragraph footer = new Paragraph("Comprobante oficial de pago.\n\n\n\n", fNormal);
+        Paragraph footer = new Paragraph("Comprobante oficial de pago.\n\n* POLÍTICA: No se aceptan reembolsos\nuna vez realizado el apartado.\n\n\n", fNormal);
         footer.setAlignment(Element.ALIGN_CENTER);
         documento.add(footer);
 
@@ -1088,9 +1122,9 @@ public class GeneradorTickets {
     
     public static void generarTicketCambioPDF(int idDetalleOriginal, modelo.Producto productoSustituto, double precioOriginal) {
         try {
-            java.io.File dir = new java.io.File("reportes");
+            java.io.File dir = new java.io.File("reportes/garantias_y_cambios");
             if (!dir.exists()) dir.mkdirs();
-            String ruta = "reportes/Comprobante_Cambio_" + idDetalleOriginal + "_" + System.currentTimeMillis() + ".pdf";
+            String ruta = "reportes/garantias_y_cambios/Comprobante_Cambio_" + idDetalleOriginal + ".pdf";
             
             Rectangle tamanoTicket = new Rectangle(226, 800);
             Document documento = new Document(tamanoTicket, 10, 10, 15, 15);
@@ -1102,7 +1136,7 @@ public class GeneradorTickets {
             com.itextpdf.text.Font fTitulo = FontFactory.getFont(FontFactory.COURIER_BOLD, 12);
             
             modelo.Empresa emp = utilidades.SesionGlobal.getEmpresaActual();
-            String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORIN STORE";
+            String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
             String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
             String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
 
@@ -1201,9 +1235,9 @@ public class GeneradorTickets {
 
     public static void generarTicketGarantiaPDF(int idDetalleOriginal, String resolucion, String observacion) {
         try {
-            java.io.File dir = new java.io.File("reportes");
+            java.io.File dir = new java.io.File("reportes/garantias_y_cambios");
             if (!dir.exists()) dir.mkdirs();
-            String ruta = "reportes/Comprobante_Reclamo_" + idDetalleOriginal + "_" + System.currentTimeMillis() + ".pdf";
+            String ruta = "reportes/garantias_y_cambios/Comprobante_Reclamo_" + idDetalleOriginal + ".pdf";
             
             Rectangle tamanoTicket = new Rectangle(226, 800);
             Document documento = new Document(tamanoTicket, 10, 10, 15, 15);
@@ -1215,7 +1249,7 @@ public class GeneradorTickets {
             com.itextpdf.text.Font fTitulo = FontFactory.getFont(FontFactory.COURIER_BOLD, 12);
             
             modelo.Empresa emp = utilidades.SesionGlobal.getEmpresaActual();
-            String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORIN STORE";
+            String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
             String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
             String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
 
@@ -1285,9 +1319,9 @@ public class GeneradorTickets {
 
     public static void generarTicketEntregaReparacionPDF(String nombreProducto, String observacion) {
         try {
-            java.io.File dir = new java.io.File("reportes");
+            java.io.File dir = new java.io.File("reportes/garantias_y_cambios");
             if (!dir.exists()) dir.mkdirs();
-            String ruta = "reportes/Comprobante_Entrega_Reparacion_" + System.currentTimeMillis() + ".pdf";
+            String ruta = "reportes/garantias_y_cambios/Comprobante_Entrega_Reparacion_" + System.currentTimeMillis() + ".pdf";
             
             Rectangle tamanoTicket = new Rectangle(226, 800);
             Document documento = new Document(tamanoTicket, 10, 10, 15, 15);
@@ -1299,7 +1333,7 @@ public class GeneradorTickets {
             com.itextpdf.text.Font fTitulo = FontFactory.getFont(FontFactory.COURIER_BOLD, 12);
             
             modelo.Empresa emp = utilidades.SesionGlobal.getEmpresaActual();
-            String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORIN STORE";
+            String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
             String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
             String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
 
