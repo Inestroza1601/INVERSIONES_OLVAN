@@ -14,6 +14,12 @@ import java.util.List;
 
 public class DialogoBuscarProductoSustituto extends JDialog {
     private Producto productoSeleccionado = null;
+    
+    // Caché y estado para Lazy Loading con Shimmer
+    private java.util.Map<Integer, ImageIcon> cacheImagenes = new java.util.concurrent.ConcurrentHashMap<>();
+    private java.util.Set<Integer> imagenesEnProceso = java.util.Collections.synchronizedSet(new java.util.HashSet<>());
+    private float animacionShimmerPhase = 0f;
+    private Timer timerShimmer;
 
     public DialogoBuscarProductoSustituto(Window parent) {
         super(parent, "Catálogo Rápido - Selección de Sustituto", Dialog.ModalityType.APPLICATION_MODAL);
@@ -110,6 +116,15 @@ public class DialogoBuscarProductoSustituto extends JDialog {
         sc.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)));
         sc.getViewport().setBackground(new Color(255, 255, 255));
         add(sc, BorderLayout.CENTER);
+        
+        timerShimmer = new Timer(30, e -> {
+            if (!imagenesEnProceso.isEmpty()) {
+                animacionShimmerPhase += 0.05f;
+                if (animacionShimmerPhase > 1f) animacionShimmerPhase = 0f;
+                tab.repaint();
+            }
+        });
+        timerShimmer.start();
     }
 
     public Producto getProductoSeleccionado() {
@@ -119,27 +134,92 @@ public class DialogoBuscarProductoSustituto extends JDialog {
     private class ImagenMiniaturaRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            JLabel label = new JLabel();
-            label.setHorizontalAlignment(SwingConstants.CENTER);
-            label.setOpaque(true);
-            label.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
             
-            String imgVal = (value != null) ? value.toString() : null;
+            int filaModelo = table.convertRowIndexToModel(row);
+            int idProducto = (int) table.getModel().getValueAt(filaModelo, 0);
             
-            if (imgVal == null || imgVal.trim().isEmpty()) {
-                if (utilidades.SesionGlobal.getEmpresaActual() != null && utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
-                    imgVal = utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
+            if (cacheImagenes.containsKey(idProducto)) {
+                JLabel label = new JLabel();
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                label.setOpaque(true);
+                label.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+                
+                ImageIcon icon = cacheImagenes.get(idProducto);
+                if (icon != null && icon.getIconWidth() > 0) {
+                    label.setIcon(icon);
+                } else { 
+                    label.setText("No Img"); 
+                    label.setForeground(new Color(140, 145, 150)); 
                 }
+                return label;
             }
             
-            ImageIcon icon = utilidades.ImagenHelper.obtenerIcono(imgVal, 50, 50);
-            if (icon != null) {
-                label.setIcon(icon);
-            } else { 
-                label.setText("No Img"); 
-                label.setForeground(new Color(140, 145, 150)); 
+            if (!imagenesEnProceso.contains(idProducto)) {
+                imagenesEnProceso.add(idProducto);
+                
+                SwingWorker<ImageIcon, Void> worker = new SwingWorker<>() {
+                    @Override
+                    protected ImageIcon doInBackground() throws Exception {
+                        String imgVal = new InventarioDAO().obtenerRutaImagenBase64(idProducto);
+                        if (imgVal == null || imgVal.trim().isEmpty()) {
+                            if (utilidades.SesionGlobal.getEmpresaActual() != null && utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
+                                imgVal = utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
+                            }
+                        }
+                        if (imgVal == null || imgVal.trim().isEmpty()) return null;
+                        
+                        String valProcesar = imgVal;
+                        if (valProcesar.contains("|")) {
+                            valProcesar = valProcesar.split("\\|")[0];
+                        }
+                        return utilidades.ImagenHelper.obtenerIcono(valProcesar, 50, 50);
+                    }
+                    @Override
+                    protected void done() {
+                        try {
+                            ImageIcon icon = get();
+                            cacheImagenes.put(idProducto, icon != null ? icon : new ImageIcon()); 
+                        } catch (Exception ex) {
+                            cacheImagenes.put(idProducto, new ImageIcon());
+                        } finally {
+                            imagenesEnProceso.remove(idProducto);
+                            table.repaint();
+                        }
+                    }
+                };
+                worker.execute();
             }
-            return label;
+
+            JPanel panelShimmer = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    
+                    g2.setColor(new Color(235, 237, 240));
+                    g2.fillRoundRect(getWidth()/2 - 25, getHeight()/2 - 25, 50, 50, 10, 10);
+                    
+                    int gradientWidth = 50;
+                    int startX = (getWidth()/2 - 25) - gradientWidth + (int)(animacionShimmerPhase * (50 + gradientWidth * 2));
+                    
+                    Color c1 = new Color(255, 255, 255, 0);
+                    Color c2 = new Color(255, 255, 255, 200);
+                    
+                    LinearGradientPaint paint = new LinearGradientPaint(
+                            startX, 0, startX + gradientWidth, 0,
+                            new float[]{0.0f, 0.5f, 1.0f},
+                            new Color[]{c1, c2, c1}
+                    );
+                    
+                    g2.setPaint(paint);
+                    g2.fillRoundRect(getWidth()/2 - 25, getHeight()/2 - 25, 50, 50, 10, 10);
+                    g2.dispose();
+                }
+            };
+            panelShimmer.setOpaque(true);
+            panelShimmer.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+            return panelShimmer;
         }
     }
 }

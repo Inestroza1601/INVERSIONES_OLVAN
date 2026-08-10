@@ -8,6 +8,7 @@ public class Usuario {
     private String passwordHash;
     private boolean estadoUsuario;
     private String emailUsuario;
+    private java.util.List<String> permisos = new java.util.ArrayList<>(); // <--- AGREGAR PERMISOS RBAC
 
     public Usuario() {}
 
@@ -26,4 +27,16 @@ public class Usuario {
     public void setEstadoUsuario(boolean estadoUsuario) { this.estadoUsuario = estadoUsuario; }
     public String getEmailUsuario() { return emailUsuario; }
     public void setEmailUsuario(String emailUsuario) { this.emailUsuario = emailUsuario; }
+    
+    public java.util.List<String> getPermisos() { return permisos; }
+    public void setPermisos(java.util.List<String> permisos) { this.permisos = permisos; }
+    
+    // Utilidad rápida para chequear permiso en la UI
+    public boolean tienePermiso(String permisoBuscado) {
+        // Rol 1 (Admin/Programador) o "Administrador" (si el nombre aplica) tienen todo.
+        if (this.idRol == 1 || (this.nombreRol != null && this.nombreRol.equalsIgnoreCase("Administrador"))) {
+            return true;
+        }
+        return this.permisos != null && this.permisos.contains(permisoBuscado.toUpperCase());
+    }
 }

@@ -124,7 +124,7 @@ public class InventarioDAO {
 
     public java.util.List<Producto> listarProductosActivos() {
         java.util.List<Producto> lista = new java.util.ArrayList<>();
-        String sql = "SELECT * FROM INVENTARIO WHERE eliminado_producto = 0 ORDER BY CASE WHEN stock_producto > 0 THEN 0 ELSE 1 END ASC, id_producto ASC";
+        String sql = "SELECT id_producto, codigo_barras_producto, nombre_producto, precio_compra_producto, precio_venta_producto, precio_mayorista_producto, stock_producto, dias_garantia, requiere_serie, incluye_impuesto FROM INVENTARIO WHERE eliminado_producto = 0 ORDER BY CASE WHEN stock_producto > 0 THEN 0 ELSE 1 END ASC, id_producto ASC";
 
         try (Connection con = factory.getConexion();
              PreparedStatement ps = con.prepareStatement(sql);
@@ -139,7 +139,7 @@ public class InventarioDAO {
                 p.setPrecioVenta(rs.getDouble("precio_venta_producto"));
                 p.setPrecioMayorista(rs.getDouble("precio_mayorista_producto"));
                 p.setStockProducto(rs.getInt("stock_producto"));
-                p.setRutaImagen(rs.getString("ruta_imagen_producto"));
+                p.setRutaImagen(null);
                 
                 // --- LAS DOS LÍNEAS QUE FALTABAN AQUÍ ---
                 p.setDiasGarantia(rs.getInt("dias_garantia"));
@@ -155,15 +155,38 @@ public class InventarioDAO {
         return lista;
     }
 
-    public boolean eliminarProductoLogico(int idProducto) {
+    public String obtenerRutaImagenBase64(int idProducto) {
+        String sql = "SELECT ruta_imagen_producto FROM INVENTARIO WHERE id_producto = ?";
+        try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idProducto);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("ruta_imagen_producto");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener imagen del producto: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public boolean eliminarProductoLogico(int idProducto) throws SQLException {
+        String sqlCheck = "SELECT COUNT(*) FROM DETALLES_APARTADO d INNER JOIN APARTADOS a ON d.id_apartado = a.id_apartado WHERE d.id_producto = ? AND a.estado_apartado = 'VIGENTE'";
+        try (Connection con = factory.getConexion();
+             PreparedStatement psCheck = con.prepareStatement(sqlCheck)) {
+            psCheck.setInt(1, idProducto);
+            try (ResultSet rs = psCheck.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    throw new SQLException("El producto está asociado a un apartado vigente y no puede ser eliminado.");
+                }
+            }
+        }
+
         String sql = "UPDATE INVENTARIO SET eliminado_producto = 1 WHERE id_producto = ?";
         try (Connection con = factory.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idProducto);
             return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.println("Error al eliminar producto: " + e.getMessage());
-            return false;
         }
     }
     

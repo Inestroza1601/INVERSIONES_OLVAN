@@ -81,22 +81,66 @@ public class MenuPrincipal extends JFrame {
                 BorderFactory.createMatteBorder(0, 0, 0, 1, COLOR_BORDE_LATERAL),
                 BorderFactory.createEmptyBorder(25, 0, 20, 0)));
 
-        // Cabecera con Marca
-        JLabel lblEmpresa = new JLabel("INVERSIONES OLVAN");
-        lblEmpresa.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        lblEmpresa.setForeground(new Color(19, 58, 42));
-        lblEmpresa.setAlignmentX(Component.LEFT_ALIGNMENT);
-        lblEmpresa.setBorder(BorderFactory.createEmptyBorder(0, 25, 2, 0));
+        modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
+        String nombreUser = (uAct != null && uAct.getNombreUsuario() != null && !uAct.getNombreUsuario().isEmpty()) ? uAct.getNombreUsuario() : "Administrador";
+        String rolUser = (uAct != null && uAct.getNombreRol() != null && !uAct.getNombreRol().isEmpty()) ? uAct.getNombreRol() : "Soporte Técnico";
+        String emailUser = (uAct != null && uAct.getEmailUsuario() != null && !uAct.getEmailUsuario().isEmpty()) ? uAct.getEmailUsuario() : "admin@sistema.com";
+        String inicial = nombreUser.substring(0, 1).toUpperCase();
 
-        JLabel lblOnline = new JLabel("● SISTEMA ONLINE");
-        lblOnline.setFont(new Font("Segoe UI", Font.BOLD, 10));
-        lblOnline.setForeground(new Color(22, 101, 52));
-        lblOnline.setAlignmentX(Component.LEFT_ALIGNMENT);
-        lblOnline.setBorder(BorderFactory.createEmptyBorder(0, 25, 15, 0));
+        JPanel panelPerfil = new JPanel(new BorderLayout(15, 0));
+        panelPerfil.setOpaque(false);
+        panelPerfil.setBorder(BorderFactory.createEmptyBorder(0, 20, 20, 10));
+        panelPerfil.setMaximumSize(new Dimension(260, 100));
+        panelPerfil.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel lblAvatar = new JLabel(inicial) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(39, 174, 96)); 
+                g2.fillOval(0, 0, getWidth(), getHeight());
+                g2.setColor(Color.WHITE);
+                g2.setFont(new Font("Segoe UI", Font.BOLD, 28));
+                FontMetrics fm = g2.getFontMetrics();
+                int x = (getWidth() - fm.stringWidth(getText())) / 2;
+                int y = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
+                g2.drawString(getText(), x, y);
+                g2.dispose();
+            }
+        };
+        lblAvatar.setPreferredSize(new Dimension(65, 65));
+        lblAvatar.setHorizontalAlignment(SwingConstants.CENTER);
+        lblAvatar.setOpaque(false);
+
+        JPanel pnlInfoUser = new JPanel();
+        pnlInfoUser.setLayout(new BoxLayout(pnlInfoUser, BoxLayout.Y_AXIS));
+        pnlInfoUser.setOpaque(false);
+
+        JLabel lblNombre = new JLabel(nombreUser);
+        lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 17));
+        lblNombre.setForeground(new Color(19, 58, 42));
+        
+        JLabel lblRol = new JLabel(rolUser);
+        lblRol.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        lblRol.setForeground(new Color(39, 174, 96));
+
+        JLabel lblEmail = new JLabel(emailUser);
+        lblEmail.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        lblEmail.setForeground(new Color(75, 115, 95));
+
+        pnlInfoUser.add(lblNombre);
+        pnlInfoUser.add(Box.createVerticalStrut(2));
+        pnlInfoUser.add(lblRol);
+        pnlInfoUser.add(Box.createVerticalStrut(2));
+        pnlInfoUser.add(lblEmail);
+
+        panelPerfil.add(lblAvatar, BorderLayout.WEST);
+        panelPerfil.add(pnlInfoUser, BorderLayout.CENTER);
 
         JLabel lblMenu = new JLabel("MENÚ PRINCIPAL");
         lblMenu.setFont(new Font("Segoe UI", Font.BOLD, 11));
-        lblMenu.setForeground(new Color(75, 115, 95));
+        lblMenu.setForeground(new Color(140, 145, 150));
         lblMenu.setAlignmentX(Component.LEFT_ALIGNMENT);
         lblMenu.setBorder(BorderFactory.createEmptyBorder(0, 25, 12, 0));
 
@@ -112,34 +156,54 @@ public class MenuPrincipal extends JFrame {
         btnEstadisticas = crearBotonWebAnimado("Estadísticas", new IconoMenu(7), false);
         btnCerrarSesion = crearBotonWebAnimado("Cerrar Sesión", new IconoMenu(6), true);
 
-        int rolId = (utilidades.SesionGlobal.getUsuarioActual() != null)
-                ? utilidades.SesionGlobal.getUsuarioActual().getIdRol()
-                : 1;
+        // uAct ya fue declarado arriba
+        
+        boolean pAdmin       = (uAct == null) ? true : uAct.tienePermiso("VER_ADMINISTRACION");
+        boolean pClientes    = (uAct == null) ? true : uAct.tienePermiso("VER_CLIENTES");
+        boolean pInventario  = (uAct == null) ? true : uAct.tienePermiso("VER_INVENTARIO");
+        boolean pPOS         = (uAct == null) ? true : uAct.tienePermiso("VER_POS");
+        boolean pCaja        = (uAct == null) ? true : uAct.tienePermiso("VER_CAJA");
+        boolean pApartados   = (uAct == null) ? true : uAct.tienePermiso("VER_APARTADOS");
+        boolean pVentas      = (uAct == null) ? true : uAct.tienePermiso("VER_VENTAS");
+        boolean pGarantias   = (uAct == null) ? true : uAct.tienePermiso("VER_GARANTIAS");
+        boolean pEstadisticas= (uAct == null) ? true : uAct.tienePermiso("VER_ESTADISTICAS");
 
-        panelLateralIzquierdo.add(lblEmpresa);
-        panelLateralIzquierdo.add(lblOnline);
+        panelLateralIzquierdo.add(panelPerfil);
         panelLateralIzquierdo.add(lblMenu);
         panelLateralIzquierdo.add(Box.createVerticalStrut(4));
 
-        if (rolId != 3) {
+        if (pAdmin) {
             panelLateralIzquierdo.add(btnAdministracion);
             panelLateralIzquierdo.add(Box.createVerticalStrut(4));
         }
-        panelLateralIzquierdo.add(btnClientes);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
-        panelLateralIzquierdo.add(btnInventario);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
-        panelLateralIzquierdo.add(btnPuntoVenta);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
-        panelLateralIzquierdo.add(btnControlCaja);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
-        panelLateralIzquierdo.add(btnApartados);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
-        panelLateralIzquierdo.add(btnHistorialVentas);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
-        panelLateralIzquierdo.add(btnGarantias);
-
-        if (rolId != 3) {
+        if (pClientes) {
+            panelLateralIzquierdo.add(btnClientes);
+            panelLateralIzquierdo.add(Box.createVerticalStrut(4));
+        }
+        if (pInventario) {
+            panelLateralIzquierdo.add(btnInventario);
+            panelLateralIzquierdo.add(Box.createVerticalStrut(4));
+        }
+        if (pPOS) {
+            panelLateralIzquierdo.add(btnPuntoVenta);
+            panelLateralIzquierdo.add(Box.createVerticalStrut(4));
+        }
+        if (pCaja) {
+            panelLateralIzquierdo.add(btnControlCaja);
+            panelLateralIzquierdo.add(Box.createVerticalStrut(4));
+        }
+        if (pApartados) {
+            panelLateralIzquierdo.add(btnApartados);
+            panelLateralIzquierdo.add(Box.createVerticalStrut(4));
+        }
+        if (pVentas) {
+            panelLateralIzquierdo.add(btnHistorialVentas);
+            panelLateralIzquierdo.add(Box.createVerticalStrut(4));
+        }
+        if (pGarantias) {
+            panelLateralIzquierdo.add(btnGarantias);
+        }
+        if (pEstadisticas) {
             panelLateralIzquierdo.add(Box.createVerticalStrut(4));
             panelLateralIzquierdo.add(btnEstadisticas);
         }
@@ -152,12 +216,17 @@ public class MenuPrincipal extends JFrame {
         panelCentral.setLayout(new BorderLayout());
         panelCentral.setBackground(COLOR_FONDO_APP);
 
-        if (rolId == 3) {
-            abrirPanelAsync(() -> new PanelPuntoVenta());
-            marcarBotonActivo(btnPuntoVenta, false);
-        } else {
+        if (pEstadisticas) {
             abrirPanelAsync(() -> new PanelEstadisticas());
             marcarBotonActivo(btnEstadisticas, false);
+        } else if (pPOS) {
+            if(validarCajaPrevia()) {
+                abrirPanelAsync(() -> new PanelPuntoVenta());
+                marcarBotonActivo(btnPuntoVenta, false);
+            }
+        } else if (pInventario) {
+            abrirPanelAsync(() -> new PanelInventario());
+            marcarBotonActivo(btnInventario, false);
         }
 
         panelApp.add(panelLateralIzquierdo, BorderLayout.WEST);
@@ -171,7 +240,11 @@ public class MenuPrincipal extends JFrame {
         btnAdministracion.addActionListener(e -> abrirPanelAsync(() -> new PanelAdministracion()));
         btnClientes.addActionListener(e -> abrirPanelAsync(() -> new PanelGestionClientes()));
         btnInventario.addActionListener(e -> abrirPanelAsync(() -> new PanelInventario()));
-        btnPuntoVenta.addActionListener(e -> abrirPanelAsync(() -> new PanelPuntoVenta()));
+        btnPuntoVenta.addActionListener(e -> {
+            if (validarCajaPrevia()) {
+                abrirPanelAsync(() -> new PanelPuntoVenta());
+            }
+        });
         btnControlCaja.addActionListener(e -> abrirPanelAsync(() -> new PanelControlCaja()));
         btnApartados.addActionListener(e -> abrirPanelAsync(() -> new PanelApartados()));
         btnHistorialVentas.addActionListener(e -> abrirPanelAsync(() -> new PanelHistorialVentas()));
@@ -197,6 +270,19 @@ public class MenuPrincipal extends JFrame {
                 cardLayout.show(panelContenedor, "LOGIN");
             }
         });
+    }
+
+    private boolean validarCajaPrevia() {
+        try {
+            if (new dao.ControlCajaDAO().existeCajaAbiertaAnterior()) {
+                JOptionPane.showMessageDialog(this, "ATENCIÓN: Se ha detectado un turno de caja de una fecha anterior que aún NO se ha cerrado.\n\nPor favor, diríjase al módulo 'Control de Caja' y realice el cierre del turno anterior para evitar descuadres en sus finanzas antes de registrar nuevas ventas.", "Cierre de Caja Requerido", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+        } catch(java.sql.SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error al verificar el estado de la caja:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
     }
 
     // =========================================================================

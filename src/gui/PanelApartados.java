@@ -145,10 +145,19 @@ public class PanelApartados extends JPanel {
         btnCancelar.setPreferredSize(new Dimension(230, 50));
         btnCancelar.addActionListener(e -> cancelarApartadoCompleto());
 
-        // Restringir botón de cancelar si es cajero
-        int rolId = SesionGlobal.getUsuarioActual() != null ? SesionGlobal.getUsuarioActual().getIdRol() : 3;
-        if (rolId == 3) {
-            btnCancelar.setVisible(false);
+        // Restringir botón de cancelar según permisos
+        modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
+        if (uAct != null && !uAct.tienePermiso("ELIMINAR_APARTADOS")) {
+            btnCancelar.setEnabled(false);
+            btnCancelar.setToolTipText("No tienes permiso para cancelar apartados.");
+        }
+        if (uAct != null && !uAct.tienePermiso("CREAR_APARTADOS")) {
+            btnAbonar.setEnabled(false);
+            btnAbonar.setToolTipText("No tienes permiso para registrar abonos.");
+        }
+        if (uAct != null && !uAct.tienePermiso("EDITAR_APARTADOS")) {
+            btnEntregar.setEnabled(false);
+            btnEntregar.setToolTipText("No tienes permiso para entregar artículos.");
         }
 
         pnlBotones.add(btnDetalles);
@@ -308,7 +317,7 @@ public class PanelApartados extends JPanel {
                 try {
                     java.io.File pdf = utilidades.GeneradorTickets.generarFactura(idVentaGenerada);
                     if (java.awt.Desktop.isDesktopSupported()) {
-                        java.awt.Desktop.getDesktop().open(pdf);
+                        utilidades.GestorImpresion.procesarImpresion(pdf, utilidades.GestorImpresion.TIPO_TICKET);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();

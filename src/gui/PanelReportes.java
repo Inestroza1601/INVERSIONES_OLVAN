@@ -352,7 +352,7 @@ public class PanelReportes extends JPanel {
                 File pdf = GeneradorReportesPDF.generarReporte(ultimoTitulo, ultimasColumnas, ultimosDatos, archivoDestino);
                 if (pdf != null && pdf.exists()) {
                     if (Desktop.isDesktopSupported()) {
-                        Desktop.getDesktop().open(pdf);
+                        utilidades.GestorImpresion.procesarImpresion(pdf, utilidades.GestorImpresion.TIPO_A4);
                     }
                     JOptionPane.showMessageDialog(this, "Reporte exportado exitosamente a PDF.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 }

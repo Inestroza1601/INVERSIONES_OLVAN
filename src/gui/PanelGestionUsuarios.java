@@ -105,6 +105,12 @@ public class PanelGestionUsuarios extends JPanel {
         btnNuevoRol.setPreferredSize(new Dimension(40, 30));
         btnNuevoRol.addActionListener(e -> crearNuevoRol());
 
+        modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
+        if (uAct != null && !uAct.tienePermiso("CREAR_ADMINISTRACION")) {
+            btnNuevoRol.setEnabled(false);
+            btnNuevoRol.setToolTipText("No tienes permiso para crear roles.");
+        }
+
         panelContenedorRol.add(cmbRol, BorderLayout.CENTER);
         panelContenedorRol.add(btnNuevoRol, BorderLayout.EAST);
 
@@ -174,6 +180,16 @@ public class PanelGestionUsuarios extends JPanel {
         btnGuardar = crearBotonFormulario("Guardar", new Color(39, 174, 96)); // Verde Menta
         btnLimpiar = crearBotonFormulario("Limpiar", new Color(140, 145, 150)); // Gris suave
         btnEliminar = crearBotonFormulario("Desactivar", new Color(227, 0, 15)); // Rojo Logo
+        
+        if (uAct != null && !uAct.tienePermiso("EDITAR_ADMINISTRACION") && !uAct.tienePermiso("CREAR_ADMINISTRACION")) {
+            btnGuardar.setEnabled(false);
+            btnGuardar.setToolTipText("No tienes permiso para gestionar usuarios.");
+        }
+        
+        if (uAct != null && !uAct.tienePermiso("ELIMINAR_ADMINISTRACION")) {
+            btnEliminar.setEnabled(false);
+            btnEliminar.setToolTipText("No tienes permiso para desactivar usuarios.");
+        }
         
         pnlBotones.add(btnGuardar);
         pnlBotones.add(btnLimpiar);

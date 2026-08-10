@@ -524,15 +524,24 @@ public class PanelInventarioDefectuoso extends JPanel {
                 "Reingresar al Inventario", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (confirm == JOptionPane.YES_OPTION) {
-            int idUsuario = SesionGlobal.getUsuarioActual() != null ? SesionGlobal.getUsuarioActual().getIdUsuario()
-                    : 1;
-            if (dao.reingresarInventario(idProducto, estadoActual, idUsuario)) {
-                JOptionPane.showMessageDialog(this, "Productos reingresados exitosamente.", "Éxito",
-                        JOptionPane.INFORMATION_MESSAGE);
-                cargarDatos();
-            } else {
-                JOptionPane.showMessageDialog(this, "Error al reingresar los productos.", "Error",
-                        JOptionPane.ERROR_MESSAGE);
+            String observacion = JOptionPane.showInputDialog(this, "Ingrese el motivo u observación técnica del reingreso:", "Observación Requerida", JOptionPane.PLAIN_MESSAGE);
+            if (observacion == null || observacion.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Debe ingresar una observación para poder reingresar la mercancía.", "Campo Obligatorio", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int idUsuario = SesionGlobal.getUsuarioActual() != null ? SesionGlobal.getUsuarioActual().getIdUsuario() : 1;
+            try {
+                if (dao.reingresarInventario(idProducto, estadoActual, idUsuario, observacion.trim())) {
+                    JOptionPane.showMessageDialog(this, "Productos reingresados exitosamente.", "Éxito",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    cargarDatos();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error al reingresar los productos.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (java.sql.SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Error de base de datos:\n" + ex.getMessage(), "Fallo", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

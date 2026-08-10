@@ -192,7 +192,7 @@ public class DialogoKardex extends JDialog {
                 utilidades.GeneradorTickets.generarTicketVentaPDF(rutaTemp, cliente, fechaHistorica, detalles, subtotal, isv, total, true, metodo, ref, banco);
                 
                 JOptionPane.showMessageDialog(previewDialog, "Copia de recibo generada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                if (Desktop.isDesktopSupported()) Desktop.getDesktop().open(new File(rutaTemp));
+                if (Desktop.isDesktopSupported()) utilidades.GestorImpresion.procesarImpresion(new File(rutaTemp), utilidades.GestorImpresion.TIPO_A4);
                 
             } catch (Exception err) {
                 JOptionPane.showMessageDialog(previewDialog, "Error al generar PDF: " + err.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

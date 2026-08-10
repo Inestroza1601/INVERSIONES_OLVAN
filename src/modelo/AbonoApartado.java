@@ -13,6 +13,8 @@ public class AbonoApartado {
     private String bancoPago;
     private String nombreMetodo; // For joins
     private String nombreUsuario;
+    private double totalHistorico;
+    private double saldoHistorico;
 
     public AbonoApartado() {}
 
@@ -46,4 +48,10 @@ public class AbonoApartado {
 
     public String getNombreUsuario() { return nombreUsuario; }
     public void setNombreUsuario(String nombreUsuario) { this.nombreUsuario = nombreUsuario; }
+
+    public double getTotalHistorico() { return totalHistorico; }
+    public void setTotalHistorico(double totalHistorico) { this.totalHistorico = totalHistorico; }
+
+    public double getSaldoHistorico() { return saldoHistorico; }
+    public void setSaldoHistorico(double saldoHistorico) { this.saldoHistorico = saldoHistorico; }
 }

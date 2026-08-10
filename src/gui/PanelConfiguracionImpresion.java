@@ -80,8 +80,13 @@ public class PanelConfiguracionImpresion extends JPanel {
         panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("RECIBO DE RECLAMO", txtMensajeReclamo), "Reclamo");
 
         // --- PANEL INFERIOR (Botones de Control) ---
-        JPanel panelBotonesControl = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 15));
-        panelBotonesControl.setBackground(new Color(240, 242, 245)); // Gris Nube
+        JPanel panelBotonesControl = new JPanel(new java.awt.GridLayout(2, 1));
+        
+        JPanel fila1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        fila1.setBackground(new Color(240, 242, 245));
+        
+        JPanel fila2 = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        fila2.setBackground(new Color(240, 242, 245));
 
         JButton btnFactura = crearBotonEstiloPestana("Factura");
         JButton btnRecibo = crearBotonEstiloPestana("Recibo");
@@ -114,16 +119,20 @@ public class PanelConfiguracionImpresion extends JPanel {
         btnImpresoras.setForeground(Color.WHITE);
         btnImpresoras.addActionListener(e -> abrirDialogoImpresoras());
 
-        panelBotonesControl.add(btnFactura);
-        panelBotonesControl.add(btnRecibo);
-        panelBotonesControl.add(btnEntrega);
-        panelBotonesControl.add(btnCotizacion);
-        panelBotonesControl.add(btnGarantia);
-        panelBotonesControl.add(btnCambio);
-        panelBotonesControl.add(btnReclamo);
-        panelBotonesControl.add(lblSeparador);
-        panelBotonesControl.add(btnLogo);
-        panelBotonesControl.add(btnImpresoras);
+        fila1.add(btnFactura);
+        fila1.add(btnRecibo);
+        fila1.add(btnEntrega);
+        fila1.add(btnCotizacion);
+        fila1.add(btnGarantia);
+        fila1.add(btnCambio);
+        fila1.add(btnReclamo);
+        
+        fila2.add(btnLogo);
+        fila2.add(lblSeparador);
+        fila2.add(btnImpresoras);
+        
+        panelBotonesControl.add(fila1);
+        panelBotonesControl.add(fila2);
         
         this.add(panelTarjetas, BorderLayout.CENTER);
         this.add(panelBotonesControl, BorderLayout.SOUTH);
@@ -284,6 +293,17 @@ public class PanelConfiguracionImpresion extends JPanel {
         gbc.gridy = 3;
         pnlContenido.add(cmbImpresoraFacturasA4, gbc);
 
+        // Pre-seleccionar impresoras guardadas
+        String ticketGuardada = utilidades.GestorImpresion.obtenerImpresoraTicket();
+        String a4Guardada = utilidades.GestorImpresion.obtenerImpresoraA4();
+        
+        if (!ticketGuardada.isEmpty()) {
+            cmbImpresoraTickets.setSelectedItem(ticketGuardada);
+        }
+        if (!a4Guardada.isEmpty()) {
+            cmbImpresoraFacturasA4.setSelectedItem(a4Guardada);
+        }
+
         dialog.add(pnlContenido, BorderLayout.CENTER);
 
         JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -293,6 +313,8 @@ public class PanelConfiguracionImpresion extends JPanel {
         btnGuardar.setBackground(new Color(39, 174, 96)); 
         btnGuardar.setForeground(Color.WHITE);
         btnGuardar.addActionListener(e -> {
+            utilidades.GestorImpresion.guardarImpresoraTicket(cmbImpresoraTickets.getSelectedItem().toString());
+            utilidades.GestorImpresion.guardarImpresoraA4(cmbImpresoraFacturasA4.getSelectedItem().toString());
             JOptionPane.showMessageDialog(dialog, "Impresoras seleccionadas guardadas localmente.");
             dialog.dispose();
         });

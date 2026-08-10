@@ -28,6 +28,12 @@ public class PanelPuntoVenta extends JPanel {
     private JLabel lblClienteSeleccionado;
     private int idClienteActual = 1; 
     
+    // Caché y estado para Lazy Loading con Shimmer
+    private java.util.Map<Integer, ImageIcon> cacheImagenes = new java.util.concurrent.ConcurrentHashMap<>();
+    private java.util.Set<Integer> imagenesEnProceso = java.util.Collections.synchronizedSet(new java.util.HashSet<>());
+    private float animacionShimmerPhase = 0f;
+    private Timer timerShimmer;
+    
     private JTextField txtCodigoBarrasBusqueda;
     private JTable tablaVentas;
     private DefaultTableModel modeloTablaVentas;
@@ -133,7 +139,8 @@ public class PanelPuntoVenta extends JPanel {
                     tablaVentas.setRowSelectionInterval(f, f);
 
                     if (c == 1 && SwingUtilities.isLeftMouseButton(e)) {
-                        mostrarZoomImagen((String) modeloTablaVentas.getValueAt(tablaVentas.convertRowIndexToModel(f), 7));
+                        int idSelec = (int) modeloTablaVentas.getValueAt(tablaVentas.convertRowIndexToModel(f), 0);
+                        mostrarZoomImagen(idSelec);
                     }
                     if ((SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2 && c != 1) || SwingUtilities.isRightMouseButton(e)) {
                         mostrarMenuOpciones(e.getComponent(), e.getX(), e.getY());
@@ -146,6 +153,15 @@ public class PanelPuntoVenta extends JPanel {
         scrollTabla.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225), 1, true)); 
         scrollTabla.getViewport().setBackground(new Color(255, 255, 255));
         this.add(scrollTabla, BorderLayout.CENTER);
+        
+        timerShimmer = new Timer(30, e -> {
+            if (!imagenesEnProceso.isEmpty()) {
+                animacionShimmerPhase += 0.05f;
+                if (animacionShimmerPhase > 1f) animacionShimmerPhase = 0f;
+                tablaVentas.repaint();
+            }
+        });
+        timerShimmer.start();
 
         JPanel pnlControlVenta = new JPanel(new BorderLayout(20, 20)); pnlControlVenta.setOpaque(false); pnlControlVenta.setPreferredSize(new Dimension(300, 0));
 
@@ -190,6 +206,12 @@ public class PanelPuntoVenta extends JPanel {
         JButton btnCobrar = new JButton("Cobrar Venta"); btnCobrar.setBackground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO); btnCobrar.setForeground(Color.WHITE); btnCobrar.setFont(new Font("Segoe UI", Font.BOLD, 16)); btnCobrar.setPreferredSize(new Dimension(0, 50)); btnCobrar.setFocusPainted(false); btnCobrar.setCursor(new Cursor(Cursor.HAND_CURSOR)); btnCobrar.setBorder(BorderFactory.createEmptyBorder(0,0,0,0)); btnCobrar.putClientProperty("JButton.buttonType", "roundRect");
         utilidades.EfectosUI.aplicarEfectoHover(btnCobrar, utilidades.EfectosUI.COLOR_VERDE_PRIMARIO, utilidades.EfectosUI.COLOR_VERDE_HOVER, Color.WHITE, Color.BLACK);
         btnCobrar.addActionListener(e -> procesarVenta());
+        
+        modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
+        if (uAct != null && !uAct.tienePermiso("CREAR_POS")) {
+            btnCobrar.setEnabled(false);
+            btnCobrar.setToolTipText("No tienes permiso para registrar ventas o apartados.");
+        }
 
         cmbTipoTransaccion = new JComboBox<>(new String[]{"Venta Directa", "Apartado (Abonos)"});
         cmbTipoTransaccion.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -481,11 +503,12 @@ public class PanelPuntoVenta extends JPanel {
                 JOptionPane.showMessageDialog(this, "Debe seleccionar el Banco Emisor para autorizar esta transacción.", "Datos Incompletos", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            if (txtReferenciaPago.getText().trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Ingrese el número de Referencia, Voucher o ACH del pago.", "Datos Incompletos", JOptionPane.WARNING_MESSAGE);
+            String refStr = txtReferenciaPago.getText().trim();
+            if (!refStr.matches("^[a-zA-Z0-9]{4,}$")) {
+                JOptionPane.showMessageDialog(this, "El número de Referencia, Voucher o ACH debe contener al menos 4 caracteres alfanuméricos.", "Datos Inválidos", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            refPago = txtReferenciaPago.getText().trim();
+            refPago = refStr;
             bancoSeleccionado = cmbBanco.getSelectedItem().toString();
         }
 
@@ -547,15 +570,21 @@ public class PanelPuntoVenta extends JPanel {
             int opApartado = JOptionPane.showConfirmDialog(this, fields, "Detalles del Apartado", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (opApartado != JOptionPane.OK_OPTION) return;
 
+            double abono = 0;
+            int dias = 0;
             try {
-                double abono = Double.parseDouble(txtAbonoInicial.getText().trim());
-                int dias = Integer.parseInt(txtDiasPlazo.getText().trim());
+                abono = Double.parseDouble(txtAbonoInicial.getText().trim());
+                dias = Integer.parseInt(txtDiasPlazo.getText().trim());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Verifique los valores numéricos ingresados.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
-                if (abono < 0 || abono > granTotal) {
-                    JOptionPane.showMessageDialog(this, "El abono inicial debe ser menor o igual al total.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                if (dias <= 0) {
+            if (abono < 0 || abono > granTotal) {
+                JOptionPane.showMessageDialog(this, "El abono inicial debe ser menor o igual al total.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (dias <= 0) {
                     JOptionPane.showMessageDialog(this, "El plazo en días debe ser mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
@@ -610,48 +639,42 @@ public class PanelPuntoVenta extends JPanel {
                 }
 
                 ApartadoDAO apDAO = new ApartadoDAO();
-                if (apDAO.registrarApartado(a, detallesA)) {
+                int idApartadoGenerado = apDAO.registrarApartado(a, detallesA);
+                if (idApartadoGenerado > 0) {
                     // Generar PDF
                     txtReferenciaPago.setText(""); cmbBanco.setSelectedIndex(0); pnlCamposExtraPago.setVisible(false);
-                    JFileChooser chooser = new JFileChooser();
-                    chooser.setDialogTitle("Guardar Comprobante de Apartado");
-                    chooser.setSelectedFile(new File("Apartado_Nexar_" + System.currentTimeMillis() + ".pdf"));
+                    
+                    File dir = new File("reportes/apartados");
+                    if (!dir.exists()) dir.mkdirs();
+                    File archivoDestino = new File("reportes/apartados/Ticket_Apartado_" + idApartadoGenerado + ".pdf");
 
-                    if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-                        File archivoDestino = chooser.getSelectedFile();
-                        if (!archivoDestino.getName().toLowerCase().endsWith(".pdf")) archivoDestino = new File(archivoDestino.getAbsolutePath() + ".pdf");
+                    try {
+                        String fechaActual = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date());
+                        String fechaLim = new java.text.SimpleDateFormat("dd/MM/yyyy").format(a.getFechaLimite());
 
-                        try {
-                            String fechaActual = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date());
-                            String fechaLim = new java.text.SimpleDateFormat("dd/MM/yyyy").format(a.getFechaLimite());
-
-                            utilidades.GeneradorTickets.generarTicketApartadoPDF(
-                                archivoDestino.getAbsolutePath(),
-                                lblClienteSeleccionado.getText(),
-                                fechaActual,
-                                fechaLim,
-                                detallesPDF,
-                                granTotal,
-                                abono,
-                                a.getSaldoPendiente(),
-                                pago.nombre
-                            );
-                            JOptionPane.showMessageDialog(this, "Apartado registrado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                            if (Desktop.isDesktopSupported()) Desktop.getDesktop().open(archivoDestino);
-                        } catch (Exception ex) {
-                            JOptionPane.showMessageDialog(this, "El apartado se guardó, pero hubo un error al generar el PDF:\n" + ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
-                        }
+                        utilidades.GeneradorTickets.generarTicketApartadoPDF(
+                            archivoDestino.getAbsolutePath(),
+                            lblClienteSeleccionado.getText(),
+                            fechaActual,
+                            fechaLim,
+                            detallesPDF,
+                            granTotal,
+                            abono,
+                            a.getSaldoPendiente(),
+                            pago.nombre
+                        );
+                        JOptionPane.showMessageDialog(this, "Apartado registrado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                        if (Desktop.isDesktopSupported()) utilidades.GestorImpresion.procesarImpresion(archivoDestino, utilidades.GestorImpresion.TIPO_TICKET);
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(this, "El apartado se guardó, pero hubo un error al generar el PDF:\n" + ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
                     }
 
                     modeloTablaVentas.setRowCount(0); recalcularTotales();
                     lblClienteSeleccionado.setText("CONSUMIDOR FINAL"); idClienteActual = 1;
+                    txtAbonoInicial.setText("");
                 } else {
                     JOptionPane.showMessageDialog(this, "Error crítico al guardar el apartado en la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Verifique los valores numéricos ingresados.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
             return;
         }
 
@@ -676,16 +699,15 @@ public class PanelPuntoVenta extends JPanel {
             });
         }
 
-        if (dao.procesarVentaCompleta(idClienteActual, idUsuarioAutorizado, pago.id, sumSubtotal, sumImpuesto, granTotal, refPago, bancoSeleccionado, detalles)) {
-            
-            txtReferenciaPago.setText(""); cmbBanco.setSelectedIndex(0); pnlCamposExtraPago.setVisible(false);
-            JFileChooser chooser = new JFileChooser();
-            chooser.setDialogTitle("Guardar e Imprimir Comprobante");
-            chooser.setSelectedFile(new File("Factura_Nexar_" + System.currentTimeMillis() + ".pdf"));
-
-            if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-                File archivoDestino = chooser.getSelectedFile();
-                if (!archivoDestino.getName().toLowerCase().endsWith(".pdf")) archivoDestino = new File(archivoDestino.getAbsolutePath() + ".pdf");
+        try {
+            int idVentaGenerada = dao.procesarVentaCompleta(idClienteActual, idUsuarioAutorizado, pago.id, sumSubtotal, sumImpuesto, granTotal, refPago, bancoSeleccionado, detalles);
+            if (idVentaGenerada > 0) {
+                
+                txtReferenciaPago.setText(""); cmbBanco.setSelectedIndex(0); pnlCamposExtraPago.setVisible(false);
+                
+                File dir = new File("reportes/ventas");
+                if (!dir.exists()) dir.mkdirs();
+                File archivoDestino = new File("reportes/ventas/Ticket_Venta_" + idVentaGenerada + ".pdf");
 
                try {
                     // Generamos la fecha exacta del momento en que se presiona el botón cobrar
@@ -701,17 +723,18 @@ public class PanelPuntoVenta extends JPanel {
                         refPago, bancoSeleccionado
                     );
                     JOptionPane.showMessageDialog(this, "Venta registrada y comprobante generado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                    if (Desktop.isDesktopSupported()) Desktop.getDesktop().open(archivoDestino);
+                    if (Desktop.isDesktopSupported()) utilidades.GestorImpresion.procesarImpresion(archivoDestino, utilidades.GestorImpresion.TIPO_TICKET);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, "La venta se guardó, pero hubo un error al generar el PDF:\n" + ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
                 }
+
+                modeloTablaVentas.setRowCount(0); recalcularTotales();
+                lblClienteSeleccionado.setText("CONSUMIDOR FINAL"); idClienteActual = 1;
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al registrar la venta en la Base de Datos.", "Error", JOptionPane.ERROR_MESSAGE);
             }
-
-            modeloTablaVentas.setRowCount(0); recalcularTotales();
-            lblClienteSeleccionado.setText("CONSUMIDOR FINAL"); idClienteActual = 1;
-
-        } else {
-            JOptionPane.showMessageDialog(this, "Error crítico al guardar la venta en base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (java.sql.SQLException ex) {
+            JOptionPane.showMessageDialog(this, "No se pudo procesar la venta: \n" + ex.getMessage(), "Error de Base de Datos", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -723,20 +746,92 @@ public class PanelPuntoVenta extends JPanel {
 
     private class ImagenMiniaturaRenderer extends DefaultTableCellRenderer {
         @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            JLabel label = new JLabel(); label.setHorizontalAlignment(SwingConstants.CENTER); label.setOpaque(true); label.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
-            String imgVal = (value != null) ? value.toString() : null;
             
-            if (imgVal == null || imgVal.trim().isEmpty()) {
-                if (utilidades.SesionGlobal.getEmpresaActual() != null && utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
-                    imgVal = utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
+            int filaModelo = table.convertRowIndexToModel(row);
+            int idProducto = (int) table.getModel().getValueAt(filaModelo, 0);
+            
+            if (cacheImagenes.containsKey(idProducto)) {
+                JLabel label = new JLabel(); 
+                label.setHorizontalAlignment(SwingConstants.CENTER); 
+                label.setOpaque(true); 
+                label.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+                
+                ImageIcon icon = cacheImagenes.get(idProducto);
+                if (icon != null && icon.getIconWidth() > 0) {
+                    label.setIcon(icon);
+                } else { 
+                    label.setText("No Img"); 
+                    label.setForeground(new Color(140, 145, 150)); 
                 }
+                return label;
             }
             
-            ImageIcon icon = utilidades.ImagenHelper.obtenerIcono(imgVal, 50, 50);
-            if (icon != null) {
-                label.setIcon(icon);
-            } else { label.setText("No Img"); label.setForeground(new Color(140, 145, 150)); }
-            return label;
+            if (!imagenesEnProceso.contains(idProducto)) {
+                imagenesEnProceso.add(idProducto);
+                
+                SwingWorker<ImageIcon, Void> worker = new SwingWorker<>() {
+                    @Override
+                    protected ImageIcon doInBackground() throws Exception {
+                        String imgVal = new InventarioDAO().obtenerRutaImagenBase64(idProducto);
+                        if (imgVal == null || imgVal.trim().isEmpty()) {
+                            if (utilidades.SesionGlobal.getEmpresaActual() != null && utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
+                                imgVal = utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
+                            }
+                        }
+                        if (imgVal == null || imgVal.trim().isEmpty()) return null;
+                        
+                        String valProcesar = imgVal;
+                        if (valProcesar.contains("|")) {
+                            valProcesar = valProcesar.split("\\|")[0];
+                        }
+                        return utilidades.ImagenHelper.obtenerIcono(valProcesar, 50, 50);
+                    }
+                    @Override
+                    protected void done() {
+                        try {
+                            ImageIcon icon = get();
+                            cacheImagenes.put(idProducto, icon != null ? icon : new ImageIcon()); 
+                        } catch (Exception ex) {
+                            cacheImagenes.put(idProducto, new ImageIcon());
+                        } finally {
+                            imagenesEnProceso.remove(idProducto);
+                            table.repaint();
+                        }
+                    }
+                };
+                worker.execute();
+            }
+
+            JPanel panelShimmer = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    
+                    g2.setColor(new Color(235, 237, 240));
+                    g2.fillRoundRect(getWidth()/2 - 25, getHeight()/2 - 25, 50, 50, 10, 10);
+                    
+                    int gradientWidth = 50;
+                    int startX = (getWidth()/2 - 25) - gradientWidth + (int)(animacionShimmerPhase * (50 + gradientWidth * 2));
+                    
+                    Color c1 = new Color(255, 255, 255, 0);
+                    Color c2 = new Color(255, 255, 255, 200);
+                    
+                    LinearGradientPaint paint = new LinearGradientPaint(
+                            startX, 0, startX + gradientWidth, 0,
+                            new float[]{0.0f, 0.5f, 1.0f},
+                            new Color[]{c1, c2, c1}
+                    );
+                    
+                    g2.setPaint(paint);
+                    g2.fillRoundRect(getWidth()/2 - 25, getHeight()/2 - 25, 50, 50, 10, 10);
+                    g2.dispose();
+                }
+            };
+            panelShimmer.setOpaque(true);
+            panelShimmer.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+            return panelShimmer;
         }
     }
 
@@ -1052,37 +1147,50 @@ public class PanelPuntoVenta extends JPanel {
                     }
                 }
             });
+            
+            Timer localTimer = new Timer(30, e -> {
+                if (!imagenesEnProceso.isEmpty() && tab.isShowing()) {
+                    animacionShimmerPhase += 0.05f;
+                    if (animacionShimmerPhase > 1f) animacionShimmerPhase = 0f;
+                    tab.repaint();
+                }
+            });
+            localTimer.start();
+            
+            addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosed(java.awt.event.WindowEvent e) {
+                    localTimer.stop();
+                }
+            });
+
             JScrollPane sc = new JScrollPane(tab); sc.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225))); sc.getViewport().setBackground(new Color(255, 255, 255)); add(sc, BorderLayout.CENTER);
         }
     }
     
-    private void mostrarZoomImagen(String ruta) {
-        if (ruta == null || !new File(ruta).exists()) return;
+    private void mostrarZoomImagen(int idProducto) {
+        String imgVal = new InventarioDAO().obtenerRutaImagenBase64(idProducto);
+        if (imgVal == null || imgVal.trim().isEmpty()) {
+            if (utilidades.SesionGlobal.getEmpresaActual() != null && utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
+                imgVal = utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
+            }
+        }
+        if (imgVal == null || imgVal.trim().isEmpty()) return;
+
         JDialog zoomDialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Previsualización", true);
         zoomDialog.setLayout(new BorderLayout()); zoomDialog.getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); 
         int tamano = 600; zoomDialog.setSize(tamano, tamano);
-        Image imgOriginal = new ImageIcon(ruta).getImage();
-        int anchoOriginal = imgOriginal.getWidth(null); int altoOriginal = imgOriginal.getHeight(null);
-        if (anchoOriginal <= 0 || altoOriginal <= 0) return;
-        int nuevoAncho = tamano - 40; int nuevoAlto = tamano - 40;
-        if (anchoOriginal > altoOriginal) nuevoAlto = (altoOriginal * nuevoAncho) / anchoOriginal;
-        else nuevoAncho = (anchoOriginal * nuevoAlto) / altoOriginal;
         
-        java.awt.image.BufferedImage scratch = new java.awt.image.BufferedImage(anchoOriginal, altoOriginal, java.awt.image.BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = scratch.createGraphics(); g2.drawImage(imgOriginal, 0, 0, null); g2.dispose();
-        
-        int w = anchoOriginal, h = altoOriginal;
-        while (w > nuevoAncho * 2 || h > nuevoAlto * 2) {
-            w = (w > nuevoAncho * 2) ? w / 2 : nuevoAncho; h = (h > nuevoAlto * 2) ? h / 2 : nuevoAlto;
-            java.awt.image.BufferedImage temp = new java.awt.image.BufferedImage(w, h, java.awt.image.BufferedImage.TYPE_INT_ARGB);
-            g2 = temp.createGraphics(); g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR); g2.drawImage(scratch, 0, 0, w, h, null); g2.dispose();
-            scratch = temp;
+        String valProcesar = imgVal;
+        if (valProcesar.contains("|")) {
+            valProcesar = valProcesar.split("\\|")[0];
         }
-        java.awt.image.BufferedImage imgFinal = new java.awt.image.BufferedImage(nuevoAncho, nuevoAlto, java.awt.image.BufferedImage.TYPE_INT_ARGB);
-        g2 = imgFinal.createGraphics(); g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC); g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY); g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); g2.drawImage(scratch, 0, 0, nuevoAncho, nuevoAlto, null); g2.dispose();
         
-        JLabel lblZoom = new JLabel(new ImageIcon(imgFinal)); lblZoom.setHorizontalAlignment(SwingConstants.CENTER);
-        zoomDialog.add(lblZoom, BorderLayout.CENTER); zoomDialog.setLocationRelativeTo(this); zoomDialog.setVisible(true);
+        ImageIcon iconoZoom = utilidades.ImagenHelper.obtenerIcono(valProcesar, tamano - 40, tamano - 40);
+        if (iconoZoom != null) {
+            JLabel lblZoom = new JLabel(iconoZoom); lblZoom.setHorizontalAlignment(SwingConstants.CENTER);
+            zoomDialog.add(lblZoom, BorderLayout.CENTER); zoomDialog.setLocationRelativeTo(this); zoomDialog.setVisible(true);
+        }
     }
     
     // =========================================================

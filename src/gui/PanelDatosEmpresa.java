@@ -9,11 +9,6 @@ import java.util.List;
 
 public class PanelDatosEmpresa extends JPanel {
 
-    // --- Componentes de Control Superior ---
-    private JComboBox<EmpresaComboItem> cmbEmpresas;
-    private JTextField txtIdEmpresa;
-    private JButton btnNuevaEmpresa;
-
     // --- Componentes - Datos Generales ---
     private JTextField txtNombreEmpresa;
     private JTextField txtRtnEmpresa;
@@ -38,7 +33,6 @@ public class PanelDatosEmpresa extends JPanel {
 
     // --- VARIABLE CRÍTICA PARA ACTUALIZAR ---
     private int idEmpresaActual = 0;
-    private boolean isCargandoCombo = false; // Evita disparos accidentales al llenar el combo
 
     public PanelDatosEmpresa() {
         iniciarDiseno();
@@ -61,52 +55,6 @@ public class PanelDatosEmpresa extends JPanel {
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(40, 20, 10, 20));
         pnlTop.add(lblTitulo, BorderLayout.NORTH);
 
-        // Barra de control (Combo, ID, Botón Nuevo)
-        JPanel pnlControl = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
-        pnlControl.setOpaque(false);
-        pnlControl.setBorder(BorderFactory.createEmptyBorder(0, 15, 10, 20));
-
-        JLabel lblSeleccion = new JLabel("Seleccionar Empresa:");
-        lblSeleccion.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        lblSeleccion.setForeground(utilidades.EfectosUI.COLOR_TEXTO_SUBTITULO);
-
-        cmbEmpresas = new JComboBox<>();
-        cmbEmpresas.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        cmbEmpresas.setPreferredSize(new Dimension(300, 35));
-        cmbEmpresas.setBackground(Color.WHITE);
-
-        // Evento del ComboBox
-        cmbEmpresas.addActionListener(e -> {
-            if (!isCargandoCombo && cmbEmpresas.getSelectedItem() != null) {
-                EmpresaComboItem item = (EmpresaComboItem) cmbEmpresas.getSelectedItem();
-                cargarDatosEnFormulario(item.getEmpresa());
-            }
-        });
-
-        JLabel lblId = new JLabel("ID:");
-        lblId.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        lblId.setForeground(new Color(100, 100, 100));
-
-        txtIdEmpresa = new JTextField(5);
-        txtIdEmpresa.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        txtIdEmpresa.setHorizontalAlignment(SwingConstants.CENTER);
-        txtIdEmpresa.setEditable(false); // INMODIFICABLE
-        txtIdEmpresa.setBackground(new Color(230, 235, 240));
-        txtIdEmpresa.setForeground(new Color(227, 0, 15)); // Resaltado en rojo
-        txtIdEmpresa.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)));
-        txtIdEmpresa.setPreferredSize(new Dimension(50, 35));
-
-        btnNuevaEmpresa = utilidades.EfectosUI.crearBotonVerde("+ Crear Nueva");
-        btnNuevaEmpresa.addActionListener(e -> prepararNuevaEmpresa());
-
-        pnlControl.add(lblSeleccion);
-        pnlControl.add(cmbEmpresas);
-        pnlControl.add(lblId);
-        pnlControl.add(txtIdEmpresa);
-        pnlControl.add(btnNuevaEmpresa);
-        pnlControl.setVisible(false); // Se oculta porque no hay soporte multi-empresa en la UI
-
-        pnlTop.add(pnlControl, BorderLayout.CENTER);
         this.add(pnlTop, BorderLayout.NORTH);
 
         // =========================================================
@@ -140,48 +88,33 @@ public class PanelDatosEmpresa extends JPanel {
         btnGuardar.setBorder(BorderFactory.createEmptyBorder());
         btnGuardar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnGuardar.addActionListener(e -> guardarDatos());
+        
+        modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
+        if (uAct != null && !uAct.tienePermiso("EDITAR_ADMINISTRACION")) {
+            btnGuardar.setEnabled(false);
+            btnGuardar.setToolTipText("No tienes permiso para editar los datos de la empresa.");
+        }
 
         panelInferior.add(btnGuardar);
         this.add(panelInferior, BorderLayout.SOUTH);
 
-        // Cargar lista inicial
-        cargarListaEmpresas(true);
+        // Cargar datos de la única empresa
+        cargarDatosEmpresa();
     }
 
     // =========================================================
-    // LÓGICA DE DATOS Y MULTI-EMPRESA
+    // LÓGICA DE DATOS
     // =========================================================
 
-    private void cargarListaEmpresas(boolean seleccionarSesionActual) {
-        isCargandoCombo = true;
-        cmbEmpresas.removeAllItems();
-
+    private void cargarDatosEmpresa() {
         EmpresaDAO dao = new EmpresaDAO();
-        // NOTA: Debes crear este método en tu EmpresaDAO para que devuelva un
-        // List<Empresa>
-        List<Empresa> lista = dao.listarTodas();
+        Empresa emp = dao.obtenerDatos();
 
-        for (Empresa emp : lista) {
-            cmbEmpresas.addItem(new EmpresaComboItem(emp));
-        }
-
-        isCargandoCombo = false;
-
-        // Seleccionar la empresa de la sesión actual (o la primera si no hay)
-        if (cmbEmpresas.getItemCount() > 0 && seleccionarSesionActual) {
-            int idSesion = (SesionGlobal.getEmpresaActual() != null) ? SesionGlobal.getEmpresaActual().getIdEmpresa()
-                    : -1;
-            boolean seleccionada = false;
-
-            for (int i = 0; i < cmbEmpresas.getItemCount(); i++) {
-                if (cmbEmpresas.getItemAt(i).getEmpresa().getIdEmpresa() == idSesion) {
-                    cmbEmpresas.setSelectedIndex(i);
-                    seleccionada = true;
-                    break;
-                }
-            }
-            if (!seleccionada)
-                cmbEmpresas.setSelectedIndex(0); // Por defecto la primera
+        if (emp != null) {
+            cargarDatosEnFormulario(emp);
+        } else {
+            // No existe empresa registrada, preparamos formulario limpio
+            prepararNuevaEmpresa();
         }
     }
 
@@ -190,10 +123,19 @@ public class PanelDatosEmpresa extends JPanel {
             return;
 
         this.idEmpresaActual = emp.getIdEmpresa();
-        txtIdEmpresa.setText(String.valueOf(emp.getIdEmpresa()));
 
         txtNombreEmpresa.setText(emp.getNombreEmpresa());
-        // ... (resto de tus textfields) ...
+        txtRtnEmpresa.setText(emp.getRtnEmpresa());
+        txtDuenoEmpresa.setText(emp.getDuenoEmpresa());
+        txtDireccionEmpresa.setText(emp.getDireccionEmpresa());
+        chkEstadoEmpresa.setSelected(emp.isEstadoEmpresa());
+        chkHabilitarFacturacion.setSelected(emp.isHabilitarFacturacion());
+
+        txtNumeroTelefono.setText(emp.getNumeroTelefono());
+        txtTelefonoSecundario.setText(emp.getTelefonoSecundario());
+        txtWhatsapp.setText(emp.getWhatsapp());
+        txtEmail.setText(emp.getEmail());
+        txtWeb.setText(emp.getWeb());
         txtFacebook.setText(emp.getFacebook());
 
         // --- ¡LA MAGIA OCURRE AQUÍ! ---
@@ -205,13 +147,7 @@ public class PanelDatosEmpresa extends JPanel {
     }
 
     private void prepararNuevaEmpresa() {
-        // Deseleccionamos el combo temporalmente
-        isCargandoCombo = true;
-        cmbEmpresas.setSelectedIndex(-1);
-        isCargandoCombo = false;
-
         this.idEmpresaActual = 0;
-        txtIdEmpresa.setText("NUEVO");
 
         txtNombreEmpresa.setText("");
         txtRtnEmpresa.setText("");
@@ -226,9 +162,6 @@ public class PanelDatosEmpresa extends JPanel {
         txtEmail.setText("");
         txtWeb.setText("");
         txtFacebook.setText("");
-
-        // Limpiamos también el panel de impresión/logo
-        // panelImpresion.limpiarFormulario();
 
         btnGuardar.setText("Guardar Nueva Empresa");
         btnGuardar.setBackground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO);
@@ -263,28 +196,11 @@ public class PanelDatosEmpresa extends JPanel {
             JOptionPane.showMessageDialog(this, "Empresa guardada correctamente.", "Éxito",
                     JOptionPane.INFORMATION_MESSAGE);
 
-            // Refrescar la lista del ComboBox
-            cargarListaEmpresas(false);
+            // Refrescar los datos cargados en memoria tras guardar
+            cargarDatosEmpresa();
 
-            // Seleccionar automáticamente la empresa recién guardada/actualizada en el
-            // ComboBox
-            for (int i = 0; i < cmbEmpresas.getItemCount(); i++) {
-                if (cmbEmpresas.getItemAt(i).getEmpresa().getNombreEmpresa().equalsIgnoreCase(emp.getNombreEmpresa())) {
-                    cmbEmpresas.setSelectedIndex(i);
-                    break;
-                }
-            }
-
-            // Actualizamos la sesión global SÓLO si era la empresa que está usando el
-            // usuario activo
-            if (SesionGlobal.getEmpresaActual() != null
-                    && SesionGlobal.getEmpresaActual().getIdEmpresa() == this.idEmpresaActual) {
-                SesionGlobal.setEmpresaActual(emp);
-            }
-
-            // Mandar a guardar panel impresión (LOGO y tickets)
-            // panelImpresion.guardarConfiguracion();
-            // panelImpresion.recargarVistaPrevia();
+            // Actualizamos la sesión global
+            SesionGlobal.setEmpresaActual(emp);
         } else {
             JOptionPane.showMessageDialog(this, "Error al guardar la empresa en la base de datos.", "Error",
                     JOptionPane.ERROR_MESSAGE);
@@ -332,11 +248,13 @@ public class PanelDatosEmpresa extends JPanel {
         chkEstadoEmpresa.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         chkEstadoEmpresa.setBackground(new Color(255, 255, 255));
         chkEstadoEmpresa.setForeground(new Color(45, 45, 45));
+        chkEstadoEmpresa.setVisible(false);
 
         chkHabilitarFacturacion = new JCheckBox("Habilitar Facturación (SAR)");
         chkHabilitarFacturacion.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         chkHabilitarFacturacion.setBackground(new Color(255, 255, 255));
         chkHabilitarFacturacion.setForeground(new Color(45, 45, 45));
+        chkHabilitarFacturacion.setVisible(false);
 
         agregarFila(panel, gbc, 0, "Nombre Empresa:", txtNombreEmpresa);
         agregarFila(panel, gbc, 1, "RTN:", txtRtnEmpresa);
@@ -409,26 +327,6 @@ public class PanelDatosEmpresa extends JPanel {
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         panel.add(campo, gbc);
-    }
-
-    // =========================================================
-    // CLASE WRAPPER PARA EL COMBOBOX
-    // =========================================================
-    private class EmpresaComboItem {
-        private Empresa emp;
-
-        public EmpresaComboItem(Empresa emp) {
-            this.emp = emp;
-        }
-
-        public Empresa getEmpresa() {
-            return emp;
-        }
-
-        @Override
-        public String toString() {
-            return emp.getNombreEmpresa();
-        } // Esto es lo que mostrará el ComboBox
     }
 
     @SuppressWarnings("unchecked")

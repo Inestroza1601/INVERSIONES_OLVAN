@@ -370,7 +370,9 @@ public class DialogoRegistrarAbono extends JDialog {
                 int optImp = JOptionPane.showConfirmDialog(this, "¿Desea imprimir el comprobante del abono?", "Imprimir", JOptionPane.YES_NO_OPTION);
                 if (optImp == JOptionPane.YES_OPTION) {
                     try {
-                        String ruta = System.getProperty("user.home") + "/Ticket_Abono_" + idApartado + "_" + System.currentTimeMillis() + ".pdf";
+                        java.io.File dir = new java.io.File("reportes/abonos");
+                        if (!dir.exists()) dir.mkdirs();
+                        String ruta = "reportes/abonos/Ticket_Abono_Apartado_" + idApartado + "_" + System.currentTimeMillis() + ".pdf";
                         utilidades.GeneradorTickets.generarTicketAbonoPDF(
                             ruta,
                             ap.getNombreCliente(),
@@ -382,7 +384,7 @@ public class DialogoRegistrarAbono extends JDialog {
                             banco,
                             idApartado
                         );
-                        Desktop.getDesktop().open(new java.io.File(ruta));
+                        utilidades.GestorImpresion.procesarImpresion(new java.io.File(ruta), utilidades.GestorImpresion.TIPO_TICKET);
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(this, "Error al generar ticket: " + ex.getMessage());
                     }

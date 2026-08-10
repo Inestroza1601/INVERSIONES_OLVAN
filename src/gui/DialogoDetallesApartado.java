@@ -162,7 +162,9 @@ public class DialogoDetallesApartado extends JDialog {
     
     private void imprimirTicketGeneral() {
         try {
-            String ruta = System.getProperty("user.home") + "/Ticket_Apartado_" + idApartado + "_" + System.currentTimeMillis() + ".pdf";
+            java.io.File dir = new java.io.File("reportes/apartados");
+            if (!dir.exists()) dir.mkdirs();
+            String ruta = "reportes/apartados/Ticket_Apartado_" + idApartado + ".pdf";
             utilidades.GeneradorTickets.generarTicketApartadoPDF(
                 ruta,
                 ap.getNombreCliente() + " " + (ap.getApellidoCliente() != null ? ap.getApellidoCliente() : ""),
@@ -170,9 +172,10 @@ public class DialogoDetallesApartado extends JDialog {
                 ap.getTotalApartado(),
                 ap.getSaldoPendiente(),
                 idApartado,
-                detalles
+                detalles,
+                abonos
             );
-            Desktop.getDesktop().open(new java.io.File(ruta));
+            utilidades.GestorImpresion.procesarImpresion(new java.io.File(ruta), utilidades.GestorImpresion.TIPO_TICKET);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error al generar ticket general: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -188,22 +191,39 @@ public class DialogoDetallesApartado extends JDialog {
         double monto = Double.parseDouble(montoStr.replace("L ", "").replace(",", "").trim());
         String metodo = (String) tablaAbonos.getValueAt(row, 3);
         
+        // Buscar el abono original para obtener su saldo histórico
+        modelo.AbonoApartado abonoOrig = null;
+        double saldoDinamico = ap.getTotalApartado();
+        
+        for (modelo.AbonoApartado ab : abonos) {
+            saldoDinamico -= ab.getMontoAbono();
+            if (ab.getIdAbono() == idAbono) {
+                abonoOrig = ab;
+                break;
+            }
+        }
+        
+        if (abonoOrig == null) {
+            JOptionPane.showMessageDialog(this, "Error: No se encontró la información histórica del abono.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         try {
-            String ruta = System.getProperty("user.home") + "/Ticket_Reimpresion_Abono_" + idAbono + "_" + System.currentTimeMillis() + ".pdf";
-            // Nota: Aquí se asume saldo actual del apartado, idealmente se debería calcular el saldo histórico.
-            // Para reimpresión básica, pasaremos el saldo actual, pero lo ideal es guardarlo por historial.
+            java.io.File dir = new java.io.File("reportes/abonos");
+            if (!dir.exists()) dir.mkdirs();
+            String ruta = "reportes/abonos/Ticket_Abono_Apartado_" + idApartado + "_" + System.currentTimeMillis() + ".pdf";
             utilidades.GeneradorTickets.generarTicketAbonoPDF(
                 ruta,
                 ap.getNombreCliente() + " " + (ap.getApellidoCliente() != null ? ap.getApellidoCliente() : ""),
                 fecha,
                 monto,
-                ap.getSaldoPendiente(), // Saldo actual de la cuenta
+                saldoDinamico, 
                 metodo,
                 null,
                 null,
                 idApartado
             );
-            Desktop.getDesktop().open(new java.io.File(ruta));
+            utilidades.GestorImpresion.procesarImpresion(new java.io.File(ruta), utilidades.GestorImpresion.TIPO_TICKET);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error al generar ticket de abono: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
