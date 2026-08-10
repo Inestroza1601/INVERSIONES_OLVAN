@@ -230,7 +230,7 @@ public class PanelHistorialVentas extends JPanel {
     private void verDetallesVenta() {
         int selectedRow = tablaVentas.getSelectedRow();
         if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(this, "Seleccione una venta de la lista.", "Aviso",
+            utilidades.Mensajes.showMessageDialog(this, "Seleccione una venta de la lista.", "Aviso",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -371,7 +371,7 @@ public class PanelHistorialVentas extends JPanel {
                                 get().setVisible(true);
                             } catch (Exception ex) {
                                 ex.printStackTrace();
-                                JOptionPane.showMessageDialog(parent, "Error al cargar el historial de abonos.");
+                                utilidades.Mensajes.showMessageDialog(parent, "Error al cargar el historial de abonos.");
                             }
                         }
                     };
@@ -401,7 +401,7 @@ public class PanelHistorialVentas extends JPanel {
     private void reimprimirTicket() {
         int selectedRow = tablaVentas.getSelectedRow();
         if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(this, "Seleccione una venta de la lista.", "Aviso",
+            utilidades.Mensajes.showMessageDialog(this, "Seleccione una venta de la lista.", "Aviso",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -433,12 +433,12 @@ public class PanelHistorialVentas extends JPanel {
                     (String) venta.get("ref"),
                     (String) venta.get("banco"));
 
-            JOptionPane.showMessageDialog(this, "Reimpresión generada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Reimpresión generada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             if (Desktop.isDesktopSupported()) {
                 utilidades.GestorImpresion.procesarImpresion(archivoDestino, utilidades.GestorImpresion.TIPO_TICKET);
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Hubo un error al generar el PDF:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Hubo un error al generar el PDF:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -481,3 +481,4 @@ public class PanelHistorialVentas extends JPanel {
         }
     }
 }
+

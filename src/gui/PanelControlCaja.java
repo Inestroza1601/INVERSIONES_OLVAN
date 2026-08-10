@@ -245,7 +245,7 @@ public class PanelControlCaja extends JPanel {
         btnReimprimirDer.addActionListener(e -> {
             int row = tablaHistorial.getSelectedRow();
             if (row < 0) {
-                JOptionPane.showMessageDialog(panel, "Seleccione un turno del historial.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(panel, "Seleccione un turno del historial.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             int idCaja = (int) tablaHistorial.getValueAt(row, 0);
@@ -258,7 +258,7 @@ public class PanelControlCaja extends JPanel {
                     utilidades.GeneradorTickets.generarTicketCierreCajaPDF(dest.getAbsolutePath(), calcs);
                     if (java.awt.Desktop.isDesktopSupported()) utilidades.GestorImpresion.procesarImpresion(dest, utilidades.GestorImpresion.TIPO_TICKET);
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(panel, "Error al generar PDF: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(panel, "Error al generar PDF: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -468,13 +468,13 @@ public class PanelControlCaja extends JPanel {
             try {
                 double montoReal = Double.parseDouble(txtMontoReal.getText().trim().replace(",", ""));
                 if (montoReal < 0) {
-                    JOptionPane.showMessageDialog(dlgCierre, "El monto no puede ser negativo.", "Error", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(dlgCierre, "El monto no puede ser negativo.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 String obs = txtObservaciones.getText().trim();
 
                 JPasswordField pfPass = new JPasswordField();
-                int op = JOptionPane.showConfirmDialog(dlgCierre,
+                int op = utilidades.Mensajes.showConfirmDialog(dlgCierre,
                     new Object[]{"Ingrese su contraseña para firmar y cerrar el turno:", pfPass},
                     "Firma de Cierre", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (op != JOptionPane.OK_OPTION) return;
@@ -482,12 +482,12 @@ public class PanelControlCaja extends JPanel {
                 String pass = new String(pfPass.getPassword());
                 int idFirma = new dao.KardexDAO().validarFirmaUsuario(pass);
                 if (idFirma <= 0) {
-                    JOptionPane.showMessageDialog(dlgCierre, "Contraseña incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(dlgCierre, "Contraseña incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 if (dao.cerrarCaja(activa.getIdCaja(), montoReal, obs, idFirma)) {
-                    JOptionPane.showMessageDialog(dlgCierre, "Caja cerrada y arqueo finalizado correctamente.", "Exito", JOptionPane.INFORMATION_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(dlgCierre, "Caja cerrada y arqueo finalizado correctamente.", "Exito", JOptionPane.INFORMATION_MESSAGE);
                     Map<String, Object> calcsFinales = dao.obtenerCalculosTurno(activa.getIdCaja());
                     if (calcsFinales != null) {
                         java.io.File dir = new java.io.File("reportes/cierres");
@@ -497,17 +497,17 @@ public class PanelControlCaja extends JPanel {
                             utilidades.GeneradorTickets.generarTicketCierreCajaPDF(dest.getAbsolutePath(), calcsFinales);
                             if (java.awt.Desktop.isDesktopSupported()) utilidades.GestorImpresion.procesarImpresion(dest, utilidades.GestorImpresion.TIPO_TICKET);
                         } catch (Exception ex2) {
-                            JOptionPane.showMessageDialog(dlgCierre, "Error al generar PDF: " + ex2.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                            utilidades.Mensajes.showMessageDialog(dlgCierre, "Error al generar PDF: " + ex2.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                         }
                         mostrarReporteResumen(calcsFinales);
                     }
                     dlgCierre.dispose();
                     verificarSesion();
                 } else {
-                    JOptionPane.showMessageDialog(dlgCierre, "Error al guardar el cierre.", "Error", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(dlgCierre, "Error al guardar el cierre.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(dlgCierre, "Ingrese un monto real valido.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(dlgCierre, "Ingrese un monto real valido.", "Aviso", JOptionPane.WARNING_MESSAGE);
             }
         });
 
@@ -591,26 +591,27 @@ public class PanelControlCaja extends JPanel {
 
         JTextField txtMonto = new JTextField("0.00");
         JTextField txtCajero = new JTextField(userActual);
+        txtCajero.setEditable(false); // No permitir que se modifique el nombre del cajero
 
         Object[] msgElements = rolId == 1
             ? new Object[]{"Monto de Apertura (L):", txtMonto, "Cajero de Turno:", txtCajero}
             : new Object[]{"Monto de Apertura (L):", txtMonto};
 
-        int opt = JOptionPane.showConfirmDialog(this, msgElements, "Apertura de Caja", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        int opt = utilidades.Mensajes.showConfirmDialog(this, msgElements, "Apertura de Caja", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (opt == JOptionPane.OK_OPTION) {
             try {
                 double monto = Double.parseDouble(txtMonto.getText().trim());
-                if (monto < 0) { JOptionPane.showMessageDialog(this, "El monto no puede ser negativo.", "Error", JOptionPane.ERROR_MESSAGE); return; }
+                if (monto < 0) { utilidades.Mensajes.showMessageDialog(this, "El monto no puede ser negativo.", "Error", JOptionPane.ERROR_MESSAGE); return; }
                 String cajero = txtCajero.getText().trim();
                 if (cajero.isEmpty()) cajero = userActual;
                 if (dao.abrirCaja(idUserActual, monto, cajero)) {
-                    JOptionPane.showMessageDialog(this, "Turno de caja abierto exitosamente.", "Exito", JOptionPane.INFORMATION_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Turno de caja abierto exitosamente.", "Exito", JOptionPane.INFORMATION_MESSAGE);
                     verificarSesion();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Error al abrir la sesion.", "Error", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Error al abrir la sesion.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Monto invalido.", "Error", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Monto invalido.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -645,6 +646,7 @@ public class PanelControlCaja extends JPanel {
         JTextArea area = new JTextArea(sb.toString());
         area.setFont(new Font("Monospaced", Font.PLAIN, 12));
         area.setEditable(false);
-        JOptionPane.showMessageDialog(this, new JScrollPane(area), "Resumen Cierre de Caja", JOptionPane.INFORMATION_MESSAGE);
+        utilidades.Mensajes.showMessageDialog(this, new JScrollPane(area), "Resumen Cierre de Caja", JOptionPane.INFORMATION_MESSAGE);
     }
 }
+

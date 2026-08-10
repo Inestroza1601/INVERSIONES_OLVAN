@@ -321,7 +321,7 @@ public class PanelLogin extends JPanel {
             if (usr.isEmpty()) txtUsuario.putClientProperty("JComponent.outline", "error");
             if (pass.isEmpty()) txtPassword.putClientProperty("JComponent.outline", "error");
             ejecutarShakeError();
-            JOptionPane.showMessageDialog(this, "Debe ingresar usuario y contraseña.", "Campos Incompletos", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Debe ingresar usuario y contraseña.", "Campos Incompletos", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -392,7 +392,7 @@ public class PanelLogin extends JPanel {
                         txtUsuario.putClientProperty("JComponent.outline", "error");
                         txtPassword.putClientProperty("JComponent.outline", "error");
                         ejecutarShakeError();
-                        JOptionPane.showMessageDialog(PanelLogin.this, "El nombre de usuario o la contraseña son incorrectos.", "Credenciales Inválidas", JOptionPane.ERROR_MESSAGE);
+                        utilidades.Mensajes.showMessageDialog(PanelLogin.this, "El nombre de usuario o la contraseña son incorrectos.", "Credenciales Inválidas", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (Exception ex) {
                     btnEntrar.setEnabled(true);
@@ -400,7 +400,7 @@ public class PanelLogin extends JPanel {
                     txtPassword.setEnabled(true);
                     btnEntrar.setText("Ingresar al Sistema");
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(PanelLogin.this, "Error de conexión con la base de datos.", "Error de Red", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(PanelLogin.this, "Error de conexión con la base de datos.", "Error de Red", JOptionPane.ERROR_MESSAGE);
                 }
             }
         };
@@ -416,3 +416,4 @@ public class PanelLogin extends JPanel {
         iniciarAnimacionEntrada();
     }
 }
+

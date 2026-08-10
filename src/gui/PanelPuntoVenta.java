@@ -251,7 +251,7 @@ public class PanelPuntoVenta extends JPanel {
                         get().setVisible(true);
                     } catch (Exception ex) {
                         ex.printStackTrace();
-                        JOptionPane.showMessageDialog(PanelPuntoVenta.this, "Error al cargar el catálogo.");
+                        utilidades.Mensajes.showMessageDialog(PanelPuntoVenta.this, "Error al cargar el catálogo.");
                     }
                 }
             };
@@ -334,7 +334,7 @@ public class PanelPuntoVenta extends JPanel {
    // --- RESTRICCIÓN DE STOCK Y VALIDACIÓN DE SERIE ---
     public void agregarProductoAVenta(Producto p) {
         if (p.getStockProducto() < 1) { 
-            JOptionPane.showMessageDialog(this, "Stock agotado. No hay unidades disponibles en vitrina.", "Stock Insuficiente", JOptionPane.WARNING_MESSAGE); 
+            utilidades.Mensajes.showMessageDialog(this, "Stock agotado. No hay unidades disponibles en vitrina.", "Stock Insuficiente", JOptionPane.WARNING_MESSAGE); 
             return; 
         }
 
@@ -343,7 +343,7 @@ public class PanelPuntoVenta extends JPanel {
             imei = JOptionPane.showInputDialog(this, "Este producto requiere un identificador (IMEI/ServiceTag).\nIngrese el código para: " + p.getNombreProducto(), "Validación de Garantía", JOptionPane.QUESTION_MESSAGE);
             
             if (imei == null || imei.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Operación cancelada. Debe ingresar el IMEI/Serie para facturar este producto.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Operación cancelada. Debe ingresar el IMEI/Serie para facturar este producto.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             imei = imei.trim();
@@ -352,7 +352,7 @@ public class PanelPuntoVenta extends JPanel {
             for (int i = 0; i < modeloTablaVentas.getRowCount(); i++) {
                 Object valorImeiFila = modeloTablaVentas.getValueAt(i, 8); 
                 if (valorImeiFila != null && valorImeiFila.toString().equalsIgnoreCase(imei)) {
-                    JOptionPane.showMessageDialog(this, "El identificador '" + imei + "' ya está en la lista de compras actual.", "Identificador Duplicado", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "El identificador '" + imei + "' ya está en la lista de compras actual.", "Identificador Duplicado", JOptionPane.ERROR_MESSAGE);
                     return; 
                 }
             }
@@ -360,7 +360,7 @@ public class PanelPuntoVenta extends JPanel {
             // --- VALIDACIÓN 2: EVITAR IDENTIFICADOR QUE YA FUE VENDIDO ANTERIORMENTE ---
             VentasDAO daoVentas = new VentasDAO();
             if (daoVentas.existeIdentificadorVendido(imei)) {
-                JOptionPane.showMessageDialog(this, "¡ALERTA! El identificador '" + imei + "' ya se encuentra registrado como VENDIDO en la base de datos.\nVerifique el equipo físico o contacte al administrador.", "Fraude / Error Detectado", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "¡ALERTA! El identificador '" + imei + "' ya se encuentra registrado como VENDIDO en la base de datos.\nVerifique el equipo físico o contacte al administrador.", "Fraude / Error Detectado", JOptionPane.ERROR_MESSAGE);
                 return;
             }
         }
@@ -371,7 +371,7 @@ public class PanelPuntoVenta extends JPanel {
                 if ((int) modeloTablaVentas.getValueAt(i, 0) == p.getIdProducto()) {
                     int cantActual = (int) modeloTablaVentas.getValueAt(i, 3);
                     if (cantActual >= p.getStockProducto()) {
-                        JOptionPane.showMessageDialog(this, "Stock insuficiente. Solo hay " + p.getStockProducto() + " unidades en vitrina.", "Aviso", JOptionPane.WARNING_MESSAGE); 
+                        utilidades.Mensajes.showMessageDialog(this, "Stock insuficiente. Solo hay " + p.getStockProducto() + " unidades en vitrina.", "Aviso", JOptionPane.WARNING_MESSAGE); 
                         return;
                     }
                     double precioUnit = (double) modeloTablaVentas.getValueAt(i, 4);
@@ -396,7 +396,7 @@ public class PanelPuntoVenta extends JPanel {
         VentasDAO dao = new VentasDAO();
         Producto p = dao.buscarProductoPorCodigo(codigo);
         if (p != null) agregarProductoAVenta(p);
-        else JOptionPane.showMessageDialog(this, "Producto no encontrado o inactivo.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        else utilidades.Mensajes.showMessageDialog(this, "Producto no encontrado o inactivo.", "Aviso", JOptionPane.WARNING_MESSAGE);
         txtCodigoBarrasBusqueda.setText(""); txtCodigoBarrasBusqueda.requestFocus();
     }
 
@@ -423,7 +423,7 @@ public class PanelPuntoVenta extends JPanel {
         });
 
         // Mostramos el cuadro de diálogo con nuestro JTextField protegido
-        int opcion = JOptionPane.showConfirmDialog(this, new Object[]{"Nuevo Precio Unitario:", txtNuevoPrecio}, "Modificar Precio", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        int opcion = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Nuevo Precio Unitario:", txtNuevoPrecio}, "Modificar Precio", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         
         if (opcion == JOptionPane.OK_OPTION && !txtNuevoPrecio.getText().isEmpty()) {
             try {
@@ -441,7 +441,7 @@ public class PanelPuntoVenta extends JPanel {
         
         // --- BLOQUEO DE SEGURIDAD PARA GARANTÍAS Y SERIES ---
         if (modeloTablaVentas.getValueAt(f, 9) != null || (int)modeloTablaVentas.getValueAt(f, 8) > 0) {
-            JOptionPane.showMessageDialog(this, "No puede modificar la cantidad de un equipo que requiere Identificador o posee Garantía.\nSi el cliente lleva varios, escanee el producto nuevamente.", "Acción Bloqueada", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "No puede modificar la cantidad de un equipo que requiere Identificador o posee Garantía.\nSi el cliente lleva varios, escanee el producto nuevamente.", "Acción Bloqueada", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -459,14 +459,14 @@ public class PanelPuntoVenta extends JPanel {
             }
         });
 
-        int opcion = JOptionPane.showConfirmDialog(this, new Object[]{"Nueva Cantidad (Stock Disponible: " + stockMaximo + "):", txtNuevaCant}, "Modificar Cantidad", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        int opcion = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Nueva Cantidad (Stock Disponible: " + stockMaximo + "):", txtNuevaCant}, "Modificar Cantidad", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         
         if (opcion == JOptionPane.OK_OPTION && !txtNuevaCant.getText().isEmpty()) {
             try {
                 int nuevaCant = Integer.parseInt(txtNuevaCant.getText());
                 if (nuevaCant <= 0) { quitarProducto(); return; }
                 if (nuevaCant > stockMaximo) {
-                    JOptionPane.showMessageDialog(this, "No puede facturar " + nuevaCant + " unidades. Solo hay " + stockMaximo + " en stock.", "Error", JOptionPane.ERROR_MESSAGE); 
+                    utilidades.Mensajes.showMessageDialog(this, "No puede facturar " + nuevaCant + " unidades. Solo hay " + stockMaximo + " en stock.", "Error", JOptionPane.ERROR_MESSAGE); 
                     return;
                 }
                 double precio = (double) modeloTablaVentas.getValueAt(f, 4);
@@ -483,12 +483,12 @@ public class PanelPuntoVenta extends JPanel {
     }
 
     private void procesarVenta() {
-        if(modeloTablaVentas.getRowCount() == 0) { JOptionPane.showMessageDialog(this, "La venta está vacía.", "Aviso", JOptionPane.WARNING_MESSAGE); return; }
+        if(modeloTablaVentas.getRowCount() == 0) { utilidades.Mensajes.showMessageDialog(this, "La venta está vacía.", "Aviso", JOptionPane.WARNING_MESSAGE); return; }
         
         // Validar que la caja esté abierta
         modelo.ControlCaja CCActiva = new dao.ControlCajaDAO().obtenerSesionActiva();
         if (CCActiva == null) {
-            JOptionPane.showMessageDialog(this, "Operación denegada: El turno de caja no está abierto. Abra la caja antes de registrar transacciones.", "Caja Cerrada", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Operación denegada: El turno de caja no está abierto. Abra la caja antes de registrar transacciones.", "Caja Cerrada", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -500,12 +500,12 @@ public class PanelPuntoVenta extends JPanel {
         String bancoSeleccionado = null;
         if (pnlCamposExtraPago.isVisible()) {
             if (cmbBanco.getSelectedIndex() == 0) {
-                JOptionPane.showMessageDialog(this, "Debe seleccionar el Banco Emisor para autorizar esta transacción.", "Datos Incompletos", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Debe seleccionar el Banco Emisor para autorizar esta transacción.", "Datos Incompletos", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             String refStr = txtReferenciaPago.getText().trim();
             if (!refStr.matches("^[a-zA-Z0-9]{4,}$")) {
-                JOptionPane.showMessageDialog(this, "El número de Referencia, Voucher o ACH debe contener al menos 4 caracteres alfanuméricos.", "Datos Inválidos", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "El número de Referencia, Voucher o ACH debe contener al menos 4 caracteres alfanuméricos.", "Datos Inválidos", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             refPago = refStr;
@@ -516,12 +516,12 @@ public class PanelPuntoVenta extends JPanel {
 
         if (idClienteActual == 1) {
             if (esApartado) {
-                JOptionPane.showMessageDialog(this, "Para registrar un Apartado (Abonos) es obligatorio seleccionar un cliente registrado. No se permite Consumidor Final.", "Cliente Requerido", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Para registrar un Apartado (Abonos) es obligatorio seleccionar un cliente registrado. No se permite Consumidor Final.", "Cliente Requerido", JOptionPane.WARNING_MESSAGE);
                 DialogoBuscarClientePOS dlgBuscar = new DialogoBuscarClientePOS((Frame) SwingUtilities.getWindowAncestor(this));
                 dlgBuscar.setVisible(true);
                 
                 if (idClienteActual == 1) {
-                    JOptionPane.showMessageDialog(this, "Operación cancelada. Se requiere asociar un cliente para registrar el apartado.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Operación cancelada. Se requiere asociar un cliente para registrar el apartado.", "Aviso", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
             } else {
@@ -535,7 +535,7 @@ public class PanelPuntoVenta extends JPanel {
                     dlgBuscar.setVisible(true);
                     
                     if (idClienteActual == 1) {
-                        JOptionPane.showMessageDialog(this, "Operación cancelada. Se requiere un cliente o seleccionar 'Consumidor Final'.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                        utilidades.Mensajes.showMessageDialog(this, "Operación cancelada. Se requiere un cliente o seleccionar 'Consumidor Final'.", "Aviso", JOptionPane.WARNING_MESSAGE);
                         return;
                     }
                 } else if (res == 1) { // Consumidor Final
@@ -567,7 +567,7 @@ public class PanelPuntoVenta extends JPanel {
                 "Plazo de Pago (Días):", txtDiasPlazo
             };
 
-            int opApartado = JOptionPane.showConfirmDialog(this, fields, "Detalles del Apartado", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            int opApartado = utilidades.Mensajes.showConfirmDialog(this, fields, "Detalles del Apartado", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (opApartado != JOptionPane.OK_OPTION) return;
 
             double abono = 0;
@@ -576,29 +576,29 @@ public class PanelPuntoVenta extends JPanel {
                 abono = Double.parseDouble(txtAbonoInicial.getText().trim());
                 dias = Integer.parseInt(txtDiasPlazo.getText().trim());
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Verifique los valores numéricos ingresados.", "Error", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Verifique los valores numéricos ingresados.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             if (abono < 0 || abono > granTotal) {
-                JOptionPane.showMessageDialog(this, "El abono inicial debe ser menor o igual al total.", "Error", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "El abono inicial debe ser menor o igual al total.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             if (dias <= 0) {
-                    JOptionPane.showMessageDialog(this, "El plazo en días debe ser mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "El plazo en días debe ser mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 // Password signature
                 JPasswordField pfPass = new JPasswordField();
-                int opSign = JOptionPane.showConfirmDialog(this, new Object[]{"Ingrese su contraseña para firmar el apartado:", pfPass}, "Firma Requerida", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                int opSign = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Ingrese su contraseña para firmar el apartado:", pfPass}, "Firma Requerida", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (opSign != JOptionPane.OK_OPTION) return;
 
                 String pass = new String(pfPass.getPassword());
                 int idUsuarioAutorizado = dao.obtenerIdUsuarioPorPassword(pass);
 
                 if (idUsuarioAutorizado <= 0) {
-                    JOptionPane.showMessageDialog(this, "Contraseña incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Contraseña incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -663,30 +663,30 @@ public class PanelPuntoVenta extends JPanel {
                             a.getSaldoPendiente(),
                             pago.nombre
                         );
-                        JOptionPane.showMessageDialog(this, "Apartado registrado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                        utilidades.Mensajes.showMessageDialog(this, "Apartado registrado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                         if (Desktop.isDesktopSupported()) utilidades.GestorImpresion.procesarImpresion(archivoDestino, utilidades.GestorImpresion.TIPO_TICKET);
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(this, "El apartado se guardó, pero hubo un error al generar el PDF:\n" + ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
+                        utilidades.Mensajes.showMessageDialog(this, "El apartado se guardó, pero hubo un error al generar el PDF:\n" + ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
                     }
 
                     modeloTablaVentas.setRowCount(0); recalcularTotales();
                     lblClienteSeleccionado.setText("CONSUMIDOR FINAL"); idClienteActual = 1;
                     txtAbonoInicial.setText("");
                 } else {
-                    JOptionPane.showMessageDialog(this, "Error crítico al guardar el apartado en la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Error crítico al guardar el apartado en la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             return;
         }
 
         JPasswordField pfPass = new JPasswordField();
-        int opcion = JOptionPane.showConfirmDialog(this, new Object[]{"Ingrese su contraseña de cajero para autorizar la venta:", pfPass}, "Autorizar Cobro", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        int opcion = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Ingrese su contraseña de cajero para autorizar la venta:", pfPass}, "Autorizar Cobro", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (opcion != JOptionPane.OK_OPTION) return;
 
         String pass = new String(pfPass.getPassword());
         int idUsuarioAutorizado = dao.obtenerIdUsuarioPorPassword(pass);
 
         if (idUsuarioAutorizado <= 0) {
-            JOptionPane.showMessageDialog(this, "Contraseña incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Contraseña incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -722,19 +722,19 @@ public class PanelPuntoVenta extends JPanel {
                         pago.nombre, 
                         refPago, bancoSeleccionado
                     );
-                    JOptionPane.showMessageDialog(this, "Venta registrada y comprobante generado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Venta registrada y comprobante generado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                     if (Desktop.isDesktopSupported()) utilidades.GestorImpresion.procesarImpresion(archivoDestino, utilidades.GestorImpresion.TIPO_TICKET);
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(this, "La venta se guardó, pero hubo un error al generar el PDF:\n" + ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "La venta se guardó, pero hubo un error al generar el PDF:\n" + ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
                 }
 
                 modeloTablaVentas.setRowCount(0); recalcularTotales();
                 lblClienteSeleccionado.setText("CONSUMIDOR FINAL"); idClienteActual = 1;
             } else {
-                JOptionPane.showMessageDialog(this, "Error al registrar la venta en la Base de Datos.", "Error", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Error al registrar la venta en la Base de Datos.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } catch (java.sql.SQLException ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo procesar la venta: \n" + ex.getMessage(), "Error de Base de Datos", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "No se pudo procesar la venta: \n" + ex.getMessage(), "Error de Base de Datos", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -1142,7 +1142,7 @@ public class PanelPuntoVenta extends JPanel {
                         
                         // --- BLOQUEO DE SELECCIÓN SI EL STOCK ES 0 ---
                         if (stockActual <= 0) {
-                            JOptionPane.showMessageDialog(DialogoBuscarProductoPOS.this, "No puede seleccionar este artículo porque no cuenta con existencias en el inventario.", "Falta de Stock", JOptionPane.WARNING_MESSAGE);
+                            utilidades.Mensajes.showMessageDialog(DialogoBuscarProductoPOS.this, "No puede seleccionar este artículo porque no cuenta con existencias en el inventario.", "Falta de Stock", JOptionPane.WARNING_MESSAGE);
                             return;
                         }
                         
@@ -1337,3 +1337,4 @@ public class PanelPuntoVenta extends JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }
+

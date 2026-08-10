@@ -146,7 +146,7 @@ public class DialogoKardex extends JDialog {
         java.util.Map<String, Object> datos = vDao.obtenerReciboPorId(idVenta);
         
         if (datos.isEmpty() || !datos.containsKey("detalles")) {
-            JOptionPane.showMessageDialog(this, "No se encontraron los datos de la Venta #" + idVenta, "Error", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "No se encontraron los datos de la Venta #" + idVenta, "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -191,11 +191,11 @@ public class DialogoKardex extends JDialog {
                 // Pasamos la fecha histórica exacta al regenerador de PDF físico
                 utilidades.GeneradorTickets.generarTicketVentaPDF(rutaTemp, cliente, fechaHistorica, detalles, subtotal, isv, total, true, metodo, ref, banco);
                 
-                JOptionPane.showMessageDialog(previewDialog, "Copia de recibo generada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(previewDialog, "Copia de recibo generada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 if (Desktop.isDesktopSupported()) utilidades.GestorImpresion.procesarImpresion(new File(rutaTemp), utilidades.GestorImpresion.TIPO_A4);
                 
             } catch (Exception err) {
-                JOptionPane.showMessageDialog(previewDialog, "Error al generar PDF: " + err.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(previewDialog, "Error al generar PDF: " + err.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -224,3 +224,4 @@ public class DialogoKardex extends JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }
+

@@ -195,7 +195,7 @@ public class PanelGestionClientes extends JPanel {
                     dialog.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    JOptionPane.showMessageDialog(PanelGestionClientes.this, "Error al abrir el formulario: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(PanelGestionClientes.this, "Error al abrir el formulario: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         };
@@ -292,14 +292,14 @@ public class PanelGestionClientes extends JPanel {
         int idCliente = (int) modeloTabla.getValueAt(filaModelo, 0);
         String nombre = modeloTabla.getValueAt(filaModelo, 2).toString();
         
-        int confirmacion = JOptionPane.showConfirmDialog(this, 
+        int confirmacion = utilidades.Mensajes.showConfirmDialog(this, 
             "¿Está seguro de desactivar al cliente: " + nombre + "?", 
             "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             
         if (confirmacion == JOptionPane.YES_OPTION) {
             ClienteDAO dao = new ClienteDAO();
             if (dao.desactivarCliente(idCliente)) {
-                JOptionPane.showMessageDialog(this, "Cliente eliminado exitosamente.");
+                utilidades.Mensajes.showMessageDialog(this, "Cliente eliminado exitosamente.");
                 cargarDatosDesdeBD();
             }
         }
@@ -385,3 +385,4 @@ public class PanelGestionClientes extends JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }
+

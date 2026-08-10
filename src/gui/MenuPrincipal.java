@@ -275,11 +275,11 @@ public class MenuPrincipal extends JFrame {
     private boolean validarCajaPrevia() {
         try {
             if (new dao.ControlCajaDAO().existeCajaAbiertaAnterior()) {
-                JOptionPane.showMessageDialog(this, "ATENCIÓN: Se ha detectado un turno de caja de una fecha anterior que aún NO se ha cerrado.\n\nPor favor, diríjase al módulo 'Control de Caja' y realice el cierre del turno anterior para evitar descuadres en sus finanzas antes de registrar nuevas ventas.", "Cierre de Caja Requerido", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "ATENCIÓN: Se ha detectado un turno de caja de una fecha anterior que aún NO se ha cerrado.\n\nPor favor, diríjase al módulo 'Control de Caja' y realice el cierre del turno anterior para evitar descuadres en sus finanzas antes de registrar nuevas ventas.", "Cierre de Caja Requerido", JOptionPane.WARNING_MESSAGE);
                 return false;
             }
         } catch(java.sql.SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error al verificar el estado de la caja:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Error al verificar el estado de la caja:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;

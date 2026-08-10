@@ -206,7 +206,7 @@ public class DialogoReclamarGarantia extends JDialog {
                     // Cargar imagen original
                     java.awt.image.BufferedImage imgOriginal = javax.imageio.ImageIO.read(archivo);
                     if (imgOriginal == null) {
-                        JOptionPane.showMessageDialog(this, "El archivo seleccionado no es una imagen válida.", "Error", JOptionPane.ERROR_MESSAGE);
+                        utilidades.Mensajes.showMessageDialog(this, "El archivo seleccionado no es una imagen válida.", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     
@@ -237,7 +237,7 @@ public class DialogoReclamarGarantia extends JDialog {
                     
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Error al procesar la imagen.", "Error", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Error al procesar la imagen.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -288,13 +288,13 @@ public class DialogoReclamarGarantia extends JDialog {
 
     private void procesarReclamo(ActionEvent evt) {
         if (txtObservacion.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
+            utilidades.Mensajes.showMessageDialog(this, 
                 "Por favor, ingrese un motivo u observación sobre el daño del producto.", 
                 "Faltan Datos", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        int confirmacion = JOptionPane.showConfirmDialog(this, 
+        int confirmacion = utilidades.Mensajes.showConfirmDialog(this, 
             "¿Está seguro de procesar el reclamo de garantía para este producto?", 
             "Confirmar Reclamo", 
             JOptionPane.YES_NO_OPTION, 
@@ -305,7 +305,7 @@ public class DialogoReclamarGarantia extends JDialog {
             if (cmbResolucion.getSelectedIndex() == 2) {
                 // Cambio por Otro Producto Diferente
                 if (productoSustituto == null) {
-                    JOptionPane.showMessageDialog(this, "Debe seleccionar un producto sustituto.", "Faltan Datos", JOptionPane.WARNING_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Debe seleccionar un producto sustituto.", "Faltan Datos", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
                 int idUsuario = utilidades.SesionGlobal.getUsuarioActual() != null ? utilidades.SesionGlobal.getUsuarioActual().getIdUsuario() : 1;
@@ -316,7 +316,7 @@ public class DialogoReclamarGarantia extends JDialog {
                     utilidades.GeneradorTickets.generarTicketCambioPDF(idDetalle, productoSustituto, dao.obtenerPrecioOriginal(idDetalle));
                     this.dispose();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Hubo un error al aplicar el reclamo.", "Error", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Hubo un error al aplicar el reclamo.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
                 // Resolución Normal
@@ -327,7 +327,7 @@ public class DialogoReclamarGarantia extends JDialog {
                     utilidades.GeneradorTickets.generarTicketGarantiaPDF(idDetalle, cmbResolucion.getSelectedItem().toString(), txtObservacion.getText());
                     this.dispose();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Hubo un error al aplicar el reclamo.", "Error", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Hubo un error al aplicar el reclamo.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
@@ -398,7 +398,7 @@ public class DialogoReclamarGarantia extends JDialog {
         btnTomarFotoQR.addActionListener(e -> {
             new DialogoEscanearQR((Frame) SwingUtilities.getWindowAncestor(this), false, 4, b64 -> {
                 setPreviewBase64(b64);
-                JOptionPane.showMessageDialog(this, "Foto capturada y adjuntada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Foto capturada y adjuntada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             }).setVisible(true);
         });
 
@@ -453,3 +453,4 @@ public class DialogoReclamarGarantia extends JDialog {
         @Override public int getIconHeight() { return 20; }
     }
 }
+

@@ -158,7 +158,7 @@ public class DialogoEntregarDefectuoso extends JDialog {
             GeneradorTickets.generarTicketEntregaReparacionPDF(nombreProducto, obs);
             dispose();
         } else {
-            JOptionPane.showMessageDialog(this, "Ocurrió un error al procesar la entrega.", "Error", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Ocurrió un error al procesar la entrega.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -166,3 +166,4 @@ public class DialogoEntregarDefectuoso extends JDialog {
         return exito;
     }
 }
+

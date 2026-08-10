@@ -233,7 +233,7 @@ public class PanelGestionRoles extends JPanel {
                 btnGuardar.setEnabled(false);
                 if (btnEditarRol != null) btnEditarRol.setEnabled(false);
                 if (btnEliminarRol != null) btnEliminarRol.setEnabled(false);
-                JOptionPane.showMessageDialog(this, "El Rol Maestro/Administrador tiene acceso total por defecto y no puede ser modificado.", "Rol Protegido", JOptionPane.INFORMATION_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "El Rol Maestro/Administrador tiene acceso total por defecto y no puede ser modificado.", "Rol Protegido", JOptionPane.INFORMATION_MESSAGE);
                 panelPermisos.removeAll();
                 panelPermisos.revalidate();
                 panelPermisos.repaint();
@@ -332,12 +332,12 @@ public class PanelGestionRoles extends JPanel {
                 try {
                     boolean exito = get();
                     if (exito) {
-                        JOptionPane.showMessageDialog(PanelGestionRoles.this, "¡Permisos guardados correctamente para el rol: " + rolSeleccionado.getNombreRol() + "!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                        utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "¡Permisos guardados correctamente para el rol: " + rolSeleccionado.getNombreRol() + "!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        JOptionPane.showMessageDialog(PanelGestionRoles.this, "Ocurrió un error al guardar los permisos.", "Error", JOptionPane.ERROR_MESSAGE);
+                        utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Ocurrió un error al guardar los permisos.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(PanelGestionRoles.this, "Error: " + ex.getMessage());
+                    utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Error: " + ex.getMessage());
                 } finally {
                     boton.setEnabled(true);
                     boton.setText("Guardar Permisos del Rol");
@@ -362,13 +362,13 @@ public class PanelGestionRoles extends JPanel {
                     try {
                         int idGenerado = get();
                         if (idGenerado > 0) {
-                            JOptionPane.showMessageDialog(PanelGestionRoles.this, "Rol creado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                            utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Rol creado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                             cargarRoles();
                         } else {
-                            JOptionPane.showMessageDialog(PanelGestionRoles.this, "Error al crear el rol o el rol ya existe.", "Error", JOptionPane.ERROR_MESSAGE);
+                            utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Error al crear el rol o el rol ya existe.", "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(PanelGestionRoles.this, "Error: " + ex.getMessage());
+                        utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Error: " + ex.getMessage());
                     } finally {
                         boton.setEnabled(true);
                     }
@@ -396,13 +396,13 @@ public class PanelGestionRoles extends JPanel {
                     try {
                         boolean exito = get();
                         if (exito) {
-                            JOptionPane.showMessageDialog(PanelGestionRoles.this, "Rol editado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                            utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Rol editado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                             cargarRoles();
                         } else {
-                            JOptionPane.showMessageDialog(PanelGestionRoles.this, "Ocurrió un error al editar el rol.", "Error", JOptionPane.ERROR_MESSAGE);
+                            utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Ocurrió un error al editar el rol.", "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(PanelGestionRoles.this, "Error: " + ex.getMessage());
+                        utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Error: " + ex.getMessage());
                     } finally {
                         boton.setEnabled(true);
                     }
@@ -416,7 +416,7 @@ public class PanelGestionRoles extends JPanel {
         Rol rolSeleccionado = (Rol) cbRoles.getSelectedItem();
         if (rolSeleccionado == null) return;
 
-        int confirmacion = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea eliminar el rol '" + rolSeleccionado.getNombreRol() + "'? Esta acción eliminará los permisos asociados.\nNota: Fallará si existen usuarios asignados a este rol.", "Eliminar Rol", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        int confirmacion = utilidades.Mensajes.showConfirmDialog(this, "¿Está seguro que desea eliminar el rol '" + rolSeleccionado.getNombreRol() + "'? Esta acción eliminará los permisos asociados.\nNota: Fallará si existen usuarios asignados a este rol.", "Eliminar Rol", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (confirmacion == JOptionPane.YES_OPTION) {
             boton.setEnabled(false);
             SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
@@ -430,13 +430,13 @@ public class PanelGestionRoles extends JPanel {
                     try {
                         boolean exito = get();
                         if (exito) {
-                            JOptionPane.showMessageDialog(PanelGestionRoles.this, "Rol eliminado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                            utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Rol eliminado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                             cargarRoles();
                         } else {
-                            JOptionPane.showMessageDialog(PanelGestionRoles.this, "No se pudo eliminar el rol. Verifique que no haya usuarios asignados a él.", "Error", JOptionPane.ERROR_MESSAGE);
+                            utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "No se pudo eliminar el rol. Verifique que no haya usuarios asignados a él.", "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(PanelGestionRoles.this, "Error: " + ex.getMessage());
+                        utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Error: " + ex.getMessage());
                     } finally {
                         boton.setEnabled(true);
                     }
@@ -446,3 +446,4 @@ public class PanelGestionRoles extends JPanel {
         }
     }
 }
+

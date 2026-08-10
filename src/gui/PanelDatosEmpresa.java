@@ -170,8 +170,16 @@ public class PanelDatosEmpresa extends JPanel {
 
     private void guardarDatos() {
         if (txtNombreEmpresa.getText().trim().isEmpty() || txtRtnEmpresa.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "El Nombre de la Empresa y el RTN son obligatorios.", "Advertencia",
+            utilidades.Mensajes.showMessageDialog(this, "El Nombre de la Empresa y el RTN son obligatorios.", "Advertencia",
                     JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int opcion = utilidades.Mensajes.showConfirmDialog(this,
+                "¿Está seguro de que desea guardar/actualizar los datos de la empresa?",
+                "Confirmar Actualización", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                
+        if (opcion != JOptionPane.YES_OPTION) {
             return;
         }
 
@@ -193,7 +201,7 @@ public class PanelDatosEmpresa extends JPanel {
 
         EmpresaDAO dao = new EmpresaDAO();
         if (dao.guardarOActualizar(emp)) {
-            JOptionPane.showMessageDialog(this, "Empresa guardada correctamente.", "Éxito",
+            utilidades.Mensajes.showMessageDialog(this, "Empresa guardada correctamente.", "Éxito",
                     JOptionPane.INFORMATION_MESSAGE);
 
             // Refrescar los datos cargados en memoria tras guardar
@@ -202,7 +210,7 @@ public class PanelDatosEmpresa extends JPanel {
             // Actualizamos la sesión global
             SesionGlobal.setEmpresaActual(emp);
         } else {
-            JOptionPane.showMessageDialog(this, "Error al guardar la empresa en la base de datos.", "Error",
+            utilidades.Mensajes.showMessageDialog(this, "Error al guardar la empresa en la base de datos.", "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -347,3 +355,4 @@ public class PanelDatosEmpresa extends JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }
+

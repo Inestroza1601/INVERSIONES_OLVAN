@@ -32,7 +32,7 @@ public class ConexionFactory {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         } catch (ClassNotFoundException e) {
-            JOptionPane.showMessageDialog(null, 
+            utilidades.Mensajes.showMessageDialog(null, 
                 "Falta el archivo mssql-jdbc.jar en las librerías del proyecto.", 
                 "Error de Driver", JOptionPane.ERROR_MESSAGE);
         }
@@ -72,7 +72,7 @@ public class ConexionFactory {
             Connection con = DriverManager.getConnection(url, usuario, password);
             
             if (huboFalloConexion) {
-                JOptionPane.showMessageDialog(null, "Conexión Restablecida exitosamente con el servidor.", "Conexión Recuperada", JOptionPane.INFORMATION_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(null, "Conexión Restablecida exitosamente con el servidor.", "Conexión Recuperada", JOptionPane.INFORMATION_MESSAGE);
                 huboFalloConexion = false; 
             }
             return con;
@@ -130,7 +130,7 @@ public class ConexionFactory {
                 msjTraducido = "Código de error: " + e.getErrorCode() + "\nDetalle: " + e.getMessage();
             }
 
-            JOptionPane.showMessageDialog(null, msjTraducido, tituloAlerta, JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(null, msjTraducido, tituloAlerta, JOptionPane.ERROR_MESSAGE);
             tiempoUltimoError = tiempoActual;
         }
     }
@@ -156,3 +156,4 @@ public class ConexionFactory {
         }).start();
     }
 }
+

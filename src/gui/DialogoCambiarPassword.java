@@ -117,27 +117,28 @@ public class DialogoCambiarPassword extends JDialog {
         String conf = new String(txtConfirmarClave.getPassword());
         
         if (token.isEmpty() || pass.isEmpty() || conf.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Campos vacíos", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Todos los campos son obligatorios.", "Campos vacíos", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         if (!pass.equals(conf)) {
-            JOptionPane.showMessageDialog(this, "Las contraseñas no coinciden.", "Error de validación", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Las contraseñas no coinciden.", "Error de validación", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
         UsuarioDAO dao = new UsuarioDAO();
         
         if (!dao.validarTokenRecuperacion(usuario.getIdUsuario(), token)) {
-            JOptionPane.showMessageDialog(this, "El código de seguridad es inválido o ha expirado.", "Código Incorrecto", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "El código de seguridad es inválido o ha expirado.", "Código Incorrecto", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
         if (dao.actualizarPassword(usuario.getIdUsuario(), pass)) {
-            JOptionPane.showMessageDialog(this, "¡Su contraseña se ha actualizado correctamente!\nPuede iniciar sesión con su nueva clave.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "¡Su contraseña se ha actualizado correctamente!\nPuede iniciar sesión con su nueva clave.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             dispose();
         } else {
-            JOptionPane.showMessageDialog(this, "Ocurrió un error al actualizar la contraseña.", "Error", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Ocurrió un error al actualizar la contraseña.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
+

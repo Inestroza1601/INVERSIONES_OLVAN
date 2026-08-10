@@ -177,7 +177,7 @@ public class DialogoDetallesApartado extends JDialog {
             );
             utilidades.GestorImpresion.procesarImpresion(new java.io.File(ruta), utilidades.GestorImpresion.TIPO_TICKET);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error al generar ticket general: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Error al generar ticket general: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -204,7 +204,7 @@ public class DialogoDetallesApartado extends JDialog {
         }
         
         if (abonoOrig == null) {
-            JOptionPane.showMessageDialog(this, "Error: No se encontró la información histórica del abono.", "Error", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Error: No se encontró la información histórica del abono.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -225,7 +225,8 @@ public class DialogoDetallesApartado extends JDialog {
             );
             utilidades.GestorImpresion.procesarImpresion(new java.io.File(ruta), utilidades.GestorImpresion.TIPO_TICKET);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error al generar ticket de abono: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Error al generar ticket de abono: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
+

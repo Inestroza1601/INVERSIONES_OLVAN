@@ -220,7 +220,7 @@ public class PanelGestionGarantias extends JPanel {
                 longitudAbrirArchivo(archivoPDF);
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al generar recibo: " + e.getMessage());
+            utilidades.Mensajes.showMessageDialog(this, "Error al generar recibo: " + e.getMessage());
         }
     }
 
@@ -233,7 +233,7 @@ public class PanelGestionGarantias extends JPanel {
                 longitudAbrirArchivo(archivoPDF);
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al generar certificado: " + e.getMessage());
+            utilidades.Mensajes.showMessageDialog(this, "Error al generar certificado: " + e.getMessage());
         }
     }
 
@@ -260,7 +260,7 @@ public class PanelGestionGarantias extends JPanel {
         dialogo.setVisible(true);
 
         if (dialogo.isExito()) {
-            JOptionPane.showMessageDialog(this, "Garantía reclamada exitosamente.", "Orion Systems", JOptionPane.INFORMATION_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Garantía reclamada exitosamente.", "Orion Systems", JOptionPane.INFORMATION_MESSAGE);
             cargarDatosDesdeBD(); // Recargamos la tabla para ver el cambio
         }
     }
@@ -377,3 +377,4 @@ public class PanelGestionGarantias extends JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }
+

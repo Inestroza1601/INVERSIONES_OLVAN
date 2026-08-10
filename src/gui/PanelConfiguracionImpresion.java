@@ -160,7 +160,7 @@ public class PanelConfiguracionImpresion extends JPanel {
         Empresa emp = (this.empresaActiva != null) ? this.empresaActiva : SesionGlobal.getEmpresaActual();
         
         if (emp == null) {
-            JOptionPane.showMessageDialog(this, "No se encontró una empresa activa.\nPor favor, guarde primero los Datos Generales.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "No se encontró una empresa activa.\nPor favor, guarde primero los Datos Generales.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -179,9 +179,9 @@ public class PanelConfiguracionImpresion extends JPanel {
 
         EmpresaDAO dao = new EmpresaDAO();
         if (dao.guardarOActualizar(emp)) {
-            JOptionPane.showMessageDialog(this, "Diseño y textos guardados correctamente.");
+            utilidades.Mensajes.showMessageDialog(this, "Diseño y textos guardados correctamente.");
         } else {
-            JOptionPane.showMessageDialog(this, "Error al guardar en la base de datos.");
+            utilidades.Mensajes.showMessageDialog(this, "Error al guardar en la base de datos.");
         }
     }
 
@@ -203,13 +203,13 @@ public class PanelConfiguracionImpresion extends JPanel {
                 EmpresaDAO dao = new EmpresaDAO();
                 
                 if (dao.guardarOActualizar(emp)) {
-                    JOptionPane.showMessageDialog(this, "Logo cargado y guardado en la base de datos exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Logo cargado y guardado en la base de datos exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                     recargarVistaPrevia(); 
                 } else {
-                    JOptionPane.showMessageDialog(this, "Error al guardar el logo en la base de datos.", "Error de Base de Datos", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Error al guardar el logo en la base de datos.", "Error de Base de Datos", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "No se encontró una empresa activa.\nPor favor, guarde primero los Datos Generales.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "No se encontró una empresa activa.\nPor favor, guarde primero los Datos Generales.", "Aviso", JOptionPane.WARNING_MESSAGE);
             }
         }
     }
@@ -312,7 +312,7 @@ public class PanelConfiguracionImpresion extends JPanel {
         btnGuardar.addActionListener(e -> {
             utilidades.GestorImpresion.guardarImpresoraTicket(cmbImpresoraTickets.getSelectedItem().toString());
             utilidades.GestorImpresion.guardarImpresoraA4(cmbImpresoraFacturasA4.getSelectedItem().toString());
-            JOptionPane.showMessageDialog(dialog, "Impresoras seleccionadas guardadas localmente.");
+            utilidades.Mensajes.showMessageDialog(dialog, "Impresoras seleccionadas guardadas localmente.");
             dialog.dispose();
         });
 
@@ -374,3 +374,4 @@ public class PanelConfiguracionImpresion extends JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }
+

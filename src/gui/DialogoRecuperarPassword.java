@@ -77,7 +77,7 @@ public class DialogoRecuperarPassword extends JDialog {
     private void enviarCodigo() {
         String nombreUsuario = txtUsuario.getText().trim();
         if (nombreUsuario.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Por favor ingrese su nombre de usuario.", "Atención", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Por favor ingrese su nombre de usuario.", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -123,7 +123,7 @@ public class DialogoRecuperarPassword extends JDialog {
                     boolean exito = get();
                     if (exito) {
                         String ofuscado = correoUsuario.replaceAll("(^[^@]{2}|(?!^)\\G)[^@]", "$1*");
-                        JOptionPane.showMessageDialog(DialogoRecuperarPassword.this, 
+                        utilidades.Mensajes.showMessageDialog(DialogoRecuperarPassword.this, 
                             "Se ha enviado un código de recuperación a su correo: " + ofuscado, 
                             "Correo Enviado", JOptionPane.INFORMATION_MESSAGE);
                         dispose();
@@ -135,15 +135,15 @@ public class DialogoRecuperarPassword extends JDialog {
                         
                     } else {
                         if (usuarioEncontrado == null) {
-                            JOptionPane.showMessageDialog(DialogoRecuperarPassword.this, 
+                            utilidades.Mensajes.showMessageDialog(DialogoRecuperarPassword.this, 
                                 "No se encontró ningún usuario con ese nombre.", 
                                 "Error", JOptionPane.ERROR_MESSAGE);
                         } else if (sinCorreo) {
-                            JOptionPane.showMessageDialog(DialogoRecuperarPassword.this, 
+                            utilidades.Mensajes.showMessageDialog(DialogoRecuperarPassword.this, 
                                 "El usuario no tiene un correo electrónico enlazado.\nPor favor contacte al administrador.", 
                                 "Sin Correo Enlazado", JOptionPane.WARNING_MESSAGE);
                         } else {
-                            JOptionPane.showMessageDialog(DialogoRecuperarPassword.this, 
+                            utilidades.Mensajes.showMessageDialog(DialogoRecuperarPassword.this, 
                                 "Hubo un error al enviar el correo. Por favor intente más tarde.", 
                                 "Error de Envío", JOptionPane.ERROR_MESSAGE);
                         }
@@ -156,3 +156,4 @@ public class DialogoRecuperarPassword extends JDialog {
         worker.execute();
     }
 }
+

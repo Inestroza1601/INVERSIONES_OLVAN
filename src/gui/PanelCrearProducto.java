@@ -1,4 +1,4 @@
-Ôªøpackage gui;
+package gui;
 
 import dao.InventarioDAO;
 import dao.CatalogosDAO;
@@ -65,7 +65,7 @@ public class PanelCrearProducto extends JPanel {
         if (codigosEnRam == null) codigosEnRam = new HashSet<>();
         
         if(productoAEditar != null) {
-            codigosEnRam.remove(productoAEditar.getCodigoBarras()); // Evita que su propio c√≥digo marque error
+            codigosEnRam.remove(productoAEditar.getCodigoBarras()); // Evita que su propio cÛdigo marque error
         }
         
         iniciarDiseno();
@@ -83,7 +83,7 @@ public class PanelCrearProducto extends JPanel {
         this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); // Verde Vintage
         this.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
-        String textoTitulo = (productoAEditar == null) ? "Registrar Nuevo Producto" : "Edici√≥n de Producto";
+        String textoTitulo = (productoAEditar == null) ? "Registrar Nuevo Producto" : "EdiciÛn de Producto";
         JLabel lblTitulo = new JLabel(textoTitulo);
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
         lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
@@ -100,7 +100,7 @@ public class PanelCrearProducto extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         txtCodigoBarras = new JTextField(20);
-        txtCodigoBarras.putClientProperty("JTextField.placeholderText", "Dejar vac√≠o para usar ID autogenerado");
+        txtCodigoBarras.putClientProperty("JTextField.placeholderText", "Dejar vacÌo para usar ID autogenerado");
         
         lblErrorCodigo = new JLabel(" ");
         lblErrorCodigo.setForeground(new Color(227, 0, 15)); // Rojo Logo
@@ -130,19 +130,19 @@ public class PanelCrearProducto extends JPanel {
 
         txtStockInicial = new JTextField(10);
         txtStockMinimo = new JTextField("0", 10); 
-        agregarFilaCorta(pnlForm, gbc, 0, "C√≥digo de Barras:", txtCodigoBarras);
+        agregarFilaCorta(pnlForm, gbc, 0, "CÛdigo de Barras:", txtCodigoBarras);
         gbc.gridy = 1; gbc.gridx = 1; gbc.insets = new Insets(0, 10, 10, 10);
         pnlForm.add(lblErrorCodigo, gbc);
         gbc.insets = new Insets(10, 10, 10, 10); 
         
         agregarFila(pnlForm, gbc, 2, "Nombre del Producto:", txtNombre);
-        agregarFila(pnlForm, gbc, 3, "Categor√≠a:", crearPanelCatalogo(cmbCategoria, "Categor√≠a"));
+        agregarFila(pnlForm, gbc, 3, "CategorÌa:", crearPanelCatalogo(cmbCategoria, "CategorÌa"));
         agregarFila(pnlForm, gbc, 4, "Proveedor:", crearPanelCatalogo(cmbProveedor, "Proveedor"));
-        agregarFila(pnlForm, gbc, 5, "Ubicaci√≥n:", crearPanelCatalogo(cmbUbicacion, "Ubicaci√≥n"));
+        agregarFila(pnlForm, gbc, 5, "UbicaciÛn:", crearPanelCatalogo(cmbUbicacion, "UbicaciÛn"));
 
-        cmbDiasGarantia = new JComboBox<>(new String[]{"Sin garant√≠a", "3 d√≠as", "7 d√≠as", "15 d√≠as", "30 d√≠as", "60 d√≠as", "90 d√≠as", "1 a√±o"});
+        cmbDiasGarantia = new JComboBox<>(new String[]{"Sin garantÌa", "3 dÌas", "7 dÌas", "15 dÌas", "30 dÌas", "60 dÌas", "90 dÌas", "1 aÒo"});
         cmbDiasGarantia.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        agregarFilaCorta(pnlForm, gbc, 6, "Garant√≠a (D√≠as):", cmbDiasGarantia);
+        agregarFilaCorta(pnlForm, gbc, 6, "GarantÌa (DÌas):", cmbDiasGarantia);
 
         chkRequiereSerie = new JCheckBox("Solicitar Identificador al facturar");
         chkRequiereSerie.setBackground(new Color(255, 255, 255)); // Blanco Puro
@@ -175,7 +175,7 @@ public class PanelCrearProducto extends JPanel {
         txtPrecioMayorista.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(5, 8, 5, 8)));
         pnlForm.add(txtPrecioMayorista, gbc);
         agregarFilaCorta(pnlForm, gbc, 11, "Stock Inicial:", txtStockInicial);
-        agregarFilaCorta(pnlForm, gbc, 12, "Stock M√≠nimo:", txtStockMinimo);
+        agregarFilaCorta(pnlForm, gbc, 12, "Stock MÌnimo:", txtStockMinimo);
 
         gbc.gridy = 13; gbc.weighty = 1.0;
         pnlForm.add(new JLabel(""), gbc);
@@ -196,7 +196,7 @@ public class PanelCrearProducto extends JPanel {
         ));
         pnlImagen.setPreferredSize(new Dimension(250, 0)); 
 
-        JLabel lblTituloImg = new JLabel("Fotograf√≠as (M√°x 4)");
+        JLabel lblTituloImg = new JLabel("FotografÌas (M·x 4)");
         lblTituloImg.setForeground(new Color(45, 45, 45)); // Gris Oscuro
         lblTituloImg.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblTituloImg.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -216,9 +216,9 @@ public class PanelCrearProducto extends JPanel {
                 if (indiceImagenActual >= 0 && indiceImagenActual < imagenesSeleccionadas.size()) {
                     Window window = SwingUtilities.getWindowAncestor(PanelCrearProducto.this);
                     if (window instanceof Frame) {
-                        new DialogoVisorImagen((Frame) window, "Visor de Fotograf√≠a", imagenesSeleccionadas, indiceImagenActual).setVisible(true);
+                        new DialogoVisorImagen((Frame) window, "Visor de FotografÌa", imagenesSeleccionadas, indiceImagenActual).setVisible(true);
                     } else if (window instanceof JDialog) {
-                        new DialogoVisorImagen((JDialog) window, "Visor de Fotograf√≠a", imagenesSeleccionadas, indiceImagenActual).setVisible(true);
+                        new DialogoVisorImagen((JDialog) window, "Visor de FotografÌa", imagenesSeleccionadas, indiceImagenActual).setVisible(true);
                     }
                 }
             }
@@ -289,7 +289,7 @@ public class PanelCrearProducto extends JPanel {
         btnTomarFoto.setMaximumSize(new Dimension(150, 35));
         btnTomarFoto.addActionListener(e -> {
             if (imagenesSeleccionadas.size() >= 4) {
-                JOptionPane.showMessageDialog(this, "L√≠mite de 4 im√°genes alcanzado.", "L√≠mite Excedido", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "LÌmite de 4 im·genes alcanzado.", "LÌmite Excedido", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             Window window = SwingUtilities.getWindowAncestor(PanelCrearProducto.this);
@@ -304,7 +304,7 @@ public class PanelCrearProducto extends JPanel {
                     }
                     indiceImagenActual = imagenesSeleccionadas.size() - 1;
                     actualizarVistaPreviaImagen();
-                    JOptionPane.showMessageDialog(this, "Foto(s) capturada(s) exitosamente.", "√âxito", JOptionPane.INFORMATION_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Foto(s) capturada(s) exitosamente.", "…xito", JOptionPane.INFORMATION_MESSAGE);
                 }
             }).setVisible(true);
         });
@@ -381,7 +381,7 @@ public class PanelCrearProducto extends JPanel {
     }
 
     // =========================================================
-    // L√É‚ÄúGICA: RESTRICCIONES DE TECLADO
+    // L√ìGICA: RESTRICCIONES DE TECLADO
     // =========================================================
     private void aplicarRestriccionesNumericas() {
         permitirSoloNumeros(txtPrecioCompra, true);
@@ -407,13 +407,13 @@ public class PanelCrearProducto extends JPanel {
     }
 
     // =========================================================
-    // L√É‚ÄúGICA DE GUARDADO EN BASE DE DATOS
+    // L√ìGICA DE GUARDADO EN BASE DE DATOS
     // =========================================================
     private void cargarDatosCombos() {
         CatalogosDAO dao = new CatalogosDAO();
         
         cmbCategoria.removeAllItems();
-        cmbCategoria.addItem(new ItemCatalogo(0, "Seleccione Categor√≠a..."));
+        cmbCategoria.addItem(new ItemCatalogo(0, "Seleccione CategorÌa..."));
         for (Map.Entry<Integer, String> entry : dao.listarCategorias().entrySet()) {
             cmbCategoria.addItem(new ItemCatalogo(entry.getKey(), entry.getValue()));
         }
@@ -425,7 +425,7 @@ public class PanelCrearProducto extends JPanel {
         }
         
         cmbUbicacion.removeAllItems();
-        cmbUbicacion.addItem(new ItemCatalogo(0, "Seleccione Ubicaci√≥n..."));
+        cmbUbicacion.addItem(new ItemCatalogo(0, "Seleccione UbicaciÛn..."));
         for (Map.Entry<Integer, String> entry : dao.listarUbicaciones().entrySet()) {
             cmbUbicacion.addItem(new ItemCatalogo(entry.getKey(), entry.getValue()));
         }
@@ -433,7 +433,7 @@ public class PanelCrearProducto extends JPanel {
     
     private void guardarProducto() {
         if (txtNombre.getText().trim().isEmpty() || txtPrecioCompra.getText().trim().isEmpty() || txtPrecioVenta.getText().trim().isEmpty() || txtStockInicial.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Complete los campos obligatorios (Nombre, Precios y Stock).", "Error", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Complete los campos obligatorios (Nombre, Precios y Stock).", "Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -442,7 +442,7 @@ public class PanelCrearProducto extends JPanel {
         ItemCatalogo ubi = (ItemCatalogo) cmbUbicacion.getSelectedItem();
         
         if (cat == null || cat.id == 0 || prov == null || prov.id == 0 || ubi == null || ubi.id == 0) {
-            JOptionPane.showMessageDialog(this, "Debe seleccionar Categor√≠a, Proveedor y Ubicaci√≥n.", "Error", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Debe seleccionar CategorÌa, Proveedor y UbicaciÛn.", "Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -477,14 +477,14 @@ public class PanelCrearProducto extends JPanel {
             }
 
             if (exito) {
-                JOptionPane.showMessageDialog(this, "¬°Producto " + ((productoAEditar == null)? "guardado" : "actualizado") + " exitosamente!", "√âxito", JOptionPane.INFORMATION_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "°Producto " + ((productoAEditar == null)? "guardado" : "actualizado") + " exitosamente!", "…xito", JOptionPane.INFORMATION_MESSAGE);
                 if (productoAEditar == null) limpiarFormulario();
             } else {
-                // AQU√ç FALTABA ESTE BLOQUE
-                JOptionPane.showMessageDialog(this, "Error al guardar el producto en la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
+                // AQUÕ FALTABA ESTE BLOQUE
+                utilidades.Mensajes.showMessageDialog(this, "Error al guardar el producto en la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Verifique que los valores num√©ricos sean v√°lidos.", "Error", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Verifique que los valores numÈricos sean v·lidos.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -514,7 +514,7 @@ public class PanelCrearProducto extends JPanel {
         
         txtStockInicial.setText(String.valueOf(productoAEditar.getStockProducto()));
         txtStockInicial.setEnabled(false);
-        txtStockInicial.setToolTipText("El stock solo puede modificarse a trav√©s del Kardex.");
+        txtStockInicial.setToolTipText("El stock solo puede modificarse a travÈs del Kardex.");
         
         txtStockMinimo.setText(String.valueOf(productoAEditar.getStockMinimo()));
         
@@ -557,7 +557,7 @@ public class PanelCrearProducto extends JPanel {
     }
 
     // =========================================================
-    // VENTANAS PARA CREAR/EDITAR CAT√ÅLOGOS (FUNCIONALES)
+    // VENTANAS PARA CREAR/EDITAR CAT¡LOGOS (FUNCIONALES)
     // =========================================================
 
     private void abrirDialogoMantenimiento(String tipoCatalogo) {
@@ -579,17 +579,17 @@ public class PanelCrearProducto extends JPanel {
         
         JTextField txtDesc = null, txtGarantia = null, txtEncargado = null, txtTel = null, txtDir = null, txtRepuestos = null;
 
-        if (tipoCatalogo.equals("Categor√≠a")) {
+        if (tipoCatalogo.equals("CategorÌa")) {
             txtGarantia = crearInputOscuro();
-            permitirSoloNumeros(txtGarantia, false); // Solo n√∫meros para los d√≠as
-            agregarFilaDialog(pnlForm, gbc, 2, "D√≠as de Garant√≠a:", txtGarantia);
+            permitirSoloNumeros(txtGarantia, false); // Solo n˙meros para los dÌas
+            agregarFilaDialog(pnlForm, gbc, 2, "DÌas de GarantÌa:", txtGarantia);
         } else if (tipoCatalogo.equals("Proveedor")) {
             txtEncargado = crearInputOscuro(); txtTel = crearInputOscuro();
             txtDir = crearInputOscuro(); txtRepuestos = crearInputOscuro();
-            permitirSoloNumeros(txtTel, false); // Solo n√∫meros para tel√©fono
+            permitirSoloNumeros(txtTel, false); // Solo n˙meros para telÈfono
             agregarFilaDialog(pnlForm, gbc, 1, "Encargado:", txtEncargado);
-            agregarFilaDialog(pnlForm, gbc, 2, "Tel√©fono:", txtTel);
-            agregarFilaDialog(pnlForm, gbc, 3, "Direcci√≥n:", txtDir);
+            agregarFilaDialog(pnlForm, gbc, 2, "TelÈfono:", txtTel);
+            agregarFilaDialog(pnlForm, gbc, 3, "DirecciÛn:", txtDir);
             agregarFilaDialog(pnlForm, gbc, 4, "Tipo Repuestos:", txtRepuestos);
         }
 
@@ -604,11 +604,11 @@ public class PanelCrearProducto extends JPanel {
         final JTextField fTxtDesc = txtDesc, fTxtGarantia = txtGarantia, fTxtEncargado = txtEncargado, fTxtTel = txtTel, fTxtDir = txtDir, fTxtRepuestos = txtRepuestos;
         
         btnGuardarCat.addActionListener(e -> {
-            if (txtNombreCat.getText().trim().isEmpty()) { JOptionPane.showMessageDialog(dialog, "El nombre es obligatorio."); return; }
+            if (txtNombreCat.getText().trim().isEmpty()) { utilidades.Mensajes.showMessageDialog(dialog, "El nombre es obligatorio."); return; }
             CatalogosDAO dao = new CatalogosDAO();
             boolean exito = false;
             
-            if (tipoCatalogo.equals("Categor√≠a")) {
+            if (tipoCatalogo.equals("CategorÌa")) {
                 int garantias = fTxtGarantia.getText().trim().isEmpty() ? 0 : Integer.parseInt(fTxtGarantia.getText().trim());
                 exito = dao.registrarCategoria(txtNombreCat.getText().trim(), fTxtDesc != null ? fTxtDesc.getText().trim() : "", garantias);
             } else if (tipoCatalogo.equals("Proveedor")) {
@@ -618,11 +618,11 @@ public class PanelCrearProducto extends JPanel {
             }
 
             if (exito) {
-                JOptionPane.showMessageDialog(dialog, tipoCatalogo + " registrada exitosamente.");
+                utilidades.Mensajes.showMessageDialog(dialog, tipoCatalogo + " registrada exitosamente.");
                 cargarDatosCombos(); // Recarga los combos inmediatamente
                 dialog.dispose();
             } else {
-                JOptionPane.showMessageDialog(dialog, "Error al guardar en la base de datos.");
+                utilidades.Mensajes.showMessageDialog(dialog, "Error al guardar en la base de datos.");
             }
         });
         
@@ -659,7 +659,7 @@ public class PanelCrearProducto extends JPanel {
         if (codigoStr.isEmpty()) { restaurarEstiloCodigo(); btnGuardar.setEnabled(true); return; }
         if (codigosEnRam.contains(codigoStr)) {
             txtCodigoBarras.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(227, 0, 15), 2), BorderFactory.createEmptyBorder(4, 7, 4, 7))); // Rojo Logo
-            lblErrorCodigo.setText("Este c√≥digo ya est√° registrado en el inventario."); btnGuardar.setEnabled(false); 
+            lblErrorCodigo.setText("Este cÛdigo ya est· registrado en el inventario."); btnGuardar.setEnabled(false); 
         } else { restaurarEstiloCodigo(); btnGuardar.setEnabled(true); }
     }
 
@@ -705,14 +705,14 @@ public class PanelCrearProducto extends JPanel {
         
         JButton btnEditar = new JButton("Editar"); 
         btnEditar.setFont(new Font("Segoe UI", Font.BOLD, 10));
-        btnEditar.setBackground(new Color(140, 145, 150)); // Gris suave en vez del azul para editar cat√°logos
+        btnEditar.setBackground(new Color(140, 145, 150)); // Gris suave en vez del azul para editar cat·logos
         btnEditar.setForeground(Color.WHITE); 
         btnEditar.setFocusPainted(false); 
         btnEditar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnEditar.addActionListener(e -> {
             ItemCatalogo item = (ItemCatalogo) combo.getSelectedItem();
             if (item == null || item.id == 0) {
-                JOptionPane.showMessageDialog(this, "Seleccione un(a) " + tipoCatalogo + " v√°lido de la lista para editar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Seleccione un(a) " + tipoCatalogo + " v·lido de la lista para editar.", "Aviso", JOptionPane.WARNING_MESSAGE);
             } else {
                 abrirDialogoEdicion(tipoCatalogo, item);
             }
@@ -727,11 +727,11 @@ public class PanelCrearProducto extends JPanel {
 
     private void seleccionarImagen() {
         if (imagenesSeleccionadas.size() >= 4) {
-            JOptionPane.showMessageDialog(this, "L√≠mite de 4 im√°genes alcanzado.", "L√≠mite Excedido", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "LÌmite de 4 im·genes alcanzado.", "LÌmite Excedido", JOptionPane.WARNING_MESSAGE);
             return;
         }
         JFileChooser fileChooser = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Im√°genes (JPG, PNG, GIF, JPEG)", "jpg", "png", "gif", "jpeg");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Im·genes (JPG, PNG, GIF, JPEG)", "jpg", "png", "gif", "jpeg");
         fileChooser.setFileFilter(filter);
 
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -743,17 +743,17 @@ public class PanelCrearProducto extends JPanel {
                     indiceImagenActual = imagenesSeleccionadas.size() - 1;
                     actualizarVistaPreviaImagen();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Error al procesar la imagen.", "Error", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Error al procesar la imagen.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Error al leer el archivo de imagen.", "Error", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Error al leer el archivo de imagen.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
     private void cargarImagenDesdeURL() {
         if (imagenesSeleccionadas.size() >= 4) {
-            JOptionPane.showMessageDialog(this, "L√≠mite de 4 im√°genes alcanzado.", "L√≠mite Excedido", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "LÌmite de 4 im·genes alcanzado.", "LÌmite Excedido", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -768,7 +768,7 @@ public class PanelCrearProducto extends JPanel {
             protected String doInBackground() throws Exception {
                 java.net.URL url = new java.net.URL(urlStr.trim());
                 java.awt.image.BufferedImage img = javax.imageio.ImageIO.read(url);
-                if (img == null) throw new Exception("La URL no contiene una imagen v√°lida.");
+                if (img == null) throw new Exception("La URL no contiene una imagen v·lida.");
                 return utilidades.ImagenHelper.convertirImagenABase64(img);
             }
             @Override
@@ -779,10 +779,10 @@ public class PanelCrearProducto extends JPanel {
                     imagenesSeleccionadas.add(b64);
                     indiceImagenActual = imagenesSeleccionadas.size() - 1;
                     actualizarVistaPreviaImagen();
-                    JOptionPane.showMessageDialog(PanelCrearProducto.this, "Imagen descargada y adjuntada exitosamente.", "√âxito", JOptionPane.INFORMATION_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(PanelCrearProducto.this, "Imagen descargada y adjuntada exitosamente.", "…xito", JOptionPane.INFORMATION_MESSAGE);
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(PanelCrearProducto.this, "√¢≈°¬†√Ø¬∏¬è No se pudo descargar la imagen.\nVerifique que la URL sea v√°lida o que tenga conexi√≥n a internet (No WiFi).", "Error de Conexi√≥n", JOptionPane.WARNING_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(PanelCrearProducto.this, "‚ö†Ô∏è No se pudo descargar la imagen.\nVerifique que la URL sea v·lida o que tenga conexiÛn a internet (No WiFi).", "Error de ConexiÛn", JOptionPane.WARNING_MESSAGE);
                 }
             }
         };
@@ -843,13 +843,13 @@ public class PanelCrearProducto extends JPanel {
         JTextField txtDesc = null, txtGarantia = null, txtEncargado = null, txtTel = null, txtDir = null, txtRepuestos = null;
         CatalogosDAO dao = new CatalogosDAO();
 
-        if (tipoCatalogo.equals("Categor√≠a")) {
+        if (tipoCatalogo.equals("CategorÌa")) {
             String[] datos = dao.obtenerDatosCategoria(item.id);
             txtDesc = crearInputOscuro(); txtDesc.setText(datos[0]);
             txtGarantia = crearInputOscuro(); txtGarantia.setText(datos[1]);
             permitirSoloNumeros(txtGarantia, false);
-            agregarFilaDialog(pnlForm, gbc, 1, "Descripci√≥n:", txtDesc);
-            agregarFilaDialog(pnlForm, gbc, 2, "D√≠as de Garant√≠a:", txtGarantia);
+            agregarFilaDialog(pnlForm, gbc, 1, "DescripciÛn:", txtDesc);
+            agregarFilaDialog(pnlForm, gbc, 2, "DÌas de GarantÌa:", txtGarantia);
         } else if (tipoCatalogo.equals("Proveedor")) {
             String[] datos = dao.obtenerDatosProveedor(item.id);
             txtEncargado = crearInputOscuro(); txtEncargado.setText(datos[0]);
@@ -858,8 +858,8 @@ public class PanelCrearProducto extends JPanel {
             txtRepuestos = crearInputOscuro(); txtRepuestos.setText(datos[3]);
             permitirSoloNumeros(txtTel, false);
             agregarFilaDialog(pnlForm, gbc, 1, "Encargado:", txtEncargado);
-            agregarFilaDialog(pnlForm, gbc, 2, "Tel√©fono:", txtTel);
-            agregarFilaDialog(pnlForm, gbc, 3, "Direcci√≥n:", txtDir);
+            agregarFilaDialog(pnlForm, gbc, 2, "TelÈfono:", txtTel);
+            agregarFilaDialog(pnlForm, gbc, 3, "DirecciÛn:", txtDir);
             agregarFilaDialog(pnlForm, gbc, 4, "Tipo Repuestos:", txtRepuestos);
         }
 
@@ -873,10 +873,10 @@ public class PanelCrearProducto extends JPanel {
         final JTextField fTxtDesc = txtDesc, fTxtGarantia = txtGarantia, fTxtEncargado = txtEncargado, fTxtTel = txtTel, fTxtDir = txtDir, fTxtRepuestos = txtRepuestos;
         
         btnGuardarCat.addActionListener(e -> {
-            if (txtNombreCat.getText().trim().isEmpty()) { JOptionPane.showMessageDialog(dialog, "El nombre es obligatorio."); return; }
+            if (txtNombreCat.getText().trim().isEmpty()) { utilidades.Mensajes.showMessageDialog(dialog, "El nombre es obligatorio."); return; }
             boolean exito = false;
             
-            if (tipoCatalogo.equals("Categor√≠a")) {
+            if (tipoCatalogo.equals("CategorÌa")) {
                 int garantias = fTxtGarantia.getText().trim().isEmpty() ? 0 : Integer.parseInt(fTxtGarantia.getText().trim());
                 exito = dao.actualizarCategoria(item.id, txtNombreCat.getText().trim(), fTxtDesc != null ? fTxtDesc.getText().trim() : "", garantias);
             } else if (tipoCatalogo.equals("Proveedor")) {
@@ -886,11 +886,11 @@ public class PanelCrearProducto extends JPanel {
             }
 
             if (exito) {
-                JOptionPane.showMessageDialog(dialog, tipoCatalogo + " actualizada exitosamente.");
+                utilidades.Mensajes.showMessageDialog(dialog, tipoCatalogo + " actualizada exitosamente.");
                 cargarDatosCombos(); // Recarga los combos inmediatamente
                 dialog.dispose();
             } else {
-                JOptionPane.showMessageDialog(dialog, "Error al actualizar en la base de datos.");
+                utilidades.Mensajes.showMessageDialog(dialog, "Error al actualizar en la base de datos.");
             }
         });
         
@@ -968,6 +968,7 @@ public class PanelCrearProducto extends JPanel {
         @Override public int getIconHeight() { return 20; }
     }
 }
+
 
 
 

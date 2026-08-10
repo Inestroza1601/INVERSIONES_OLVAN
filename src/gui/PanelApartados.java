@@ -235,7 +235,7 @@ public class PanelApartados extends JPanel {
     private void registrarAbonoRapido() {
         int selectedRow = tablaApartados.getSelectedRow();
         if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(this, "Seleccione un apartado de la lista.", "Aviso", JOptionPane.WARNING_MESSAGE); return;
+            utilidades.Mensajes.showMessageDialog(this, "Seleccione un apartado de la lista.", "Aviso", JOptionPane.WARNING_MESSAGE); return;
         }
 
         int id = (int) tablaApartados.getValueAt(selectedRow, 0);
@@ -243,14 +243,14 @@ public class PanelApartados extends JPanel {
         
         if (ap == null) return;
         if (ap.getEstadoApartado().equalsIgnoreCase("Cancelado") || ap.getEstadoApartado().equalsIgnoreCase("Entregado")) {
-            JOptionPane.showMessageDialog(this, "No se pueden aplicar abonos a apartados en estado: " + ap.getEstadoApartado(), "Aviso", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "No se pueden aplicar abonos a apartados en estado: " + ap.getEstadoApartado(), "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         // Check active cash session
         modelo.ControlCaja CCActiva = new dao.ControlCajaDAO().obtenerSesionActiva();
         if (CCActiva == null) {
-            JOptionPane.showMessageDialog(this, "Operación denegada: El turno de caja no está abierto. Abra la caja antes de registrar cobros.", "Caja Cerrada", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Operación denegada: El turno de caja no está abierto. Abra la caja antes de registrar cobros.", "Caja Cerrada", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -273,7 +273,7 @@ public class PanelApartados extends JPanel {
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(PanelApartados.this, "Error al abrir la ventana: " + ex.getMessage());
+                    utilidades.Mensajes.showMessageDialog(PanelApartados.this, "Error al abrir la ventana: " + ex.getMessage());
                 }
             }
         };
@@ -283,7 +283,7 @@ public class PanelApartados extends JPanel {
     private void entregarArticulos() {
         int selectedRow = tablaApartados.getSelectedRow();
         if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(this, "Seleccione un apartado de la lista.", "Aviso", JOptionPane.WARNING_MESSAGE); return;
+            utilidades.Mensajes.showMessageDialog(this, "Seleccione un apartado de la lista.", "Aviso", JOptionPane.WARNING_MESSAGE); return;
         }
 
         int id = (int) tablaApartados.getValueAt(selectedRow, 0);
@@ -291,16 +291,16 @@ public class PanelApartados extends JPanel {
 
         if (ap == null) return;
         if (ap.getSaldoPendiente() > 0.05) {
-            JOptionPane.showMessageDialog(this, "No se puede entregar la mercancía de un apartado con saldo pendiente (L " + String.format("%,.2f", ap.getSaldoPendiente()) + ").", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "No se puede entregar la mercancía de un apartado con saldo pendiente (L " + String.format("%,.2f", ap.getSaldoPendiente()) + ").", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if (ap.getEstadoApartado().equalsIgnoreCase("Entregado")) {
-            JOptionPane.showMessageDialog(this, "El apartado ya fue entregado.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "El apartado ya fue entregado.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         if (ap.getEstadoApartado().equalsIgnoreCase("Cancelado")) {
-            JOptionPane.showMessageDialog(this, "El apartado se encuentra cancelado.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "El apartado se encuentra cancelado.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -308,7 +308,7 @@ public class PanelApartados extends JPanel {
             "¿Confirmar que la mercancía ha sido entregada físicamente al cliente?",
             "Esta acción registrará oficialmente los ingresos en el Historial de Ventas."
         };
-        int opt = JOptionPane.showConfirmDialog(this, msj, "Entregar Apartado y Registrar Venta", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+        int opt = utilidades.Mensajes.showConfirmDialog(this, msj, "Entregar Apartado y Registrar Venta", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
         
         if (opt == JOptionPane.YES_OPTION) {
             int idUser = utilidades.SesionGlobal.getUsuarioActual() != null ? utilidades.SesionGlobal.getUsuarioActual().getIdUsuario() : 1;
@@ -322,10 +322,10 @@ public class PanelApartados extends JPanel {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-                JOptionPane.showMessageDialog(this, "Apartado completado, entregado y Comprobante registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Apartado completado, entregado y Comprobante registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 cargarApartados();
             } else {
-                JOptionPane.showMessageDialog(this, "Error de base de datos al entregar apartado y generar venta.", "Error", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Error de base de datos al entregar apartado y generar venta.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -333,7 +333,7 @@ public class PanelApartados extends JPanel {
     private void cancelarApartadoCompleto() {
         int selectedRow = tablaApartados.getSelectedRow();
         if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(this, "Seleccione un apartado de la lista.", "Aviso", JOptionPane.WARNING_MESSAGE); return;
+            utilidades.Mensajes.showMessageDialog(this, "Seleccione un apartado de la lista.", "Aviso", JOptionPane.WARNING_MESSAGE); return;
         }
 
         int id = (int) tablaApartados.getValueAt(selectedRow, 0);
@@ -341,30 +341,30 @@ public class PanelApartados extends JPanel {
 
         if (ap == null) return;
         if (ap.getEstadoApartado().equalsIgnoreCase("Cancelado") || ap.getEstadoApartado().equalsIgnoreCase("Entregado")) {
-            JOptionPane.showMessageDialog(this, "No se puede cancelar un apartado con estado: " + ap.getEstadoApartado(), "Aviso", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "No se puede cancelar un apartado con estado: " + ap.getEstadoApartado(), "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        int opt = JOptionPane.showConfirmDialog(this, "Al cancelar, los productos se devolverán al inventario activo. ¿Desea continuar?", "Cancelar Apartado", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        int opt = utilidades.Mensajes.showConfirmDialog(this, "Al cancelar, los productos se devolverán al inventario activo. ¿Desea continuar?", "Cancelar Apartado", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (opt == JOptionPane.YES_OPTION) {
             // Password signature
             JPasswordField pfPass = new JPasswordField();
-            int opSign = JOptionPane.showConfirmDialog(this, new Object[]{"Ingrese su contraseña para firmar la cancelación:", pfPass}, "Firma Requerida", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            int opSign = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Ingrese su contraseña para firmar la cancelación:", pfPass}, "Firma Requerida", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (opSign != JOptionPane.OK_OPTION) return;
 
             String pass = new String(pfPass.getPassword());
             int idUserFirma = new KardexDAO().validarFirmaUsuario(pass);
 
             if (idUserFirma <= 0) {
-                JOptionPane.showMessageDialog(this, "Contraseña incorrecta o usuario inactivo.", "Firma Rechazada", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Contraseña incorrecta o usuario inactivo.", "Firma Rechazada", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             if (dao.cancelarApartado(id, idUserFirma)) {
-                JOptionPane.showMessageDialog(this, "Apartado cancelado exitosamente y stock retornado al inventario.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Apartado cancelado exitosamente y stock retornado al inventario.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 cargarApartados();
             } else {
-                JOptionPane.showMessageDialog(this, "Error al registrar cancelación.", "Error", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Error al registrar cancelación.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -372,7 +372,7 @@ public class PanelApartados extends JPanel {
     private void verDetallesApartado() {
         int selectedRow = tablaApartados.getSelectedRow();
         if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(this, "Seleccione un apartado de la lista.", "Aviso", JOptionPane.WARNING_MESSAGE); return;
+            utilidades.Mensajes.showMessageDialog(this, "Seleccione un apartado de la lista.", "Aviso", JOptionPane.WARNING_MESSAGE); return;
         }
 
         int id = (int) tablaApartados.getValueAt(selectedRow, 0);
@@ -392,7 +392,7 @@ public class PanelApartados extends JPanel {
                     get().setVisible(true);
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(PanelApartados.this, "Error al abrir detalles: " + ex.getMessage());
+                    utilidades.Mensajes.showMessageDialog(PanelApartados.this, "Error al abrir detalles: " + ex.getMessage());
                 }
             }
         };
@@ -444,3 +444,4 @@ public class PanelApartados extends JPanel {
         }
     }
 }
+

@@ -318,11 +318,11 @@ public class DialogoRegistrarAbono extends JDialog {
         try {
             double abono = Double.parseDouble(txtAbono.getText().replace(",", "").trim());
             if (abono <= 0) { 
-                JOptionPane.showMessageDialog(this, "El abono debe ser mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE); 
+                utilidades.Mensajes.showMessageDialog(this, "El abono debe ser mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE); 
                 return; 
             }
             if (abono > ap.getSaldoPendiente() + 0.05) { 
-                JOptionPane.showMessageDialog(this, "El abono no puede exceder el saldo pendiente.", "Error", JOptionPane.ERROR_MESSAGE); 
+                utilidades.Mensajes.showMessageDialog(this, "El abono no puede exceder el saldo pendiente.", "Error", JOptionPane.ERROR_MESSAGE); 
                 return; 
             }
 
@@ -341,33 +341,33 @@ public class DialogoRegistrarAbono extends JDialog {
                 ref = null; banco = null;
             } else {
                 if (ref.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Debe ingresar el número de referencia para este método de pago.", "Error", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Debe ingresar el número de referencia para este método de pago.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 if (banco == null) {
-                    JOptionPane.showMessageDialog(this, "Debe seleccionar un banco para este método de pago.", "Error", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Debe seleccionar un banco para este método de pago.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
 
             JPasswordField pfPass = new JPasswordField();
-            int opSign = JOptionPane.showConfirmDialog(this, new Object[]{"Ingrese contraseña de cajero para autorizar el abono:", pfPass}, "Firma Autorización", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            int opSign = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Ingrese contraseña de cajero para autorizar el abono:", pfPass}, "Firma Autorización", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (opSign != JOptionPane.OK_OPTION) return;
 
             String pass = new String(pfPass.getPassword());
             int idUserFirma = new KardexDAO().validarFirmaUsuario(pass);
 
             if (idUserFirma <= 0) {
-                JOptionPane.showMessageDialog(this, "Contraseña incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Contraseña incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             if (dao.registrarAbono(idApartado, abono, idMetodo, idUserFirma, ref, banco)) {
-                JOptionPane.showMessageDialog(this, "Abono registrado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Abono registrado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 this.exito = true;
                 
                 // Imprimir comprobante
-                int optImp = JOptionPane.showConfirmDialog(this, "¿Desea imprimir el comprobante del abono?", "Imprimir", JOptionPane.YES_NO_OPTION);
+                int optImp = utilidades.Mensajes.showConfirmDialog(this, "¿Desea imprimir el comprobante del abono?", "Imprimir", JOptionPane.YES_NO_OPTION);
                 if (optImp == JOptionPane.YES_OPTION) {
                     try {
                         java.io.File dir = new java.io.File("reportes/abonos");
@@ -386,17 +386,18 @@ public class DialogoRegistrarAbono extends JDialog {
                         );
                         utilidades.GestorImpresion.procesarImpresion(new java.io.File(ruta), utilidades.GestorImpresion.TIPO_TICKET);
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(this, "Error al generar ticket: " + ex.getMessage());
+                        utilidades.Mensajes.showMessageDialog(this, "Error al generar ticket: " + ex.getMessage());
                     }
                 }
                 
                 this.dispose();
             } else {
-                JOptionPane.showMessageDialog(this, "Error de base de datos al guardar abono.", "Error", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Error de base de datos al guardar abono.", "Error", JOptionPane.ERROR_MESSAGE);
             }
 
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Monto de abono inválido.", "Error", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Monto de abono inválido.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
+

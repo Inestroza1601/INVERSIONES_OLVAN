@@ -346,12 +346,12 @@ public class PanelGestionUsuarios extends JPanel {
 
     private void guardarOActualizarUsuario() {
         if (txtNombre.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "El nombre del usuario es obligatorio.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "El nombre del usuario es obligatorio.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         if (chkAccesoSistema.isSelected() && txtEmail.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "El correo electrónico es obligatorio para usuarios con acceso al sistema.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "El correo electrónico es obligatorio para usuarios con acceso al sistema.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -362,7 +362,7 @@ public class PanelGestionUsuarios extends JPanel {
                 String idTexto = txtIdentidad.getText().trim();
                 u.setIdUsuario(Integer.parseInt(idTexto)); 
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "El ID del usuario no es válido.");
+                utilidades.Mensajes.showMessageDialog(this, "El ID del usuario no es válido.");
                 return;
             }
         }
@@ -391,7 +391,7 @@ public class PanelGestionUsuarios extends JPanel {
             if (passEscrita.isEmpty()) {
                 // Si lo estamos creando nuevo, O si antes NO tenía acceso y ahora se lo dimos:
                 if (btnGuardar.getText().equals("Guardar") || !teniaAccesoAntes) {
-                    JOptionPane.showMessageDialog(this, "Debe ingresar una contraseña para habilitar el acceso al sistema.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Debe ingresar una contraseña para habilitar el acceso al sistema.", "Advertencia", JOptionPane.WARNING_MESSAGE);
                     return;
                 } 
                 // Si ya tenía acceso y deja la caja vacía, el DAO conserva la clave anterior
@@ -399,7 +399,7 @@ public class PanelGestionUsuarios extends JPanel {
             } else {
                 // Validar que la contraseña no se repita con la de otro usuario
                 if (dao.existePassword(passEscrita)) {
-                    JOptionPane.showMessageDialog(this, "Contraseña no admitida por falta de seguridad. Ingrese una distinta.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Contraseña no admitida por falta de seguridad. Ingrese una distinta.", "Advertencia", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
                 // Si escribió una clave nueva y es válida, la encriptamos
@@ -418,11 +418,11 @@ public class PanelGestionUsuarios extends JPanel {
         }
 
         if (exito) {
-            JOptionPane.showMessageDialog(this, "Operación realizada con éxito.");
+            utilidades.Mensajes.showMessageDialog(this, "Operación realizada con éxito.");
             limpiarFormulario();
             cargarTabla(); 
         } else {
-            JOptionPane.showMessageDialog(this, "Error al guardar en la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Error al guardar en la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -440,24 +440,24 @@ public class PanelGestionUsuarios extends JPanel {
             UsuarioDAO dao = new UsuarioDAO();
             
             if (estado.equals("Activo")) {
-                if (JOptionPane.showConfirmDialog(this, "¿Está seguro de desactivar ID " + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                if (utilidades.Mensajes.showConfirmDialog(this, "¿Está seguro de desactivar ID " + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                     if (dao.desactivarUsuario(id)) {
-                        JOptionPane.showMessageDialog(this, "Usuario desactivado.");
+                        utilidades.Mensajes.showMessageDialog(this, "Usuario desactivado.");
                         limpiarFormulario();
                         cargarTabla(); 
                     }
                 }
             } else {
-                if (JOptionPane.showConfirmDialog(this, "¿Está seguro de activar ID " + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                if (utilidades.Mensajes.showConfirmDialog(this, "¿Está seguro de activar ID " + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                     if (dao.activarUsuario(id)) {
-                        JOptionPane.showMessageDialog(this, "Usuario activado.");
+                        utilidades.Mensajes.showMessageDialog(this, "Usuario activado.");
                         limpiarFormulario();
                         cargarTabla(); 
                     }
                 }
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Error de formato de ID.");
+            utilidades.Mensajes.showMessageDialog(this, "Error de formato de ID.");
         }
     }
     
@@ -485,9 +485,9 @@ public class PanelGestionUsuarios extends JPanel {
             if (idCreado != -1) {
                 cargarRolesEnCombo(); 
                 cmbRol.setSelectedItem(nuevoRol.trim().toLowerCase()); 
-                JOptionPane.showMessageDialog(this, "Rol creado y seleccionado.");
+                utilidades.Mensajes.showMessageDialog(this, "Rol creado y seleccionado.");
             } else {
-                JOptionPane.showMessageDialog(this, "Error al crear el rol.");
+                utilidades.Mensajes.showMessageDialog(this, "Error al crear el rol.");
             }
         }
     }                  
@@ -512,3 +512,4 @@ public class PanelGestionUsuarios extends JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }
+

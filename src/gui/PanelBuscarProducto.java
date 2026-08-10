@@ -147,7 +147,12 @@ public class PanelBuscarProducto extends JPanel {
                     if (columna == 1 && SwingUtilities.isLeftMouseButton(e)) {
                         int filaModelo = tablaInventario.convertRowIndexToModel(fila);
                         int idProducto = (int) modeloTabla.getValueAt(filaModelo, 0);
-                        mostrarZoomImagen(idProducto);
+                        String nombre = modeloTabla.getValueAt(filaModelo, 3).toString();
+                        int stock = 0;
+                        try {
+                            stock = Integer.parseInt(modeloTabla.getValueAt(filaModelo, 7).toString());
+                        } catch(Exception ex) {}
+                        mostrarZoomImagen(idProducto, nombre, stock);
                     }
                     
                     // 2. Lógica del Menú Estilo Windows (Doble Clic Izquierdo O Clic Derecho)
@@ -306,7 +311,7 @@ public class PanelBuscarProducto extends JPanel {
         }
     }
     
-    private void mostrarZoomImagen(int idProducto) {
+    private void mostrarZoomImagen(int idProducto, String nombreProducto, int stock) {
         String imgVal = new InventarioDAO().obtenerRutaImagenBase64(idProducto);
         if (imgVal == null || imgVal.trim().isEmpty()) {
             if (SesionGlobal.getEmpresaActual() != null && SesionGlobal.getEmpresaActual().getImagen_logo() != null) {
@@ -328,10 +333,16 @@ public class PanelBuscarProducto extends JPanel {
         }
 
         Window window = SwingUtilities.getWindowAncestor(this);
+        DialogoVisorImagen visor = null;
         if (window instanceof Frame) {
-            new DialogoVisorImagen((Frame) window, "Previsualización del Producto", list, 0).setVisible(true);
+            visor = new DialogoVisorImagen((Frame) window, "Previsualización del Producto", list, 0);
         } else if (window instanceof JDialog) {
-            new DialogoVisorImagen((JDialog) window, "Previsualización del Producto", list, 0).setVisible(true);
+            visor = new DialogoVisorImagen((JDialog) window, "Previsualización del Producto", list, 0);
+        }
+        
+        if (visor != null) {
+            visor.setInfoProducto(nombreProducto, stock);
+            visor.setVisible(true);
         }
     }
 
@@ -458,16 +469,16 @@ public class PanelBuscarProducto extends JPanel {
         int idProducto = (int) modeloTabla.getValueAt(filaModelo, 0);
         String nombre = modeloTabla.getValueAt(filaModelo, 3).toString();
         
-        int confirmacion = JOptionPane.showConfirmDialog(this, "¿Está seguro de eliminar el producto:\n" + nombre + "?", "Confirmar Eliminación", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        int confirmacion = utilidades.Mensajes.showConfirmDialog(this, "¿Está seguro de eliminar el producto:\n" + nombre + "?", "Confirmar Eliminación", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (confirmacion == JOptionPane.YES_OPTION) {
             InventarioDAO dao = new InventarioDAO();
             try {
                 if (dao.eliminarProductoLogico(idProducto)) {
-                    JOptionPane.showMessageDialog(this, "Producto eliminado exitosamente.");
+                    utilidades.Mensajes.showMessageDialog(this, "Producto eliminado exitosamente.");
                     cargarDatosDesdeBD();
                 }
             } catch (java.sql.SQLException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Acción Denegada", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, ex.getMessage(), "Acción Denegada", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -543,3 +554,4 @@ public class PanelBuscarProducto extends JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }
+

@@ -165,7 +165,7 @@ public class PanelReportes extends JPanel {
             if (desde != null && hasta != null) {
                 Date minDate = truncarInicioDia(desde);
                 if (truncarInicioDia(hasta).before(minDate)) {
-                    JOptionPane.showMessageDialog(PanelReportes.this,
+                    utilidades.Mensajes.showMessageDialog(PanelReportes.this,
                             "La fecha final ('Hasta') no puede ser menor que la primera fecha ('Desde').",
                             "Fecha Inválida",
                             JOptionPane.WARNING_MESSAGE);
@@ -185,13 +185,13 @@ public class PanelReportes extends JPanel {
                     if (desde != null) {
                         Date minDate = truncarInicioDia(desde);
                         if (hasta != null && truncarInicioDia(hasta).before(minDate)) {
-                            JOptionPane.showMessageDialog(PanelReportes.this,
+                            utilidades.Mensajes.showMessageDialog(PanelReportes.this,
                                     "La fecha final ('Hasta') no puede ser menor que la primera fecha ('Desde').\nSe ajustará automáticamente a la fecha inicial.",
                                     "Fecha Inválida",
                                     JOptionPane.WARNING_MESSAGE);
                             dpFechaHasta.setDate(desde);
                         } else if (hasta == null && !editorHasta.getText().trim().isEmpty()) {
-                            JOptionPane.showMessageDialog(PanelReportes.this,
+                            utilidades.Mensajes.showMessageDialog(PanelReportes.this,
                                     "La fecha ingresada en 'Hasta' es inválida o menor a la fecha inicial ('Desde').\nSe restablecerá a la fecha inicial.",
                                     "Fecha Inválida",
                                     JOptionPane.WARNING_MESSAGE);
@@ -217,7 +217,7 @@ public class PanelReportes extends JPanel {
                             dpFechaHasta.setDate(desde);
                         }
                     } else if (!editorDesde.getText().trim().isEmpty()) {
-                        JOptionPane.showMessageDialog(PanelReportes.this,
+                        utilidades.Mensajes.showMessageDialog(PanelReportes.this,
                                 "La fecha ingresada en 'Desde' no es válida.\nSe restablecerá a la fecha actual.",
                                 "Fecha Inválida",
                                 JOptionPane.WARNING_MESSAGE);
@@ -271,7 +271,7 @@ public class PanelReportes extends JPanel {
         
         if (index == 0) {
             if (dpFechaDiaria == null || dpFechaDiaria.getDate() == null) {
-                JOptionPane.showMessageDialog(this, "Por favor, seleccione una fecha diaria válida.", "Fecha Inválida", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Por favor, seleccione una fecha diaria válida.", "Fecha Inválida", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             String fecha = new SimpleDateFormat("yyyy-MM-dd").format(dpFechaDiaria.getDate());
@@ -281,13 +281,13 @@ public class PanelReportes extends JPanel {
         } 
         else if (index == 1) {
             if (dpFechaDesde == null || dpFechaDesde.getDate() == null || dpFechaHasta == null || dpFechaHasta.getDate() == null) {
-                JOptionPane.showMessageDialog(this, "Por favor, seleccione un rango de fechas válido.", "Fecha Inválida", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Por favor, seleccione un rango de fechas válido.", "Fecha Inválida", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             Date fDesdeDate = truncarInicioDia(dpFechaDesde.getDate());
             Date fHastaDate = truncarInicioDia(dpFechaHasta.getDate());
             if (fHastaDate.before(fDesdeDate)) {
-                JOptionPane.showMessageDialog(this, "La fecha final ('Hasta') no puede ser menor que la primera fecha ('Desde').", "Rango de Fechas Inválido", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "La fecha final ('Hasta') no puede ser menor que la primera fecha ('Desde').", "Rango de Fechas Inválido", JOptionPane.WARNING_MESSAGE);
                 dpFechaHasta.setDate(dpFechaDesde.getDate());
                 return;
             }
@@ -324,7 +324,7 @@ public class PanelReportes extends JPanel {
         }
 
         if (ultimosDatos.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No se encontraron datos para los filtros seleccionados.", "Sin Resultados", JOptionPane.INFORMATION_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "No se encontraron datos para los filtros seleccionados.", "Sin Resultados", JOptionPane.INFORMATION_MESSAGE);
             btnGenerarPDF.setEnabled(false);
         } else {
             btnGenerarPDF.setEnabled(true);
@@ -354,12 +354,13 @@ public class PanelReportes extends JPanel {
                     if (Desktop.isDesktopSupported()) {
                         utilidades.GestorImpresion.procesarImpresion(pdf, utilidades.GestorImpresion.TIPO_A4);
                     }
-                    JOptionPane.showMessageDialog(this, "Reporte exportado exitosamente a PDF.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Reporte exportado exitosamente a PDF.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error al generar el PDF: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Error al generar el PDF: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
+

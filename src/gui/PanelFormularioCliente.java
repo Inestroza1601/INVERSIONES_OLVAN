@@ -196,13 +196,13 @@ public class PanelFormularioCliente extends JPanel {
         String telefonoLimpio = txtTelefono.getText().replace("-", "").replace("_", "").trim();
         
         if (txtNombre.getText().trim().isEmpty() || identidadLimpia.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "El nombre y la identidad son obligatorios.", "Campos Incompletos", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "El nombre y la identidad son obligatorios.", "Campos Incompletos", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         // Validamos que haya escrito los 13 números completos
         if (identidadLimpia.length() != 13) {
-            JOptionPane.showMessageDialog(this, "La identidad debe tener exactamente 13 dígitos.", "Formato Inválido", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "La identidad debe tener exactamente 13 dígitos.", "Formato Inválido", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -225,11 +225,11 @@ public class PanelFormularioCliente extends JPanel {
         }
 
         if (exito) {
-            JOptionPane.showMessageDialog(this, "Cliente guardado exitosamente.");
+            utilidades.Mensajes.showMessageDialog(this, "Cliente guardado exitosamente.");
             panelPadre.cargarDatosDesdeBD(); 
             dialogPadre.dispose(); 
         } else {
-            JOptionPane.showMessageDialog(this, "Error al guardar en la base de datos.");
+            utilidades.Mensajes.showMessageDialog(this, "Error al guardar en la base de datos.");
         }
     }
 
@@ -275,3 +275,4 @@ public class PanelFormularioCliente extends JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }
+

@@ -38,7 +38,7 @@ public class DialogoEscanearQR extends JDialog {
             servidor.start(); // Inicia el servidor como daemon thread
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "No se pudo iniciar el servidor local.", "Error", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "No se pudo iniciar el servidor local.", "Error", JOptionPane.ERROR_MESSAGE);
             dispose();
         }
     }
@@ -106,3 +106,4 @@ public class DialogoEscanearQR extends JDialog {
         }
     }
 }
+

@@ -102,7 +102,7 @@ public class DialogoBuscarProductoSustituto extends JDialog {
                     int filaModelo = tab.convertRowIndexToModel(tab.getSelectedRow());
                     int stockActual = (int) mod.getValueAt(filaModelo, 5);
                     if (stockActual <= 0) {
-                        JOptionPane.showMessageDialog(DialogoBuscarProductoSustituto.this, "No puede seleccionar este artículo porque no cuenta con existencias en el inventario.", "Falta de Stock", JOptionPane.WARNING_MESSAGE);
+                        utilidades.Mensajes.showMessageDialog(DialogoBuscarProductoSustituto.this, "No puede seleccionar este artículo porque no cuenta con existencias en el inventario.", "Falta de Stock", JOptionPane.WARNING_MESSAGE);
                         return;
                     }
                     int idSelec = (int) mod.getValueAt(filaModelo, 0);
@@ -229,3 +229,4 @@ public class DialogoBuscarProductoSustituto extends JDialog {
         }
     }
 }
+

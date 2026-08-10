@@ -52,14 +52,14 @@ public class GestorImpresion {
         }
 
         if (!impresoraEncontrada) {
-            JOptionPane.showMessageDialog(null, 
+            utilidades.Mensajes.showMessageDialog(null, 
                 "Advertencia: No se encontró la impresora o está desconectada (" + impresoraConfigurada + ").\n\nPuede imprimir manualmente desde el visor de PDF que se acaba de abrir.", 
                 "Impresora no encontrada", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         // 3. Si la encontró, preguntar confirmación
-        int respuesta = JOptionPane.showConfirmDialog(null, 
+        int respuesta = utilidades.Mensajes.showConfirmDialog(null, 
             "El documento se ha abierto para revisión.\n\n¿Está seguro de imprimir este documento en:\n" + impresoraConfigurada + "?", 
             "Confirmar Impresión Directa", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             
@@ -82,7 +82,7 @@ public class GestorImpresion {
             }
 
             if (servicioSeleccionado == null) {
-                JOptionPane.showMessageDialog(null, 
+                utilidades.Mensajes.showMessageDialog(null, 
                     "No se encontró la impresora o está desconectada: " + nombreImpresora + "\nSe abrirá el documento PDF.", 
                     "Impresora no encontrada", JOptionPane.WARNING_MESSAGE);
                 abrirPDF(archivoPdf);
@@ -100,7 +100,7 @@ public class GestorImpresion {
         } catch (Exception e) {
             System.err.println("Error al intentar imprimir el PDF: " + e.getMessage());
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, 
+            utilidades.Mensajes.showMessageDialog(null, 
                 "Ocurrió un error al intentar imprimir. Se abrirá el documento PDF.\nDetalle: " + e.getMessage(), 
                 "Error de Impresión", JOptionPane.ERROR_MESSAGE);
             abrirPDF(archivoPdf);
@@ -112,7 +112,7 @@ public class GestorImpresion {
             if (Desktop.isDesktopSupported()) {
                 Desktop.getDesktop().open(archivoPdf);
             } else {
-                JOptionPane.showMessageDialog(null, "Apertura automática no soportada en este sistema.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(null, "Apertura automática no soportada en este sistema.", "Aviso", JOptionPane.WARNING_MESSAGE);
             }
         } catch (Exception ex) {
             System.err.println("No se pudo abrir el PDF: " + ex.getMessage());
@@ -136,3 +136,4 @@ public class GestorImpresion {
         return Preferences.userNodeForPackage(GestorImpresion.class).get(PREF_IMPRESORA_A4, "");
     }
 }
+
