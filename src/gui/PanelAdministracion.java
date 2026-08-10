@@ -95,12 +95,11 @@ public class PanelAdministracion extends JPanel {
     private void cambiarBotonActivo(JButton nuevoBoton) {
         if (botonActivo != null) {
             botonActivo.setEnabled(true);
-            botonActivo.setBackground(new Color(46, 204, 113)); // Restaurar color original del botón verde
+            botonActivo.setBackground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO); // Restaurar color original
         }
         botonActivo = nuevoBoton;
         if (botonActivo != null) {
             botonActivo.setEnabled(false);
-            botonActivo.setBackground(Color.GRAY); // Color bloqueado
         }
     }
 

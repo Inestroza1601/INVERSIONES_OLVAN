@@ -21,7 +21,6 @@ public class PanelInventario extends JPanel {
         botonActivo = nuevoBoton;
         if (botonActivo != null) {
             botonActivo.setEnabled(false);
-            botonActivo.setBackground(Color.GRAY); // Color de estado activo/seleccionado
         }
     }
 

@@ -16,6 +16,8 @@ public class PanelReportes extends JPanel {
     private JComboBox<String> cmbTipoReporte;
     private JPanel panelFiltros;
     private JButton btnGenerarPDF;
+    private JButton btnEnviarCorreo;
+    private JButton btnEnviarWhatsapp;
     private JTable tablaVistaPrevia;
     private DefaultTableModel modeloTabla;
 
@@ -78,11 +80,21 @@ public class PanelReportes extends JPanel {
         btnGenerarPDF.setEnabled(false); // Se habilita tras previsualizar
         btnGenerarPDF.addActionListener(e -> exportarPDF());
 
+        btnEnviarCorreo = utilidades.EfectosUI.crearBotonBlanco("Enviar Correo");
+        btnEnviarCorreo.setEnabled(false);
+        btnEnviarCorreo.addActionListener(e -> enviarPorCorreo());
+
+        btnEnviarWhatsapp = utilidades.EfectosUI.crearBotonVerde("Enviar WhatsApp");
+        btnEnviarWhatsapp.setEnabled(false);
+        btnEnviarWhatsapp.addActionListener(e -> enviarPorWhatsapp());
+
         panelControles.add(lblTipo);
         panelControles.add(cmbTipoReporte);
         panelControles.add(panelFiltros);
         panelControles.add(btnPrevisualizar);
         panelControles.add(btnGenerarPDF);
+        panelControles.add(btnEnviarCorreo);
+        panelControles.add(btnEnviarWhatsapp);
 
         panelCabecera.add(panelControles, BorderLayout.CENTER);
         this.add(panelCabecera, BorderLayout.NORTH);
@@ -132,6 +144,8 @@ public class PanelReportes extends JPanel {
         panelFiltros.revalidate();
         panelFiltros.repaint();
         btnGenerarPDF.setEnabled(false);
+        btnEnviarCorreo.setEnabled(false);
+        btnEnviarWhatsapp.setEnabled(false);
         modeloTabla.setRowCount(0);
         modeloTabla.setColumnCount(0);
     }
@@ -326,8 +340,12 @@ public class PanelReportes extends JPanel {
         if (ultimosDatos.isEmpty()) {
             utilidades.Mensajes.showMessageDialog(this, "No se encontraron datos para los filtros seleccionados.", "Sin Resultados", JOptionPane.INFORMATION_MESSAGE);
             btnGenerarPDF.setEnabled(false);
+            btnEnviarCorreo.setEnabled(false);
+            btnEnviarWhatsapp.setEnabled(false);
         } else {
             btnGenerarPDF.setEnabled(true);
+            btnEnviarCorreo.setEnabled(true);
+            btnEnviarWhatsapp.setEnabled(true);
         }
     }
 
@@ -360,6 +378,122 @@ public class PanelReportes extends JPanel {
         } catch (Exception ex) {
             ex.printStackTrace();
             utilidades.Mensajes.showMessageDialog(this, "Error al generar el PDF: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private File generarPDFTemporal() throws Exception {
+        File dir = new File("reportes/temp");
+        if (!dir.exists()) dir.mkdirs();
+        
+        String tituloLimpio = ultimoTitulo.replaceAll("[\\\\/:*?\"<>|]", "-").replaceAll(" ", "_");
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File archivoTemp = new File(dir, "Reporte_" + tituloLimpio + "_" + timestamp + ".pdf");
+        
+        return GeneradorReportesPDF.generarReporte(ultimoTitulo, ultimasColumnas, ultimosDatos, archivoTemp);
+    }
+
+    private void enviarPorCorreo() {
+        JTextField txtEmail = new JTextField(25);
+        Object[] message = {
+            "Ingrese el correo electrónico del destinatario:", txtEmail
+        };
+        
+        int option = utilidades.Mensajes.showConfirmDialog(this, message, "Enviar Reporte por Correo", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (option == JOptionPane.OK_OPTION) {
+            String email = txtEmail.getText().trim();
+            if (email.isEmpty() || !email.contains("@")) {
+                utilidades.Mensajes.showMessageDialog(this, "Debe ingresar un correo electrónico válido.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            JDialog dlgCarga = new JDialog((java.awt.Frame) SwingUtilities.getWindowAncestor(this), "Enviando Correo", true);
+            dlgCarga.setUndecorated(true);
+            JPanel pnlCarga = new JPanel(new BorderLayout());
+            pnlCarga.setBackground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO);
+            pnlCarga.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.WHITE, 2),
+                BorderFactory.createEmptyBorder(20, 30, 20, 30)
+            ));
+            JLabel lblCarga = new JLabel("Enviando reporte, por favor espere...");
+            lblCarga.setFont(new Font("Segoe UI", Font.BOLD, 16));
+            lblCarga.setForeground(Color.WHITE);
+            pnlCarga.add(lblCarga, BorderLayout.CENTER);
+            dlgCarga.add(pnlCarga);
+            dlgCarga.pack();
+            dlgCarga.setLocationRelativeTo(this);
+            
+            SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+                @Override
+                protected Boolean doInBackground() throws Exception {
+                    File pdfTemp = generarPDFTemporal();
+                    if (pdfTemp == null || !pdfTemp.exists()) return false;
+                    return utilidades.EmailSender.enviarReporteConAdjunto(email, pdfTemp.getAbsolutePath(), ultimoTitulo);
+                }
+
+                @Override
+                protected void done() {
+                    dlgCarga.dispose();
+                    try {
+                        if (get()) {
+                            utilidades.Mensajes.showMessageDialog(PanelReportes.this, "¡Excelente! El reporte fue enviado exitosamente a:\n" + email, "Envío Confirmado", JOptionPane.INFORMATION_MESSAGE);
+                        } else {
+                            utilidades.Mensajes.showMessageDialog(PanelReportes.this, "Hubo un problema al enviar el correo. Revise su conexión a internet o la dirección proporcionada.", "Error de Envío", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        utilidades.Mensajes.showMessageDialog(PanelReportes.this, "Error interno al enviar: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            };
+            worker.execute();
+            dlgCarga.setVisible(true); // Bloquea la UI hasta que worker.done() cierre el diálogo
+        }
+    }
+
+    private void enviarPorWhatsapp() {
+        try {
+            File pdfTemp = generarPDFTemporal();
+            if (pdfTemp == null || !pdfTemp.exists()) {
+                utilidades.Mensajes.showMessageDialog(this, "Error al generar el PDF temporal.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Copiar archivo al portapapeles
+            java.awt.datatransfer.Clipboard clipboard = java.awt.Toolkit.getDefaultToolkit().getSystemClipboard();
+            java.awt.datatransfer.Transferable transferable = new java.awt.datatransfer.Transferable() {
+                @Override
+                public java.awt.datatransfer.DataFlavor[] getTransferDataFlavors() {
+                    return new java.awt.datatransfer.DataFlavor[]{java.awt.datatransfer.DataFlavor.javaFileListFlavor};
+                }
+                @Override
+                public boolean isDataFlavorSupported(java.awt.datatransfer.DataFlavor flavor) {
+                    return java.awt.datatransfer.DataFlavor.javaFileListFlavor.equals(flavor);
+                }
+                @Override
+                public Object getTransferData(java.awt.datatransfer.DataFlavor flavor) throws java.awt.datatransfer.UnsupportedFlavorException {
+                    if (java.awt.datatransfer.DataFlavor.javaFileListFlavor.equals(flavor)) {
+                        java.util.List<File> list = new java.util.ArrayList<>();
+                        list.add(pdfTemp);
+                        return list;
+                    }
+                    throw new java.awt.datatransfer.UnsupportedFlavorException(flavor);
+                }
+            };
+            clipboard.setContents(transferable, null);
+
+            // Mostrar instrucción
+            int opt = utilidades.Mensajes.showConfirmDialog(this, 
+                "El PDF ha sido copiado al portapapeles.\n\nAl presionar Continuar se abrirá WhatsApp Web.\nSolo tienes que elegir a quién enviarlo y presionar Ctrl+V (Pegar).", 
+                "Instrucciones de WhatsApp", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                
+            if (opt == JOptionPane.OK_OPTION) {
+                if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                    Desktop.getDesktop().browse(new java.net.URI("https://web.whatsapp.com/"));
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            utilidades.Mensajes.showMessageDialog(this, "Error al preparar el envío por WhatsApp: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
