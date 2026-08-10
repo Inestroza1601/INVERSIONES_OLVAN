@@ -272,6 +272,12 @@ public class PanelControlCaja extends JPanel {
         btnCerrarCaja.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnCerrarCaja.setPreferredSize(new Dimension(0, 50));
         btnCerrarCaja.addActionListener(e -> mostrarVentanaCierreCaja());
+        
+        modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
+        if (uAct != null && !uAct.tienePermiso("ELIMINAR_CAJA")) {
+            btnCerrarCaja.setEnabled(false);
+            btnCerrarCaja.setToolTipText("No tienes permiso para cerrar caja.");
+        }
 
         pnlBotones.add(btnReimprimirDer);
         pnlBotones.add(btnCerrarCaja);
@@ -310,6 +316,12 @@ public class PanelControlCaja extends JPanel {
         btnAbrirCaja.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnAbrirCaja.setPreferredSize(new Dimension(220, 50));
         btnAbrirCaja.addActionListener(e -> mostrarAperturaModal());
+        
+        modelo.Usuario uAct2 = utilidades.SesionGlobal.getUsuarioActual();
+        if (uAct2 != null && !uAct2.tienePermiso("CREAR_CAJA")) {
+            btnAbrirCaja.setEnabled(false);
+            btnAbrirCaja.setToolTipText("No tienes permiso para abrir caja.");
+        }
 
         gbc.gridy = 0; panel.add(lblIconWarn, gbc);
         gbc.gridy = 1; panel.add(lblMsg, gbc);

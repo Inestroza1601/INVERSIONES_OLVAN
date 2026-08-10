@@ -206,6 +206,12 @@ public class PanelPuntoVenta extends JPanel {
         JButton btnCobrar = new JButton("Cobrar Venta"); btnCobrar.setBackground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO); btnCobrar.setForeground(Color.WHITE); btnCobrar.setFont(new Font("Segoe UI", Font.BOLD, 16)); btnCobrar.setPreferredSize(new Dimension(0, 50)); btnCobrar.setFocusPainted(false); btnCobrar.setCursor(new Cursor(Cursor.HAND_CURSOR)); btnCobrar.setBorder(BorderFactory.createEmptyBorder(0,0,0,0)); btnCobrar.putClientProperty("JButton.buttonType", "roundRect");
         utilidades.EfectosUI.aplicarEfectoHover(btnCobrar, utilidades.EfectosUI.COLOR_VERDE_PRIMARIO, utilidades.EfectosUI.COLOR_VERDE_HOVER, Color.WHITE, Color.BLACK);
         btnCobrar.addActionListener(e -> procesarVenta());
+        
+        modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
+        if (uAct != null && !uAct.tienePermiso("CREAR_POS")) {
+            btnCobrar.setEnabled(false);
+            btnCobrar.setToolTipText("No tienes permiso para registrar ventas o apartados.");
+        }
 
         cmbTipoTransaccion = new JComboBox<>(new String[]{"Venta Directa", "Apartado (Abonos)"});
         cmbTipoTransaccion.setFont(new Font("Segoe UI", Font.PLAIN, 14));

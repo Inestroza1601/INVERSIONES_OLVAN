@@ -49,9 +49,12 @@ public class PanelInventario extends JPanel {
 
         panelSubMenu.add(btnBuscarProducto);
         modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
-        // Control RBAC: Solo usuarios con permiso para eliminar/gestionar pueden crear o ver defectuosos
-        if (uAct == null || uAct.tienePermiso("ELIMINAR_PRODUCTOS")) {
+        // Control RBAC: Solo usuarios con permiso CREAR_INVENTARIO pueden crear
+        if (uAct == null || uAct.tienePermiso("CREAR_INVENTARIO")) {
             panelSubMenu.add(btnCrearProducto);
+        }
+        // Inventario defectuoso puede asociarse a ELIMINAR_INVENTARIO (baja de producto)
+        if (uAct == null || uAct.tienePermiso("ELIMINAR_INVENTARIO")) {
             panelSubMenu.add(btnInventarioDefectuoso);
         }
 

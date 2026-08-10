@@ -114,15 +114,15 @@ public class MenuPrincipal extends JFrame {
 
         modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
         
-        boolean pAdmin       = (uAct == null) ? true : uAct.tienePermiso("ACCESO_ADMINISTRACION");
-        boolean pClientes    = (uAct == null) ? true : uAct.tienePermiso("ACCESO_CLIENTES");
-        boolean pInventario  = (uAct == null) ? true : uAct.tienePermiso("ACCESO_INVENTARIO");
-        boolean pPOS         = (uAct == null) ? true : uAct.tienePermiso("ACCESO_POS");
-        boolean pCaja        = (uAct == null) ? true : uAct.tienePermiso("ACCESO_CAJA");
-        boolean pApartados   = (uAct == null) ? true : uAct.tienePermiso("ACCESO_APARTADOS");
-        boolean pVentas      = (uAct == null) ? true : uAct.tienePermiso("ACCESO_VENTAS");
-        boolean pGarantias   = (uAct == null) ? true : uAct.tienePermiso("ACCESO_GARANTIAS");
-        boolean pEstadisticas= (uAct == null) ? true : uAct.tienePermiso("ACCESO_ESTADISTICAS");
+        boolean pAdmin       = (uAct == null) ? true : uAct.tienePermiso("VER_ADMINISTRACION");
+        boolean pClientes    = (uAct == null) ? true : uAct.tienePermiso("VER_CLIENTES");
+        boolean pInventario  = (uAct == null) ? true : uAct.tienePermiso("VER_INVENTARIO");
+        boolean pPOS         = (uAct == null) ? true : uAct.tienePermiso("VER_POS");
+        boolean pCaja        = (uAct == null) ? true : uAct.tienePermiso("VER_CAJA");
+        boolean pApartados   = (uAct == null) ? true : uAct.tienePermiso("VER_APARTADOS");
+        boolean pVentas      = (uAct == null) ? true : uAct.tienePermiso("VER_VENTAS");
+        boolean pGarantias   = (uAct == null) ? true : uAct.tienePermiso("VER_GARANTIAS");
+        boolean pEstadisticas= (uAct == null) ? true : uAct.tienePermiso("VER_ESTADISTICAS");
 
         panelLateralIzquierdo.add(lblEmpresa);
         panelLateralIzquierdo.add(lblOnline);

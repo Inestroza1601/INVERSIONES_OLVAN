@@ -415,4 +415,54 @@ public class UsuarioDAO {
             try { if (con != null) { con.setAutoCommit(true); con.close(); } } catch (Exception e) {}
         }
     }
+    
+    // Editar el nombre de un rol
+    public boolean editarRol(int idRol, String nuevoNombre) {
+        String sql = "UPDATE ROLES_USUARIO SET nombre_rol = ? WHERE id_rol = ?";
+        try (Connection con = factory.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nuevoNombre.trim());
+            ps.setInt(2, idRol);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al editar rol: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Eliminar un rol (fallará si hay usuarios con este rol asignado por FK)
+    public boolean eliminarRol(int idRol) {
+        Connection con = null;
+        PreparedStatement psDeletePermisos = null;
+        PreparedStatement psDeleteRol = null;
+        try {
+            con = factory.getConexion();
+            con.setAutoCommit(false);
+            
+            // Primero eliminar sus permisos asignados
+            String sqlPermisos = "DELETE FROM ROL_PERMISOS WHERE id_rol = ?";
+            psDeletePermisos = con.prepareStatement(sqlPermisos);
+            psDeletePermisos.setInt(1, idRol);
+            psDeletePermisos.executeUpdate();
+            
+            // Luego eliminar el rol
+            String sqlRol = "DELETE FROM ROLES_USUARIO WHERE id_rol = ?";
+            psDeleteRol = con.prepareStatement(sqlRol);
+            psDeleteRol.setInt(1, idRol);
+            int filas = psDeleteRol.executeUpdate();
+            
+            con.commit();
+            return filas > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al eliminar rol (verificar constraint FK con usuarios): " + e.getMessage());
+            if (con != null) {
+                try { con.rollback(); } catch (SQLException ex) { }
+            }
+            return false;
+        } finally {
+            try { if (psDeletePermisos != null) psDeletePermisos.close(); } catch (Exception e) {}
+            try { if (psDeleteRol != null) psDeleteRol.close(); } catch (Exception e) {}
+            try { if (con != null) { con.setAutoCommit(true); con.close(); } } catch (Exception e) {}
+        }
+    }
 }

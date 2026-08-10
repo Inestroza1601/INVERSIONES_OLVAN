@@ -22,8 +22,8 @@ public class GeneradorReportesPDF {
     public static File generarReporte(String tituloReporte, String[] columnas, List<Object[]> datos, File archivoPdf) throws Exception {
         // Obtener datos de la empresa
         EmpresaDAO empresaDAO = new EmpresaDAO();
-        Empresa empresa = SesionGlobal.getEmpresaActual() != null ? SesionGlobal.getEmpresaActual() : 
-            (empresaDAO.listarTodas().isEmpty() ? new Empresa() : empresaDAO.listarTodas().get(0));
+        Empresa empresa = empresaDAO.obtenerDatos();
+        if (empresa == null) empresa = new Empresa();
 
         // Crear documento y ruta
         Document documento = new Document(PageSize.A4.rotate()); // Horizontal para tablas anchas

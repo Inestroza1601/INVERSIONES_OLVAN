@@ -193,9 +193,14 @@ public class PanelGestionGarantias extends JPanel {
         itemRecibo.addActionListener(e -> verReciboOriginal(filaModelo));
         itemCertificado.addActionListener(e -> imprimirCertificado(filaModelo));
         
-        // Solo habilitamos el botón de reclamar si la garantía está VIGENTE
+        // Solo habilitamos el botón de reclamar si la garantía está VIGENTE y tiene permiso
+        modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
         if (estado.equals("VIGENTE")) {
             itemReclamar.addActionListener(e -> reclamarGarantia(filaModelo));
+            if (uAct != null && !uAct.tienePermiso("EDITAR_GARANTIAS")) {
+                itemReclamar.setEnabled(false);
+                itemReclamar.setToolTipText("No tienes permiso para registrar o editar garantías.");
+            }
             menu.add(itemReclamar);
             menu.addSeparator();
         }

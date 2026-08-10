@@ -88,6 +88,12 @@ public class PanelDatosEmpresa extends JPanel {
         btnGuardar.setBorder(BorderFactory.createEmptyBorder());
         btnGuardar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnGuardar.addActionListener(e -> guardarDatos());
+        
+        modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
+        if (uAct != null && !uAct.tienePermiso("EDITAR_ADMINISTRACION")) {
+            btnGuardar.setEnabled(false);
+            btnGuardar.setToolTipText("No tienes permiso para editar los datos de la empresa.");
+        }
 
         panelInferior.add(btnGuardar);
         this.add(panelInferior, BorderLayout.SOUTH);

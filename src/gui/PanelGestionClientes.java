@@ -247,6 +247,16 @@ public class PanelGestionClientes extends JPanel {
         JMenuItem itemEliminar = crearMenuItem("Eliminar Cliente", new Color(227, 0, 15), new IconoBasurero()); // Rojo Logo
         
         modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
+        if (uAct != null && !uAct.tienePermiso("CREAR_CLIENTES")) {
+            btnNuevoCliente.setEnabled(false);
+            btnNuevoCliente.setToolTipText("No tienes permiso para crear clientes.");
+        }
+        
+        if (uAct != null && !uAct.tienePermiso("EDITAR_CLIENTES")) {
+            itemEditar.setEnabled(false);
+            itemEditar.setToolTipText("No tienes permiso para editar clientes.");
+        }
+
         if (uAct != null && !uAct.tienePermiso("ELIMINAR_CLIENTES")) {
             itemEliminar.setEnabled(false);
             itemEliminar.setToolTipText("No tienes permiso para eliminar clientes.");

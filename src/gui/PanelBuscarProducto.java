@@ -387,7 +387,12 @@ public class PanelBuscarProducto extends JPanel {
         itemEditar.addActionListener(e -> editarProductoSeleccionado(filaVista));
         
         modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
-        if (uAct != null && !uAct.tienePermiso("ELIMINAR_PRODUCTOS")) {
+        if (uAct != null && !uAct.tienePermiso("EDITAR_INVENTARIO")) {
+            itemEditar.setEnabled(false);
+            itemEditar.setToolTipText("No tienes permiso para editar productos.");
+        }
+        
+        if (uAct != null && !uAct.tienePermiso("ELIMINAR_INVENTARIO")) {
             itemEliminar.setEnabled(false);
             itemEliminar.setToolTipText("No tienes permiso para eliminar productos.");
         } else {
