@@ -164,6 +164,9 @@ public class PanelInventarioDefectuoso extends JPanel {
         if (base64 == null || base64.isEmpty())
             return null;
         try {
+            if (base64.contains("|")) {
+                base64 = base64.split("\\|")[0];
+            }
             if (base64.contains(",")) {
                 base64 = base64.split(",")[1];
             }
@@ -341,7 +344,13 @@ public class PanelInventarioDefectuoso extends JPanel {
                 @Override
                 public void mouseClicked(java.awt.event.MouseEvent e) {
                     if (b64 != null && !b64.isEmpty()) {
-                        new DialogoVisorImagen(dialog, "Visor de Fotografía", b64).setVisible(true);
+                        java.util.List<String> list = new java.util.ArrayList<>();
+                        if (b64.contains("|")) {
+                            list.addAll(java.util.Arrays.asList(b64.split("\\|")));
+                        } else {
+                            list.add(b64);
+                        }
+                        new DialogoVisorImagen(dialog, "Visor de Fotografía", list, 0).setVisible(true);
                     }
                 }
             });
@@ -433,7 +442,13 @@ public class PanelInventarioDefectuoso extends JPanel {
                     if (row >= 0 && col == 0) {
                         String b64 = (String) tabD.getModel().getValueAt(row, 4);
                         if (b64 != null && !b64.isEmpty()) {
-                            new DialogoVisorImagen(dialog, "Visor de Fotografía", b64).setVisible(true);
+                            java.util.List<String> list = new java.util.ArrayList<>();
+                            if (b64.contains("|")) {
+                                list.addAll(java.util.Arrays.asList(b64.split("\\|")));
+                            } else {
+                                list.add(b64);
+                            }
+                            new DialogoVisorImagen(dialog, "Visor de Fotografía", list, 0).setVisible(true);
                         }
                     }
                 }

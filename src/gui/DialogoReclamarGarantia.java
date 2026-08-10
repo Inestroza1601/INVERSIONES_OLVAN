@@ -341,6 +341,12 @@ public class DialogoReclamarGarantia extends JDialog {
         this.fotoBase64 = base64String;
         try {
             String b64 = base64String;
+            int count = 1;
+            if (b64.contains("|")) {
+                String[] parts = b64.split("\\|");
+                b64 = parts[0];
+                count = parts.length;
+            }
             if (b64.contains(",")) b64 = b64.split(",")[1];
             byte[] bytes = java.util.Base64.getDecoder().decode(b64);
             java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(bytes);
@@ -348,11 +354,38 @@ public class DialogoReclamarGarantia extends JDialog {
             if (img != null) {
                 Image imgPreview = img.getScaledInstance(260, 200, Image.SCALE_SMOOTH);
                 lblFotoPlaceholder.setIcon(new ImageIcon(imgPreview));
-                lblFotoPlaceholder.setText("");
+                if (count > 1) {
+                    lblFotoPlaceholder.setText(count + " fotos (Clic para ver)");
+                    lblFotoPlaceholder.setVerticalTextPosition(SwingConstants.BOTTOM);
+                    lblFotoPlaceholder.setHorizontalTextPosition(SwingConstants.CENTER);
+                    lblFotoPlaceholder.setForeground(new Color(41, 128, 185));
+                    lblFotoPlaceholder.setFont(new Font("Segoe UI", Font.BOLD, 12));
+                } else {
+                    lblFotoPlaceholder.setText("");
+                }
             }
         } catch(Exception e) {
             e.printStackTrace();
         }
+        
+        for (java.awt.event.MouseListener ml : lblFotoPlaceholder.getMouseListeners()) {
+            lblFotoPlaceholder.removeMouseListener(ml);
+        }
+        lblFotoPlaceholder.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblFotoPlaceholder.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (fotoBase64 != null && !fotoBase64.isEmpty()) {
+                    java.util.List<String> list = new java.util.ArrayList<>();
+                    if (fotoBase64.contains("|")) {
+                        list.addAll(java.util.Arrays.asList(fotoBase64.split("\\|")));
+                    } else {
+                        list.add(fotoBase64);
+                    }
+                    new DialogoVisorImagen(DialogoReclamarGarantia.this, "Visor de Garantía", list, 0).setVisible(true);
+                }
+            }
+        });
     }
 
     private void construirPanelFoto(JPanel pnlFoto, JLabel lblTituloFoto, JPanel pnlCentro) {
