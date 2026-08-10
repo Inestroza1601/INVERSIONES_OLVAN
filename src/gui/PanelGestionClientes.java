@@ -56,6 +56,12 @@ public class PanelGestionClientes extends JPanel {
         
         btnNuevoCliente.addActionListener(e -> abrirFormularioCliente(null));
 
+        modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
+        if (uAct != null && !uAct.tienePermiso("CREAR_CLIENTES")) {
+            btnNuevoCliente.setEnabled(false);
+            btnNuevoCliente.setToolTipText("No tienes permiso para crear clientes.");
+        }
+
         // Asignamos cada cosa a su esquina para que nunca choquen
         panelSuperior.add(lblTitulo, BorderLayout.WEST);
         panelSuperior.add(panelCentro, BorderLayout.CENTER);
@@ -247,11 +253,6 @@ public class PanelGestionClientes extends JPanel {
         JMenuItem itemEliminar = crearMenuItem("Eliminar Cliente", new Color(227, 0, 15), new IconoBasurero()); // Rojo Logo
         
         modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
-        if (uAct != null && !uAct.tienePermiso("CREAR_CLIENTES")) {
-            btnNuevoCliente.setEnabled(false);
-            btnNuevoCliente.setToolTipText("No tienes permiso para crear clientes.");
-        }
-        
         if (uAct != null && !uAct.tienePermiso("EDITAR_CLIENTES")) {
             itemEditar.setEnabled(false);
             itemEditar.setToolTipText("No tienes permiso para editar clientes.");

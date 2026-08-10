@@ -1225,7 +1225,7 @@ public class GeneradorTickets {
             documento.close();
             
             if (java.awt.Desktop.isDesktopSupported()) {
-                java.awt.Desktop.getDesktop().open(new java.io.File(ruta));
+                utilidades.GestorImpresion.procesarImpresion(new java.io.File(ruta), utilidades.GestorImpresion.TIPO_TICKET);
             }
             
         } catch (Exception e) {
@@ -1309,7 +1309,7 @@ public class GeneradorTickets {
             documento.close();
             
             if (java.awt.Desktop.isDesktopSupported()) {
-                java.awt.Desktop.getDesktop().open(new java.io.File(ruta));
+                utilidades.GestorImpresion.procesarImpresion(new java.io.File(ruta), utilidades.GestorImpresion.TIPO_TICKET);
             }
             
         } catch (Exception e) {
@@ -1392,7 +1392,7 @@ public class GeneradorTickets {
             documento.close();
             
             if (java.awt.Desktop.isDesktopSupported()) {
-                java.awt.Desktop.getDesktop().open(new java.io.File(ruta));
+                utilidades.GestorImpresion.procesarImpresion(new java.io.File(ruta), utilidades.GestorImpresion.TIPO_TICKET);
             }
             
         } catch (Exception e) {

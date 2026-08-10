@@ -175,7 +175,7 @@ public class DialogoDetallesApartado extends JDialog {
                 detalles,
                 abonos
             );
-            Desktop.getDesktop().open(new java.io.File(ruta));
+            utilidades.GestorImpresion.procesarImpresion(new java.io.File(ruta), utilidades.GestorImpresion.TIPO_TICKET);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error al generar ticket general: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -223,7 +223,7 @@ public class DialogoDetallesApartado extends JDialog {
                 null,
                 idApartado
             );
-            Desktop.getDesktop().open(new java.io.File(ruta));
+            utilidades.GestorImpresion.procesarImpresion(new java.io.File(ruta), utilidades.GestorImpresion.TIPO_TICKET);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error al generar ticket de abono: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }

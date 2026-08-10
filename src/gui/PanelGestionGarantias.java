@@ -241,9 +241,9 @@ public class PanelGestionGarantias extends JPanel {
     private void longitudAbrirArchivo(java.io.File archivo) {
         try {
             if (Desktop.isDesktopSupported()) {
-                Desktop.getDesktop().open(archivo);
+                utilidades.GestorImpresion.procesarImpresion(archivo, utilidades.GestorImpresion.TIPO_TICKET);
             }
-        } catch (java.io.IOException ex) {
+        } catch (Exception ex) {
             System.err.println("No se pudo abrir el PDF: " + ex.getMessage());
         }
     }

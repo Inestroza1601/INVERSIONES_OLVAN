@@ -256,7 +256,7 @@ public class PanelControlCaja extends JPanel {
                 java.io.File dest = new java.io.File("reportes/cierres/Ticket_Cierre_" + idCaja + ".pdf");
                 try {
                     utilidades.GeneradorTickets.generarTicketCierreCajaPDF(dest.getAbsolutePath(), calcs);
-                    if (java.awt.Desktop.isDesktopSupported()) java.awt.Desktop.getDesktop().open(dest);
+                    if (java.awt.Desktop.isDesktopSupported()) utilidades.GestorImpresion.procesarImpresion(dest, utilidades.GestorImpresion.TIPO_TICKET);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(panel, "Error al generar PDF: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -495,7 +495,7 @@ public class PanelControlCaja extends JPanel {
                         java.io.File dest = new java.io.File("reportes/cierres/Cierre_Caja_" + activa.getIdCaja() + ".pdf");
                         try {
                             utilidades.GeneradorTickets.generarTicketCierreCajaPDF(dest.getAbsolutePath(), calcsFinales);
-                            if (java.awt.Desktop.isDesktopSupported()) java.awt.Desktop.getDesktop().open(dest);
+                            if (java.awt.Desktop.isDesktopSupported()) utilidades.GestorImpresion.procesarImpresion(dest, utilidades.GestorImpresion.TIPO_TICKET);
                         } catch (Exception ex2) {
                             JOptionPane.showMessageDialog(dlgCierre, "Error al generar PDF: " + ex2.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                         }

@@ -664,7 +664,7 @@ public class PanelPuntoVenta extends JPanel {
                             pago.nombre
                         );
                         JOptionPane.showMessageDialog(this, "Apartado registrado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                        if (Desktop.isDesktopSupported()) Desktop.getDesktop().open(archivoDestino);
+                        if (Desktop.isDesktopSupported()) utilidades.GestorImpresion.procesarImpresion(archivoDestino, utilidades.GestorImpresion.TIPO_TICKET);
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(this, "El apartado se guardó, pero hubo un error al generar el PDF:\n" + ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
                     }
@@ -723,7 +723,7 @@ public class PanelPuntoVenta extends JPanel {
                         refPago, bancoSeleccionado
                     );
                     JOptionPane.showMessageDialog(this, "Venta registrada y comprobante generado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                    if (Desktop.isDesktopSupported()) Desktop.getDesktop().open(archivoDestino);
+                    if (Desktop.isDesktopSupported()) utilidades.GestorImpresion.procesarImpresion(archivoDestino, utilidades.GestorImpresion.TIPO_TICKET);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, "La venta se guardó, pero hubo un error al generar el PDF:\n" + ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
                 }

@@ -435,7 +435,7 @@ public class PanelHistorialVentas extends JPanel {
 
             JOptionPane.showMessageDialog(this, "Reimpresión generada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             if (Desktop.isDesktopSupported()) {
-                Desktop.getDesktop().open(archivoDestino);
+                utilidades.GestorImpresion.procesarImpresion(archivoDestino, utilidades.GestorImpresion.TIPO_TICKET);
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Hubo un error al generar el PDF:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

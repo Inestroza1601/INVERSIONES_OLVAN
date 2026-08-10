@@ -317,7 +317,7 @@ public class PanelApartados extends JPanel {
                 try {
                     java.io.File pdf = utilidades.GeneradorTickets.generarFactura(idVentaGenerada);
                     if (java.awt.Desktop.isDesktopSupported()) {
-                        java.awt.Desktop.getDesktop().open(pdf);
+                        utilidades.GestorImpresion.procesarImpresion(pdf, utilidades.GestorImpresion.TIPO_TICKET);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();

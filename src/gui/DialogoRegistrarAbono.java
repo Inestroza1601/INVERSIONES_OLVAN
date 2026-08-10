@@ -384,7 +384,7 @@ public class DialogoRegistrarAbono extends JDialog {
                             banco,
                             idApartado
                         );
-                        Desktop.getDesktop().open(new java.io.File(ruta));
+                        utilidades.GestorImpresion.procesarImpresion(new java.io.File(ruta), utilidades.GestorImpresion.TIPO_TICKET);
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(this, "Error al generar ticket: " + ex.getMessage());
                     }
