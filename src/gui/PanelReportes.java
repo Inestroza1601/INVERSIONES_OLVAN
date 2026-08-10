@@ -21,7 +21,7 @@ public class PanelReportes extends JPanel {
     private JTable tablaVistaPrevia;
     private DefaultTableModel modeloTabla;
 
-    // Filtros específicos
+    // Filtros espec\u00EDficos
     private JDateChooser dpFechaDiaria;
     private JDateChooser dpFechaDesde;
     private JDateChooser dpFechaHasta;
@@ -45,7 +45,7 @@ public class PanelReportes extends JPanel {
         panelCabecera.setOpaque(false);
         panelCabecera.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
 
-        JLabel lblTitulo = new JLabel("Generación de Reportes PDF");
+        JLabel lblTitulo = new JLabel("Generaci\u00F3n de Reportes PDF");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
         lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         panelCabecera.add(lblTitulo, BorderLayout.NORTH);
@@ -60,8 +60,8 @@ public class PanelReportes extends JPanel {
         String[] tipos = {
             "1. Reporte de Caja Diario", 
             "2. Reporte Detallado de Ventas", 
-            "3. Reporte Dinámico de Inventario", 
-            "4. Alertas (Stock Bajo / Estancados > 15 días)"
+            "3. Reporte Din\u00E1mico de Inventario", 
+            "4. Alertas (Stock Bajo / Estancados > 15 d\u00EDas)"
         };
         cmbTipoReporte = new JComboBox<>(tipos);
         cmbTipoReporte.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -120,19 +120,27 @@ public class PanelReportes extends JPanel {
         if (index == 0) { // Caja Diario
             panelFiltros.add(new JLabel("Fecha:"));
             dpFechaDiaria = new JDateChooser(new Date());
+            dpFechaDiaria.setMaxSelectableDate(new Date());
+            dpFechaDiaria.getJCalendar().getDayChooser().addDateEvaluator(new FechasValidasEvaluator(reportesDAO.obtenerFechasConCaja()));
             dpFechaDiaria.setDateFormatString("yyyy-MM-dd");
             aplicarEstiloDateChooser(dpFechaDiaria);
             panelFiltros.add(dpFechaDiaria);
         } 
         else if (index == 1) { // Detallado Ventas
+            java.util.List<Date> fechasVentas = reportesDAO.obtenerFechasConVentas();
+            
             panelFiltros.add(new JLabel("Desde:"));
             dpFechaDesde = new JDateChooser(new Date());
+            dpFechaDesde.setMaxSelectableDate(new Date());
+            dpFechaDesde.getJCalendar().getDayChooser().addDateEvaluator(new FechasValidasEvaluator(fechasVentas));
             dpFechaDesde.setDateFormatString("yyyy-MM-dd");
             aplicarEstiloDateChooser(dpFechaDesde);
             panelFiltros.add(dpFechaDesde);
             
             panelFiltros.add(new JLabel("Hasta:"));
             dpFechaHasta = new JDateChooser(new Date());
+            dpFechaHasta.setMaxSelectableDate(new Date());
+            dpFechaHasta.getJCalendar().getDayChooser().addDateEvaluator(new FechasValidasEvaluator(fechasVentas));
             dpFechaHasta.setDateFormatString("yyyy-MM-dd");
             aplicarEstiloDateChooser(dpFechaHasta);
             panelFiltros.add(dpFechaHasta);
@@ -153,13 +161,13 @@ public class PanelReportes extends JPanel {
     private void configurarRestriccionFechas() {
         if (dpFechaDesde == null || dpFechaHasta == null) return;
 
-        // Establecer fecha mínima seleccionable en fecha hasta
+        // Establecer fecha m\u00EDnima seleccionable en fecha hasta
         Date fechaInicial = dpFechaDesde.getDate();
         if (fechaInicial != null) {
             dpFechaHasta.setMinSelectableDate(truncarInicioDia(fechaInicial));
         }
 
-        // Listener en dpFechaDesde para actualizar el límite mínimo de dpFechaHasta
+        // Listener en dpFechaDesde para actualizar el l\u00EDmite m\u00EDnimo de dpFechaHasta
         dpFechaDesde.getDateEditor().addPropertyChangeListener("date", evt -> {
             Date nuevaDesde = dpFechaDesde.getDate();
             if (nuevaDesde != null) {
@@ -181,14 +189,14 @@ public class PanelReportes extends JPanel {
                 if (truncarInicioDia(hasta).before(minDate)) {
                     utilidades.Mensajes.showMessageDialog(PanelReportes.this,
                             "La fecha final ('Hasta') no puede ser menor que la primera fecha ('Desde').",
-                            "Fecha Inválida",
+                            "Fecha Inv\u00E1lida",
                             JOptionPane.WARNING_MESSAGE);
                     dpFechaHasta.setDate(desde);
                 }
             }
         });
 
-        // Validación al perder el foco al escribir manualmente en dpFechaHasta
+        // Validaci\u00F3n al perder el foco al escribir manualmente en dpFechaHasta
         if (dpFechaHasta.getDateEditor() instanceof com.toedter.calendar.JTextFieldDateEditor) {
             com.toedter.calendar.JTextFieldDateEditor editorHasta = (com.toedter.calendar.JTextFieldDateEditor) dpFechaHasta.getDateEditor();
             editorHasta.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -200,14 +208,14 @@ public class PanelReportes extends JPanel {
                         Date minDate = truncarInicioDia(desde);
                         if (hasta != null && truncarInicioDia(hasta).before(minDate)) {
                             utilidades.Mensajes.showMessageDialog(PanelReportes.this,
-                                    "La fecha final ('Hasta') no puede ser menor que la primera fecha ('Desde').\nSe ajustará automáticamente a la fecha inicial.",
-                                    "Fecha Inválida",
+                                    "La fecha final ('Hasta') no puede ser menor que la primera fecha ('Desde').\nSe ajustar\u00E1 autom\u00E1ticamente a la fecha inicial.",
+                                    "Fecha Inv\u00E1lida",
                                     JOptionPane.WARNING_MESSAGE);
                             dpFechaHasta.setDate(desde);
                         } else if (hasta == null && !editorHasta.getText().trim().isEmpty()) {
                             utilidades.Mensajes.showMessageDialog(PanelReportes.this,
-                                    "La fecha ingresada en 'Hasta' es inválida o menor a la fecha inicial ('Desde').\nSe restablecerá a la fecha inicial.",
-                                    "Fecha Inválida",
+                                    "La fecha ingresada en 'Hasta' es inv\u00E1lida o menor a la fecha inicial ('Desde').\nSe restablecer\u00E1 a la fecha inicial.",
+                                    "Fecha Inv\u00E1lida",
                                     JOptionPane.WARNING_MESSAGE);
                             dpFechaHasta.setDate(desde);
                         }
@@ -216,7 +224,7 @@ public class PanelReportes extends JPanel {
             });
         }
 
-        // Validación al perder el foco al escribir manualmente en dpFechaDesde
+        // Validaci\u00F3n al perder el foco al escribir manualmente en dpFechaDesde
         if (dpFechaDesde.getDateEditor() instanceof com.toedter.calendar.JTextFieldDateEditor) {
             com.toedter.calendar.JTextFieldDateEditor editorDesde = (com.toedter.calendar.JTextFieldDateEditor) dpFechaDesde.getDateEditor();
             editorDesde.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -232,8 +240,8 @@ public class PanelReportes extends JPanel {
                         }
                     } else if (!editorDesde.getText().trim().isEmpty()) {
                         utilidades.Mensajes.showMessageDialog(PanelReportes.this,
-                                "La fecha ingresada en 'Desde' no es válida.\nSe restablecerá a la fecha actual.",
-                                "Fecha Inválida",
+                                "La fecha ingresada en 'Desde' no es v\u00E1lida.\nSe restablecer\u00E1 a la fecha actual.",
+                                "Fecha Inv\u00E1lida",
                                 JOptionPane.WARNING_MESSAGE);
                         dpFechaDesde.setDate(new Date());
                         dpFechaHasta.setMinSelectableDate(truncarInicioDia(dpFechaDesde.getDate()));
@@ -255,6 +263,7 @@ public class PanelReportes extends JPanel {
     }
 
     private void aplicarEstiloDateChooser(JDateChooser dateChooser) {
+        dateChooser.setPreferredSize(new Dimension(140, 30));
         // Estilo general
         dateChooser.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         dateChooser.setBackground(Color.WHITE);
@@ -269,7 +278,7 @@ public class PanelReportes extends JPanel {
                 BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
 
-        // Estilo del botón del calendario
+        // Estilo del bot\u00F3n del calendario
         JButton boton = dateChooser.getCalendarButton();
         boton.setBackground(Color.WHITE);
         boton.setBorder(BorderFactory.createCompoundBorder(
@@ -285,7 +294,7 @@ public class PanelReportes extends JPanel {
         
         if (index == 0) {
             if (dpFechaDiaria == null || dpFechaDiaria.getDate() == null) {
-                utilidades.Mensajes.showMessageDialog(this, "Por favor, seleccione una fecha diaria válida.", "Fecha Inválida", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Por favor, seleccione una fecha diaria v\u00E1lida.", "Fecha Inv\u00E1lida", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             String fecha = new SimpleDateFormat("yyyy-MM-dd").format(dpFechaDiaria.getDate());
@@ -295,13 +304,13 @@ public class PanelReportes extends JPanel {
         } 
         else if (index == 1) {
             if (dpFechaDesde == null || dpFechaDesde.getDate() == null || dpFechaHasta == null || dpFechaHasta.getDate() == null) {
-                utilidades.Mensajes.showMessageDialog(this, "Por favor, seleccione un rango de fechas válido.", "Fecha Inválida", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Por favor, seleccione un rango de fechas v\u00E1lido.", "Fecha Inv\u00E1lida", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             Date fDesdeDate = truncarInicioDia(dpFechaDesde.getDate());
             Date fHastaDate = truncarInicioDia(dpFechaHasta.getDate());
             if (fHastaDate.before(fDesdeDate)) {
-                utilidades.Mensajes.showMessageDialog(this, "La fecha final ('Hasta') no puede ser menor que la primera fecha ('Desde').", "Rango de Fechas Inválido", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "La fecha final ('Hasta') no puede ser menor que la primera fecha ('Desde').", "Rango de Fechas Inv\u00E1lido", JOptionPane.WARNING_MESSAGE);
                 dpFechaHasta.setDate(dpFechaDesde.getDate());
                 return;
             }
@@ -312,14 +321,14 @@ public class PanelReportes extends JPanel {
             ultimoTitulo = "Reporte Detallado de Ventas (" + fDesde + " al " + fHasta + ")";
         }
         else if (index == 2) {
-            ultimasColumnas = new String[]{"Código", "Producto", "Stock Actual", "Precio Venta (L.)"};
+            ultimasColumnas = new String[]{"C\u00F3digo", "Producto", "Stock Actual", "Precio Venta (L.)"};
             ultimosDatos = reportesDAO.obtenerReporteInventario();
-            ultimoTitulo = "Reporte Dinámico de Inventario";
+            ultimoTitulo = "Reporte Din\u00E1mico de Inventario";
         }
         else if (index == 3) {
-            ultimasColumnas = new String[]{"Código", "Producto", "Stock Actual", "Última Venta", "Motivo de Alerta"};
+            ultimasColumnas = new String[]{"C\u00F3digo", "Producto", "Stock Actual", "\u00DAltima Venta", "Motivo de Alerta"};
             ultimosDatos = reportesDAO.obtenerAlertasStockYEstancados();
-            ultimoTitulo = "Alertas de Stock y Productos Estancados (> 15 días)";
+            ultimoTitulo = "Alertas de Stock y Productos Estancados (> 15 d\u00EDas)";
         }
 
         // Cargar en tabla
@@ -372,7 +381,7 @@ public class PanelReportes extends JPanel {
                     if (Desktop.isDesktopSupported()) {
                         utilidades.GestorImpresion.procesarImpresion(pdf, utilidades.GestorImpresion.TIPO_A4);
                     }
-                    utilidades.Mensajes.showMessageDialog(this, "Reporte exportado exitosamente a PDF.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Reporte exportado exitosamente a PDF.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         } catch (Exception ex) {
@@ -395,14 +404,14 @@ public class PanelReportes extends JPanel {
     private void enviarPorCorreo() {
         JTextField txtEmail = new JTextField(25);
         Object[] message = {
-            "Ingrese el correo electrónico del destinatario:", txtEmail
+            "Ingrese el correo electr\u00F3nico del destinatario:", txtEmail
         };
         
         int option = utilidades.Mensajes.showConfirmDialog(this, message, "Enviar Reporte por Correo", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (option == JOptionPane.OK_OPTION) {
             String email = txtEmail.getText().trim();
             if (email.isEmpty() || !email.contains("@")) {
-                utilidades.Mensajes.showMessageDialog(this, "Debe ingresar un correo electrónico válido.", "Error", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Debe ingresar un correo electr\u00F3nico v\u00E1lido.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
@@ -435,9 +444,9 @@ public class PanelReportes extends JPanel {
                     dlgCarga.dispose();
                     try {
                         if (get()) {
-                            utilidades.Mensajes.showMessageDialog(PanelReportes.this, "¡Excelente! El reporte fue enviado exitosamente a:\n" + email, "Envío Confirmado", JOptionPane.INFORMATION_MESSAGE);
+                            utilidades.Mensajes.showMessageDialog(PanelReportes.this, "\u00A1Excelente! El reporte fue enviado exitosamente a:\n" + email, "Env\u00EDo Confirmado", JOptionPane.INFORMATION_MESSAGE);
                         } else {
-                            utilidades.Mensajes.showMessageDialog(PanelReportes.this, "Hubo un problema al enviar el correo. Revise su conexión a internet o la dirección proporcionada.", "Error de Envío", JOptionPane.ERROR_MESSAGE);
+                            utilidades.Mensajes.showMessageDialog(PanelReportes.this, "Hubo un problema al enviar el correo. Revise su conexi\u00F3n a internet o la direcci\u00F3n proporcionada.", "Error de Env\u00EDo", JOptionPane.ERROR_MESSAGE);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -446,7 +455,7 @@ public class PanelReportes extends JPanel {
                 }
             };
             worker.execute();
-            dlgCarga.setVisible(true); // Bloquea la UI hasta que worker.done() cierre el diálogo
+            dlgCarga.setVisible(true); // Bloquea la UI hasta que worker.done() cierre el di\u00E1logo
         }
     }
 
@@ -481,9 +490,9 @@ public class PanelReportes extends JPanel {
             };
             clipboard.setContents(transferable, null);
 
-            // Mostrar instrucción
+            // Mostrar instrucci\u00F3n
             int opt = utilidades.Mensajes.showConfirmDialog(this, 
-                "El PDF ha sido copiado al portapapeles.\n\nAl presionar Continuar se abrirá WhatsApp Web.\nSolo tienes que elegir a quién enviarlo y presionar Ctrl+V (Pegar).", 
+                "El PDF ha sido copiado al portapapeles.\n\nAl presionar Continuar se abrir\u00E1 WhatsApp Web.\nSolo tienes que elegir a qui\u00E9n enviarlo y presionar Ctrl+V (Pegar).", 
                 "Instrucciones de WhatsApp", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
                 
             if (opt == JOptionPane.OK_OPTION) {
@@ -493,8 +502,36 @@ public class PanelReportes extends JPanel {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            utilidades.Mensajes.showMessageDialog(this, "Error al preparar el envío por WhatsApp: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Error al preparar el env\u00EDo por WhatsApp: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private class FechasValidasEvaluator implements com.toedter.calendar.IDateEvaluator {
+        private java.util.Set<String> fechasValidasSet = new java.util.HashSet<>();
+        private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        public FechasValidasEvaluator(java.util.List<Date> fechasValidas) {
+            for (Date d : fechasValidas) {
+                fechasValidasSet.add(sdf.format(d));
+            }
+        }
+
+        @Override
+        public boolean isSpecial(Date date) { return false; }
+        @Override
+        public Color getSpecialForegroundColor() { return null; }
+        @Override
+        public Color getSpecialBackroundColor() { return null; }
+        @Override
+        public String getSpecialTooltip() { return null; }
+        @Override
+        public boolean isInvalid(Date date) { return !fechasValidasSet.contains(sdf.format(date)); }
+        @Override
+        public Color getInvalidForegroundColor() { return Color.LIGHT_GRAY; }
+        @Override
+        public Color getInvalidBackroundColor() { return null; }
+        @Override
+        public String getInvalidTooltip() { return "Sin movimientos en esta fecha"; }
     }
 }
 

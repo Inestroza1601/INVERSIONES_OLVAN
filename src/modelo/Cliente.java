@@ -9,7 +9,7 @@ public class Cliente {
     private String correoCliente;
     private boolean estadoCliente;
 
-    // Constructor vacío
+    // Constructor vac\u00EDo
     public Cliente() {}
 
     // Getters y Setters

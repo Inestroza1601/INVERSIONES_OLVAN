@@ -23,7 +23,7 @@ public class PanelBuscarProducto extends JPanel {
     private JTextField txtBusqueda;
     private TableRowSorter<DefaultTableModel> sorter;
     
-    // Caché y estado para Lazy Loading con Shimmer
+    // Cach\u00E9 y estado para Lazy Loading con Shimmer
     private java.util.Map<Integer, ImageIcon> cacheImagenes = new java.util.concurrent.ConcurrentHashMap<>();
     private java.util.Set<Integer> imagenesEnProceso = java.util.Collections.synchronizedSet(new java.util.HashSet<>());
     private float animacionShimmerPhase = 0f;
@@ -42,12 +42,12 @@ public class PanelBuscarProducto extends JPanel {
         JPanel panelSuperior = new JPanel(new BorderLayout());
         panelSuperior.setOpaque(false);
 
-        JLabel lblTitulo = new JLabel("Catálogo de Inventario");
+        JLabel lblTitulo = new JLabel("Cat\u00E1logo de Inventario");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
         lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
 
         txtBusqueda = new JTextField(20);
-        txtBusqueda.putClientProperty("JTextField.placeholderText", "Buscar por nombre o código...");
+        txtBusqueda.putClientProperty("JTextField.placeholderText", "Buscar por nombre o c\u00F3digo...");
         txtBusqueda.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         txtBusqueda.setPreferredSize(new Dimension(300, 35));
 
@@ -56,13 +56,13 @@ public class PanelBuscarProducto extends JPanel {
         this.add(panelSuperior, BorderLayout.NORTH);
 
         // --- TABLA DE INVENTARIO (Sin columna de acciones) ---
-        String[] columnas = {"ID", "Foto", "Código", "Producto", "P. Compra", "P. Venta", "P. Técnico", "Stock"};
+        String[] columnas = {"ID", "Foto", "C\u00F3digo", "Producto", "P. Compra", "P. Venta", "P. T\u00E9cnico", "Stock"};
         modeloTabla = new DefaultTableModel(null, columnas) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; } // Nada es editable directamente
         };
 
-        // --- CREACIÓN DE LA TABLA CON FORMATO CONDICIONAL ROJO ---
+        // --- CREACI\u00D3N DE LA TABLA CON FORMATO CONDICIONAL ROJO ---
         tablaInventario = new JTable(modeloTabla) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
@@ -86,7 +86,7 @@ public class PanelBuscarProducto extends JPanel {
         tablaInventario.setBackground(new Color(255, 255, 255)); // Blanco Puro
         tablaInventario.setForeground(new Color(30, 41, 59));
         tablaInventario.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        tablaInventario.setSelectionBackground(new Color(209, 250, 229)); // Selección menta luminosa
+        tablaInventario.setSelectionBackground(new Color(209, 250, 229)); // Selecci\u00F3n menta luminosa
         tablaInventario.setSelectionForeground(new Color(6, 95, 70));
         tablaInventario.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         tablaInventario.getTableHeader().setBackground(new Color(236, 253, 245)); // Verde Menta fresca
@@ -101,7 +101,7 @@ public class PanelBuscarProducto extends JPanel {
         tablaInventario.getColumnModel().getColumn(1).setMaxWidth(80);
         tablaInventario.getColumnModel().getColumn(1).setCellRenderer(new ImagenProductoRenderer());
 
-        // Centrar el texto en todas las demás columnas para que se vea ordenado y alineado con el encabezado
+        // Centrar el texto en todas las dem\u00E1s columnas para que se vea ordenado y alineado con el encabezado
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         for (int i = 2; i < tablaInventario.getColumnCount(); i++) {
@@ -123,7 +123,7 @@ public class PanelBuscarProducto extends JPanel {
             }
         });
 
-       // --- LÓGICA DE CURSORES Y CLICS EN TABLA ---
+       // --- L\u00D3GICA DE CURSORES Y CLICS EN TABLA ---
         tablaInventario.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             @Override
             public void mouseMoved(java.awt.event.MouseEvent e) {
@@ -140,10 +140,10 @@ public class PanelBuscarProducto extends JPanel {
                 int columna = tablaInventario.columnAtPoint(e.getPoint());
                 
                 if (fila >= 0) {
-                    // Selecciona automáticamente la fila al hacer clic (útil para el clic derecho)
+                    // Selecciona autom\u00E1ticamente la fila al hacer clic (\u00FAtil para el clic derecho)
                     tablaInventario.setRowSelectionInterval(fila, fila);
 
-                    // 1. Lógica para hacer ZOOM a la foto (Clic Izquierdo en Columna 1)
+                    // 1. L\u00F3gica para hacer ZOOM a la foto (Clic Izquierdo en Columna 1)
                     if (columna == 1 && SwingUtilities.isLeftMouseButton(e)) {
                         int filaModelo = tablaInventario.convertRowIndexToModel(fila);
                         int idProducto = (int) modeloTabla.getValueAt(filaModelo, 0);
@@ -155,7 +155,7 @@ public class PanelBuscarProducto extends JPanel {
                         mostrarZoomImagen(idProducto, nombre, stock);
                     }
                     
-                    // 2. Lógica del Menú Estilo Windows (Doble Clic Izquierdo O Clic Derecho)
+                    // 2. L\u00F3gica del Men\u00FA Estilo Windows (Doble Clic Izquierdo O Clic Derecho)
                     if ((SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) || SwingUtilities.isRightMouseButton(e)) {
                         mostrarMenuOpciones(e.getComponent(), e.getX(), e.getY(), fila);
                     }
@@ -170,7 +170,7 @@ public class PanelBuscarProducto extends JPanel {
 
         cargarDatosDesdeBD();
 
-        // Timer global para la animación fluida del Shimmer (brillo)
+        // Timer global para la animaci\u00F3n fluida del Shimmer (brillo)
         timerShimmer = new Timer(30, e -> {
             if (!imagenesEnProceso.isEmpty()) {
                 animacionShimmerPhase += 0.05f;
@@ -194,11 +194,11 @@ public class PanelBuscarProducto extends JPanel {
             modeloTabla.addRow(new Object[]{
                 p.getIdProducto(),       // 0: ID
                 p.getImagen_producto(),       // 1: Ruta Foto
-                p.getCodigoBarras(),     // 2: Código
+                p.getCodigoBarras(),     // 2: C\u00F3digo
                 p.getNombreProducto(),   // 3: Nombre
                 pCompra,                 // 4: Precio Compra
                 pVenta,                  // 5: Precio Venta
-                pMayorista,              // 6: Precio Técnico/Mayorista
+                pMayorista,              // 6: Precio T\u00E9cnico/Mayorista
                 p.getStockProducto(),    // 7: Stock
             });
         }
@@ -214,7 +214,7 @@ public class PanelBuscarProducto extends JPanel {
             int filaModelo = table.convertRowIndexToModel(row);
             int idProducto = (int) table.getModel().getValueAt(filaModelo, 0);
             
-            // Si ya está en caché, retornamos el JLabel normal
+            // Si ya est\u00E1 en cach\u00E9, retornamos el JLabel normal
             if (cacheImagenes.containsKey(idProducto)) {
                 JLabel label = new JLabel();
                 label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -231,7 +231,7 @@ public class PanelBuscarProducto extends JPanel {
                 return label;
             }
 
-            // Si NO está en caché, iniciamos SwingWorker y retornamos panel animado
+            // Si NO est\u00E1 en cach\u00E9, iniciamos SwingWorker y retornamos panel animado
             if (!imagenesEnProceso.contains(idProducto)) {
                 imagenesEnProceso.add(idProducto);
                 
@@ -275,7 +275,7 @@ public class PanelBuscarProducto extends JPanel {
                 worker.execute();
             }
 
-            // --- RENDERIZADO DEL SKELETON ANIMADO (BRÍLLO) ---
+            // --- RENDERIZADO DEL SKELETON ANIMADO (BR\u00CDLLO) ---
             JPanel panelShimmer = new JPanel() {
                 @Override
                 protected void paintComponent(Graphics g) {
@@ -335,9 +335,9 @@ public class PanelBuscarProducto extends JPanel {
         Window window = SwingUtilities.getWindowAncestor(this);
         DialogoVisorImagen visor = null;
         if (window instanceof Frame) {
-            visor = new DialogoVisorImagen((Frame) window, "Previsualización del Producto", list, 0);
+            visor = new DialogoVisorImagen((Frame) window, "Previsualizaci\u00F3n del Producto", list, 0);
         } else if (window instanceof JDialog) {
-            visor = new DialogoVisorImagen((JDialog) window, "Previsualización del Producto", list, 0);
+            visor = new DialogoVisorImagen((JDialog) window, "Previsualizaci\u00F3n del Producto", list, 0);
         }
         
         if (visor != null) {
@@ -347,7 +347,7 @@ public class PanelBuscarProducto extends JPanel {
     }
 
     /**
-     * Reduce las dimensiones de la imagen por pasos intermedios para evitar la pérdida de definición.
+     * Reduce las dimensiones de la imagen por pasos intermedios para evitar la p\u00E9rdida de definici\u00F3n.
      */
     private java.awt.image.BufferedImage escalarConMaximaNitidez(Image img, int targetWidth, int targetHeight) {
         int w = img.getWidth(null);
@@ -359,7 +359,7 @@ public class PanelBuscarProducto extends JPanel {
         g2.drawImage(img, 0, 0, null);
         g2.dispose();
         
-        // Reducción progresiva dividiendo por 2 hasta acercarnos al tamaño final
+        // Reducci\u00F3n progresiva dividiendo por 2 hasta acercarnos al tama\u00F1o final
         while (w > targetWidth * 2 || h > targetHeight * 2) {
             w = (w > targetWidth * 2) ? w / 2 : targetWidth;
             h = (h > targetHeight * 2) ? h / 2 : targetHeight;
@@ -372,7 +372,7 @@ public class PanelBuscarProducto extends JPanel {
             scratch = temp;
         }
         
-        // Renderizado final con ajuste Bicúbico y Antialiasing para máxima fidelidad
+        // Renderizado final con ajuste Bic\u00FAbico y Antialiasing para m\u00E1xima fidelidad
         java.awt.image.BufferedImage imgFinal = new java.awt.image.BufferedImage(targetWidth, targetHeight, java.awt.image.BufferedImage.TYPE_INT_ARGB);
         g2 = imgFinal.createGraphics();
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
@@ -385,7 +385,7 @@ public class PanelBuscarProducto extends JPanel {
     }
     
     // =========================================================
-    // MENÚ CONTEXTUAL (ESTILO WINDOWS) Y ACCIONES
+    // MEN\u00DA CONTEXTUAL (ESTILO WINDOWS) Y ACCIONES
     // =========================================================
     private void mostrarMenuOpciones(Component componente, int x, int y, int filaVista) {
         int rolId = (SesionGlobal.getUsuarioActual() != null) ? SesionGlobal.getUsuarioActual().getIdRol() : 1;
@@ -397,7 +397,7 @@ public class PanelBuscarProducto extends JPanel {
         menu.setBackground(new Color(255, 255, 255)); // Blanco puro
         menu.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225), 1));
 
-        // Ahora inyectamos nuestros propios íconos dibujados en Java 2D
+        // Ahora inyectamos nuestros propios \u00EDconos dibujados en Java 2D
         JMenuItem itemEditar = crearMenuItem("Ver / Editar Producto", new Color(39, 174, 96), new IconoOjo()); // Verde Menta
         JMenuItem itemEliminar = crearMenuItem("Eliminar Producto", new Color(227, 0, 15), new IconoBasurero()); // Rojo Logo
 
@@ -425,8 +425,8 @@ public class PanelBuscarProducto extends JPanel {
 
     private JMenuItem crearMenuItem(String texto, Color colorHover, Icon icono) {
         JMenuItem item = new JMenuItem(texto);
-        item.setIcon(icono); // Asignamos el ícono detallado
-        item.setIconTextGap(12); // Separación elegante entre el dibujo y el texto
+        item.setIcon(icono); // Asignamos el \u00EDcono detallado
+        item.setIconTextGap(12); // Separaci\u00F3n elegante entre el dibujo y el texto
         item.setFont(new Font("Segoe UI", Font.BOLD, 14));
         item.setForeground(new Color(45, 45, 45)); // Gris Oscuro
         item.setBackground(new Color(255, 255, 255)); // Blanco Puro
@@ -469,7 +469,7 @@ public class PanelBuscarProducto extends JPanel {
         int idProducto = (int) modeloTabla.getValueAt(filaModelo, 0);
         String nombre = modeloTabla.getValueAt(filaModelo, 3).toString();
         
-        int confirmacion = utilidades.Mensajes.showConfirmDialog(this, "¿Está seguro de eliminar el producto:\n" + nombre + "?", "Confirmar Eliminación", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        int confirmacion = utilidades.Mensajes.showConfirmDialog(this, "\u00BFEst\u00E1 seguro de eliminar el producto:\n" + nombre + "?", "Confirmar Eliminaci\u00F3n", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (confirmacion == JOptionPane.YES_OPTION) {
             InventarioDAO dao = new InventarioDAO();
             try {
@@ -478,12 +478,12 @@ public class PanelBuscarProducto extends JPanel {
                     cargarDatosDesdeBD();
                 }
             } catch (java.sql.SQLException ex) {
-                utilidades.Mensajes.showMessageDialog(this, ex.getMessage(), "Acción Denegada", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, ex.getMessage(), "Acci\u00F3n Denegada", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
     // =========================================================
-    // DIBUJOS VECTORIALES PARA EL MENÚ CONTEXTUAL
+    // DIBUJOS VECTORIALES PARA EL MEN\u00DA CONTEXTUAL
     // =========================================================
     private class IconoOjo implements Icon {
         @Override public int getIconWidth() { return 20; }
@@ -491,17 +491,17 @@ public class PanelBuscarProducto extends JPanel {
         @Override public void paintIcon(Component c, Graphics g, int x, int y) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(c.getForeground()); // Hereda dinámicamente el color del texto (gris o blanco en hover)
+            g2.setColor(c.getForeground()); // Hereda din\u00E1micamente el color del texto (gris o blanco en hover)
             g2.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
             // Forma de almendra (Curvas superior e inferior)
             g2.draw(new java.awt.geom.QuadCurve2D.Double(x + 1, y + 10, x + 10, y + 2, x + 19, y + 10));
             g2.draw(new java.awt.geom.QuadCurve2D.Double(x + 1, y + 10, x + 10, y + 18, x + 19, y + 10));
             
-            // Iris (Círculo central)
+            // Iris (C\u00EDrculo central)
             g2.drawOval(x + 6, y + 6, 8, 8);
             
-            // Pupila (Relleno) y un pequeño brillo (Blanco)
+            // Pupila (Relleno) y un peque\u00F1o brillo (Blanco)
             g2.fillOval(x + 8, y + 8, 4, 4);
             g2.setColor(Color.WHITE);
             g2.fillOval(x + 9, y + 9, 1, 1); // Detalle de brillo en el ojo
@@ -516,7 +516,7 @@ public class PanelBuscarProducto extends JPanel {
         @Override public void paintIcon(Component c, Graphics g, int x, int y) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(c.getForeground()); // Hereda dinámicamente el color del texto (gris o blanco en hover)
+            g2.setColor(c.getForeground()); // Hereda din\u00E1micamente el color del texto (gris o blanco en hover)
             g2.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
             // Agarradera y Tapa
@@ -526,7 +526,7 @@ public class PanelBuscarProducto extends JPanel {
             // Cuerpo del basurero (Con bordes suavemente redondeados)
             g2.drawRoundRect(x + 5, y + 5, 10, 12, 3, 3);
             
-            // Detalles internos (Líneas del basurero)
+            // Detalles internos (L\u00EDneas del basurero)
             g2.setStroke(new BasicStroke(1.5f));
             g2.drawLine(x + 8, y + 8, x + 8, y + 14);
             g2.drawLine(x + 12, y + 8, x + 12, y + 14);

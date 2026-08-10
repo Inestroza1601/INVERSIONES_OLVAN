@@ -28,7 +28,7 @@ public class PanelPuntoVenta extends JPanel {
     private JLabel lblClienteSeleccionado;
     private int idClienteActual = 1; 
     
-    // Caché y estado para Lazy Loading con Shimmer
+    // Cach\u00E9 y estado para Lazy Loading con Shimmer
     private java.util.Map<Integer, ImageIcon> cacheImagenes = new java.util.concurrent.ConcurrentHashMap<>();
     private java.util.Set<Integer> imagenesEnProceso = java.util.Collections.synchronizedSet(new java.util.HashSet<>());
     private float animacionShimmerPhase = 0f;
@@ -89,7 +89,7 @@ public class PanelPuntoVenta extends JPanel {
 
         JPanel pnlLector = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0)); pnlLector.setOpaque(false);
         txtCodigoBarrasBusqueda = new JTextField(); 
-        txtCodigoBarrasBusqueda.putClientProperty("JTextField.placeholderText", "Escanear código de barras o escribir código..."); 
+        txtCodigoBarrasBusqueda.putClientProperty("JTextField.placeholderText", "Escanear c\u00F3digo de barras o escribir c\u00F3digo..."); 
         txtCodigoBarrasBusqueda.putClientProperty("JTextField.showClearButton", true);
         txtCodigoBarrasBusqueda.setFont(new Font("Segoe UI", Font.PLAIN, 14)); 
         txtCodigoBarrasBusqueda.setPreferredSize(new Dimension(460, 38)); 
@@ -174,10 +174,10 @@ public class PanelPuntoVenta extends JPanel {
         pnlCamposExtraPago.setVisible(false);
         
         JLabel lblBanco = new JLabel("Banco Emisor:"){{ setForeground(new Color(100, 100, 100)); setFont(new Font("Segoe UI", Font.BOLD, 12)); }};
-        String[] bancosHonduras = {"Seleccione Banco...", "Banco Atlántida", "BAC Credomatic", "Banco Ficohsa", "Banpaís", "Banco de Occidente", "Banco Banrural", "Banco Promerica", "Banco LAFISE", "Banco FICENSA", "Banco BANHCAFE", "ACH - Transferencia Interbancaria"};
+        String[] bancosHonduras = {"Seleccione Banco...", "Banco Atl\u00E1ntida", "BAC Credomatic", "Banco Ficohsa", "Banpa\u00EDs", "Banco de Occidente", "Banco Banrural", "Banco Promerica", "Banco LAFISE", "Banco FICENSA", "Banco BANHCAFE", "ACH - Transferencia Interbancaria"};
         cmbBanco = new JComboBox<>(bancosHonduras); cmbBanco.setFont(new Font("Segoe UI", Font.PLAIN, 14)); cmbBanco.setBackground(new Color(255, 255, 255));
         
-        lblReferenciaPago = new JLabel("Nº Referencia:"){{ setForeground(new Color(100, 100, 100)); setFont(new Font("Segoe UI", Font.BOLD, 12)); }};
+        lblReferenciaPago = new JLabel("N\u00BA Referencia:"){{ setForeground(new Color(100, 100, 100)); setFont(new Font("Segoe UI", Font.BOLD, 12)); }};
         txtReferenciaPago = new JTextField(); txtReferenciaPago.setFont(new Font("Segoe UI", Font.PLAIN, 14)); txtReferenciaPago.setBackground(new Color(255, 255, 255)); txtReferenciaPago.setForeground(new Color(45, 45, 45)); txtReferenciaPago.setCaretColor(new Color(45, 45, 45)); txtReferenciaPago.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(0, 5, 0, 5))); txtReferenciaPago.setPreferredSize(new Dimension(0, 32));
         
         pnlCamposExtraPago.add(lblBanco); pnlCamposExtraPago.add(cmbBanco); pnlCamposExtraPago.add(lblReferenciaPago); pnlCamposExtraPago.add(txtReferenciaPago);
@@ -187,7 +187,7 @@ public class PanelPuntoVenta extends JPanel {
             if (pagoSeleccionado != null) {
                 String nombrePago = pagoSeleccionado.nombre.toLowerCase();
                 if (nombrePago.contains("transferencia") || nombrePago.contains("tarjeta")) {
-                    lblReferenciaPago.setText(nombrePago.contains("transferencia") ? "Nº Referencia / ACH:" : "Nº Voucher / Referencia:");
+                    lblReferenciaPago.setText(nombrePago.contains("transferencia") ? "N\u00BA Referencia / ACH:" : "N\u00BA Voucher / Referencia:");
                     pnlCamposExtraPago.setVisible(true);
                 } else {
                     pnlCamposExtraPago.setVisible(false);
@@ -221,9 +221,9 @@ public class PanelPuntoVenta extends JPanel {
             btnCobrar.setText(esApartado ? "Registrar Apartado" : "Cobrar Venta");
         });
 
-        gbc.gridy = 0; gbc.insets = new Insets(0, 0, 5, 0); pnlLiquidacion.add(new JLabel("Tipo Transacción:"){{setForeground(new Color(100, 100, 100)); setFont(new Font("Segoe UI", Font.BOLD, 12));}}, gbc);
+        gbc.gridy = 0; gbc.insets = new Insets(0, 0, 5, 0); pnlLiquidacion.add(new JLabel("Tipo Transacci\u00F3n:"){{setForeground(new Color(100, 100, 100)); setFont(new Font("Segoe UI", Font.BOLD, 12));}}, gbc);
         gbc.gridy = 1; gbc.insets = new Insets(0, 0, 8, 0); pnlLiquidacion.add(cmbTipoTransaccion, gbc);
-        gbc.gridy = 2; gbc.insets = new Insets(5, 0, 5, 0); pnlLiquidacion.add(new JLabel("Método de Pago:"){{setForeground(new Color(100, 100, 100)); setFont(new Font("Segoe UI", Font.BOLD, 12));}}, gbc);
+        gbc.gridy = 2; gbc.insets = new Insets(5, 0, 5, 0); pnlLiquidacion.add(new JLabel("M\u00E9todo de Pago:"){{setForeground(new Color(100, 100, 100)); setFont(new Font("Segoe UI", Font.BOLD, 12));}}, gbc);
         gbc.gridy = 3; gbc.insets = new Insets(0, 0, 5, 0); pnlLiquidacion.add(cmbMetodoPago, gbc);
         gbc.gridy = 4; gbc.insets = new Insets(5, 0, 5, 0); pnlLiquidacion.add(pnlCamposExtraPago, gbc);
         gbc.gridy = 5; gbc.insets = new Insets(15, 0, 0, 0); pnlLiquidacion.add(lblSubtotal, gbc);
@@ -232,7 +232,7 @@ public class PanelPuntoVenta extends JPanel {
         gbc.gridy = 8; gbc.insets = new Insets(0, 0, 20, 0); pnlLiquidacion.add(lblTotal, gbc);
         gbc.gridy = 9; gbc.insets = new Insets(0, 0, 0, 0); pnlLiquidacion.add(btnCobrar, gbc);
         
-        JButton btnBuscarProducto = utilidades.EfectosUI.crearBotonVerde("Catálogo de Productos");
+        JButton btnBuscarProducto = utilidades.EfectosUI.crearBotonVerde("Cat\u00E1logo de Productos");
         btnBuscarProducto.setFont(new Font("Segoe UI", Font.BOLD, 15));
         btnBuscarProducto.setPreferredSize(new Dimension(0, 50));
         btnBuscarProducto.addActionListener(e -> {
@@ -251,7 +251,7 @@ public class PanelPuntoVenta extends JPanel {
                         get().setVisible(true);
                     } catch (Exception ex) {
                         ex.printStackTrace();
-                        utilidades.Mensajes.showMessageDialog(PanelPuntoVenta.this, "Error al cargar el catálogo.");
+                        utilidades.Mensajes.showMessageDialog(PanelPuntoVenta.this, "Error al cargar el cat\u00E1logo.");
                     }
                 }
             };
@@ -273,19 +273,19 @@ public class PanelPuntoVenta extends JPanel {
         VentasDAO dao = new VentasDAO();
         Map<Integer, String> metodos = dao.obtenerMetodosPago();
         
-        ItemPago itemEfectivo = null; // Variable para atrapar la opción de Efectivo
+        ItemPago itemEfectivo = null; // Variable para atrapar la opci\u00F3n de Efectivo
         
         for (Map.Entry<Integer, String> entry : metodos.entrySet()) {
             ItemPago item = new ItemPago(entry.getKey(), entry.getValue());
             cmbMetodoPago.addItem(item);
             
-            // Verificamos si este método es el Efectivo
+            // Verificamos si este m\u00E9todo es el Efectivo
             if (item.nombre.toLowerCase().contains("efectivo")) {
                 itemEfectivo = item;
             }
         }
         
-        // Si encontramos la opción de Efectivo, la fijamos como predeterminada
+        // Si encontramos la opci\u00F3n de Efectivo, la fijamos como predeterminada
         if (itemEfectivo != null) {
             cmbMetodoPago.setSelectedItem(itemEfectivo);
         }
@@ -315,8 +315,8 @@ public class PanelPuntoVenta extends JPanel {
             sumImpuesto = sumSubtotal * 0.15;
             granTotal = sumSubtotal + sumImpuesto;
         } else {
-            // Si no hay facturación, el cliente no paga impuesto. (O puedes ajustarlo según necesidad).
-            // Según el requisito, se muestra todo el total:
+            // Si no hay facturaci\u00F3n, el cliente no paga impuesto. (O puedes ajustarlo seg\u00FAn necesidad).
+            // Seg\u00FAn el requisito, se muestra todo el total:
             granTotal = sumSubtotal; // Mantiene el subtotal como el precio final, o suma impuesto = 0.0
             sumImpuesto = 0.0;
         }
@@ -331,7 +331,7 @@ public class PanelPuntoVenta extends JPanel {
         lblTotal.setText(String.format("L %,.2f", granTotal));
     }
 
-   // --- RESTRICCIÓN DE STOCK Y VALIDACIÓN DE SERIE ---
+   // --- RESTRICCI\u00D3N DE STOCK Y VALIDACI\u00D3N DE SERIE ---
     public void agregarProductoAVenta(Producto p) {
         if (p.getStockProducto() < 1) { 
             utilidades.Mensajes.showMessageDialog(this, "Stock agotado. No hay unidades disponibles en vitrina.", "Stock Insuficiente", JOptionPane.WARNING_MESSAGE); 
@@ -340,32 +340,32 @@ public class PanelPuntoVenta extends JPanel {
 
         String imei = null;
         if (p.isRequiereSerie()) {
-            imei = JOptionPane.showInputDialog(this, "Este producto requiere un identificador (IMEI/ServiceTag).\nIngrese el código para: " + p.getNombreProducto(), "Validación de Garantía", JOptionPane.QUESTION_MESSAGE);
+            imei = JOptionPane.showInputDialog(this, "Este producto requiere un identificador (IMEI/ServiceTag).\nIngrese el c\u00F3digo para: " + p.getNombreProducto(), "Validaci\u00F3n de Garant\u00EDa", JOptionPane.QUESTION_MESSAGE);
             
             if (imei == null || imei.trim().isEmpty()) {
-                utilidades.Mensajes.showMessageDialog(this, "Operación cancelada. Debe ingresar el IMEI/Serie para facturar este producto.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Operaci\u00F3n cancelada. Debe ingresar el IMEI/Serie para facturar este producto.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             imei = imei.trim();
 
-            // --- VALIDACIÓN 1: EVITAR IDENTIFICADOR DUPLICADO EN LA VENTA ACTUAL ---
+            // --- VALIDACI\u00D3N 1: EVITAR IDENTIFICADOR DUPLICADO EN LA VENTA ACTUAL ---
             for (int i = 0; i < modeloTablaVentas.getRowCount(); i++) {
                 Object valorImeiFila = modeloTablaVentas.getValueAt(i, 8); 
                 if (valorImeiFila != null && valorImeiFila.toString().equalsIgnoreCase(imei)) {
-                    utilidades.Mensajes.showMessageDialog(this, "El identificador '" + imei + "' ya está en la lista de compras actual.", "Identificador Duplicado", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "El identificador '" + imei + "' ya est\u00E1 en la lista de compras actual.", "Identificador Duplicado", JOptionPane.ERROR_MESSAGE);
                     return; 
                 }
             }
             
-            // --- VALIDACIÓN 2: EVITAR IDENTIFICADOR QUE YA FUE VENDIDO ANTERIORMENTE ---
+            // --- VALIDACI\u00D3N 2: EVITAR IDENTIFICADOR QUE YA FUE VENDIDO ANTERIORMENTE ---
             VentasDAO daoVentas = new VentasDAO();
             if (daoVentas.existeIdentificadorVendido(imei)) {
-                utilidades.Mensajes.showMessageDialog(this, "¡ALERTA! El identificador '" + imei + "' ya se encuentra registrado como VENDIDO en la base de datos.\nVerifique el equipo físico o contacte al administrador.", "Fraude / Error Detectado", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "\u00A1ALERTA! El identificador '" + imei + "' ya se encuentra registrado como VENDIDO en la base de datos.\nVerifique el equipo f\u00EDsico o contacte al administrador.", "Fraude / Error Detectado", JOptionPane.ERROR_MESSAGE);
                 return;
             }
         }
 
-        // Si NO requiere serie Y NO TIENE GARANTÍA, agrupamos las cantidades si ya está en la tabla
+        // Si NO requiere serie Y NO TIENE GARANT\u00CDA, agrupamos las cantidades si ya est\u00E1 en la tabla
         if (!p.isRequiereSerie() && p.getDiasGarantia() == 0) {
             for (int i = 0; i < modeloTablaVentas.getRowCount(); i++) {
                 if ((int) modeloTablaVentas.getValueAt(i, 0) == p.getIdProducto()) {
@@ -411,9 +411,9 @@ public class PanelPuntoVenta extends JPanel {
         txtNuevoPrecio.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent e) {
                 char c = e.getKeyChar();
-                // Si la tecla NO es un número, NO es un punto y NO es la tecla de borrar -> la bloqueamos
+                // Si la tecla NO es un n\u00FAmero, NO es un punto y NO es la tecla de borrar -> la bloqueamos
                 if (!Character.isDigit(c) && c != '.' && c != java.awt.event.KeyEvent.VK_BACK_SPACE) {
-                    e.consume(); // Anula la pulsación
+                    e.consume(); // Anula la pulsaci\u00F3n
                 }
                 // Si ya hay un punto decimal y el usuario intenta poner otro -> lo bloqueamos
                 if (c == '.' && txtNuevoPrecio.getText().contains(".")) {
@@ -422,7 +422,7 @@ public class PanelPuntoVenta extends JPanel {
             }
         });
 
-        // Mostramos el cuadro de diálogo con nuestro JTextField protegido
+        // Mostramos el cuadro de di\u00E1logo con nuestro JTextField protegido
         int opcion = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Nuevo Precio Unitario:", txtNuevoPrecio}, "Modificar Precio", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         
         if (opcion == JOptionPane.OK_OPTION && !txtNuevoPrecio.getText().isEmpty()) {
@@ -439,9 +439,9 @@ public class PanelPuntoVenta extends JPanel {
     private void modificarCantidad() {
         int f = tablaVentas.getSelectedRow(); if(f < 0) return;
         
-        // --- BLOQUEO DE SEGURIDAD PARA GARANTÍAS Y SERIES ---
+        // --- BLOQUEO DE SEGURIDAD PARA GARANT\u00CDAS Y SERIES ---
         if (modeloTablaVentas.getValueAt(f, 9) != null || (int)modeloTablaVentas.getValueAt(f, 8) > 0) {
-            utilidades.Mensajes.showMessageDialog(this, "No puede modificar la cantidad de un equipo que requiere Identificador o posee Garantía.\nSi el cliente lleva varios, escanee el producto nuevamente.", "Acción Bloqueada", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "No puede modificar la cantidad de un equipo que requiere Identificador o posee Garant\u00EDa.\nSi el cliente lleva varios, escanee el producto nuevamente.", "Acci\u00F3n Bloqueada", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -483,12 +483,12 @@ public class PanelPuntoVenta extends JPanel {
     }
 
     private void procesarVenta() {
-        if(modeloTablaVentas.getRowCount() == 0) { utilidades.Mensajes.showMessageDialog(this, "La venta está vacía.", "Aviso", JOptionPane.WARNING_MESSAGE); return; }
+        if(modeloTablaVentas.getRowCount() == 0) { utilidades.Mensajes.showMessageDialog(this, "La venta est\u00E1 vac\u00EDa.", "Aviso", JOptionPane.WARNING_MESSAGE); return; }
         
-        // Validar que la caja esté abierta
+        // Validar que la caja est\u00E9 abierta
         modelo.ControlCaja CCActiva = new dao.ControlCajaDAO().obtenerSesionActiva();
         if (CCActiva == null) {
-            utilidades.Mensajes.showMessageDialog(this, "Operación denegada: El turno de caja no está abierto. Abra la caja antes de registrar transacciones.", "Caja Cerrada", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Operaci\u00F3n denegada: El turno de caja no est\u00E1 abierto. Abra la caja antes de registrar transacciones.", "Caja Cerrada", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -500,12 +500,12 @@ public class PanelPuntoVenta extends JPanel {
         String bancoSeleccionado = null;
         if (pnlCamposExtraPago.isVisible()) {
             if (cmbBanco.getSelectedIndex() == 0) {
-                utilidades.Mensajes.showMessageDialog(this, "Debe seleccionar el Banco Emisor para autorizar esta transacción.", "Datos Incompletos", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Debe seleccionar el Banco Emisor para autorizar esta transacci\u00F3n.", "Datos Incompletos", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             String refStr = txtReferenciaPago.getText().trim();
             if (!refStr.matches("^[a-zA-Z0-9]{4,}$")) {
-                utilidades.Mensajes.showMessageDialog(this, "El número de Referencia, Voucher o ACH debe contener al menos 4 caracteres alfanuméricos.", "Datos Inválidos", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "El n\u00FAmero de Referencia, Voucher o ACH debe contener al menos 4 caracteres alfanum\u00E9ricos.", "Datos Inv\u00E1lidos", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             refPago = refStr;
@@ -521,11 +521,11 @@ public class PanelPuntoVenta extends JPanel {
                 dlgBuscar.setVisible(true);
                 
                 if (idClienteActual == 1) {
-                    utilidades.Mensajes.showMessageDialog(this, "Operación cancelada. Se requiere asociar un cliente para registrar el apartado.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Operaci\u00F3n cancelada. Se requiere asociar un cliente para registrar el apartado.", "Aviso", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
             } else {
-                String msg = "No ha seleccionado un cliente para esta venta.<br>¿Desea buscar uno o proseguir como Consumidor Final?";
+                String msg = "No ha seleccionado un cliente para esta venta.<br>\u00BFDesea buscar uno o proseguir como Consumidor Final?";
                 DialogoConfirmacionCliente dlgConfirm = new DialogoConfirmacionCliente((Frame) SwingUtilities.getWindowAncestor(this), msg);
                 dlgConfirm.setVisible(true);
                 
@@ -535,7 +535,7 @@ public class PanelPuntoVenta extends JPanel {
                     dlgBuscar.setVisible(true);
                     
                     if (idClienteActual == 1) {
-                        utilidades.Mensajes.showMessageDialog(this, "Operación cancelada. Se requiere un cliente o seleccionar 'Consumidor Final'.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                        utilidades.Mensajes.showMessageDialog(this, "Operaci\u00F3n cancelada. Se requiere un cliente o seleccionar 'Consumidor Final'.", "Aviso", JOptionPane.WARNING_MESSAGE);
                         return;
                     }
                 } else if (res == 1) { // Consumidor Final
@@ -564,7 +564,7 @@ public class PanelPuntoVenta extends JPanel {
             Object[] fields = {
                 "Total de la Compra: L " + String.format("%,.2f", granTotal),
                 "Abono Inicial (L):", txtAbonoInicial,
-                "Plazo de Pago (Días):", txtDiasPlazo
+                "Plazo de Pago (D\u00EDas):", txtDiasPlazo
             };
 
             int opApartado = utilidades.Mensajes.showConfirmDialog(this, fields, "Detalles del Apartado", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -576,7 +576,7 @@ public class PanelPuntoVenta extends JPanel {
                 abono = Double.parseDouble(txtAbonoInicial.getText().trim());
                 dias = Integer.parseInt(txtDiasPlazo.getText().trim());
             } catch (NumberFormatException ex) {
-                utilidades.Mensajes.showMessageDialog(this, "Verifique los valores numéricos ingresados.", "Error", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Verifique los valores num\u00E9ricos ingresados.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -585,20 +585,20 @@ public class PanelPuntoVenta extends JPanel {
                 return;
             }
             if (dias <= 0) {
-                    utilidades.Mensajes.showMessageDialog(this, "El plazo en días debe ser mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "El plazo en d\u00EDas debe ser mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 // Password signature
                 JPasswordField pfPass = new JPasswordField();
-                int opSign = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Ingrese su contraseña para firmar el apartado:", pfPass}, "Firma Requerida", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                int opSign = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Ingrese su contrase\u00F1a para firmar el apartado:", pfPass}, "Firma Requerida", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (opSign != JOptionPane.OK_OPTION) return;
 
                 String pass = new String(pfPass.getPassword());
                 int idUsuarioAutorizado = dao.obtenerIdUsuarioPorPassword(pass);
 
                 if (idUsuarioAutorizado <= 0) {
-                    utilidades.Mensajes.showMessageDialog(this, "Contraseña incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Contrase\u00F1a incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -663,30 +663,30 @@ public class PanelPuntoVenta extends JPanel {
                             a.getSaldoPendiente(),
                             pago.nombre
                         );
-                        utilidades.Mensajes.showMessageDialog(this, "Apartado registrado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                        utilidades.Mensajes.showMessageDialog(this, "Apartado registrado con \u00E9xito.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
                         if (Desktop.isDesktopSupported()) utilidades.GestorImpresion.procesarImpresion(archivoDestino, utilidades.GestorImpresion.TIPO_TICKET);
                     } catch (Exception ex) {
-                        utilidades.Mensajes.showMessageDialog(this, "El apartado se guardó, pero hubo un error al generar el PDF:\n" + ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
+                        utilidades.Mensajes.showMessageDialog(this, "El apartado se guard\u00F3, pero hubo un error al generar el PDF:\n" + ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
                     }
 
                     modeloTablaVentas.setRowCount(0); recalcularTotales();
                     lblClienteSeleccionado.setText("CONSUMIDOR FINAL"); idClienteActual = 1;
                     txtAbonoInicial.setText("");
                 } else {
-                    utilidades.Mensajes.showMessageDialog(this, "Error crítico al guardar el apartado en la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Error cr\u00EDtico al guardar el apartado en la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             return;
         }
 
         JPasswordField pfPass = new JPasswordField();
-        int opcion = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Ingrese su contraseña de cajero para autorizar la venta:", pfPass}, "Autorizar Cobro", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        int opcion = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Ingrese su contrase\u00F1a de cajero para autorizar la venta:", pfPass}, "Autorizar Cobro", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (opcion != JOptionPane.OK_OPTION) return;
 
         String pass = new String(pfPass.getPassword());
         int idUsuarioAutorizado = dao.obtenerIdUsuarioPorPassword(pass);
 
         if (idUsuarioAutorizado <= 0) {
-            utilidades.Mensajes.showMessageDialog(this, "Contraseña incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Contrase\u00F1a incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -710,7 +710,7 @@ public class PanelPuntoVenta extends JPanel {
                 File archivoDestino = new File("reportes/ventas/Ticket_Venta_" + idVentaGenerada + ".pdf");
 
                try {
-                    // Generamos la fecha exacta del momento en que se presiona el botón cobrar
+                    // Generamos la fecha exacta del momento en que se presiona el bot\u00F3n cobrar
                     String fechaActual = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date());
 
                     utilidades.GeneradorTickets.generarTicketVentaPDF(
@@ -722,10 +722,10 @@ public class PanelPuntoVenta extends JPanel {
                         pago.nombre, 
                         refPago, bancoSeleccionado
                     );
-                    utilidades.Mensajes.showMessageDialog(this, "Venta registrada y comprobante generado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Venta registrada y comprobante generado con \u00E9xito.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
                     if (Desktop.isDesktopSupported()) utilidades.GestorImpresion.procesarImpresion(archivoDestino, utilidades.GestorImpresion.TIPO_TICKET);
                 } catch (Exception ex) {
-                    utilidades.Mensajes.showMessageDialog(this, "La venta se guardó, pero hubo un error al generar el PDF:\n" + ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "La venta se guard\u00F3, pero hubo un error al generar el PDF:\n" + ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
                 }
 
                 modeloTablaVentas.setRowCount(0); recalcularTotales();
@@ -845,10 +845,10 @@ public class PanelPuntoVenta extends JPanel {
         private int resultado = -1; // 0 = Buscar Cliente, 1 = Consumidor Final, 2 = Cancelar
 
         public DialogoConfirmacionCliente(Frame parent, String mensajeInfo) {
-            super(parent, "Confirmación de Cliente", true);
+            super(parent, "Confirmaci\u00F3n de Cliente", true);
             setSize(450, 290);
             setLocationRelativeTo(parent);
-            setUndecorated(true); // Sin marcos para un diseño limpio y moderno
+            setUndecorated(true); // Sin marcos para un dise\u00F1o limpio y moderno
             
             JPanel pnlPrincipal = new JPanel(new BorderLayout(15, 15));
             pnlPrincipal.setBackground(Color.WHITE); // Fondo blanco limpio
@@ -857,17 +857,17 @@ public class PanelPuntoVenta extends JPanel {
                 BorderFactory.createEmptyBorder(25, 25, 25, 25)
             ));
 
-            // Cabecera / Título con Icono
+            // Cabecera / T\u00EDtulo con Icono
             JPanel pnlHeader = new JPanel(new BorderLayout(10, 5));
             pnlHeader.setOpaque(false);
 
-            JLabel lblIcon = new JLabel("👥");
+            JLabel lblIcon = new JLabel("\uD83D\uDC65");
             lblIcon.setFont(new Font("Segoe UI", Font.PLAIN, 46));
             lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
             lblIcon.setForeground(new Color(45, 106, 79));
             pnlHeader.add(lblIcon, BorderLayout.NORTH);
 
-            JLabel lblTitulo = new JLabel("Asociar Cliente a la Transacción");
+            JLabel lblTitulo = new JLabel("Asociar Cliente a la Transacci\u00F3n");
             lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
             lblTitulo.setForeground(new Color(30, 41, 59)); // Gris oscuro moderno
             lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -952,7 +952,7 @@ public class PanelPuntoVenta extends JPanel {
             pnlTitleText.add(lblSubtitle);
             pnlHeader.add(pnlTitleText, BorderLayout.WEST);
 
-            String[] cols = {"ID", "Avatar", "Nombre Completo", "Identidad", "Teléfono"};
+            String[] cols = {"ID", "Avatar", "Nombre Completo", "Identidad", "Tel\u00E9fono"};
             DefaultTableModel mod = new DefaultTableModel(null, cols) { @Override public boolean isCellEditable(int r, int c) { return false; } };
 
             JButton btnNuevo = utilidades.EfectosUI.crearBotonVerde("+ Nuevo Cliente");
@@ -981,7 +981,7 @@ public class PanelPuntoVenta extends JPanel {
                             dialog.pack(); dialog.setLocationRelativeTo(DialogoBuscarClientePOS.this); 
                             dialog.setVisible(true);
                             
-                            // Recargar tabla de clientes (se hace cuando se cierra el diálogo)
+                            // Recargar tabla de clientes (se hace cuando se cierra el di\u00E1logo)
                             mod.setRowCount(0);
                             mod.addRow(new Object[]{1, "C", "CONSUMIDOR FINAL", "0000-0000-00000", "N/A"});
                             int maxId = 1;
@@ -1026,7 +1026,7 @@ public class PanelPuntoVenta extends JPanel {
                 BorderFactory.createEmptyBorder(0, 12, 0, 12)
             ));
             txtB.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-            txtB.putClientProperty("JTextField.placeholderText", "🔍 Escriba el nombre, identidad o DNI del cliente...");
+            txtB.putClientProperty("JTextField.placeholderText", "\uD83D\uDD0D Escriba el nombre, identidad o DNI del cliente...");
             pnlSearch.add(txtB, BorderLayout.CENTER);
             pnlTopWrapper.add(pnlSearch, BorderLayout.SOUTH);
             add(pnlTopWrapper, BorderLayout.NORTH);
@@ -1082,23 +1082,23 @@ public class PanelPuntoVenta extends JPanel {
     // --- MINI BUSCADOR DE PRODUCTOS (CON ALERTA DE STOCK Y FILTRO DE ELIMINADOS) ---
     private class DialogoBuscarProductoPOS extends JDialog {
         public DialogoBuscarProductoPOS(Frame parent) {
-            super(parent, "Catálogo Rápido", true);
+            super(parent, "Cat\u00E1logo R\u00E1pido", true);
             setSize(600, 500); setLocationRelativeTo(parent); getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); setLayout(new BorderLayout(10, 10));
             
             JPanel pnlTop = new JPanel(new BorderLayout()); pnlTop.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); pnlTop.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-            JTextField txtB = new JTextField(); txtB.setBackground(new Color(255, 255, 255)); txtB.setForeground(new Color(45, 45, 45)); txtB.setCaretColor(new Color(45, 45, 45)); txtB.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(180, 208, 192)), BorderFactory.createEmptyBorder(0, 8, 0, 8))); txtB.setFont(new Font("Segoe UI", Font.PLAIN, 14)); txtB.putClientProperty("JTextField.placeholderText", "Buscar por Nombre o Código...");
+            JTextField txtB = new JTextField(); txtB.setBackground(new Color(255, 255, 255)); txtB.setForeground(new Color(45, 45, 45)); txtB.setCaretColor(new Color(45, 45, 45)); txtB.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(180, 208, 192)), BorderFactory.createEmptyBorder(0, 8, 0, 8))); txtB.setFont(new Font("Segoe UI", Font.PLAIN, 14)); txtB.putClientProperty("JTextField.placeholderText", "Buscar por Nombre o C\u00F3digo...");
             pnlTop.add(txtB, BorderLayout.CENTER); add(pnlTop, BorderLayout.NORTH);
             
-            String[] cols = {"ID", "Foto", "Código", "Producto", "Precio", "Stock"};
+            String[] cols = {"ID", "Foto", "C\u00F3digo", "Producto", "Precio", "Stock"};
             DefaultTableModel mod = new DefaultTableModel(null, cols) { @Override public boolean isCellEditable(int r, int c) { return false; } };
             
-            // --- APLICACIÓN DE COLORES EN ROJO SI EL STOCK ES 0 ---
+            // --- APLICACI\u00D3N DE COLORES EN ROJO SI EL STOCK ES 0 ---
             JTable tab = new JTable(mod) {
                 @Override
                 public Component prepareRenderer(javax.swing.table.TableCellRenderer renderer, int row, int column) {
                     Component c = super.prepareRenderer(renderer, row, column);
                     if (!isRowSelected(row)) {
-                        Object valorStock = getValueAt(row, 5); // El stock está en la columna 5
+                        Object valorStock = getValueAt(row, 5); // El stock est\u00E1 en la columna 5
                         int stock = 1;
                         if (valorStock != null) {
                             try { stock = Integer.parseInt(valorStock.toString()); } catch (NumberFormatException e) {}
@@ -1129,8 +1129,8 @@ public class PanelPuntoVenta extends JPanel {
             
             List<Producto> lista = new InventarioDAO().listarProductosActivos();
             for (Producto p : lista) { 
-                // FILTRO ESTRICTO: Si está eliminado lógicamente (eliminado_producto == 1), NO se añade a la lista
-                // Nota: Si tu método en el modelo se llama diferente (ej: isEliminadoProducto()), adáptalo aquí
+                // FILTRO ESTRICTO: Si est\u00E1 eliminado l\u00F3gicamente (eliminado_producto == 1), NO se a\u00F1ade a la lista
+                // Nota: Si tu m\u00E9todo en el modelo se llama diferente (ej: isEliminadoProducto()), ad\u00E1ptalo aqu\u00ED
                 mod.addRow(new Object[]{p.getIdProducto(), p.getImagen_producto(), p.getCodigoBarras(), p.getNombreProducto(), String.format("L %,.2f", p.getPrecioVenta()), p.getStockProducto()}); 
             }
             
@@ -1140,9 +1140,9 @@ public class PanelPuntoVenta extends JPanel {
                         int filaModelo = tab.convertRowIndexToModel(tab.getSelectedRow());
                         int stockActual = (int) mod.getValueAt(filaModelo, 5);
                         
-                        // --- BLOQUEO DE SELECCIÓN SI EL STOCK ES 0 ---
+                        // --- BLOQUEO DE SELECCI\u00D3N SI EL STOCK ES 0 ---
                         if (stockActual <= 0) {
-                            utilidades.Mensajes.showMessageDialog(DialogoBuscarProductoPOS.this, "No puede seleccionar este artículo porque no cuenta con existencias en el inventario.", "Falta de Stock", JOptionPane.WARNING_MESSAGE);
+                            utilidades.Mensajes.showMessageDialog(DialogoBuscarProductoPOS.this, "No puede seleccionar este art\u00EDculo porque no cuenta con existencias en el inventario.", "Falta de Stock", JOptionPane.WARNING_MESSAGE);
                             return;
                         }
                         
@@ -1183,7 +1183,7 @@ public class PanelPuntoVenta extends JPanel {
         }
         if (imgVal == null || imgVal.trim().isEmpty()) return;
 
-        JDialog zoomDialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Previsualización", true);
+        JDialog zoomDialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Previsualizaci\u00F3n", true);
         zoomDialog.setLayout(new BorderLayout()); zoomDialog.getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); 
         int tamano = 600; zoomDialog.setSize(tamano, tamano);
         
@@ -1200,14 +1200,14 @@ public class PanelPuntoVenta extends JPanel {
     }
     
     // =========================================================
-    // MENÚ CONTEXTUAL DE OPCIONES
+    // MEN\u00DA CONTEXTUAL DE OPCIONES
     // =========================================================
     private void mostrarMenuOpciones(Component componente, int x, int y) {
         JPopupMenu menu = new JPopupMenu();
         menu.setBackground(new Color(255, 255, 255)); // Blanco puro
         menu.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225), 1));
 
-        // Inyectamos los nuevos íconos específicos para cada acción
+        // Inyectamos los nuevos \u00EDconos espec\u00EDficos para cada acci\u00F3n
         JMenuItem itemModPrecio = crearMenuItem("Modificar Precio", new Color(13, 110, 253), new IconoPrecio());
         JMenuItem itemModCant = crearMenuItem("Modificar Cantidad", new Color(39, 174, 96), new IconoCantidad());
         JMenuItem itemQuitar = crearMenuItem("Quitar Producto", new Color(227, 0, 15), new IconoBasurero());
@@ -1248,7 +1248,7 @@ public class PanelPuntoVenta extends JPanel {
     }
 
     // =========================================================
-    // ÍCONOS VECTORIALES ESPECÍFICOS (JAVA 2D)
+    // \u00CDCONOS VECTORIALES ESPEC\u00CDFICOS (JAVA 2D)
     // =========================================================
     private class IconoPrecio implements Icon {
         @Override public int getIconWidth() { return 20; }
@@ -1256,14 +1256,14 @@ public class PanelPuntoVenta extends JPanel {
         @Override public void paintIcon(Component c, Graphics g, int x, int y) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(c.getForeground()); // Color dinámico
+            g2.setColor(c.getForeground()); // Color din\u00E1mico
             g2.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
             // Dibujo de una Etiqueta de Precio detallada
             g2.drawRoundRect(x + 2, y + 4, 16, 12, 3, 3); // Cuerpo de la etiqueta
-            g2.drawOval(x + 5, y + 8, 4, 4); // Orificio para el cordón
+            g2.drawOval(x + 5, y + 8, 4, 4); // Orificio para el cord\u00F3n
             
-            // Líneas horizontales simétricas que simulan el valor/código de barras
+            // L\u00EDneas horizontales sim\u00E9tricas que simulan el valor/c\u00F3digo de barras
             g2.setStroke(new BasicStroke(1.5f));
             g2.drawLine(x + 12, y + 7, x + 15, y + 7);
             g2.drawLine(x + 11, y + 11, x + 15, y + 11);
@@ -1277,14 +1277,14 @@ public class PanelPuntoVenta extends JPanel {
         @Override public void paintIcon(Component c, Graphics g, int x, int y) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(c.getForeground()); // Color dinámico
+            g2.setColor(c.getForeground()); // Color din\u00E1mico
             g2.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
-            // Dibujo de dos Cajas Apiladas (Representa inventario físico/unidades)
-            // 1. Caja de atrás (arriba a la derecha)
+            // Dibujo de dos Cajas Apiladas (Representa inventario f\u00EDsico/unidades)
+            // 1. Caja de atr\u00E1s (arriba a la derecha)
             g2.drawRect(x + 7, y + 3, 10, 9);
             
-            // Mascara de fondo claro intermedio para evitar que las líneas se crucen feo
+            // Mascara de fondo claro intermedio para evitar que las l\u00EDneas se crucen feo
             g2.setColor(c.getBackground());
             g2.fillRect(x + 3, y + 8, 10, 9);
             
@@ -1305,7 +1305,7 @@ public class PanelPuntoVenta extends JPanel {
         @Override public void paintIcon(Component c, Graphics g, int x, int y) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(c.getForeground()); // Color dinámico (cambiará de texto oscuro a texto blanco sobre fondo rojo)
+            g2.setColor(c.getForeground()); // Color din\u00E1mico (cambiar\u00E1 de texto oscuro a texto blanco sobre fondo rojo)
             g2.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
             g2.drawRoundRect(x + 8, y + 2, 4, 3, 2, 2);

@@ -45,7 +45,7 @@ public class DialogoHistorialAbonosVenta extends JDialog {
         pnlHeader.add(lblSub, BorderLayout.CENTER);
         add(pnlHeader, BorderLayout.NORTH);
 
-        String[] cols = {"N°", "Fecha y Hora", "Método", "Cajero", "Monto Abonado"};
+        String[] cols = {"N\u00B0", "Fecha y Hora", "M\u00E9todo", "Cajero", "Monto Abonado"};
         modeloAbonos = new DefaultTableModel(null, cols) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
@@ -86,7 +86,7 @@ public class DialogoHistorialAbonosVenta extends JDialog {
             AbonoApartado ab = abonos.get(i);
             totalAbonos += ab.getMontoAbono();
             modeloAbonos.addRow(new Object[]{
-                (i + 1), // Correlative N° instead of DB ID for cleaner look
+                (i + 1), // Correlative N\u00B0 instead of DB ID for cleaner look
                 sdf.format(ab.getFechaAbono()),
                 ab.getNombreMetodo(),
                 ab.getNombreUsuario(),

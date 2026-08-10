@@ -14,7 +14,7 @@ public class DialogoRecuperarPassword extends JDialog {
     private JButton btnCancelar;
     
     public DialogoRecuperarPassword(Frame parent) {
-        super(parent, "Recuperar Contraseña", true);
+        super(parent, "Recuperar Contrase\u00F1a", true);
         iniciarDiseno();
         pack();
         setLocationRelativeTo(parent);
@@ -30,11 +30,11 @@ public class DialogoRecuperarPassword extends JDialog {
         gbc.insets = new Insets(10, 5, 10, 5);
         gbc.gridx = 0;
         
-        JLabel lblTitulo = new JLabel("Recuperación de Contraseña");
+        JLabel lblTitulo = new JLabel("Recuperaci\u00F3n de Contrase\u00F1a");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
         lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         
-        JLabel lblInstrucciones = new JLabel("<html><body>Ingrese su nombre de usuario.<br>Verificaremos su cuenta y enviaremos el código a su correo.</body></html>");
+        JLabel lblInstrucciones = new JLabel("<html><body>Ingrese su nombre de usuario.<br>Verificaremos su cuenta y enviaremos el c\u00F3digo a su correo.</body></html>");
         lblInstrucciones.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         lblInstrucciones.setForeground(utilidades.EfectosUI.COLOR_TEXTO_SUBTITULO);
         
@@ -58,7 +58,7 @@ public class DialogoRecuperarPassword extends JDialog {
         btnCancelar.setFocusPainted(false);
         btnCancelar.addActionListener(e -> dispose());
         
-        btnEnviar = utilidades.EfectosUI.crearBotonVerde("Enviar Código");
+        btnEnviar = utilidades.EfectosUI.crearBotonVerde("Enviar C\u00F3digo");
         btnEnviar.setFont(new Font("Segoe UI", Font.BOLD, 14));
         btnEnviar.setPreferredSize(new Dimension(140, 40));
         btnEnviar.putClientProperty("JButton.buttonType", "roundRect");
@@ -77,7 +77,7 @@ public class DialogoRecuperarPassword extends JDialog {
     private void enviarCodigo() {
         String nombreUsuario = txtUsuario.getText().trim();
         if (nombreUsuario.isEmpty()) {
-            utilidades.Mensajes.showMessageDialog(this, "Por favor ingrese su nombre de usuario.", "Atención", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Por favor ingrese su nombre de usuario.", "Atenci\u00F3n", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -124,7 +124,7 @@ public class DialogoRecuperarPassword extends JDialog {
                     if (exito) {
                         String ofuscado = correoUsuario.replaceAll("(^[^@]{2}|(?!^)\\G)[^@]", "$1*");
                         utilidades.Mensajes.showMessageDialog(DialogoRecuperarPassword.this, 
-                            "Se ha enviado un código de recuperación a su correo: " + ofuscado, 
+                            "Se ha enviado un c\u00F3digo de recuperaci\u00F3n a su correo: " + ofuscado, 
                             "Correo Enviado", JOptionPane.INFORMATION_MESSAGE);
                         dispose();
                         
@@ -136,16 +136,16 @@ public class DialogoRecuperarPassword extends JDialog {
                     } else {
                         if (usuarioEncontrado == null) {
                             utilidades.Mensajes.showMessageDialog(DialogoRecuperarPassword.this, 
-                                "No se encontró ningún usuario con ese nombre.", 
+                                "No se encontr\u00F3 ning\u00FAn usuario con ese nombre.", 
                                 "Error", JOptionPane.ERROR_MESSAGE);
                         } else if (sinCorreo) {
                             utilidades.Mensajes.showMessageDialog(DialogoRecuperarPassword.this, 
-                                "El usuario no tiene un correo electrónico enlazado.\nPor favor contacte al administrador.", 
+                                "El usuario no tiene un correo electr\u00F3nico enlazado.\nPor favor contacte al administrador.", 
                                 "Sin Correo Enlazado", JOptionPane.WARNING_MESSAGE);
                         } else {
                             utilidades.Mensajes.showMessageDialog(DialogoRecuperarPassword.this, 
-                                "Hubo un error al enviar el correo. Por favor intente más tarde.", 
-                                "Error de Envío", JOptionPane.ERROR_MESSAGE);
+                                "Hubo un error al enviar el correo. Por favor intente m\u00E1s tarde.", 
+                                "Error de Env\u00EDo", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                 } catch (Exception ex) {

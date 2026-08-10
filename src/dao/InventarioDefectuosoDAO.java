@@ -104,7 +104,7 @@ public class InventarioDefectuosoDAO {
                     if (motivo == null || motivo.trim().isEmpty()) {
                         motivo = rs.getString("observacion_garantia");
                     }
-                    fila.put("motivo", motivo != null ? motivo : "Sin observación");
+                    fila.put("motivo", motivo != null ? motivo : "Sin observaci\u00F3n");
                     fila.put("resolucion", rs.getString("resolucion_garantia"));
                     fila.put("foto", rs.getString("foto_garantia"));
                     fila.put("fecha_envio", rs.getTimestamp("fecha_envio_proveedor"));

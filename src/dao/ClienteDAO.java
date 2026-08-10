@@ -56,7 +56,7 @@ public class ClienteDAO {
             ps.setString(3, c.getApellidoCliente());
             ps.setString(4, c.getTelefonoCliente());
             ps.setString(5, c.getCorreoCliente());
-            // El estado por defecto será 1 (Activo) en la inserción
+            // El estado por defecto ser\u00E1 1 (Activo) en la inserci\u00F3n
 
             return ps.executeUpdate() > 0;
 
@@ -89,7 +89,7 @@ public class ClienteDAO {
         }
     }
 
-    // 4. ELIMINACIÓN LÓGICA (SOFT DELETE)
+    // 4. ELIMINACI\u00D3N L\u00D3GICA (SOFT DELETE)
     public boolean desactivarCliente(int idCliente) {
         String sql = "UPDATE CLIENTES SET estado_cliente = 0 WHERE id_cliente = ?";
 
@@ -117,7 +117,7 @@ public class ClienteDAO {
             ps.setInt(2, idExcluir);
 
             try (ResultSet rs = ps.executeQuery()) {
-                return rs.next(); // Retorna true si encontró a alguien
+                return rs.next(); // Retorna true si encontr\u00F3 a alguien
             }
 
         } catch (SQLException e) {
@@ -126,7 +126,7 @@ public class ClienteDAO {
         }
     }
     
-    // 6. CARGAR IDENTIDADES EN RAM PARA VALIDACIÓN INSTANTÁNEA
+    // 6. CARGAR IDENTIDADES EN RAM PARA VALIDACI\u00D3N INSTANT\u00C1NEA
     public java.util.Set<String> obtenerIdentidadesEnRam() {
         java.util.Set<String> identidades = new java.util.HashSet<>();
         String sql = "SELECT identidad_cliente FROM CLIENTES WHERE estado_cliente = 1";

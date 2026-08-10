@@ -17,6 +17,6 @@ public class Rol {
 
     @Override
     public String toString() {
-        return nombreRol; // Útil para mostrar en JComboBox
+        return nombreRol; // \u00DAtil para mostrar en JComboBox
     }
 }

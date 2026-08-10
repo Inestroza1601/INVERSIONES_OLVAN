@@ -12,18 +12,18 @@ public class PanelAdministracion extends JPanel {
     private JButton btnUsuarios;
     private JButton btnReportes;
     
-    // Contenedor dinámico donde se mostrarán los sub-paneles
+    // Contenedor din\u00E1mico donde se mostrar\u00E1n los sub-paneles
     private JPanel panelContenedorAdmon;
 
     public PanelAdministracion() {
-        initComponents(); // Deja que NetBeans cargue su panel vacío
-        iniciarDiseno();  // Ejecuta nuestro código manual para sobreescribirlo
+        initComponents(); // Deja que NetBeans cargue su panel vac\u00EDo
+        iniciarDiseno();  // Ejecuta nuestro c\u00F3digo manual para sobreescribirlo
     }
 
     private JButton botonActivo = null;
 
     /**
-     * Este es NUESTRO método para armar la pantalla, esquivando el bloqueo de NetBeans.
+     * Este es NUESTRO m\u00E9todo para armar la pantalla, esquivando el bloqueo de NetBeans.
      */
     private void iniciarDiseno() {
         this.removeAll();
@@ -41,11 +41,11 @@ public class PanelAdministracion extends JPanel {
         panelSubMenu.setBackground(new Color(213, 233, 222));
         panelSubMenu.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(190, 215, 200)));
 
-        // 3. Botones del sub-menú (mismo tamaño)
+        // 3. Botones del sub-men\u00FA (mismo tama\u00F1o)
         btnDatosEmpresa = utilidades.EfectosUI.crearBotonVerde("Datos de Empresa");
         btnUsuarios = utilidades.EfectosUI.crearBotonVerde("Gestion de Usuarios");
-        JButton btnRoles = utilidades.EfectosUI.crearBotonVerde("Gestión de Permisos");
-        btnReportes = utilidades.EfectosUI.crearBotonVerde("Generación de Reportes");
+        JButton btnRoles = utilidades.EfectosUI.crearBotonVerde("Gesti\u00F3n de Permisos");
+        btnReportes = utilidades.EfectosUI.crearBotonVerde("Generaci\u00F3n de Reportes");
 
         Dimension tamBoton = new Dimension(220, 50); // Reducido un poco para caber los 4
         btnDatosEmpresa.setPreferredSize(tamBoton);
@@ -66,7 +66,7 @@ public class PanelAdministracion extends JPanel {
         this.add(panelContenedorAdmon, BorderLayout.CENTER);
         this.add(panelSubMenu, BorderLayout.SOUTH);
 
-        // 4. Configurar los Eventos con Carga Asíncrona
+        // 4. Configurar los Eventos con Carga As\u00EDncrona
         btnDatosEmpresa.addActionListener(e -> {
             cambiarBotonActivo(btnDatosEmpresa);
             abrirSubPanelAsync(() -> new PanelDatosEmpresa());
@@ -106,7 +106,7 @@ public class PanelAdministracion extends JPanel {
     public void abrirSubPanelAsync(java.util.function.Supplier<JPanel> panelSupplier) {
         panelContenedorAdmon.removeAll();
         
-        PanelCargaOverlay loader = new PanelCargaOverlay("Cargando módulo...");
+        PanelCargaOverlay loader = new PanelCargaOverlay("Cargando m\u00F3dulo...");
         panelContenedorAdmon.add(loader, BorderLayout.CENTER);
         panelContenedorAdmon.revalidate();
         panelContenedorAdmon.repaint();
@@ -128,7 +128,7 @@ public class PanelAdministracion extends JPanel {
                     e.printStackTrace();
                     loader.detenerAnimacion();
                     panelContenedorAdmon.removeAll();
-                    JLabel lblError = new JLabel("Error al cargar el módulo: " + e.getMessage());
+                    JLabel lblError = new JLabel("Error al cargar el m\u00F3dulo: " + e.getMessage());
                     lblError.setHorizontalAlignment(SwingConstants.CENTER);
                     lblError.setForeground(Color.RED);
                     panelContenedorAdmon.add(lblError, BorderLayout.CENTER);
@@ -141,7 +141,7 @@ public class PanelAdministracion extends JPanel {
     }
 
     /**
-     * Método interno para cambiar el panel central de la administración
+     * M\u00E9todo interno para cambiar el panel central de la administraci\u00F3n
      */
     private void mostrarSubPanel(JPanel nuevoPanel) {
         panelContenedorAdmon.removeAll();

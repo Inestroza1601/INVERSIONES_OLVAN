@@ -79,7 +79,7 @@ public class DialogoRegistrarAbono extends JDialog {
         lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         
         String cliente = ap.getNombreCliente() + " " + (ap.getApellidoCliente() != null ? ap.getApellidoCliente() : "");
-        JLabel lblCliente = new JLabel("Cliente: " + cliente + " | Fecha Límite: " + 
+        JLabel lblCliente = new JLabel("Cliente: " + cliente + " | Fecha L\u00EDmite: " + 
             (ap.getFechaLimite() != null ? new SimpleDateFormat("dd/MM/yyyy").format(ap.getFechaLimite()) : "N/A"));
         lblCliente.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         lblCliente.setForeground(utilidades.EfectosUI.COLOR_TEXTO_SUBTITULO);
@@ -135,7 +135,7 @@ public class DialogoRegistrarAbono extends JDialog {
         JPanel pnlHist = new JPanel(new BorderLayout());
         pnlHist.setBackground(Color.WHITE);
         pnlHist.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), "Historial de Pagos"));
-        modeloAbonos = new DefaultTableModel(null, new String[]{"No.", "Fecha", "Monto", "Método"}) {
+        modeloAbonos = new DefaultTableModel(null, new String[]{"No.", "Fecha", "Monto", "M\u00E9todo"}) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         tablaAbonos = new JTable(modeloAbonos);
@@ -178,11 +178,11 @@ public class DialogoRegistrarAbono extends JDialog {
             @Override
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 char c = evt.getKeyChar();
-                // Permitir solo números y punto decimal
+                // Permitir solo n\u00FAmeros y punto decimal
                 if (!Character.isDigit(c) && c != '.') {
                     evt.consume();
                 }
-                // Prevenir múltiples puntos
+                // Prevenir m\u00FAltiples puntos
                 if (c == '.' && txtAbono.getText().contains(".")) {
                     evt.consume();
                 }
@@ -199,9 +199,9 @@ public class DialogoRegistrarAbono extends JDialog {
         });
         pnlForm.add(txtAbono, gbc);
         
-        // Método
+        // M\u00E9todo
         gbc.gridy = 2;
-        pnlForm.add(new JLabel("Método de Pago:"), gbc);
+        pnlForm.add(new JLabel("M\u00E9todo de Pago:"), gbc);
         
         gbc.gridy = 3;
         cmbMetodo = new JComboBox<>();
@@ -341,33 +341,33 @@ public class DialogoRegistrarAbono extends JDialog {
                 ref = null; banco = null;
             } else {
                 if (ref.isEmpty()) {
-                    utilidades.Mensajes.showMessageDialog(this, "Debe ingresar el número de referencia para este método de pago.", "Error", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Debe ingresar el n\u00FAmero de referencia para este m\u00E9todo de pago.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 if (banco == null) {
-                    utilidades.Mensajes.showMessageDialog(this, "Debe seleccionar un banco para este método de pago.", "Error", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Debe seleccionar un banco para este m\u00E9todo de pago.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
 
             JPasswordField pfPass = new JPasswordField();
-            int opSign = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Ingrese contraseña de cajero para autorizar el abono:", pfPass}, "Firma Autorización", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            int opSign = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Ingrese contrase\u00F1a de cajero para autorizar el abono:", pfPass}, "Firma Autorizaci\u00F3n", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (opSign != JOptionPane.OK_OPTION) return;
 
             String pass = new String(pfPass.getPassword());
             int idUserFirma = new KardexDAO().validarFirmaUsuario(pass);
 
             if (idUserFirma <= 0) {
-                utilidades.Mensajes.showMessageDialog(this, "Contraseña incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Contrase\u00F1a incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             if (dao.registrarAbono(idApartado, abono, idMetodo, idUserFirma, ref, banco)) {
-                utilidades.Mensajes.showMessageDialog(this, "Abono registrado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Abono registrado con \u00E9xito.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
                 this.exito = true;
                 
                 // Imprimir comprobante
-                int optImp = utilidades.Mensajes.showConfirmDialog(this, "¿Desea imprimir el comprobante del abono?", "Imprimir", JOptionPane.YES_NO_OPTION);
+                int optImp = utilidades.Mensajes.showConfirmDialog(this, "\u00BFDesea imprimir el comprobante del abono?", "Imprimir", JOptionPane.YES_NO_OPTION);
                 if (optImp == JOptionPane.YES_OPTION) {
                     try {
                         java.io.File dir = new java.io.File("reportes/abonos");
@@ -396,7 +396,7 @@ public class DialogoRegistrarAbono extends JDialog {
             }
 
         } catch (NumberFormatException ex) {
-            utilidades.Mensajes.showMessageDialog(this, "Monto de abono inválido.", "Error", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Monto de abono inv\u00E1lido.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

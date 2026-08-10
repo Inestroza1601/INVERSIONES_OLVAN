@@ -39,7 +39,7 @@ public class PanelFormularioCliente extends JPanel {
         this.panelPadre = panelPadre;
         this.clienteAEditar = cliente;
         
-        // 1. CARGAMOS LA RAM ANTES DE INICIAR EL DISEÑO
+        // 1. CARGAMOS LA RAM ANTES DE INICIAR EL DISE\u00D1O
         ClienteDAO dao = new ClienteDAO();
         identidadesEnRam = dao.obtenerIdentidadesEnRam();
         
@@ -74,7 +74,7 @@ public class PanelFormularioCliente extends JPanel {
         gbc.insets = new Insets(10, 5, 5, 5); 
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // 2. CONFIGURACIÓN DE LAS MÁSCARAS
+        // 2. CONFIGURACI\u00D3N DE LAS M\u00C1SCARAS
         try {
             MaskFormatter maskDNI = new MaskFormatter("####-####-#####");
             maskDNI.setPlaceholderCharacter('_');
@@ -84,7 +84,7 @@ public class PanelFormularioCliente extends JPanel {
             maskTel.setPlaceholderCharacter('_');
             txtTelefono = new JFormattedTextField(maskTel);
         } catch (ParseException e) {
-            // Fallback por si hay error en la máscara
+            // Fallback por si hay error en la m\u00E1scara
             txtIdentidad = new JFormattedTextField();
             txtTelefono = new JFormattedTextField();
         }
@@ -107,8 +107,8 @@ public class PanelFormularioCliente extends JPanel {
         
         agregarFila(pnlForm, gbc, 2, "Nombre:", txtNombre);
         agregarFila(pnlForm, gbc, 3, "Apellido:", txtApellido);
-        agregarFila(pnlForm, gbc, 4, "Teléfono:", txtTelefono);
-        agregarFila(pnlForm, gbc, 5, "Correo Electrónico:", txtCorreo);
+        agregarFila(pnlForm, gbc, 4, "Tel\u00E9fono:", txtTelefono);
+        agregarFila(pnlForm, gbc, 5, "Correo Electr\u00F3nico:", txtCorreo);
 
         this.add(pnlForm, BorderLayout.CENTER);
 
@@ -158,23 +158,23 @@ public class PanelFormularioCliente extends JPanel {
     }
 
     private void validarIdentidad() {
-        // 3. LIMPIAMOS EL TEXTO PARA LA VALIDACIÓN (Quitamos guiones y guiones bajos)
+        // 3. LIMPIAMOS EL TEXTO PARA LA VALIDACI\u00D3N (Quitamos guiones y guiones bajos)
         String identidadRaw = txtIdentidad.getText().replace("-", "").replace("_", "").trim();
         
-        // Si no ha escrito los 13 dígitos, restauramos visualmente
+        // Si no ha escrito los 13 d\u00EDgitos, restauramos visualmente
         if (identidadRaw.isEmpty() || identidadRaw.length() < 13) {
             restaurarEstiloIdentidad();
             btnGuardar.setEnabled(true);
             return;
         }
 
-        //  VERIFICACIÓN EN RAM
+        //  VERIFICACI\u00D3N EN RAM
         if (identidadesEnRam.contains(identidadRaw)) {
             txtIdentidad.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(227, 0, 15), 2), // Rojo Logo
                 BorderFactory.createEmptyBorder(4, 7, 4, 7)
             ));
-            lblErrorIdentidad.setText("Esta identidad ya está registrada.");
+            lblErrorIdentidad.setText("Esta identidad ya est\u00E1 registrada.");
             btnGuardar.setEnabled(false); 
         } else {
             restaurarEstiloIdentidad();
@@ -200,9 +200,9 @@ public class PanelFormularioCliente extends JPanel {
             return;
         }
 
-        // Validamos que haya escrito los 13 números completos
+        // Validamos que haya escrito los 13 n\u00FAmeros completos
         if (identidadLimpia.length() != 13) {
-            utilidades.Mensajes.showMessageDialog(this, "La identidad debe tener exactamente 13 dígitos.", "Formato Inválido", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "La identidad debe tener exactamente 13 d\u00EDgitos.", "Formato Inv\u00E1lido", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -210,7 +210,7 @@ public class PanelFormularioCliente extends JPanel {
         c.setIdentidadCliente(identidadLimpia);
         c.setNombreCliente(txtNombre.getText().trim());
         c.setApellidoCliente(txtApellido.getText().trim());
-        // Solo guardamos el teléfono si escribió algo
+        // Solo guardamos el tel\u00E9fono si escribi\u00F3 algo
         c.setTelefonoCliente(telefonoLimpio.isEmpty() ? "" : telefonoLimpio);
         c.setCorreoCliente(txtCorreo.getText().trim());
 

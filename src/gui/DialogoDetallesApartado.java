@@ -57,7 +57,7 @@ public class DialogoDetallesApartado extends JDialog {
         pnlInfo.add(crearLabelInfo("Cliente:", cli, fBold, fPlain));
         pnlInfo.add(crearLabelInfo("Estado:", ap.getEstadoApartado(), fBold, fPlain));
         pnlInfo.add(crearLabelInfo("Fecha Apartado:", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(ap.getFechaApartado()), fBold, fPlain));
-        pnlInfo.add(crearLabelInfo("Fecha Límite:", (ap.getFechaLimite() != null ? new SimpleDateFormat("dd/MM/yyyy").format(ap.getFechaLimite()) : "N/A"), fBold, fPlain));
+        pnlInfo.add(crearLabelInfo("Fecha L\u00EDmite:", (ap.getFechaLimite() != null ? new SimpleDateFormat("dd/MM/yyyy").format(ap.getFechaLimite()) : "N/A"), fBold, fPlain));
         pnlInfo.add(crearLabelInfo("Total Apartado:", String.format("L %,.2f", ap.getTotalApartado()), fBold, fPlain));
         pnlInfo.add(crearLabelInfo("Saldo Pendiente:", String.format("L %,.2f", ap.getSaldoPendiente()), fBold, fPlain));
 
@@ -69,7 +69,7 @@ public class DialogoDetallesApartado extends JDialog {
         tabs.setBackground(Color.WHITE);
         
         // Tab Productos
-        String[] colP = {"Código", "Producto", "Cantidad", "Precio Unitario", "Subtotal"};
+        String[] colP = {"C\u00F3digo", "Producto", "Cantidad", "Precio Unitario", "Subtotal"};
         DefaultTableModel modP = new DefaultTableModel(null, colP) { @Override public boolean isCellEditable(int r, int c) { return false; } };
         tablaProductos = new JTable(modP); 
         tablaProductos.setRowHeight(25);
@@ -92,7 +92,7 @@ public class DialogoDetallesApartado extends JDialog {
         tabs.addTab("Productos", pnlProd);
 
         // Tab Abonos
-        String[] colA = {"ID Abono", "Fecha Abono", "Monto", "Método", "Cajero"};
+        String[] colA = {"ID Abono", "Fecha Abono", "Monto", "M\u00E9todo", "Cajero"};
         modeloAbonos = new DefaultTableModel(null, colA) { @Override public boolean isCellEditable(int r, int c) { return false; } };
         tablaAbonos = new JTable(modeloAbonos); 
         tablaAbonos.setRowHeight(25);
@@ -191,7 +191,7 @@ public class DialogoDetallesApartado extends JDialog {
         double monto = Double.parseDouble(montoStr.replace("L ", "").replace(",", "").trim());
         String metodo = (String) tablaAbonos.getValueAt(row, 3);
         
-        // Buscar el abono original para obtener su saldo histórico
+        // Buscar el abono original para obtener su saldo hist\u00F3rico
         modelo.AbonoApartado abonoOrig = null;
         double saldoDinamico = ap.getTotalApartado();
         
@@ -204,7 +204,7 @@ public class DialogoDetallesApartado extends JDialog {
         }
         
         if (abonoOrig == null) {
-            utilidades.Mensajes.showMessageDialog(this, "Error: No se encontró la información histórica del abono.", "Error", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Error: No se encontr\u00F3 la informaci\u00F3n hist\u00F3rica del abono.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 

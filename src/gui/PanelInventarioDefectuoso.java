@@ -61,7 +61,7 @@ public class PanelInventarioDefectuoso extends JPanel {
         lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         panelCabecera.add(lblTitulo, BorderLayout.WEST);
 
-        // Barra de búsqueda
+        // Barra de b\u00FAsqueda
         JPanel pnlBusqueda = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         pnlBusqueda.setOpaque(false);
         JLabel lblBuscar = new JLabel("Buscar:");
@@ -78,7 +78,7 @@ public class PanelInventarioDefectuoso extends JPanel {
         panelCabecera.add(pnlBusqueda, BorderLayout.EAST);
 
         // Tabla
-        String[] columnas = { "ID Producto", "Imagen", "Código Inv. Defectuoso", "Nombre del Producto", "Cliente", "Estado",
+        String[] columnas = { "ID Producto", "Imagen", "C\u00F3digo Inv. Defectuoso", "Nombre del Producto", "Cliente", "Estado",
                 "Cantidad Defectuosa", "Identidad", "ID Defectuoso" };
         modeloTabla = new DefaultTableModel(null, columnas) {
             @Override
@@ -239,7 +239,7 @@ public class PanelInventarioDefectuoso extends JPanel {
         menu.setBackground(new Color(255, 255, 255));
         menu.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225), 1));
 
-        JMenuItem itemDetalles = crearMenuItem("Ver Detalles de Daños", new Color(13, 110, 253), new IconoOjo());
+        JMenuItem itemDetalles = crearMenuItem("Ver Detalles de Da\u00F1os", new Color(13, 110, 253), new IconoOjo());
         JMenuItem itemEnviar = crearMenuItem("Marcar como 'Enviado a Proveedor'", new Color(243, 156, 18),
                 new IconoEnvio());
         JMenuItem itemReingresar = crearMenuItem("Recibir de Proveedor (Reingresar a Inv. Normal)",
@@ -469,7 +469,7 @@ public class PanelInventarioDefectuoso extends JPanel {
                         } else {
                             list.add(b64);
                         }
-                        new DialogoVisorImagen(dialog, "Visor de Fotografía", list, 0).setVisible(true);
+                        new DialogoVisorImagen(dialog, "Visor de Fotograf\u00EDa", list, 0).setVisible(true);
                     }
                 }
             });
@@ -487,18 +487,18 @@ public class PanelInventarioDefectuoso extends JPanel {
                 pnlInfo.add(Box.createVerticalStrut(15));
             }
             
-            pnlInfo.add(crearEtiquetaDetalle("Motivo del Daño", d.get("motivo").toString()));
+            pnlInfo.add(crearEtiquetaDetalle("Motivo del Da\u00F1o", d.get("motivo").toString()));
             pnlInfo.add(Box.createVerticalStrut(15));
-            pnlInfo.add(crearEtiquetaDetalle("Resolución de Garantía", d.get("resolucion").toString()));
+            pnlInfo.add(crearEtiquetaDetalle("Resoluci\u00F3n de Garant\u00EDa", d.get("resolucion").toString()));
             pnlInfo.add(Box.createVerticalStrut(15));
             
             StringBuilder timeline = new StringBuilder();
-            timeline.append("• ").append(d.get("fecha")).append(" (Ingreso)<br>");
+            timeline.append("\u2022 ").append(d.get("fecha")).append(" (Ingreso)<br>");
             if (d.get("fecha_envio") != null) {
-                timeline.append("• ").append(d.get("fecha_envio")).append(" (Enviado al Proveedor)<br>");
+                timeline.append("\u2022 ").append(d.get("fecha_envio")).append(" (Enviado al Proveedor)<br>");
             }
             if (d.get("fecha_recibido") != null) {
-                timeline.append("• ").append(d.get("fecha_recibido")).append(" (Recibido del Proveedor)<br>");
+                timeline.append("\u2022 ").append(d.get("fecha_recibido")).append(" (Recibido del Proveedor)<br>");
             }
             pnlInfo.add(crearEtiquetaDetalle("Historial de Movimientos", timeline.toString()));
             
@@ -512,7 +512,7 @@ public class PanelInventarioDefectuoso extends JPanel {
             dialog.add(scrollCard, BorderLayout.CENTER);
             dialog.add(scrollCard, BorderLayout.CENTER);
         } else {
-            String[] colD = { "Imagen", "Fecha de Ingreso", "Motivo del Daño", "Resolución Garantía", "Base64" };
+            String[] colD = { "Imagen", "Fecha de Ingreso", "Motivo del Da\u00F1o", "Resoluci\u00F3n Garant\u00EDa", "Base64" };
             DefaultTableModel modD = new DefaultTableModel(null, colD) {
                 @Override
                 public boolean isCellEditable(int r, int c) {
@@ -567,7 +567,7 @@ public class PanelInventarioDefectuoso extends JPanel {
                             } else {
                                 list.add(b64);
                             }
-                            new DialogoVisorImagen(dialog, "Visor de Fotografía", list, 0).setVisible(true);
+                            new DialogoVisorImagen(dialog, "Visor de Fotograf\u00EDa", list, 0).setVisible(true);
                         }
                     }
                 }
@@ -614,7 +614,7 @@ public class PanelInventarioDefectuoso extends JPanel {
         }
 
         if (estadoActual.equals(nuevoEstado)) {
-            utilidades.Mensajes.showMessageDialog(this, "El producto ya está en ese estado.", "Información",
+            utilidades.Mensajes.showMessageDialog(this, "El producto ya est\u00E1 en ese estado.", "Informaci\u00F3n",
                     JOptionPane.INFORMATION_MESSAGE);
             return;
         }
@@ -625,14 +625,14 @@ public class PanelInventarioDefectuoso extends JPanel {
         int idDefectuoso = (int) modeloTabla.getValueAt(fila, 8);
 
         int confirm = utilidades.Mensajes.showConfirmDialog(this,
-                "¿Estás seguro de marcar los productos defectuosos '" + producto + "' como '" + nuevoEstado + "'?",
+                "\u00BFEst\u00E1s seguro de marcar los productos defectuosos '" + producto + "' como '" + nuevoEstado + "'?",
                 "Confirmar Cambio de Estado", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (confirm == JOptionPane.YES_OPTION) {
             int idUsuario = SesionGlobal.getUsuarioActual() != null ? SesionGlobal.getUsuarioActual().getIdUsuario()
                     : 1;
             if (dao.cambiarEstadoMermas(idProducto, estadoActual, nuevoEstado, idUsuario, kardexRef, cliente, idDefectuoso)) {
-                utilidades.Mensajes.showMessageDialog(this, "Estado actualizado con éxito.", "Éxito",
+                utilidades.Mensajes.showMessageDialog(this, "Estado actualizado con \u00E9xito.", "\u00C9xito",
                         JOptionPane.INFORMATION_MESSAGE);
                 cargarDatos();
             } else {
@@ -656,13 +656,13 @@ public class PanelInventarioDefectuoso extends JPanel {
         int idDefectuoso = (int) modeloTabla.getValueAt(fila, 8);
 
         int confirm = utilidades.Mensajes.showConfirmDialog(this,
-                "Esta acción sacará " + cant + " unidad(es) de '" + producto
-                        + "' del Inventario Defectuoso y las agregará al Inventario Normal para la venta.\n\n¿Deseas continuar?",
+                "Esta acci\u00F3n sacar\u00E1 " + cant + " unidad(es) de '" + producto
+                        + "' del Inventario Defectuoso y las agregar\u00E1 al Inventario Normal para la venta.\n\n\u00BFDeseas continuar?",
                 "Confirmar Reingreso", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (confirm == JOptionPane.YES_OPTION) {
             String observacion = JOptionPane.showInputDialog(this,
-                    "Ingrese una observación o motivo para el reingreso:",
+                    "Ingrese una observaci\u00F3n o motivo para el reingreso:",
                     "Reingresar Producto", JOptionPane.QUESTION_MESSAGE);
 
             if (observacion != null && !observacion.trim().isEmpty()) {
@@ -670,7 +670,7 @@ public class PanelInventarioDefectuoso extends JPanel {
                         : 1;
                 try {
                     if (dao.reingresarInventario(idProducto, estadoActual, idUsuario, observacion.trim(), cliente, idDefectuoso)) {
-                        utilidades.Mensajes.showMessageDialog(this, "Productos reingresados exitosamente.", "Éxito",
+                        utilidades.Mensajes.showMessageDialog(this, "Productos reingresados exitosamente.", "\u00C9xito",
                                 JOptionPane.INFORMATION_MESSAGE);
                         cargarDatos();
                     } else {
@@ -681,7 +681,7 @@ public class PanelInventarioDefectuoso extends JPanel {
                     utilidades.Mensajes.showMessageDialog(this, "Error de base de datos:\n" + ex.getMessage(), "Fallo", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                utilidades.Mensajes.showMessageDialog(this, "Debe ingresar una observación para poder reingresar la mercancía.", "Campo Obligatorio", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Debe ingresar una observaci\u00F3n para poder reingresar la mercanc\u00EDa.", "Campo Obligatorio", JOptionPane.WARNING_MESSAGE);
             }
         }
     }
@@ -714,7 +714,7 @@ public class PanelInventarioDefectuoso extends JPanel {
                     DialogoEntregarDefectuoso dialog = get();
                     dialog.setVisible(true);
                     if (dialog.isExito()) {
-                        utilidades.Mensajes.showMessageDialog(PanelInventarioDefectuoso.this, "Garantía finalizada. Producto entregado.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                        utilidades.Mensajes.showMessageDialog(PanelInventarioDefectuoso.this, "Garant\u00EDa finalizada. Producto entregado.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
                         cargarDatos();
                     }
                 } catch (Exception ex) {

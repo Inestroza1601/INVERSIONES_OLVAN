@@ -16,7 +16,7 @@ public class ActualizarPruebaBase64 {
         
         File file = new File("image/logo_inversionesOlvan.png");
         if (!file.exists()) {
-            System.out.println("Error: No se encontró la imagen en " + file.getAbsolutePath());
+            System.out.println("Error: No se encontr\u00F3 la imagen en " + file.getAbsolutePath());
             return;
         }
         
@@ -60,7 +60,7 @@ public class ActualizarPruebaBase64 {
                         
                         contador++;
                     }
-                    System.out.println("¡" + contador + " productos actualizados con la imagen Base64!");
+                    System.out.println("\u00A1" + contador + " productos actualizados con la imagen Base64!");
                 }
             }
         } catch (Exception e) {

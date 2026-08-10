@@ -16,7 +16,7 @@ public class KardexDAO {
     }
 
     // ==========================================
-    // 1. LÓGICA DE FIRMA Y SEGURIDAD (SHA-256)
+    // 1. L\u00D3GICA DE FIRMA Y SEGURIDAD (SHA-256)
     // ==========================================
     
     private String encriptarSHA256(String password) {
@@ -31,12 +31,12 @@ public class KardexDAO {
             }
             return hexString.toString();
         } catch (Exception e) {
-            throw new RuntimeException("Error al encriptar contraseña.", e);
+            throw new RuntimeException("Error al encriptar contrase\u00F1a.", e);
         }
     }
 
     /**
-     * Valida la firma SOLO con la contraseña. 
+     * Valida la firma SOLO con la contrase\u00F1a. 
      * Encripta lo que el usuario escribe y busca ese Hash en la BD.
      */
     public int validarFirmaUsuario(String passwordPlana) {
@@ -110,7 +110,7 @@ public class KardexDAO {
 
         } catch (SQLException e) {
             if (con != null) try { con.rollback(); } catch (SQLException ex) { }
-            System.err.println("Error en transacción de Kardex: " + e.getMessage());
+            System.err.println("Error en transacci\u00F3n de Kardex: " + e.getMessage());
             return false;
         } finally {
             if (con != null) try { con.setAutoCommit(true); con.close(); } catch (SQLException e) { }

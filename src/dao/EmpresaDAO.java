@@ -17,7 +17,7 @@ public class EmpresaDAO {
     }
 
     /**
-     * Trae los datos de una empresa ESPECÍFICA por su ID.
+     * Trae los datos de una empresa ESPEC\u00CDFICA por su ID.
      */
     public Empresa obtenerDatos(int idEmpresa) {
         Empresa emp = null;
@@ -40,7 +40,7 @@ public class EmpresaDAO {
     }
 
     /**
-     * Método inteligente: Prioriza la sesión actual, si no hay, busca el TOP 1 como respaldo.
+     * M\u00E9todo inteligente: Prioriza la sesi\u00F3n actual, si no hay, busca el TOP 1 como respaldo.
      */
     public Empresa obtenerDatos() {
         // 1. Si hay una empresa cargada en memoria, buscamos esa misma para refrescar datos
@@ -66,14 +66,14 @@ public class EmpresaDAO {
     }
 
     /**
-     * Extrae la lógica de mapeo para mantener el código limpio y no repetirlo.
+     * Extrae la l\u00F3gica de mapeo para mantener el c\u00F3digo limpio y no repetirlo.
      */
     private Empresa mapearEmpresa(ResultSet rs) throws SQLException {
         Empresa emp = new Empresa();
         emp.setIdEmpresa(rs.getInt("id_empresa"));
         emp.setNombreEmpresa(rs.getString("nombre_empresa"));
         emp.setRtnEmpresa(rs.getString("rtn_empresa"));
-        emp.setDuenoEmpresa(rs.getString("dueño_empresa")); 
+        emp.setDuenoEmpresa(rs.getString("due\u00F1o_empresa")); 
         emp.setDireccionEmpresa(rs.getString("direccion_empresa"));
         emp.setEstadoEmpresa(rs.getBoolean("estado_empresa"));
         emp.setHabilitarFacturacion(rs.getBoolean("habilitar_facturacion_empresa"));
@@ -90,7 +90,7 @@ public class EmpresaDAO {
         emp.setMensajeTicketPieCotizacion(rs.getString("mensaje_ticket_pie_cotizacion"));
         emp.setImagen_logo(rs.getString("imagen_logo"));
         
-        // Nuevos campos para garantías y cambios
+        // Nuevos campos para garant\u00EDas y cambios
         emp.setPoliticasGarantia(rs.getString("politicas_garantia"));
         emp.setMensajeTicketCambio(rs.getString("mensaje_ticket_cambio"));
         emp.setMensajeTicketReclamo(rs.getString("mensaje_ticket_reclamo"));
@@ -107,16 +107,16 @@ public class EmpresaDAO {
         boolean esUpdate = emp.getIdEmpresa() > 0;
 
         if (!esUpdate) {
-            // INSERT (Para una empresa totalmente nueva - 20 parámetros)
-            sql = "INSERT INTO EMPRESA (nombre_empresa, rtn_empresa, dueño_empresa, direccion_empresa, estado_empresa, "
+            // INSERT (Para una empresa totalmente nueva - 20 par\u00E1metros)
+            sql = "INSERT INTO EMPRESA (nombre_empresa, rtn_empresa, due\u00F1o_empresa, direccion_empresa, estado_empresa, "
                 + "habilitar_facturacion_empresa, numero_telefono, telefono_secundario, whatsapp_empresa, "
                 + "email_empresa, web_empresa, facebook_empresa, mensaje_ticket_pie_factura, "
                 + "mensaje_ticket_pie_recibo, mensaje_ticket_entrega, mensaje_ticket_pie_cotizacion, imagen_logo, "
                 + "politicas_garantia, mensaje_ticket_cambio, mensaje_ticket_reclamo) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         } else {
-            // UPDATE (Para la empresa actual - 20 parámetros + 1 para el WHERE)
-            sql = "UPDATE EMPRESA SET nombre_empresa=?, rtn_empresa=?, dueño_empresa=?, direccion_empresa=?, "
+            // UPDATE (Para la empresa actual - 20 par\u00E1metros + 1 para el WHERE)
+            sql = "UPDATE EMPRESA SET nombre_empresa=?, rtn_empresa=?, due\u00F1o_empresa=?, direccion_empresa=?, "
                 + "estado_empresa=?, habilitar_facturacion_empresa=?, numero_telefono=?, telefono_secundario=?, "
                 + "whatsapp_empresa=?, email_empresa=?, web_empresa=?, facebook_empresa=?, "
                 + "mensaje_ticket_pie_factura=?, mensaje_ticket_pie_recibo=?, mensaje_ticket_entrega=?, "

@@ -42,7 +42,7 @@ public class PanelHistorialVentas extends JPanel {
         JPanel pnlBuscar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         pnlBuscar.setOpaque(false);
         
-        String[] opcionesOrden = { "Más Recientes", "Más Antiguos", "Mayor a Menor (Total)", "Menor a Mayor (Total)", "Cliente (A-Z)", "Cliente (Z-A)" };
+        String[] opcionesOrden = { "M\u00E1s Recientes", "M\u00E1s Antiguos", "Mayor a Menor (Total)", "Menor a Mayor (Total)", "Cliente (A-Z)", "Cliente (Z-A)" };
         cmbOrdenar = new JComboBox<>(opcionesOrden);
         cmbOrdenar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         cmbOrdenar.setPreferredSize(new Dimension(200, 35));
@@ -56,7 +56,7 @@ public class PanelHistorialVentas extends JPanel {
         pnlBuscar.add(cmbOrdenar);
         
         txtBuscar = new JTextField(15);
-        txtBuscar.putClientProperty("JTextField.placeholderText", "Buscar por cliente, DNI, fecha o método...");
+        txtBuscar.putClientProperty("JTextField.placeholderText", "Buscar por cliente, DNI, fecha o m\u00E9todo...");
         txtBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         txtBuscar.setPreferredSize(new Dimension(350, 38));
         txtBuscar.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)),
@@ -73,7 +73,7 @@ public class PanelHistorialVentas extends JPanel {
         this.add(pnlCabecera, BorderLayout.NORTH);
 
         // Tabla
-        String[] cols = { "ID Venta", "Tipo", "Nombre", "Fecha / Hora", "Cliente", "Método Pago", "Vendedor", "Total" };
+        String[] cols = { "ID Venta", "Tipo", "Nombre", "Fecha / Hora", "Cliente", "M\u00E9todo Pago", "Vendedor", "Total" };
         modeloTabla = new DefaultTableModel(null, cols) {
             @Override
             public boolean isCellEditable(int r, int c) {
@@ -192,12 +192,12 @@ public class PanelHistorialVentas extends JPanel {
         ventas.sort((v1, v2) -> {
             try {
                 switch (seleccion) {
-                    case "Más Antiguos":
+                    case "M\u00E1s Antiguos":
                         java.util.Date d1 = (java.util.Date) v1[1];
                         java.util.Date d2 = (java.util.Date) v2[1];
                         if (d1 == null || d2 == null) return 0;
                         return d1.compareTo(d2);
-                    case "Más Recientes":
+                    case "M\u00E1s Recientes":
                         java.util.Date d1_r = (java.util.Date) v1[1];
                         java.util.Date d2_r = (java.util.Date) v2[1];
                         if (d1_r == null || d2_r == null) return 0;
@@ -280,16 +280,16 @@ public class PanelHistorialVentas extends JPanel {
         
         pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Cliente:</span><br><b style='font-size:14px; color:#2c3e50'>" + venta.get("cliente") + "</b></html>"));
         pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Fecha / Hora:</span><br><b style='font-size:14px; color:#2c3e50'>" + venta.get("fecha") + "</b></html>"));
-        pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Método de Pago:</span><br><b style='font-size:14px; color:#2c3e50'>" + venta.get("metodo") + "</b></html>"));
+        pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>M\u00E9todo de Pago:</span><br><b style='font-size:14px; color:#2c3e50'>" + venta.get("metodo") + "</b></html>"));
 
         if (esApartado) {
-            pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Transacción:</span><br><b style='font-size:14px; color:#2c3e50'>Pago de Apartado #" + numApartado + "</b></html>"));
+            pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Transacci\u00F3n:</span><br><b style='font-size:14px; color:#2c3e50'>Pago de Apartado #" + numApartado + "</b></html>"));
             pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Referencia / Banco:</span><br><b style='font-size:14px; color:#2c3e50'>N/A</b></html>"));
         } else if (esGarantia) {
-            pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Transacción:</span><br><b style='font-size:14px; color:#e74c3c'>" + ref + "</b></html>"));
+            pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Transacci\u00F3n:</span><br><b style='font-size:14px; color:#e74c3c'>" + ref + "</b></html>"));
             pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Referencia / Banco:</span><br><b style='font-size:14px; color:#2c3e50'>N/A</b></html>"));
         } else {
-            pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Transacción:</span><br><b style='font-size:14px; color:#2c3e50'>Venta Regular</b></html>"));
+            pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Transacci\u00F3n:</span><br><b style='font-size:14px; color:#2c3e50'>Venta Regular</b></html>"));
             String infoExtra = (ref != null && !ref.isEmpty() ? ref : "N/A") + (banco != null && !banco.isEmpty() ? " (" + banco + ")" : "");
             pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Referencia / Banco:</span><br><b style='font-size:14px; color:#2c3e50'>" + infoExtra + "</b></html>"));
         }
@@ -298,7 +298,7 @@ public class PanelHistorialVentas extends JPanel {
         pnlInfo.add(new JLabel("<html><span style='color:#7f8c8d; font-family:Segoe UI'>Impuesto (15%):</span><br><b style='font-size:14px; color:#2c3e50'>L " + String.format("%,.2f", (double) venta.get("isv")) + "</b></html>"));
 
         // Tabla Productos
-        String[] colP = { "Descripción / Serie", "Cantidad", "Precio Unitario", "Total Fila" };
+        String[] colP = { "Descripci\u00F3n / Serie", "Cantidad", "Precio Unitario", "Total Fila" };
         DefaultTableModel modP = new DefaultTableModel(null, colP) {
             @Override
             public boolean isCellEditable(int r, int c) {
@@ -433,7 +433,7 @@ public class PanelHistorialVentas extends JPanel {
                     (String) venta.get("ref"),
                     (String) venta.get("banco"));
 
-            utilidades.Mensajes.showMessageDialog(this, "Reimpresión generada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Reimpresi\u00F3n generada exitosamente.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
             if (Desktop.isDesktopSupported()) {
                 utilidades.GestorImpresion.procesarImpresion(archivoDestino, utilidades.GestorImpresion.TIPO_TICKET);
             }

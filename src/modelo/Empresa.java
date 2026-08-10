@@ -25,7 +25,7 @@ public class Empresa {
     private String imagen_logo;
     private String politicasGarantia;
 
-    // Constructores vacíos
+    // Constructores vac\u00EDos
     public Empresa() {}
 
     // Getters y Setters

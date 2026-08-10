@@ -28,10 +28,10 @@ public class PanelDatosEmpresa extends JPanel {
     // --- Componentes para Impresion
     private PanelConfiguracionImpresion panelImpresion;
 
-    // --- Botón de Acción ---
+    // --- Bot\u00F3n de Acci\u00F3n ---
     private JButton btnGuardar;
 
-    // --- VARIABLE CRÍTICA PARA ACTUALIZAR ---
+    // --- VARIABLE CR\u00CDTICA PARA ACTUALIZAR ---
     private int idEmpresaActual = 0;
 
     public PanelDatosEmpresa() {
@@ -44,12 +44,12 @@ public class PanelDatosEmpresa extends JPanel {
         this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); // Verde Vintage
 
         // =========================================================
-        // 1. PANEL SUPERIOR (TÍTULO Y SELECTOR DE EMPRESA)
+        // 1. PANEL SUPERIOR (T\u00CDTULO Y SELECTOR DE EMPRESA)
         // =========================================================
         JPanel pnlTop = new JPanel(new BorderLayout());
         pnlTop.setOpaque(false);
 
-        JLabel lblTitulo = new JLabel("Configuración de Empresa");
+        JLabel lblTitulo = new JLabel("Configuraci\u00F3n de Empresa");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
         lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(40, 20, 10, 20));
@@ -58,7 +58,7 @@ public class PanelDatosEmpresa extends JPanel {
         this.add(pnlTop, BorderLayout.NORTH);
 
         // =========================================================
-        // 2. PESTAÑAS CENTRALES
+        // 2. PESTA\u00D1AS CENTRALES
         // =========================================================
         JTabbedPane pestanas = new JTabbedPane();
         pestanas.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -68,12 +68,12 @@ public class PanelDatosEmpresa extends JPanel {
         pestanas.addTab("Datos Generales", crearPanelGenerales());
         pestanas.addTab("Contacto y Redes", crearPanelContacto());
         panelImpresion = new PanelConfiguracionImpresion();
-        pestanas.addTab("Impresión y Logo", panelImpresion);
+        pestanas.addTab("Impresi\u00F3n y Logo", panelImpresion);
 
         this.add(pestanas, BorderLayout.CENTER);
 
         // =========================================================
-        // 3. PANEL INFERIOR (BOTÓN GUARDAR)
+        // 3. PANEL INFERIOR (BOT\u00D3N GUARDAR)
         // =========================================================
         JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panelInferior.setBackground(new Color(240, 242, 245));
@@ -98,12 +98,12 @@ public class PanelDatosEmpresa extends JPanel {
         panelInferior.add(btnGuardar);
         this.add(panelInferior, BorderLayout.SOUTH);
 
-        // Cargar datos de la única empresa
+        // Cargar datos de la \u00FAnica empresa
         cargarDatosEmpresa();
     }
 
     // =========================================================
-    // LÓGICA DE DATOS
+    // L\u00D3GICA DE DATOS
     // =========================================================
 
     private void cargarDatosEmpresa() {
@@ -138,8 +138,8 @@ public class PanelDatosEmpresa extends JPanel {
         txtWeb.setText(emp.getWeb());
         txtFacebook.setText(emp.getFacebook());
 
-        // --- ¡LA MAGIA OCURRE AQUÍ! ---
-        // Le pasamos la empresa al panel de impresión en tiempo real
+        // --- \u00A1LA MAGIA OCURRE AQU\u00CD! ---
+        // Le pasamos la empresa al panel de impresi\u00F3n en tiempo real
         panelImpresion.setEmpresaEnEdicion(emp);
 
         btnGuardar.setText("Actualizar Datos");
@@ -176,8 +176,8 @@ public class PanelDatosEmpresa extends JPanel {
         }
 
         int opcion = utilidades.Mensajes.showConfirmDialog(this,
-                "¿Está seguro de que desea guardar/actualizar los datos de la empresa?",
-                "Confirmar Actualización", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                "\u00BFEst\u00E1 seguro de que desea guardar/actualizar los datos de la empresa?",
+                "Confirmar Actualizaci\u00F3n", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 
         if (opcion != JOptionPane.YES_OPTION) {
             return;
@@ -201,13 +201,13 @@ public class PanelDatosEmpresa extends JPanel {
 
         EmpresaDAO dao = new EmpresaDAO();
         if (dao.guardarOActualizar(emp)) {
-            utilidades.Mensajes.showMessageDialog(this, "Empresa guardada correctamente.", "Éxito",
+            utilidades.Mensajes.showMessageDialog(this, "Empresa guardada correctamente.", "\u00C9xito",
                     JOptionPane.INFORMATION_MESSAGE);
 
             // Refrescar los datos cargados en memoria tras guardar
             cargarDatosEmpresa();
 
-            // Actualizamos la sesión global
+            // Actualizamos la sesi\u00F3n global
             SesionGlobal.setEmpresaActual(emp);
         } else {
             utilidades.Mensajes.showMessageDialog(this, "Error al guardar la empresa en la base de datos.", "Error",
@@ -216,7 +216,7 @@ public class PanelDatosEmpresa extends JPanel {
     }
 
     // =========================================================
-    // CREACIÓN DE PANELES Y ESTILOS
+    // CREACI\u00D3N DE PANELES Y ESTILOS
     // =========================================================
 
     private JTextField crearTextField(int columnas) {
@@ -258,7 +258,7 @@ public class PanelDatosEmpresa extends JPanel {
         chkEstadoEmpresa.setForeground(new Color(45, 45, 45));
         chkEstadoEmpresa.setVisible(false);
 
-        chkHabilitarFacturacion = new JCheckBox("Habilitar Facturación (SAR)");
+        chkHabilitarFacturacion = new JCheckBox("Habilitar Facturaci\u00F3n (SAR)");
         chkHabilitarFacturacion.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         chkHabilitarFacturacion.setBackground(new Color(255, 255, 255));
         chkHabilitarFacturacion.setForeground(new Color(45, 45, 45));
@@ -271,7 +271,7 @@ public class PanelDatosEmpresa extends JPanel {
         gbc.gridy = 3;
         gbc.gridx = 0;
         gbc.anchor = GridBagConstraints.NORTHEAST;
-        JLabel lblDir = new JLabel("Dirección:");
+        JLabel lblDir = new JLabel("Direcci\u00F3n:");
         lblDir.setForeground(new Color(100, 100, 100));
         lblDir.setFont(new Font("Segoe UI", Font.BOLD, 13));
         panel.add(lblDir, gbc);
@@ -305,8 +305,8 @@ public class PanelDatosEmpresa extends JPanel {
         txtWeb = crearTextField(30);
         txtFacebook = crearTextField(30);
 
-        agregarFila(panel, gbc, 0, "Teléfono Principal:", txtNumeroTelefono);
-        agregarFila(panel, gbc, 1, "Teléfono Secundario:", txtTelefonoSecundario);
+        agregarFila(panel, gbc, 0, "Tel\u00E9fono Principal:", txtNumeroTelefono);
+        agregarFila(panel, gbc, 1, "Tel\u00E9fono Secundario:", txtTelefonoSecundario);
         agregarFila(panel, gbc, 2, "WhatsApp:", txtWhatsapp);
         agregarFila(panel, gbc, 3, "Correo:", txtEmail);
         agregarFila(panel, gbc, 4, "Web:", txtWeb);

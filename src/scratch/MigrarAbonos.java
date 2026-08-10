@@ -10,17 +10,17 @@ public class MigrarAbonos {
         try (Connection con = factory.getConexion(); Statement stmt = con.createStatement()) {
             System.out.println("Conectando a la base de datos...");
             
-            // 1. Añadir columnas
+            // 1. A\u00F1adir columnas
             try {
                 stmt.executeUpdate("ALTER TABLE ABONOS_APARTADO ADD total_historico DECIMAL(10,2) DEFAULT 0.0 NOT NULL");
-                System.out.println("Columna total_historico añadida.");
+                System.out.println("Columna total_historico a\u00F1adida.");
             } catch (Exception e) {
                 System.out.println("Columna total_historico ya existe o error: " + e.getMessage());
             }
             
             try {
                 stmt.executeUpdate("ALTER TABLE ABONOS_APARTADO ADD saldo_historico DECIMAL(10,2) DEFAULT 0.0 NOT NULL");
-                System.out.println("Columna saldo_historico añadida.");
+                System.out.println("Columna saldo_historico a\u00F1adida.");
             } catch (Exception e) {
                 System.out.println("Columna saldo_historico ya existe o error: " + e.getMessage());
             }
@@ -30,9 +30,9 @@ public class MigrarAbonos {
                                "FROM ABONOS_APARTADO ab INNER JOIN APARTADOS ap ON ab.id_apartado = ap.id_apartado " +
                                "WHERE ab.total_historico = 0";
             int rows = stmt.executeUpdate(updateSql);
-            System.out.println("Saldos históricos actualizados (Fallback) en " + rows + " filas.");
+            System.out.println("Saldos hist\u00F3ricos actualizados (Fallback) en " + rows + " filas.");
             
-            System.out.println("Migración completada exitosamente.");
+            System.out.println("Migraci\u00F3n completada exitosamente.");
         } catch (Exception e) {
             e.printStackTrace();
         }

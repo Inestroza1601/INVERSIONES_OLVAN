@@ -76,12 +76,12 @@ public class DialogoEntregarDefectuoso extends JDialog {
         StringBuilder timeline = new StringBuilder("<html><div style='font-size:12px; color:#1e4d38; margin-bottom:10px;'>");
         if (!detalles.isEmpty()) {
             java.util.Map<String, Object> d = detalles.get(0);
-            timeline.append("• <b>Ingreso:</b> ").append(d.get("fecha")).append("<br>");
+            timeline.append("\u2022 <b>Ingreso:</b> ").append(d.get("fecha")).append("<br>");
             if (d.get("fecha_envio") != null) {
-                timeline.append("• <b>Envío a Proveedor:</b> ").append(d.get("fecha_envio")).append("<br>");
+                timeline.append("\u2022 <b>Env\u00EDo a Proveedor:</b> ").append(d.get("fecha_envio")).append("<br>");
             }
             if (d.get("fecha_recibido") != null) {
-                timeline.append("• <b>Recepción de Proveedor:</b> ").append(d.get("fecha_recibido")).append("<br>");
+                timeline.append("\u2022 <b>Recepci\u00F3n de Proveedor:</b> ").append(d.get("fecha_recibido")).append("<br>");
             }
         } else {
             timeline.append("No hay registros de historial disponibles.");
@@ -91,7 +91,7 @@ public class DialogoEntregarDefectuoso extends JDialog {
         JLabel lblTimeline = new JLabel(timeline.toString());
         lblTimeline.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel lblObs = new JLabel("Observaciones de la Reparación / Notas del Proveedor:");
+        JLabel lblObs = new JLabel("Observaciones de la Reparaci\u00F3n / Notas del Proveedor:");
         lblObs.setFont(new Font("Segoe UI", Font.BOLD, 13));
         lblObs.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         lblObs.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -108,7 +108,7 @@ public class DialogoEntregarDefectuoso extends JDialog {
         JScrollPane scrollObs = new JScrollPane(txtObservaciones);
         scrollObs.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel lblInfo = new JLabel("<html><i style='color:#557a66; font-size:11px'>Al confirmar, se registrará la entrega y se imprimirá un comprobante.</i></html>");
+        JLabel lblInfo = new JLabel("<html><i style='color:#557a66; font-size:11px'>Al confirmar, se registrar\u00E1 la entrega y se imprimir\u00E1 un comprobante.</i></html>");
         lblInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         pnlBody.add(lblHistorial);
@@ -150,7 +150,7 @@ public class DialogoEntregarDefectuoso extends JDialog {
     private void procesarEntrega() {
         String obs = txtObservaciones.getText().trim();
         if (obs.isEmpty()) {
-            obs = "Ninguna observación adicional.";
+            obs = "Ninguna observaci\u00F3n adicional.";
         }
 
         if (dao.entregarCliente(idProducto, estadoActual, nombreCliente, idDefectuoso)) {
@@ -158,7 +158,7 @@ public class DialogoEntregarDefectuoso extends JDialog {
             GeneradorTickets.generarTicketEntregaReparacionPDF(nombreProducto, obs);
             dispose();
         } else {
-            utilidades.Mensajes.showMessageDialog(this, "Ocurrió un error al procesar la entrega.", "Error", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Ocurri\u00F3 un error al procesar la entrega.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

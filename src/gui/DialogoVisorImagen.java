@@ -18,7 +18,7 @@ public class DialogoVisorImagen extends JDialog {
     private JLabel lblNombreProducto;
     private JLabel lblStockProducto;
     
-    // Renderizador personalizado y Animación
+    // Renderizador personalizado y Animaci\u00F3n
     private JPanel pnlRender;
     private Image imgActual;
     private Image imgSiguiente;
@@ -104,7 +104,7 @@ public class DialogoVisorImagen extends JDialog {
         
         this.add(pnlTopInfo, BorderLayout.NORTH);
 
-        // --- PANEL CENTRAL (RENDERIZADO Y ANIMACIÓN) ---
+        // --- PANEL CENTRAL (RENDERIZADO Y ANIMACI\u00D3N) ---
         pnlRender = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -116,7 +116,7 @@ public class DialogoVisorImagen extends JDialog {
                 int panelH = getHeight();
                 
                 if (animacionSlide < 1.0f && imgSiguiente != null && imgActual != null) {
-                    // Animación de deslizamiento suave (Ease Out)
+                    // Animaci\u00F3n de deslizamiento suave (Ease Out)
                     float t = animacionSlide;
                     float easeOut = 1 - (float)Math.pow(1 - t, 3);
                     
@@ -169,7 +169,7 @@ public class DialogoVisorImagen extends JDialog {
         pnlRender.setBackground(COLOR_FONDO);
         pnlRender.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
         
-        // --- INTERACCIONES DE RATÓN ---
+        // --- INTERACCIONES DE RAT\u00D3N ---
         MouseAdapter mouseInteractions = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -245,7 +245,7 @@ public class DialogoVisorImagen extends JDialog {
 
             JButton btnPrev = crearBotonNavegacion("Anterior", new IconoFlechaIzquierda());
             btnPrev.addActionListener(e -> {
-                if (animacionSlide < 1.0f) return; // Bloquear si está animando
+                if (animacionSlide < 1.0f) return; // Bloquear si est\u00E1 animando
                 if (indiceActual > 0) { indiceActual--; actualizarImagen(true, -1); }
                 else { indiceActual = listaImagenes.size() - 1; actualizarImagen(true, -1); }
             });
@@ -258,7 +258,7 @@ public class DialogoVisorImagen extends JDialog {
             JButton btnNext = crearBotonNavegacion("Siguiente", new IconoFlechaDerecha());
             btnNext.setHorizontalTextPosition(SwingConstants.LEFT);
             btnNext.addActionListener(e -> {
-                if (animacionSlide < 1.0f) return; // Bloquear si está animando
+                if (animacionSlide < 1.0f) return; // Bloquear si est\u00E1 animando
                 if (indiceActual < listaImagenes.size() - 1) { indiceActual++; actualizarImagen(true, 1); }
                 else { indiceActual = 0; actualizarImagen(true, 1); }
             });
@@ -274,7 +274,7 @@ public class DialogoVisorImagen extends JDialog {
 
         this.add(pnlFooter, BorderLayout.SOUTH);
         
-        // Cargar imagen inicial sin animación
+        // Cargar imagen inicial sin animaci\u00F3n
         SwingUtilities.invokeLater(() -> actualizarImagen(false, 1));
 
         this.getRootPane().registerKeyboardAction(e -> dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -283,7 +283,7 @@ public class DialogoVisorImagen extends JDialog {
     private JButton crearBotonNavegacion(String texto, Icon icono) {
         JButton btn = new JButton(texto, icono);
         btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        btn.setBackground(new Color(30, 80, 60)); // Verde más claro para que resalten más
+        btn.setBackground(new Color(30, 80, 60)); // Verde m\u00E1s claro para que resalten m\u00E1s
         btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
         btn.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));

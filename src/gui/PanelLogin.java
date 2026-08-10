@@ -48,7 +48,7 @@ public class PanelLogin extends JPanel {
                 g2.setColor(new Color(15, 45, 30, 90));
                 g2.fillRoundRect(4, 6, getWidth() - 8, getHeight() - 8, 35, 35);
 
-                // Máscara de recorte redondeada
+                // M\u00E1scara de recorte redondeada
                 g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 35, 35));
                 super.paint(g2);
 
@@ -98,7 +98,7 @@ public class PanelLogin extends JPanel {
         gbcDer.gridx = 0;
         gbcDer.weightx = 1.0;
 
-        JLabel lblTitulo = new JLabel("Iniciar Sesión", SwingConstants.CENTER);
+        JLabel lblTitulo = new JLabel("Iniciar Sesi\u00F3n", SwingConstants.CENTER);
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 28)); 
         lblTitulo.setForeground(new Color(45, 45, 45));
         
@@ -123,14 +123,14 @@ public class PanelLogin extends JPanel {
         gbcDer.gridy = 2; gbcDer.insets = new Insets(5, 45, 4, 45); pnlDerecha.add(lblUser, gbcDer);
         gbcDer.gridy = 3; gbcDer.insets = new Insets(0, 45, 15, 45); pnlDerecha.add(txtUsuario, gbcDer);
 
-        JLabel lblPass = new JLabel("Contraseña");
+        JLabel lblPass = new JLabel("Contrase\u00F1a");
         lblPass.setFont(new Font("Segoe UI", Font.BOLD, 13));
         lblPass.setForeground(new Color(70, 70, 70));
 
         txtPassword = new JPasswordField();
         txtPassword.setPreferredSize(new Dimension(0, 42));
         txtPassword.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        txtPassword.putClientProperty("JTextField.placeholderText", "Ingresa tu contraseña");
+        txtPassword.putClientProperty("JTextField.placeholderText", "Ingresa tu contrase\u00F1a");
         txtPassword.putClientProperty("JTextField.showRevealButton", true);
         
         txtPassword.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -158,8 +158,8 @@ public class PanelLogin extends JPanel {
         txtUsuario.getDocument().addDocumentListener(resetErrorListener);
         txtPassword.getDocument().addDocumentListener(resetErrorListener);
 
-        // --- ENLACE OLVIDE MI CONTRASEÑA ---
-        JLabel lblRecuperar = new JLabel("¿Olvidaste tu contraseña?");
+        // --- ENLACE OLVIDE MI CONTRASE\u00D1A ---
+        JLabel lblRecuperar = new JLabel("\u00BFOlvidaste tu contrase\u00F1a?");
         lblRecuperar.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         lblRecuperar.setForeground(new Color(45, 106, 79)); // Verde Vintage
         lblRecuperar.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -259,7 +259,7 @@ public class PanelLogin extends JPanel {
         pnlTarjeta.add(pnlIzquierda);
         pnlTarjeta.add(pnlDerecha);
 
-        // Añadir la tarjeta centrada al fondo principal
+        // A\u00F1adir la tarjeta centrada al fondo principal
         this.add(pnlTarjeta);
     }
 
@@ -321,7 +321,7 @@ public class PanelLogin extends JPanel {
             if (usr.isEmpty()) txtUsuario.putClientProperty("JComponent.outline", "error");
             if (pass.isEmpty()) txtPassword.putClientProperty("JComponent.outline", "error");
             ejecutarShakeError();
-            utilidades.Mensajes.showMessageDialog(this, "Debe ingresar usuario y contraseña.", "Campos Incompletos", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Debe ingresar usuario y contrase\u00F1a.", "Campos Incompletos", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -361,11 +361,11 @@ public class PanelLogin extends JPanel {
                 try {
                     modelo.Usuario logged = get();
                     if (logged != null) {
-                        btnEntrar.setText("¡Acceso Correcto! Entrando...");
+                        btnEntrar.setText("\u00A1Acceso Correcto! Entrando...");
                         btnEntrar.repaint();
                         utilidades.SesionGlobal.setUsuarioActual(logged);
 
-                        // Animación suave de salida (Fade-Out + Elevación)
+                        // Animaci\u00F3n suave de salida (Fade-Out + Elevaci\u00F3n)
                         if (animTimer != null && animTimer.isRunning()) animTimer.stop();
                         animTimer = new Timer(15, e -> {
                             tarjetaAlpha -= 0.08f;
@@ -375,7 +375,7 @@ public class PanelLogin extends JPanel {
                                 animTimer.stop();
                                 menuPrincipal.iniciarEntornoApp();
 
-                                // Restaurar controles para cuando se cierre sesión
+                                // Restaurar controles para cuando se cierre sesi\u00F3n
                                 btnEntrar.setEnabled(true);
                                 txtUsuario.setEnabled(true);
                                 txtPassword.setEnabled(true);
@@ -392,7 +392,7 @@ public class PanelLogin extends JPanel {
                         txtUsuario.putClientProperty("JComponent.outline", "error");
                         txtPassword.putClientProperty("JComponent.outline", "error");
                         ejecutarShakeError();
-                        utilidades.Mensajes.showMessageDialog(PanelLogin.this, "El nombre de usuario o la contraseña son incorrectos.", "Credenciales Inválidas", JOptionPane.ERROR_MESSAGE);
+                        utilidades.Mensajes.showMessageDialog(PanelLogin.this, "El nombre de usuario o la contrase\u00F1a son incorrectos.", "Credenciales Inv\u00E1lidas", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (Exception ex) {
                     btnEntrar.setEnabled(true);
@@ -400,7 +400,7 @@ public class PanelLogin extends JPanel {
                     txtPassword.setEnabled(true);
                     btnEntrar.setText("Ingresar al Sistema");
                     ex.printStackTrace();
-                    utilidades.Mensajes.showMessageDialog(PanelLogin.this, "Error de conexión con la base de datos.", "Error de Red", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(PanelLogin.this, "Error de conexi\u00F3n con la base de datos.", "Error de Red", JOptionPane.ERROR_MESSAGE);
                 }
             }
         };

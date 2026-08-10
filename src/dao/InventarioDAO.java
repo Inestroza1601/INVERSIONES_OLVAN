@@ -19,7 +19,7 @@ public class InventarioDAO {
     }
 
     /**
-     * Carga todos los códigos de barras activos a la RAM para la validación instantánea del panel.
+     * Carga todos los c\u00F3digos de barras activos a la RAM para la validaci\u00F3n instant\u00E1nea del panel.
      */
     public Set<String> obtenerCodigosEnRam() {
         Set<String> codigos = new HashSet<>();
@@ -34,13 +34,13 @@ public class InventarioDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al cargar códigos de barras a RAM: " + e.getMessage());
+            System.err.println("Error al cargar c\u00F3digos de barras a RAM: " + e.getMessage());
         }
         return codigos;
     }
 
     /**
-     * Registra un nuevo producto. Si el código de barras viene vacío, utiliza el ID autogenerado.
+     * Registra un nuevo producto. Si el c\u00F3digo de barras viene vac\u00EDo, utiliza el ID autogenerado.
      */
     public boolean registrarProducto(Producto p) {
         String sql = "INSERT INTO INVENTARIO (codigo_barras_producto, nombre_producto, id_categoria, id_proveedor, "
@@ -49,10 +49,10 @@ public class InventarioDAO {
                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
 
         try (Connection con = factory.getConexion();
-             // Le decimos a Java que recupere el ID que SQL Server generará automáticamente
+             // Le decimos a Java que recupere el ID que SQL Server generar\u00E1 autom\u00E1ticamente
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            // 1. Validar si trae código de barras o viene nulo
+            // 1. Validar si trae c\u00F3digo de barras o viene nulo
             if (p.getCodigoBarras() == null || p.getCodigoBarras().trim().isEmpty()) {
                 ps.setNull(1, java.sql.Types.VARCHAR);
             } else {
@@ -89,7 +89,7 @@ public class InventarioDAO {
 
             int filasAfectadas = ps.executeUpdate();
 
-            // Si se guardó correctamente, revisamos si necesitamos actualizar el código de barras
+            // Si se guard\u00F3 correctamente, revisamos si necesitamos actualizar el c\u00F3digo de barras
             if (filasAfectadas > 0) {
                 if (p.getCodigoBarras() == null || p.getCodigoBarras().trim().isEmpty()) {
                     
@@ -98,7 +98,7 @@ public class InventarioDAO {
                         if (rs.next()) {
                             int idGenerado = rs.getInt(1); // Este es el id_producto
                             
-                            // Actualizamos el producto recién creado para que su código de barras sea su ID
+                            // Actualizamos el producto reci\u00E9n creado para que su c\u00F3digo de barras sea su ID
                             String sqlUpdate = "UPDATE INVENTARIO SET codigo_barras_producto = ? WHERE id_producto = ?";
                             try (PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
                                 psUpdate.setString(1, String.valueOf(idGenerado));
@@ -119,7 +119,7 @@ public class InventarioDAO {
     }
     
     // ==========================================
-    // MÉTODOS DE BÚSQUEDA Y ELIMINACIÓN
+    // M\u00C9TODOS DE B\u00DASQUEDA Y ELIMINACI\u00D3N
     // ==========================================
 
     public java.util.List<Producto> listarProductosActivos() {
@@ -141,7 +141,7 @@ public class InventarioDAO {
                 p.setStockProducto(rs.getInt("stock_producto"));
                 p.setImagen_producto(null);
                 
-                // --- LAS DOS LÍNEAS QUE FALTABAN AQUÍ ---
+                // --- LAS DOS L\u00CDNEAS QUE FALTABAN AQU\u00CD ---
                 p.setDiasGarantia(rs.getInt("dias_garantia"));
                 p.setRequiereSerie(rs.getBoolean("requiere_serie"));
                 p.setIncluyeImpuesto(rs.getBoolean("incluye_impuesto"));
@@ -177,7 +177,7 @@ public class InventarioDAO {
             psCheck.setInt(1, idProducto);
             try (ResultSet rs = psCheck.executeQuery()) {
                 if (rs.next() && rs.getInt(1) > 0) {
-                    throw new SQLException("El producto está asociado a un apartado vigente y no puede ser eliminado.");
+                    throw new SQLException("El producto est\u00E1 asociado a un apartado vigente y no puede ser eliminado.");
                 }
             }
         }
@@ -191,7 +191,7 @@ public class InventarioDAO {
     }
     
     // ==========================================
-    // MÉTODOS PARA EDICIÓN DE PRODUCTO
+    // M\u00C9TODOS PARA EDICI\u00D3N DE PRODUCTO
     // ==========================================
     public Producto obtenerProductoPorId(int id) {
         String sql = "SELECT * FROM INVENTARIO WHERE id_producto = ?";

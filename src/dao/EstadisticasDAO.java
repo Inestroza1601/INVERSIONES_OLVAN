@@ -21,9 +21,9 @@ public class EstadisticasDAO {
         String condicionActual = "";
         String condicionAnterior = "";
 
-        // Generamos las condiciones SQL dinámicamente según el filtro seleccionado
+        // Generamos las condiciones SQL din\u00E1micamente seg\u00FAn el filtro seleccionado
         switch (filtro) {
-            case "Día":
+            case "D\u00EDa":
                 condicionActual = "CAST(fecha_venta AS DATE) = CAST(GETDATE() AS DATE)";
                 condicionAnterior = "CAST(fecha_venta AS DATE) = CAST(DATEADD(day, -1, GETDATE()) AS DATE)";
                 break;
@@ -35,7 +35,7 @@ public class EstadisticasDAO {
                 condicionActual = "MONTH(fecha_venta) = MONTH(GETDATE()) AND YEAR(fecha_venta) = YEAR(GETDATE())";
                 condicionAnterior = "MONTH(fecha_venta) = MONTH(DATEADD(month, -1, GETDATE())) AND YEAR(fecha_venta) = YEAR(DATEADD(month, -1, GETDATE()))";
                 break;
-            case "Año":
+            case "A\u00F1o":
                 condicionActual = "YEAR(fecha_venta) = YEAR(GETDATE())";
                 condicionAnterior = "YEAR(fecha_venta) = YEAR(GETDATE()) - 1";
                 break;
@@ -51,7 +51,7 @@ public class EstadisticasDAO {
                 }
             }
 
-            // 2. Extraer Total del Período Anterior
+            // 2. Extraer Total del Per\u00EDodo Anterior
             String sqlAnterior = "SELECT SUM(total_venta) as total FROM VENTAS WHERE " + condicionAnterior;
             try (PreparedStatement ps = con.prepareStatement(sqlAnterior); ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -72,7 +72,7 @@ public class EstadisticasDAO {
             }
 
         } catch (Exception e) {
-            System.err.println("Error conectando métricas de Orion Systems: " + e.getMessage());
+            System.err.println("Error conectando m\u00E9tricas de Orion Systems: " + e.getMessage());
         }
 
         // Empaquetamos todo en un arreglo para mandarlo al panel visual

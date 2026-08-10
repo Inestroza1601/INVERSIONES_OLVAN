@@ -4,6 +4,7 @@ import factory.ConexionFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +74,81 @@ public class ReportesDAO {
         return lista;
     }
 
-    // 3. Reporte Dinámico de Inventario
+    public List<String[]> generarReporteVentasPorFecha(java.util.Date desde, java.util.Date hasta) {
+        List<String[]> datos = new ArrayList<>();
+        String query = "SELECT \n" +
+                       "    dv.id_detalle, v.id_venta, p.codigo_producto, p.nombre, p.categoria, \n" +
+                       "    dv.cantidad, dv.precio_unitario, dv.subtotal, \n" +
+                       "    v.fecha_venta, v.id_cliente, c.nombre AS nombre_cliente, u.nombre AS vendedor \n" +
+                       "FROM Detalles_Ventas dv\n" +
+                       "JOIN Ventas v ON dv.id_venta = v.id_venta\n" +
+                       "JOIN Inventario p ON dv.id_producto = p.id_producto\n" +
+                       "JOIN Clientes c ON v.id_cliente = c.id_cliente\n" +
+                       "JOIN Usuarios u ON v.id_usuario = u.id_usuario\n" +
+                       "WHERE CAST(v.fecha_venta AS DATE) BETWEEN ? AND ?\n" +
+                       "ORDER BY v.fecha_venta DESC";
+
+        try (Connection con = factory.getConexion();
+             PreparedStatement pst = con.prepareStatement(query)) {
+             
+            pst.setDate(1, new java.sql.Date(desde.getTime()));
+            pst.setDate(2, new java.sql.Date(hasta.getTime()));
+            
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    datos.add(new String[]{
+                        String.valueOf(rs.getInt("id_detalle")),
+                        String.valueOf(rs.getInt("id_venta")),
+                        rs.getString("codigo_producto"),
+                        rs.getString("nombre"),
+                        rs.getString("categoria"),
+                        String.valueOf(rs.getInt("cantidad")),
+                        String.format("L %.2f", rs.getDouble("precio_unitario")),
+                        String.format("L %.2f", rs.getDouble("subtotal")),
+                        rs.getString("fecha_venta"),
+                        String.valueOf(rs.getInt("id_cliente")),
+                        rs.getString("nombre_cliente"),
+                        rs.getString("vendedor")
+                    });
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return datos;
+    }
+
+    public List<java.util.Date> obtenerFechasConCaja() {
+        List<java.util.Date> fechas = new ArrayList<>();
+        String query = "SELECT DISTINCT CAST(fecha AS DATE) as fecha_caja FROM Control_Caja ORDER BY fecha_caja ASC";
+        try (Connection con = factory.getConexion();
+             PreparedStatement pst = con.prepareStatement(query);
+             ResultSet rs = pst.executeQuery()) {
+            while (rs.next()) {
+                fechas.add(new java.util.Date(rs.getDate("fecha_caja").getTime()));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return fechas;
+    }
+
+    public List<java.util.Date> obtenerFechasConVentas() {
+        List<java.util.Date> fechas = new ArrayList<>();
+        String query = "SELECT DISTINCT CAST(fecha_venta AS DATE) as f_venta FROM Ventas ORDER BY f_venta ASC";
+        try (Connection con = factory.getConexion();
+             PreparedStatement pst = con.prepareStatement(query);
+             ResultSet rs = pst.executeQuery()) {
+            while (rs.next()) {
+                fechas.add(new java.util.Date(rs.getDate("f_venta").getTime()));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return fechas;
+    }
+
+    // 3. Reporte Din\u00E1mico de Inventario
     public List<Object[]> obtenerReporteInventario() {
         List<Object[]> lista = new ArrayList<>();
         String sql = "SELECT codigo_barras_producto, nombre_producto, stock_producto, precio_venta_producto " +
@@ -95,10 +170,10 @@ public class ReportesDAO {
         return lista;
     }
 
-    // 4. Alertas (Stock Bajo o Estancado > 15 días)
+    // 4. Alertas (Stock Bajo o Estancado > 15 d\u00EDas)
     public List<Object[]> obtenerAlertasStockYEstancados() {
         List<Object[]> lista = new ArrayList<>();
-        // Se buscan productos con stock menor o igual al mínimo, o que su última fecha en el kardex (venta/salida) fue hace más de 15 días
+        // Se buscan productos con stock menor o igual al m\u00EDnimo, o que su \u00FAltima fecha en el kardex (venta/salida) fue hace m\u00E1s de 15 d\u00EDas
         String sql = "SELECT i.codigo_barras_producto, i.nombre_producto, i.stock_producto, i.stock_minimo_producto, " +
                      "(SELECT MAX(fecha_movimiento_producto) FROM KARDEX k WHERE k.id_producto = i.id_producto AND tipo_movimiento_producto = 'Salida') as ultima_venta " +
                      "FROM INVENTARIO i " +
@@ -118,7 +193,7 @@ public class ReportesDAO {
                     if (stock <= minimo) {
                         motivo = "Stock Bajo (" + stock + "/" + minimo + ")";
                     } else {
-                        motivo = "Sin movimiento > 15 días";
+                        motivo = "Sin movimiento > 15 d\u00EDas";
                     }
                     
                     lista.add(new Object[]{

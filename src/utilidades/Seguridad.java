@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 public class Seguridad {
 
     /**
-     * Recibe una contraseña en texto plano y devuelve su hash en SHA-256.
+     * Recibe una contrase\u00F1a en texto plano y devuelve su hash en SHA-256.
      */
     public static String encriptarSHA256(String password) {
         try {
@@ -25,7 +25,7 @@ public class Seguridad {
             return hexString.toString();
             
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Error en el algoritmo de encriptación", e);
+            throw new RuntimeException("Error en el algoritmo de encriptaci\u00F3n", e);
         }
     }
 }

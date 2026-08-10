@@ -16,7 +16,7 @@ public class CatalogosDAO {
     }
 
     // ==========================================
-    // MÉTODOS PARA CATEGORÍAS
+    // M\u00C9TODOS PARA CATEGOR\u00CDAS
     // ==========================================
     public Map<Integer, String> listarCategorias() {
         Map<Integer, String> mapa = new HashMap<>();
@@ -52,7 +52,7 @@ public class CatalogosDAO {
     }
 
     // ==========================================
-    // MÉTODOS PARA PROVEEDORES
+    // M\u00C9TODOS PARA PROVEEDORES
     // ==========================================
     public Map<Integer, String> listarProveedores() {
         Map<Integer, String> mapa = new HashMap<>();
@@ -88,7 +88,7 @@ public class CatalogosDAO {
     }
 
     // ==========================================
-    // MÉTODOS PARA UBICACIONES
+    // M\u00C9TODOS PARA UBICACIONES
     // ==========================================
     public Map<Integer, String> listarUbicaciones() {
         Map<Integer, String> mapa = new HashMap<>();

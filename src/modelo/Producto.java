@@ -9,7 +9,7 @@ public class Producto {
     private int idUbicacion;
     private double precioCompra;
     private double precioVenta;
-    private double precioMayorista; // Será 0 si no se aplica
+    private double precioMayorista; // Ser\u00E1 0 si no se aplica
     private int stockMinimo;
     private int stockProducto;
     private String imagen_producto;

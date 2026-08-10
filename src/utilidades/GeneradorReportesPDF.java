@@ -62,8 +62,8 @@ public class GeneradorReportesPDF {
         Paragraph infoEmpresa = new Paragraph();
         infoEmpresa.add(new Chunk(empresa.getNombreEmpresa() != null ? empresa.getNombreEmpresa() : "INVERSIONES OLVAN\n", FUENTE_EMPRESA));
         infoEmpresa.add(new Chunk("\nRTN: " + (empresa.getRtnEmpresa() != null ? empresa.getRtnEmpresa() : "N/A"), FUENTE_NORMAL));
-        infoEmpresa.add(new Chunk("\nDirección: " + (empresa.getDireccionEmpresa() != null ? empresa.getDireccionEmpresa() : "N/A"), FUENTE_NORMAL));
-        infoEmpresa.add(new Chunk("\nFecha de Emisión: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()), FUENTE_NORMAL));
+        infoEmpresa.add(new Chunk("\nDirecci\u00F3n: " + (empresa.getDireccionEmpresa() != null ? empresa.getDireccionEmpresa() : "N/A"), FUENTE_NORMAL));
+        infoEmpresa.add(new Chunk("\nFecha de Emisi\u00F3n: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()), FUENTE_NORMAL));
 
         PdfPCell celdaInfo = new PdfPCell(infoEmpresa);
         celdaInfo.setBorder(Rectangle.NO_BORDER);
@@ -74,7 +74,7 @@ public class GeneradorReportesPDF {
         documento.add(tablaEncabezado);
         documento.add(new Paragraph("\n"));
 
-        // 2. Título del Reporte
+        // 2. T\u00EDtulo del Reporte
         Paragraph pTitulo = new Paragraph(tituloReporte.toUpperCase(), FUENTE_TITULO);
         pTitulo.setAlignment(Element.ALIGN_CENTER);
         documento.add(pTitulo);

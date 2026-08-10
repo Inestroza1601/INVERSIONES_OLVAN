@@ -139,7 +139,7 @@ public class Mensajes {
                 pnlBotones.add(btnCancel);
                 pnlBotones.add(btnOk);
             } else {
-                JButton btnSi = utilidades.EfectosUI.crearBotonVerde("Sí, Continuar");
+                JButton btnSi = utilidades.EfectosUI.crearBotonVerde("S\u00ED, Continuar");
                 JButton btnNo = utilidades.EfectosUI.crearBotonPeligro("No, Cancelar");
                 btnSi.addActionListener(e -> { resultado[0] = JOptionPane.YES_OPTION; animarCierre(dialog); });
                 btnNo.addActionListener(e -> { resultado[0] = JOptionPane.NO_OPTION; animarCierre(dialog); });

@@ -34,7 +34,7 @@ public class ActualizarPrueba {
                         
                         contador++;
                     }
-                    System.out.println("¡" + contador + " productos actualizados con la ruta local: " + rutaLocal + "!");
+                    System.out.println("\u00A1" + contador + " productos actualizados con la ruta local: " + rutaLocal + "!");
                 }
             }
         } catch (Exception e) {

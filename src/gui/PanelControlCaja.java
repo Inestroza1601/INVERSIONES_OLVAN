@@ -51,7 +51,7 @@ public class PanelControlCaja extends JPanel {
         this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
         this.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
-        // ====== TÍTULO ======
+        // ====== T\u00CDTULO ======
         JPanel pnlTituloWrapper = new JPanel(new BorderLayout());
         pnlTituloWrapper.setOpaque(false);
         pnlTituloWrapper.setBorder(BorderFactory.createEmptyBorder(0, 0, 16, 0));
@@ -126,7 +126,7 @@ public class PanelControlCaja extends JPanel {
         pnlActivo = construirPanelActivo();
         pnlDerechaCards.add(pnlActivo, "ACTIVO");
 
-        // --- Card INACTIVO: sin sesión ---
+        // --- Card INACTIVO: sin sesi\u00F3n ---
         pnlInactivo = construirPanelInactivo();
         pnlDerechaCards.add(pnlInactivo, "INACTIVO");
 
@@ -143,7 +143,7 @@ public class PanelControlCaja extends JPanel {
     private JPanel construirPanelActivo() {
         JPanel panel = new JPanel(new BorderLayout(0, 12));
         panel.setOpaque(false);
-        // Padding = título "Historial de Arqueos" (Font BOLD 16 ~28px) + borde inferior (8px) = ~36px
+        // Padding = t\u00EDtulo "Historial de Arqueos" (Font BOLD 16 ~28px) + borde inferior (8px) = ~36px
         // Alinea el inicio de la tarjeta con el inicio de la tabla
         panel.setBorder(BorderFactory.createEmptyBorder(36, 0, 0, 0));
 
@@ -186,7 +186,7 @@ public class PanelControlCaja extends JPanel {
         sep2.setAlignmentX(Component.LEFT_ALIGNMENT);
         sep2.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
 
-        // Cálculos (Admin)
+        // C\u00E1lculos (Admin)
         pnlCalculosAdmin = new JPanel();
         pnlCalculosAdmin.setLayout(new BoxLayout(pnlCalculosAdmin, BoxLayout.Y_AXIS));
         pnlCalculosAdmin.setOpaque(false);
@@ -297,7 +297,7 @@ public class PanelControlCaja extends JPanel {
         lblIconWarn.setForeground(new Color(230, 126, 34));
         lblIconWarn.setHorizontalAlignment(SwingConstants.CENTER);
 
-        JLabel lblMsg = new JLabel("<html><center>No hay ningún turno<br>de caja abierto.</center></html>");
+        JLabel lblMsg = new JLabel("<html><center>No hay ning\u00FAn turno<br>de caja abierto.</center></html>");
         lblMsg.setFont(new Font("Segoe UI", Font.BOLD, 15));
         lblMsg.setForeground(new Color(45, 45, 45));
         lblMsg.setHorizontalAlignment(SwingConstants.CENTER);
@@ -330,7 +330,7 @@ public class PanelControlCaja extends JPanel {
     private void mostrarVentanaCierreCaja() {
         if (activa == null) return;
 
-        // Actualizar cálculos antes de abrir
+        // Actualizar c\u00E1lculos antes de abrir
         Map<String, Object> calcs = dao.obtenerCalculosTurno(activa.getIdCaja());
 
         Frame parentFrame = (Frame) SwingUtilities.getWindowAncestor(this);
@@ -475,14 +475,14 @@ public class PanelControlCaja extends JPanel {
 
                 JPasswordField pfPass = new JPasswordField();
                 int op = utilidades.Mensajes.showConfirmDialog(dlgCierre,
-                    new Object[]{"Ingrese su contraseña para firmar y cerrar el turno:", pfPass},
+                    new Object[]{"Ingrese su contrase\u00F1a para firmar y cerrar el turno:", pfPass},
                     "Firma de Cierre", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (op != JOptionPane.OK_OPTION) return;
 
                 String pass = new String(pfPass.getPassword());
                 int idFirma = new dao.KardexDAO().validarFirmaUsuario(pass);
                 if (idFirma <= 0) {
-                    utilidades.Mensajes.showMessageDialog(dlgCierre, "Contraseña incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(dlgCierre, "Contrase\u00F1a incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 

@@ -24,7 +24,7 @@ public class PanelEstadisticas extends JPanel {
 
     public PanelEstadisticas() {
         iniciarDiseno();
-        cargarDatosDesdeBD("Día");
+        cargarDatosDesdeBD("D\u00EDa");
     }
 
     private void iniciarDiseno() {
@@ -33,11 +33,11 @@ public class PanelEstadisticas extends JPanel {
         this.setBackground(COLOR_FONDO);
         this.setBorder(BorderFactory.createEmptyBorder(25, 35, 25, 35));
 
-        // --- 1. CABECERA (TÍTULO Y FILTRO) ---
+        // --- 1. CABECERA (T\u00CDTULO Y FILTRO) ---
         JPanel panelCabecera = new JPanel(new BorderLayout());
         panelCabecera.setOpaque(false);
 
-        // Contenedor apilado para la Marca y el Título
+        // Contenedor apilado para la Marca y el T\u00EDtulo
         JPanel panelTextos = new JPanel();
         panelTextos.setLayout(new BoxLayout(panelTextos, BoxLayout.Y_AXIS));
         panelTextos.setOpaque(false);
@@ -47,7 +47,7 @@ public class PanelEstadisticas extends JPanel {
         lblMarca.setFont(new Font("Segoe UI", Font.BOLD, 12));
         lblMarca.setForeground(COLOR_ACENTO); 
         
-        JLabel lblTitulo = new JLabel("Dashboard de Estadísticas");
+        JLabel lblTitulo = new JLabel("Dashboard de Estad\u00EDsticas");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 28));
         lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
 
@@ -55,7 +55,7 @@ public class PanelEstadisticas extends JPanel {
         panelTextos.add(Box.createVerticalStrut(2)); // Un mini respiro entre textos
         panelTextos.add(lblTitulo);
 
-        String[] opcionesFiltro = {"Día", "Semana", "Mes", "Año"};
+        String[] opcionesFiltro = {"D\u00EDa", "Semana", "Mes", "A\u00F1o"};
         cmbFiltro = new JComboBox<>(opcionesFiltro);
         cmbFiltro.setFont(new Font("Segoe UI", Font.BOLD, 14));
         cmbFiltro.setPreferredSize(new Dimension(150, 35));
@@ -68,17 +68,17 @@ public class PanelEstadisticas extends JPanel {
         panelCabecera.add(cmbFiltro, BorderLayout.EAST);
         this.add(panelCabecera, BorderLayout.NORTH);
 
-        // --- 2. ZONA CENTRAL (CUADRÍCULA 2x2 SIMÉTRICA) ---
+        // --- 2. ZONA CENTRAL (CUADR\u00CDCULA 2x2 SIM\u00C9TRICA) ---
         JPanel panelCuadricula = new JPanel(new GridLayout(2, 2, 25, 25));
         panelCuadricula.setOpaque(false);
 
-        // Tarjeta 1: Tacómetro
+        // Tarjeta 1: Tac\u00F3metro
         JPanel tarjetaTacometro = crearTarjeta("Ventas Totales (L.)");
         tacometro = new TacometroPanel();
         tarjetaTacometro.add(tacometro, BorderLayout.CENTER);
 
         // Tarjeta 2: Comparativa
-        JPanel tarjetaComparativa = crearTarjeta("Rendimiento vs Período Anterior");
+        JPanel tarjetaComparativa = crearTarjeta("Rendimiento vs Per\u00EDodo Anterior");
         tarjetaComparativa.setLayout(new BoxLayout(tarjetaComparativa, BoxLayout.Y_AXIS));
         
         lblDiferenciaPorcentaje = new JLabel("+0.00%", SwingConstants.CENTER);
@@ -104,13 +104,13 @@ public class PanelEstadisticas extends JPanel {
         tarjetaTicket.add(lblTicketPromedio, BorderLayout.CENTER);
 
         // Tarjeta 4: Top Producto
-        JPanel tarjetaTop = crearTarjeta("Producto Más Vendido");
+        JPanel tarjetaTop = crearTarjeta("Producto M\u00E1s Vendido");
         lblTopProducto = new JLabel("<html><div style='text-align: center;'>Cargando...</div></html>", SwingConstants.CENTER);
         lblTopProducto.setFont(new Font("Segoe UI", Font.BOLD, 26)); 
         lblTopProducto.setForeground(COLOR_ACENTO);
         tarjetaTop.add(lblTopProducto, BorderLayout.CENTER);
 
-        // Agregamos todo a la cuadrícula en orden
+        // Agregamos todo a la cuadr\u00EDcula en orden
         panelCuadricula.add(tarjetaTacometro);
         panelCuadricula.add(tarjetaComparativa);
         panelCuadricula.add(tarjetaTicket);
@@ -129,7 +129,7 @@ public class PanelEstadisticas extends JPanel {
                 g2.setColor(COLOR_TARJETA);
                 g2.fill(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 16, 16));
                 
-                // Línea superior decorativa verde esmeralda
+                // L\u00EDnea superior decorativa verde esmeralda
                 g2.setColor(COLOR_ACENTO);
                 g2.fill(new RoundRectangle2D.Double(0, 0, getWidth(), 4, 16, 16));
                 g2.dispose();
@@ -147,7 +147,7 @@ public class PanelEstadisticas extends JPanel {
     }
 
     // =================================================================
-    // LÓGICA DE ACTUALIZACIÓN DE DATOS Y ANIMACIÓN
+    // L\u00D3GICA DE ACTUALIZACI\u00D3N DE DATOS Y ANIMACI\u00D3N
     // =================================================================
     private void cargarDatosDesdeBD(String filtro) {
         dao.EstadisticasDAO dao = new dao.EstadisticasDAO();
@@ -158,66 +158,66 @@ public class PanelEstadisticas extends JPanel {
         double ticketProm = datos[2] != null ? (double) datos[2] : 0;
         String topProducto = datos[3] != null ? (String) datos[3] : "Sin movimientos";
 
-        // Definimos metas estimadas para que el tacómetro se vea proporcional
+        // Definimos metas estimadas para que el tac\u00F3metro se vea proporcional
         double metaEstimada = 10000;
         switch(filtro) {
-            case "Día": metaEstimada = 25000; break; // Ejemplo: Meta diaria de 25k
+            case "D\u00EDa": metaEstimada = 25000; break; // Ejemplo: Meta diaria de 25k
             case "Semana": metaEstimada = 150000; break;
             case "Mes": metaEstimada = 500000; break;
-            case "Año": metaEstimada = 2000000; break;
+            case "A\u00F1o": metaEstimada = 2000000; break;
         }
         
         if (ventasActual >= metaEstimada) {
-            metaEstimada = ventasActual * 1.2; // Expandimos un 20% más
+            metaEstimada = ventasActual * 1.2; // Expandimos un 20% m\u00E1s
         }
 
         actualizarUI(ventasActual, ventasAnterior, metaEstimada, topProducto, ticketProm, filtro);
     }
 
     private void actualizarUI(double totalActual, double totalAnterior, double metaMax, String topProd, double ticket, String tipoFiltro) {
-        // 1. Animamos el Tacómetro
+        // 1. Animamos el Tac\u00F3metro
         tacometro.animarA(totalActual, metaMax);
 
         // 2. Preparamos el formato y textos
         DecimalFormat df = new DecimalFormat("#,##0.00");
-        String periodoText = tipoFiltro.toLowerCase().equals("día") ? "este día y el anterior" : 
+        String periodoText = tipoFiltro.toLowerCase().equals("d\u00EDa") ? "este d\u00EDa y el anterior" : 
                              "est" + (tipoFiltro.equals("Semana") ? "a " : "e ") + tipoFiltro.toLowerCase() + " y el anterior";
 
-        // Limpiamos el ícono por defecto
+        // Limpiamos el \u00EDcono por defecto
         lblMensajeComparacion.setIcon(null);
 
-        // --- VALIDACIÓN DE DATOS INEXISTENTES ---
+        // --- VALIDACI\u00D3N DE DATOS INEXISTENTES ---
         if (totalAnterior <= 0) {
             lblDiferenciaPorcentaje.setText("-- %");
             lblDiferenciaPorcentaje.setForeground(new Color(140, 145, 150)); // Gris neutro
             
-            // Inyectamos nuestro ícono vectorial y el mensaje
+            // Inyectamos nuestro \u00EDcono vectorial y el mensaje
             lblMensajeComparacion.setIcon(new IconoFaltaDatos());
-            lblMensajeComparacion.setText("<html><div style='text-align: center; padding-left: 8px;'>No existen datos suficientes del período<br>anterior para calcular una diferencia.</div></html>");
+            lblMensajeComparacion.setText("<html><div style='text-align: center; padding-left: 8px;'>No existen datos suficientes del per\u00EDodo<br>anterior para calcular una diferencia.</div></html>");
             
         } else {
-            // Lógica normal de cálculo
+            // L\u00F3gica normal de c\u00E1lculo
             double porcentaje = ((totalActual - totalAnterior) / totalAnterior) * 100;
             String percStr = df.format(Math.abs(porcentaje)) + "%";
 
             if (porcentaje >= 0) {
-                lblDiferenciaPorcentaje.setText("▲ " + percStr);
+                lblDiferenciaPorcentaje.setText("\u25B2 " + percStr);
                 lblDiferenciaPorcentaje.setForeground(COLOR_EXITO);
-                lblMensajeComparacion.setText("<html><div style='text-align: center;'>Orion Systems detectó un <b>incremento</b> de ventas<br>del " + percStr + " entre " + periodoText + ".</div></html>");
+                lblMensajeComparacion.setText("<html><div style='text-align: center;'>Orion Systems detect\u00F3 un <b>incremento</b> de ventas<br>del " + percStr + " entre " + periodoText + ".</div></html>");
             } else {
-                lblDiferenciaPorcentaje.setText("▼ " + percStr);
+                lblDiferenciaPorcentaje.setText("\u25BC " + percStr);
                 lblDiferenciaPorcentaje.setForeground(COLOR_ALERTA);
-                lblMensajeComparacion.setText("<html><div style='text-align: center;'>Orion Systems detectó un <b>decremento</b> de ventas<br>del " + percStr + " entre " + periodoText + ".</div></html>");
+                lblMensajeComparacion.setText("<html><div style='text-align: center;'>Orion Systems detect\u00F3 un <b>decremento</b> de ventas<br>del " + percStr + " entre " + periodoText + ".</div></html>");
             }
         }
 
-        // 3. Actualizamos las métricas inferiores
+        // 3. Actualizamos las m\u00E9tricas inferiores
         lblTicketPromedio.setText("L. " + df.format(ticket));
         lblTopProducto.setText(topProd);
     }
 
     // =================================================================
-    // CLASE INTERNA: TACÓMETRO ANIMADO CON JAVA 2D
+    // CLASE INTERNA: TAC\u00D3METRO ANIMADO CON JAVA 2D
     // =================================================================
     private class TacometroPanel extends JPanel {
         private double valorActual = 0;
@@ -228,7 +228,7 @@ public class PanelEstadisticas extends JPanel {
         public TacometroPanel() {
             setOpaque(false);
             timer = new Timer(15, e -> {
-                double paso = (valorObjetivo - valorActual) * 0.1; // Efecto de desaceleración suave
+                double paso = (valorObjetivo - valorActual) * 0.1; // Efecto de desaceleraci\u00F3n suave
                 if (Math.abs(valorObjetivo - valorActual) < 1) {
                     valorActual = valorObjetivo;
                     timer.stop();
@@ -254,7 +254,7 @@ public class PanelEstadisticas extends JPanel {
 
             int width = getWidth();
             int height = getHeight();
-            int paddingTop = 20; // Espacio superior para el grosor de la línea
+            int paddingTop = 20; // Espacio superior para el grosor de la l\u00EDnea
             int paddingBottom = 30;
             int paddingSides = 30;
             int diameter = Math.min(width - paddingSides * 2, (height - paddingBottom - paddingTop) * 2);
@@ -292,7 +292,7 @@ public class PanelEstadisticas extends JPanel {
     }
     
     // =================================================================
-    // CLASE INTERNA: ÍCONO VECTORIAL DE AVISO (FALTA DE DATOS)
+    // CLASE INTERNA: \u00CDCONO VECTORIAL DE AVISO (FALTA DE DATOS)
     // =================================================================
     private class IconoFaltaDatos implements Icon {
         @Override public int getIconWidth() { return 24; }
@@ -307,11 +307,11 @@ public class PanelEstadisticas extends JPanel {
             g2.setColor(new Color(140, 145, 150)); 
             g2.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             
-            // Dibujar el círculo exterior
+            // Dibujar el c\u00EDrculo exterior
             g2.drawOval(x + 2, y + 2, 20, 20);
             
-            // Dibujar el signo de exclamación (!)
-            g2.drawLine(x + 12, y + 7, x + 12, y + 13); // Línea superior
+            // Dibujar el signo de exclamaci\u00F3n (!)
+            g2.drawLine(x + 12, y + 7, x + 12, y + 13); // L\u00EDnea superior
             g2.fillOval(x + 10, y + 16, 4, 4);          // Punto inferior
             
             g2.dispose();

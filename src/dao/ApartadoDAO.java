@@ -360,7 +360,7 @@ public class ApartadoDAO {
                 psUp.executeUpdate();
             }
 
-            // Devolver mercancías a inventario
+            // Devolver mercanc\u00EDas a inventario
             try (PreparedStatement psItems = con.prepareStatement(sqlItems);
                  PreparedStatement psStock = con.prepareStatement(sqlStock);
                  PreparedStatement psStockUp = con.prepareStatement(sqlStockUpdate);
@@ -387,7 +387,7 @@ public class ApartadoDAO {
                         psKardex.setInt(2, idUsuarioFirma);
                         psKardex.setInt(3, qty);
                         psKardex.setInt(4, nuevoStock);
-                        psKardex.setString(5, "Cancelación Apartado #" + idApartado);
+                        psKardex.setString(5, "Cancelaci\u00F3n Apartado #" + idApartado);
                         psKardex.executeUpdate();
                     }
                 }

@@ -70,7 +70,7 @@ public class GenerarPrueba {
                         }
                     }
                 }
-                System.out.println("¡50 productos insertados correctamente!");
+                System.out.println("\u00A150 productos insertados correctamente!");
             }
         } catch (Exception e) {
             e.printStackTrace();

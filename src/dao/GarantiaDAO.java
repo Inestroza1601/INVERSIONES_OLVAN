@@ -58,7 +58,7 @@ public class GarantiaDAO {
                 java.sql.Timestamp fechaVenta = rs.getTimestamp("fecha_venta");
                 int diasGarantia = rs.getInt("dias_garantia");
 
-                // Cálculo matemático de la fecha de vencimiento
+                // C\u00E1lculo matem\u00E1tico de la fecha de vencimiento
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(fechaVenta);
                 cal.add(Calendar.DAY_OF_YEAR, diasGarantia);
@@ -68,7 +68,7 @@ public class GarantiaDAO {
                 String estado = "VENCIDA";
                 
                 if (estadoBD != null && estadoBD.equals("RECLAMADA")) {
-                    estado = "RECLAMADA"; // Prioridad 1: Si ya se reclamó, se queda gris
+                    estado = "RECLAMADA"; // Prioridad 1: Si ya se reclam\u00F3, se queda gris
                 } else if (fechaVencimiento.after(hoy)) {
                     estado = "VIGENTE";   // Prioridad 2: Si no se ha reclamado y tiene tiempo, es verde
                 }
@@ -87,7 +87,7 @@ public class GarantiaDAO {
                 });
             }
         } catch (SQLException e) {
-            System.err.println("Error listando garantías en Orion Systems: " + e.getMessage());
+            System.err.println("Error listando garant\u00EDas en Orion Systems: " + e.getMessage());
         }
         return lista;
     }
@@ -122,7 +122,7 @@ public class GarantiaDAO {
             }
             
             if (idProdOriginal != -1) {
-                if (resolucion.startsWith("Reparación Técnica")) {
+                if (resolucion.startsWith("Reparaci\u00F3n T\u00E9cnica")) {
                     // Propiedad del cliente: entra a mermas con estado especial, no afecta KARDEX ni stock normal
                     String sqlDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, id_detalle_venta, fecha_ingreso, cantidad, motivo_danio, estado_defecto) VALUES (?, ?, GETDATE(), 1, ?, 'En Bodega (Rep. Cliente)')";
                     try (PreparedStatement psDef = con.prepareStatement(sqlDefectuoso)) {
@@ -167,7 +167,7 @@ public class GarantiaDAO {
                         psK.executeUpdate();
                     }
                 } else {
-                    // Otros casos (ej. Sin Solución)
+                    // Otros casos (ej. Sin Soluci\u00F3n)
                     if (reintegro) {
                         String sqlDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, id_detalle_venta, fecha_ingreso, cantidad, motivo_danio, estado_defecto) VALUES (?, ?, GETDATE(), 1, ?, 'En Bodega')";
                         try (PreparedStatement psDef = con.prepareStatement(sqlDefectuoso)) {
@@ -235,7 +235,7 @@ public class GarantiaDAO {
                 }
             }
             
-            // 2. Venta Negativa (Devolución)
+            // 2. Venta Negativa (Devoluci\u00F3n)
             String sqlVentaNeg = "INSERT INTO VENTAS (fecha_venta, id_cliente_venta, id_usuario, id_metodo_pago, subtotal_venta, impuesto_venta, total_venta, referencia_pago) VALUES (GETDATE(), ?, ?, ?, ?, 0, ?, 'DEV. GARANTIA')";
             int idVentaNeg = 0;
             try (PreparedStatement psVN = con.prepareStatement(sqlVentaNeg, Statement.RETURN_GENERATED_KEYS)) {

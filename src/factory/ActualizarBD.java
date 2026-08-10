@@ -1,4 +1,4 @@
-package factory; // Poniéndolo en factory para que pueda acceder a ConexionFactory fácilmente si es package private
+package factory; // Poni\u00E9ndolo en factory para que pueda acceder a ConexionFactory f\u00E1cilmente si es package private
 
 import java.sql.Connection;
 import java.sql.Statement;

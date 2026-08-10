@@ -10,7 +10,7 @@ import java.awt.event.KeyEvent;
 public class DialogoMovimientoKardex extends JDialog {
 
     private Producto productoActual;
-    private DialogoKardex padreKardex; // Para actualizar la tabla de atrás
+    private DialogoKardex padreKardex; // Para actualizar la tabla de atr\u00E1s
     
     private JRadioButton rbAgregar, rbDisminuir;
     private JTextField txtCantidad;
@@ -54,8 +54,8 @@ public class DialogoMovimientoKardex extends JDialog {
         gbc.gridy = 2; pnlForm.add(lblCantidad, gbc);
         gbc.gridy = 3; pnlForm.add(txtCantidad, gbc);
 
-        // Observación
-        JLabel lblObs = new JLabel("Motivo u Observación:"); lblObs.setForeground(new Color(45, 45, 45));
+        // Observaci\u00F3n
+        JLabel lblObs = new JLabel("Motivo u Observaci\u00F3n:"); lblObs.setForeground(new Color(45, 45, 45));
         txtObservacion = new JTextArea(4, 20); 
         txtObservacion.setText("Ajuste manual del kardex");
         txtObservacion.setBackground(new Color(250, 250, 250)); 
@@ -80,38 +80,38 @@ public class DialogoMovimientoKardex extends JDialog {
 
     private void firmarYGuardar() {
         if (txtCantidad.getText().trim().isEmpty() || txtObservacion.getText().trim().isEmpty()) {
-            utilidades.Mensajes.showMessageDialog(this, "Debe ingresar cantidad y observación.", "Aviso", JOptionPane.WARNING_MESSAGE); return;
+            utilidades.Mensajes.showMessageDialog(this, "Debe ingresar cantidad y observaci\u00F3n.", "Aviso", JOptionPane.WARNING_MESSAGE); return;
         }
 
         int cantidad = Integer.parseInt(txtCantidad.getText().trim());
-        if (cantidad <= 0) { utilidades.Mensajes.showMessageDialog(this, "Cantidad inválida.", "Error", JOptionPane.ERROR_MESSAGE); return; }
+        if (cantidad <= 0) { utilidades.Mensajes.showMessageDialog(this, "Cantidad inv\u00E1lida.", "Error", JOptionPane.ERROR_MESSAGE); return; }
 
         boolean esEntrada = rbAgregar.isSelected();
         if (!esEntrada && cantidad > productoActual.getStockProducto()) {
             utilidades.Mensajes.showMessageDialog(this, "Stock insuficiente para esta salida.", "Error", JOptionPane.ERROR_MESSAGE); return;
         }
 
-        // --- SOLICITAR FIRMA (SOLO CONTRASEÑA) ---
+        // --- SOLICITAR FIRMA (SOLO CONTRASE\u00D1A) ---
         JPasswordField pfPass = new JPasswordField();
-        Object[] msg = { "Ingrese su contraseña para autorizar el movimiento:", pfPass };
+        Object[] msg = { "Ingrese su contrase\u00F1a para autorizar el movimiento:", pfPass };
 
-        int opcion = utilidades.Mensajes.showConfirmDialog(this, msg, "Firma de Autorización", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        int opcion = utilidades.Mensajes.showConfirmDialog(this, msg, "Firma de Autorizaci\u00F3n", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         
         if (opcion == JOptionPane.OK_OPTION) {
             String pass = new String(pfPass.getPassword());
 
             KardexDAO dao = new KardexDAO();
-            // Ya no le pasamos el usuario, solo la contraseña
+            // Ya no le pasamos el usuario, solo la contrase\u00F1a
             int idAutorizador = dao.validarFirmaUsuario(pass);
 
             if (idAutorizador > 0) {
                 if (pass.equals(String.valueOf(idAutorizador))) {
-                    utilidades.Mensajes.showMessageDialog(this, "Acceso Denegado: Por políticas de seguridad de Nexar, no se permite autorizar transacciones con contraseñas por defecto. Por favor, actualice su contraseña.", "Seguridad Nexar", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Acceso Denegado: Por pol\u00EDticas de seguridad de Nexar, no se permite autorizar transacciones con contrase\u00F1as por defecto. Por favor, actualice su contrase\u00F1a.", "Seguridad Nexar", JOptionPane.ERROR_MESSAGE);
                     return; 
                 }
 
                 if (dao.registrarMovimiento(productoActual.getIdProducto(), esEntrada ? "Entrada" : "Salida", cantidad, txtObservacion.getText().trim(), idAutorizador)) {
-                    utilidades.Mensajes.showMessageDialog(this, "Movimiento registrado y firmado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Movimiento registrado y firmado exitosamente.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
                     
                     padreKardex.cargarHistorial();
                     int nuevoStock = esEntrada ? (productoActual.getStockProducto() + cantidad) : (productoActual.getStockProducto() - cantidad);
@@ -119,10 +119,10 @@ public class DialogoMovimientoKardex extends JDialog {
                     
                     this.dispose(); 
                 } else {
-                    utilidades.Mensajes.showMessageDialog(this, "Error de base de datos al guardar movimiento.", "Error Crítico", JOptionPane.ERROR_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Error de base de datos al guardar movimiento.", "Error Cr\u00EDtico", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                utilidades.Mensajes.showMessageDialog(this, "Contraseña incorrecta o usuario inactivo.", "Firma Rechazada", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Contrase\u00F1a incorrecta o usuario inactivo.", "Firma Rechazada", JOptionPane.ERROR_MESSAGE);
             }
         }
     }                  

@@ -19,7 +19,7 @@ import java.util.Iterator;
 public class ImagenHelper {
 
     /**
-     * Obtiene una ImageIcon a partir de una ruta física o un string Base64.
+     * Obtiene una ImageIcon a partir de una ruta f\u00EDsica o un string Base64.
      */
     public static ImageIcon obtenerIcono(String valor, int width, int height) {
         if (valor == null || valor.trim().isEmpty()) {
@@ -75,7 +75,7 @@ public class ImagenHelper {
     }
 
     /**
-     * Escala una imagen utilizando interpolación bicúbica de alta calidad y reducciones progresivas (bilineales) si es necesario.
+     * Escala una imagen utilizando interpolaci\u00F3n bic\u00FAbica de alta calidad y reducciones progresivas (bilineales) si es necesario.
      */
     public static ImageIcon escalarConAltaCalidad(Image img, int targetWidth, int targetHeight) {
         if (img == null) return null;
@@ -127,14 +127,14 @@ public class ImagenHelper {
 
     /**
      * Lee un archivo de imagen local y lo convierte directamente a Base64
-     * SIN aplicar ninguna compresión ni redimensionamiento para mantener la calidad 100% original.
+     * SIN aplicar ninguna compresi\u00F3n ni redimensionamiento para mantener la calidad 100% original.
      */
     public static String comprimirYConvertirABase64(File file) {
         try {
             byte[] bytes = java.nio.file.Files.readAllBytes(file.toPath());
             String b64 = java.util.Base64.getEncoder().encodeToString(bytes);
             
-            // Determinar el MIME type básico según la extensión
+            // Determinar el MIME type b\u00E1sico seg\u00FAn la extensi\u00F3n
             String mimeType = "image/png"; // por defecto
             String name = file.getName().toLowerCase();
             if (name.endsWith(".jpg") || name.endsWith(".jpeg")) {
@@ -152,7 +152,7 @@ public class ImagenHelper {
 
     /**
      * Convierte un BufferedImage (por ejemplo descargado de internet) a Base64
-     * guardando la máxima calidad posible en formato PNG.
+     * guardando la m\u00E1xima calidad posible en formato PNG.
      */
     public static String convertirImagenABase64(BufferedImage img) {
         try {

@@ -31,7 +31,7 @@ public class Usuario {
     public java.util.List<String> getPermisos() { return permisos; }
     public void setPermisos(java.util.List<String> permisos) { this.permisos = permisos; }
     
-    // Utilidad rápida para chequear permiso en la UI
+    // Utilidad r\u00E1pida para chequear permiso en la UI
     public boolean tienePermiso(String permisoBuscado) {
         // Rol 1 (Admin/Programador) o "Administrador" (si el nombre aplica) tienen todo.
         if (this.idRol == 1 || (this.nombreRol != null && this.nombreRol.equalsIgnoreCase("Administrador"))) {

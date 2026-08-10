@@ -39,14 +39,14 @@ public class UsuarioDAO {
     }
 
     // 2. SOFT DELETE (Recibe int, no String)
-    // 2. SOFT DELETE - Fíjate que el parámetro ahora es (int idUsuario)
+    // 2. SOFT DELETE - F\u00EDjate que el par\u00E1metro ahora es (int idUsuario)
     public boolean desactivarUsuario(int idUsuario) {
         String sql = "UPDATE USUARIOS SET estado_usuario = 0 WHERE id_usuario = ?";
         
         try (Connection con = factory.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
              
-            ps.setInt(1, idUsuario); // Ahora esto no dará error porque idUsuario es int
+            ps.setInt(1, idUsuario); // Ahora esto no dar\u00E1 error porque idUsuario es int
             return ps.executeUpdate() > 0;
             
         } catch (SQLException e) {
@@ -116,10 +116,10 @@ public class UsuarioDAO {
             if (actualizaClave) {
                 ps.setString(3, u.getPasswordHash());
                 ps.setString(4, u.getEmailUsuario());
-                ps.setInt(5, u.getIdUsuario()); // Corrección a setInt
+                ps.setInt(5, u.getIdUsuario()); // Correcci\u00F3n a setInt
             } else {
                 ps.setString(3, u.getEmailUsuario());
-                ps.setInt(4, u.getIdUsuario()); // Corrección a setInt
+                ps.setInt(4, u.getIdUsuario()); // Correcci\u00F3n a setInt
             }
             
             return ps.executeUpdate() > 0;
@@ -130,7 +130,7 @@ public class UsuarioDAO {
         }
     }
 
-    // 5. AUTENTICAR USUARIO PARA SESIÓN
+    // 5. AUTENTICAR USUARIO PARA SESI\u00D3N
     public Usuario autenticarUsuario(String nombreUsuario, String passwordPlana) {
         String hash = utilidades.Seguridad.encriptarSHA256(passwordPlana);
         String sql = "SELECT u.*, r.nombre_rol FROM USUARIOS u INNER JOIN ROLES_USUARIO r ON u.id_rol = r.id_rol WHERE LOWER(u.nombre_usuario) = LOWER(?) AND u.password_hash = ? AND u.estado_usuario = 1";
@@ -164,10 +164,10 @@ public class UsuarioDAO {
         return null;
     }
     
-    // Método auxiliar para cargar permisos de un rol
+    // M\u00E9todo auxiliar para cargar permisos de un rol
     public List<String> cargarPermisosRol(int idRol) {
         List<String> permisos = new ArrayList<>();
-        // Si el esquema de RBAC aún no existe en la BD (ej. script no ejecutado), atrapamos el error y devolvemos lista vacía (o acceso total si es admin).
+        // Si el esquema de RBAC a\u00FAn no existe en la BD (ej. script no ejecutado), atrapamos el error y devolvemos lista vac\u00EDa (o acceso total si es admin).
         String sql = "SELECT p.nombre_permiso FROM PERMISOS p " +
                      "INNER JOIN ROL_PERMISOS rp ON p.id_permiso = rp.id_permiso " +
                      "WHERE rp.id_rol = ?";
@@ -180,13 +180,13 @@ public class UsuarioDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Aviso: No se pudieron cargar permisos (¿Tablas RBAC creadas?): " + e.getMessage());
+            System.err.println("Aviso: No se pudieron cargar permisos (\u00BFTablas RBAC creadas?): " + e.getMessage());
         }
         return permisos;
     }
     
     // =========================================================
-    // METODOS DE RECUPERACION DE CONTRASEÑA
+    // METODOS DE RECUPERACION DE CONTRASE\u00D1A
     // =========================================================
     
     public Usuario obtenerUsuarioPorNombre(String nombreUsuario) {
@@ -254,7 +254,7 @@ public class UsuarioDAO {
             ps.setInt(1, idUsuario);
             ps.setString(2, token);
             try (ResultSet rs = ps.executeQuery()) {
-                return rs.next(); // Si hay resultado, el token es válido
+                return rs.next(); // Si hay resultado, el token es v\u00E1lido
             }
         } catch (SQLException e) {
             System.err.println("Error al validar token: " + e.getMessage());
@@ -264,7 +264,7 @@ public class UsuarioDAO {
     
     public boolean actualizarPassword(int idUsuario, String passwordPlana) {
         String hash = utilidades.Seguridad.encriptarSHA256(passwordPlana);
-        // Limpiamos el token al actualizar la contraseña
+        // Limpiamos el token al actualizar la contrase\u00F1a
         String sql = "UPDATE USUARIOS SET password_hash = ?, token_recuperacion = NULL, expiracion_token = NULL WHERE id_usuario = ?";
         try (Connection con = factory.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -297,7 +297,7 @@ public class UsuarioDAO {
     }
 
     // =========================================================
-    // GESTIÓN DINÁMICA DE ROLES
+    // GESTI\u00D3N DIN\u00C1MICA DE ROLES
     // =========================================================
 
     public List<String> listarNombresDeRoles() {
@@ -378,7 +378,7 @@ public class UsuarioDAO {
         
         try {
             con = factory.getConexion();
-            con.setAutoCommit(false); // Transacción
+            con.setAutoCommit(false); // Transacci\u00F3n
             
             // 1. Eliminar todos los permisos actuales
             String sqlDelete = "DELETE FROM ROL_PERMISOS WHERE id_rol = ?";
@@ -430,7 +430,7 @@ public class UsuarioDAO {
         }
     }
 
-    // Eliminar un rol (fallará si hay usuarios con este rol asignado por FK)
+    // Eliminar un rol (fallar\u00E1 si hay usuarios con este rol asignado por FK)
     public boolean eliminarRol(int idRol) {
         Connection con = null;
         PreparedStatement psDeletePermisos = null;

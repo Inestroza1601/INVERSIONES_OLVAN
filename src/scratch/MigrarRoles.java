@@ -30,7 +30,7 @@ public class MigrarRoles {
             stmt.execute(sql2);
             System.out.println("Tabla ROL_PERMISOS lista.");
             
-            // Insertar permisos básicos si no existen
+            // Insertar permisos b\u00E1sicos si no existen
             String[] permisos = {
                 "ACCESO_ADMINISTRACION", 
                 "ACCESO_INVENTARIO", "ELIMINAR_PRODUCTOS",
@@ -50,7 +50,7 @@ public class MigrarRoles {
             }
             System.out.println("Permisos insertados.");
             
-            System.out.println("Migración completada exitosamente.");
+            System.out.println("Migraci\u00F3n completada exitosamente.");
             
         } catch (Exception e) {
             e.printStackTrace();

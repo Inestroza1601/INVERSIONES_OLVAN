@@ -52,7 +52,7 @@ public class VentasDAO {
                     }
                 }
             }
-        } catch (SQLException e) { System.err.println("Error obteniendo métodos de pago: " + e.getMessage()); }
+        } catch (SQLException e) { System.err.println("Error obteniendo m\u00E9todos de pago: " + e.getMessage()); }
         return metodos;
     }
 
@@ -63,7 +63,7 @@ public class VentasDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) return rs.getBoolean("habilitar_facturacion_empresa");
             }
-        } catch (SQLException e) { System.err.println("Error verificando facturación: " + e.getMessage()); }
+        } catch (SQLException e) { System.err.println("Error verificando facturaci\u00F3n: " + e.getMessage()); }
         return false;
     }
 
@@ -86,11 +86,11 @@ public class VentasDAO {
                     return p;
                 }
             }
-        } catch (SQLException e) { System.err.println("Error buscando producto por código: " + e.getMessage()); }
+        } catch (SQLException e) { System.err.println("Error buscando producto por c\u00F3digo: " + e.getMessage()); }
         return null;
     }
 
-    // --- AQUÍ SE VALIDA LA CONTRASEÑA EN LA BASE DE DATOS ---
+    // --- AQU\u00CD SE VALIDA LA CONTRASE\u00D1A EN LA BASE DE DATOS ---
     public int obtenerIdUsuarioPorPassword(String passwordPlana) {
         String hash = Seguridad.encriptarSHA256(passwordPlana);
         String sql = "SELECT id_usuario FROM USUARIOS WHERE password_hash = ? AND estado_usuario = 1";
@@ -293,14 +293,14 @@ public class VentasDAO {
                         nombreClie += " " + rsV.getString("apellido_cliente");
                     }
                     
-                    // --- PROTECCIÓN: FUERZA A CONSUMIDOR FINAL SI ES ID 1 O ESTÁ VACÍO ---
+                    // --- PROTECCI\u00D3N: FUERZA A CONSUMIDOR FINAL SI ES ID 1 O EST\u00C1 VAC\u00CDO ---
                     if (idCliente == 1 || nombreClie == null || nombreClie.trim().isEmpty()) {
                         mapa.put("cliente", "CONSUMIDOR FINAL");
                     } else {
                         mapa.put("cliente", nombreClie.trim());
                     }
 
-                    // --- EXTRACCIÓN Y FORMATEO DE LA FECHA REAL DE FACTURACIÓN ---
+                    // --- EXTRACCI\u00D3N Y FORMATEO DE LA FECHA REAL DE FACTURACI\u00D3N ---
                     java.sql.Timestamp fechaVenta = rsV.getTimestamp("fecha_venta");
                     String fechaFormateada = "";
                     if (fechaVenta != null) {

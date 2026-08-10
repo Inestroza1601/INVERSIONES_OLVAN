@@ -35,7 +35,7 @@ public class ControlCajaDAO {
                 return c;
             }
         } catch (SQLException e) {
-            System.err.println("Error al obtener sesión activa de caja: " + e.getMessage());
+            System.err.println("Error al obtener sesi\u00F3n activa de caja: " + e.getMessage());
         }
         return null;
     }
@@ -94,7 +94,7 @@ public class ControlCajaDAO {
                 lista.add(c);
             }
         } catch (SQLException e) {
-            System.err.println("Error al listar cajas históricas: " + e.getMessage());
+            System.err.println("Error al listar cajas hist\u00F3ricas: " + e.getMessage());
         }
         return lista;
     }
@@ -119,7 +119,7 @@ public class ControlCajaDAO {
                                      : new Timestamp(System.currentTimeMillis());
                 double montoApertura = rsCaja.getDouble("monto_apertura");
 
-                // Buscar el ID del método de pago de efectivo
+                // Buscar el ID del m\u00E9todo de pago de efectivo
                 int cashMethodId = 1;
                 String sqlCashId = "SELECT id_metodo_pago FROM METODOS_PAGO WHERE nombre_metodo LIKE '%efectivo%'";
                 try (PreparedStatement psCash = con.prepareStatement(sqlCashId);
@@ -129,7 +129,7 @@ public class ControlCajaDAO {
                     }
                 }
 
-                // 1. Ventas por método
+                // 1. Ventas por m\u00E9todo
                 String sqlSales = "SELECT id_metodo_pago, SUM(total_venta) as total_metodo, COUNT(id_ventas) as transacciones "
                                 + "FROM VENTAS "
                                 + "WHERE fecha_venta >= ? AND fecha_venta <= ? "
@@ -148,7 +148,7 @@ public class ControlCajaDAO {
                     }
                 }
 
-                // 2. Abonos por método
+                // 2. Abonos por m\u00E9todo
                 String sqlAbonos = "SELECT id_metodo_pago, SUM(monto_abono) as total_metodo, COUNT(id_abono) as transacciones "
                                  + "FROM ABONOS_APARTADO "
                                  + "WHERE fecha_abono >= ? AND fecha_abono <= ? "
@@ -166,7 +166,7 @@ public class ControlCajaDAO {
                     }
                 }
 
-                // Cruzar con métodos de pago disponibles
+                // Cruzar con m\u00E9todos de pago disponibles
                 String sqlMethods = "SELECT id_metodo_pago, nombre_metodo FROM METODOS_PAGO";
                 List<Map<String, Object>> reportMethods = new ArrayList<>();
                 double totalSalesCash = 0.0;

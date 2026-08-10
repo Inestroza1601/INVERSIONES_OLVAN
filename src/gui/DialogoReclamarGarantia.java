@@ -25,7 +25,7 @@ public class DialogoReclamarGarantia extends JDialog {
     private String fotoBase64 = null;
 
     public DialogoReclamarGarantia(Window parent, String cliente, String producto, String serie, String fechaCompra, int idDetalle) {
-        super(parent, "Procesar Reclamo de Garantía", Dialog.ModalityType.APPLICATION_MODAL);
+        super(parent, "Procesar Reclamo de Garant\u00EDa", Dialog.ModalityType.APPLICATION_MODAL);
         this.idDetalle = idDetalle;
         
         setSize(700, 550);
@@ -45,7 +45,7 @@ public class DialogoReclamarGarantia extends JDialog {
         pnlInfo.setOpaque(false);
         pnlInfo.setBorder(BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(new Color(200, 200, 200)), 
-            "Información del Producto", 
+            "Informaci\u00F3n del Producto", 
             TitledBorder.LEFT, TitledBorder.TOP, 
             new Font("Segoe UI", Font.BOLD, 14), new Color(45, 45, 45)
         ));
@@ -61,10 +61,10 @@ public class DialogoReclamarGarantia extends JDialog {
         JPanel pnlCentro = new JPanel(new BorderLayout(20, 0));
         pnlCentro.setOpaque(false);
 
-        // Izquierda: Observaciones y Resolución
+        // Izquierda: Observaciones y Resoluci\u00F3n
         JPanel pnlObs = new JPanel(new BorderLayout(0, 10));
         pnlObs.setOpaque(false);
-        JLabel lblObs = new JLabel("Observaciones / Motivo del Daño:");
+        JLabel lblObs = new JLabel("Observaciones / Motivo del Da\u00F1o:");
         lblObs.setFont(new Font("Segoe UI", Font.BOLD, 14));
         
         txtObservacion = new JTextArea();
@@ -81,11 +81,11 @@ public class DialogoReclamarGarantia extends JDialog {
         pnlResolucion.setOpaque(false);
         pnlResolucion.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         
-        JLabel lblRes = new JLabel("Resolución del Reclamo:");
+        JLabel lblRes = new JLabel("Resoluci\u00F3n del Reclamo:");
         lblRes.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblRes.setAlignmentX(Component.LEFT_ALIGNMENT);
         
-        cmbResolucion = new JComboBox<>(new String[]{"Reparación Técnica con Proveedor", "Cambio por Producto Nuevo", "Cambio por Otro Producto Diferente", "Sin Solución"});
+        cmbResolucion = new JComboBox<>(new String[]{"Reparaci\u00F3n T\u00E9cnica con Proveedor", "Cambio por Producto Nuevo", "Cambio por Otro Producto Diferente", "Sin Soluci\u00F3n"});
         cmbResolucion.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         cmbResolucion.setAlignmentX(Component.LEFT_ALIGNMENT);
         cmbResolucion.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
@@ -96,7 +96,7 @@ public class DialogoReclamarGarantia extends JDialog {
         chkReintegro.setOpaque(false);
         chkReintegro.setAlignmentX(Component.LEFT_ALIGNMENT);
         
-        // --- Panel Dinámico de Diferencia ---
+        // --- Panel Din\u00E1mico de Diferencia ---
         pnlDiferencia = new JPanel();
         pnlDiferencia.setLayout(new BoxLayout(pnlDiferencia, BoxLayout.Y_AXIS));
         pnlDiferencia.setOpaque(false);
@@ -123,7 +123,7 @@ public class DialogoReclamarGarantia extends JDialog {
         cmbResolucion.addActionListener(e -> {
             boolean esSustituto = cmbResolucion.getSelectedIndex() == 2;
             pnlDiferencia.setVisible(esSustituto);
-            chkReintegro.setVisible(!esSustituto); // Si es sustituto, la lógica de inv. es diferente
+            chkReintegro.setVisible(!esSustituto); // Si es sustituto, la l\u00F3gica de inv. es diferente
             revalidate();
             repaint();
         });
@@ -164,12 +164,12 @@ public class DialogoReclamarGarantia extends JDialog {
         pnlIzquierda.add(scrollObs, BorderLayout.CENTER);
         pnlIzquierda.add(pnlResolucion, BorderLayout.SOUTH);
 
-        // Derecha: Evidencia Fotográfica (Maqueta)
+        // Derecha: Evidencia Fotogr\u00E1fica (Maqueta)
         JPanel pnlFoto = new JPanel(new BorderLayout(0, 10));
         pnlFoto.setOpaque(false);
         pnlFoto.setPreferredSize(new Dimension(280, 0));
         
-        JLabel lblTituloFoto = new JLabel("Fotografía de Evidencia:");
+        JLabel lblTituloFoto = new JLabel("Fotograf\u00EDa de Evidencia:");
         lblTituloFoto.setFont(new Font("Segoe UI", Font.BOLD, 14));
         
         lblFotoPlaceholder = new JLabel("Sin Imagen", SwingConstants.CENTER);
@@ -185,7 +185,7 @@ public class DialogoReclamarGarantia extends JDialog {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 if (fotoBase64 != null) {
-                    new DialogoVisorImagen((Frame) SwingUtilities.getWindowAncestor(DialogoReclamarGarantia.this), "Visor de Fotografía", fotoBase64).setVisible(true);
+                    new DialogoVisorImagen((Frame) SwingUtilities.getWindowAncestor(DialogoReclamarGarantia.this), "Visor de Fotograf\u00EDa", fotoBase64).setVisible(true);
                 }
             }
         });
@@ -196,8 +196,8 @@ public class DialogoReclamarGarantia extends JDialog {
         btnSeleccionarFoto.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnSeleccionarFoto.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
-            chooser.setDialogTitle("Seleccionar Evidencia del Daño");
-            javax.swing.filechooser.FileNameExtensionFilter filtro = new javax.swing.filechooser.FileNameExtensionFilter("Imágenes (PNG, JPG, JPEG)", "png", "jpg", "jpeg");
+            chooser.setDialogTitle("Seleccionar Evidencia del Da\u00F1o");
+            javax.swing.filechooser.FileNameExtensionFilter filtro = new javax.swing.filechooser.FileNameExtensionFilter("Im\u00E1genes (PNG, JPG, JPEG)", "png", "jpg", "jpeg");
             chooser.setFileFilter(filtro);
             
             if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -206,7 +206,7 @@ public class DialogoReclamarGarantia extends JDialog {
                     // Cargar imagen original
                     java.awt.image.BufferedImage imgOriginal = javax.imageio.ImageIO.read(archivo);
                     if (imgOriginal == null) {
-                        utilidades.Mensajes.showMessageDialog(this, "El archivo seleccionado no es una imagen válida.", "Error", JOptionPane.ERROR_MESSAGE);
+                        utilidades.Mensajes.showMessageDialog(this, "El archivo seleccionado no es una imagen v\u00E1lida.", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     
@@ -246,7 +246,7 @@ public class DialogoReclamarGarantia extends JDialog {
         construirPanelFoto(pnlFoto, lblTituloFoto, pnlCentro);
         panelPrincipal.add(pnlCentro, BorderLayout.CENTER);
 
-        // --- 3. PIE: BOTONES DE ACCIÓN ---
+        // --- 3. PIE: BOTONES DE ACCI\u00D3N ---
         JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         pnlBotones.setOpaque(false);
 
@@ -289,13 +289,13 @@ public class DialogoReclamarGarantia extends JDialog {
     private void procesarReclamo(ActionEvent evt) {
         if (txtObservacion.getText().trim().isEmpty()) {
             utilidades.Mensajes.showMessageDialog(this, 
-                "Por favor, ingrese un motivo u observación sobre el daño del producto.", 
+                "Por favor, ingrese un motivo u observaci\u00F3n sobre el da\u00F1o del producto.", 
                 "Faltan Datos", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         int confirmacion = utilidades.Mensajes.showConfirmDialog(this, 
-            "¿Está seguro de procesar el reclamo de garantía para este producto?", 
+            "\u00BFEst\u00E1 seguro de procesar el reclamo de garant\u00EDa para este producto?", 
             "Confirmar Reclamo", 
             JOptionPane.YES_NO_OPTION, 
             JOptionPane.QUESTION_MESSAGE);
@@ -319,7 +319,7 @@ public class DialogoReclamarGarantia extends JDialog {
                     utilidades.Mensajes.showMessageDialog(this, "Hubo un error al aplicar el reclamo.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                // Resolución Normal
+                // Resoluci\u00F3n Normal
                 int idUsuario = utilidades.SesionGlobal.getUsuarioActual() != null ? utilidades.SesionGlobal.getUsuarioActual().getIdUsuario() : 1;
                 if (dao.aplicarReclamo(idDetalle, txtObservacion.getText(), fotoBase64, cmbResolucion.getSelectedItem().toString(), chkReintegro.isSelected(), idUsuario)) {
                     this.exito = true;
@@ -382,7 +382,7 @@ public class DialogoReclamarGarantia extends JDialog {
                     } else {
                         list.add(fotoBase64);
                     }
-                    new DialogoVisorImagen(DialogoReclamarGarantia.this, "Visor de Garantía", list, 0).setVisible(true);
+                    new DialogoVisorImagen(DialogoReclamarGarantia.this, "Visor de Garant\u00EDa", list, 0).setVisible(true);
                 }
             }
         });
@@ -398,7 +398,7 @@ public class DialogoReclamarGarantia extends JDialog {
         btnTomarFotoQR.addActionListener(e -> {
             new DialogoEscanearQR((Frame) SwingUtilities.getWindowAncestor(this), false, 4, b64 -> {
                 setPreviewBase64(b64);
-                utilidades.Mensajes.showMessageDialog(this, "Foto capturada y adjuntada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Foto capturada y adjuntada exitosamente.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
             }).setVisible(true);
         });
 
@@ -420,7 +420,7 @@ public class DialogoReclamarGarantia extends JDialog {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setColor(Color.WHITE);
-            // Cuerpo de la cámara
+            // Cuerpo de la c\u00E1mara
             g2.fillRoundRect(x + 2, y + 6, 16, 10, 4, 4);
             // Flash/visor arriba
             g2.fillRoundRect(x + 6, y + 3, 8, 4, 2, 2);
@@ -444,7 +444,7 @@ public class DialogoReclamarGarantia extends JDialog {
             // Parte trasera de la carpeta
             g2.fillRoundRect(x + 2, y + 4, 8, 4, 2, 2);
             g2.fillRoundRect(x + 2, y + 6, 16, 10, 2, 2);
-            // Solapa frontal más clara
+            // Solapa frontal m\u00E1s clara
             g2.setColor(new Color(130, 130, 130));
             g2.fillRoundRect(x + 2, y + 8, 16, 8, 2, 2);
             g2.dispose();

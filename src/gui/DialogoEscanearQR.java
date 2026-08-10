@@ -18,7 +18,7 @@ public class DialogoEscanearQR extends JDialog {
     private JLabel lblInstrucciones;
 
     public DialogoEscanearQR(Frame parent, boolean mostrarGaleria, int maxFotos, Consumer<String> onFotoRecibida) {
-        super(parent, "Escanear Código QR", true);
+        super(parent, "Escanear C\u00F3digo QR", true);
         this.onFotoRecibida = onFotoRecibida;
         iniciarServidor(mostrarGaleria, maxFotos);
         iniciarDiseno();
@@ -26,9 +26,9 @@ public class DialogoEscanearQR extends JDialog {
 
     private void iniciarServidor(boolean mostrarGaleria, int maxFotos) {
         try {
-            int puerto = 8080; // Podríamos usar un puerto aleatorio también
+            int puerto = 8080; // Podr\u00EDamos usar un puerto aleatorio tambi\u00E9n
             servidor = new ServidorFotos(puerto, mostrarGaleria, maxFotos, base64 -> {
-                // Al recibir la foto, la pasamos al Consumer y cerramos el diálogo
+                // Al recibir la foto, la pasamos al Consumer y cerramos el di\u00E1logo
                 SwingUtilities.invokeLater(() -> {
                     onFotoRecibida.accept(base64);
                     cerrarServidor();
@@ -56,7 +56,7 @@ public class DialogoEscanearQR extends JDialog {
             BorderFactory.createEmptyBorder(20, 20, 15, 20)
         ));
         
-        lblInstrucciones = new JLabel("<html><center>Escanea este código con tu celular<br>para tomar y subir la foto.</center></html>", SwingConstants.CENTER);
+        lblInstrucciones = new JLabel("<html><center>Escanea este c\u00F3digo con tu celular<br>para tomar y subir la foto.</center></html>", SwingConstants.CENTER);
         lblInstrucciones.setFont(new Font("Segoe UI", Font.BOLD, 16));
         lblInstrucciones.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         panelSuperior.add(lblInstrucciones);

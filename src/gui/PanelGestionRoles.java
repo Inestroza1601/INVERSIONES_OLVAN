@@ -24,22 +24,22 @@ public class PanelGestionRoles extends JPanel {
     // Lista de permisos cargados para el rol seleccionado desde BD
     private List<String> permisosRolSeleccionado = new ArrayList<>();
     
-    // Definición estática de permisos por módulo (CRUD)
+    // Definici\u00F3n est\u00E1tica de permisos por m\u00F3dulo (CRUD)
     private final Map<String, String[]> MAPA_PERMISOS = new HashMap<>() {{
-        put("Administración", new String[]{"VER_ADMINISTRACION", "CREAR_ADMINISTRACION", "EDITAR_ADMINISTRACION", "ELIMINAR_ADMINISTRACION"});
+        put("Administraci\u00F3n", new String[]{"VER_ADMINISTRACION", "CREAR_ADMINISTRACION", "EDITAR_ADMINISTRACION", "ELIMINAR_ADMINISTRACION"});
         put("Punto de Venta", new String[]{"VER_POS", "CREAR_POS", "EDITAR_POS", "ELIMINAR_POS"});
         put("Inventario", new String[]{"VER_INVENTARIO", "CREAR_INVENTARIO", "EDITAR_INVENTARIO", "ELIMINAR_INVENTARIO"});
         put("Caja", new String[]{"VER_CAJA", "CREAR_CAJA", "EDITAR_CAJA", "ELIMINAR_CAJA"});
         put("Clientes", new String[]{"VER_CLIENTES", "CREAR_CLIENTES", "EDITAR_CLIENTES", "ELIMINAR_CLIENTES"});
         put("Apartados", new String[]{"VER_APARTADOS", "CREAR_APARTADOS", "EDITAR_APARTADOS", "ELIMINAR_APARTADOS"});
         put("Ventas", new String[]{"VER_VENTAS", "CREAR_VENTAS", "EDITAR_VENTAS", "ELIMINAR_VENTAS"});
-        put("Garantías", new String[]{"VER_GARANTIAS", "CREAR_GARANTIAS", "EDITAR_GARANTIAS", "ELIMINAR_GARANTIAS"});
-        put("Estadísticas", new String[]{"VER_ESTADISTICAS"}); // Solo ver
+        put("Garant\u00EDas", new String[]{"VER_GARANTIAS", "CREAR_GARANTIAS", "EDITAR_GARANTIAS", "ELIMINAR_GARANTIAS"});
+        put("Estad\u00EDsticas", new String[]{"VER_ESTADISTICAS"}); // Solo ver
     }};
     
     private final Map<String, String> DESCRIPCIONES = new HashMap<>() {{
-        // Administración
-        put("VER_ADMINISTRACION", "Ver módulo de Administración");
+        // Administraci\u00F3n
+        put("VER_ADMINISTRACION", "Ver m\u00F3dulo de Administraci\u00F3n");
         put("CREAR_ADMINISTRACION", "Crear Datos/Usuarios/Roles");
         put("EDITAR_ADMINISTRACION", "Editar Datos/Usuarios/Roles");
         put("ELIMINAR_ADMINISTRACION", "Eliminar Usuarios/Roles");
@@ -48,7 +48,7 @@ public class PanelGestionRoles extends JPanel {
         put("VER_POS", "Acceder al Punto de Venta");
         put("CREAR_POS", "Generar Factura (Crear Venta)");
         put("EDITAR_POS", "Aplicar Descuentos/Modificar Precios");
-        put("ELIMINAR_POS", "Anular Venta en Curso"); // Excepción solicitada
+        put("ELIMINAR_POS", "Anular Venta en Curso"); // Excepci\u00F3n solicitada
         
         // Inventario
         put("VER_INVENTARIO", "Ver Inventario de Productos");
@@ -80,14 +80,14 @@ public class PanelGestionRoles extends JPanel {
         put("EDITAR_VENTAS", "Editar Historial (Avanzado)");
         put("ELIMINAR_VENTAS", "Anular Facturas / Devoluciones");
         
-        // Garantías
-        put("VER_GARANTIAS", "Ver Módulo de Garantías");
+        // Garant\u00EDas
+        put("VER_GARANTIAS", "Ver M\u00F3dulo de Garant\u00EDas");
         put("CREAR_GARANTIAS", "Registrar Nuevos Reclamos");
         put("EDITAR_GARANTIAS", "Editar Estado de Reclamos");
         put("ELIMINAR_GARANTIAS", "Eliminar Reclamos");
         
-        // Estadísticas
-        put("VER_ESTADISTICAS", "Ver Gráficos y Reportes Financieros");
+        // Estad\u00EDsticas
+        put("VER_ESTADISTICAS", "Ver Gr\u00E1ficos y Reportes Financieros");
     }};
 
     public PanelGestionRoles() {
@@ -103,7 +103,7 @@ public class PanelGestionRoles extends JPanel {
         setLayout(new BorderLayout());
         setBackground(EfectosUI.COLOR_FONDO_PANEL);
 
-        // --- PANEL SUPERIOR: SELECCIÓN DE ROL ---
+        // --- PANEL SUPERIOR: SELECCI\u00D3N DE ROL ---
         JPanel panelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
         panelSuperior.setBackground(new Color(232, 243, 236));
         panelSuperior.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(190, 215, 200)));
@@ -156,14 +156,14 @@ public class PanelGestionRoles extends JPanel {
         panelSuperior.add(btnEditarRol);
         panelSuperior.add(btnEliminarRol);
 
-        // --- PANEL IZQUIERDO: MÓDULOS ---
+        // --- PANEL IZQUIERDO: M\u00D3DULOS ---
         JPanel panelIzquierdo = new JPanel();
         panelIzquierdo.setLayout(new BoxLayout(panelIzquierdo, BoxLayout.Y_AXIS));
         panelIzquierdo.setPreferredSize(new Dimension(220, 0));
         panelIzquierdo.setBackground(new Color(213, 233, 222));
         panelIzquierdo.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
         
-        JLabel lblModulos = new JLabel("MÓDULOS");
+        JLabel lblModulos = new JLabel("M\u00D3DULOS");
         lblModulos.setFont(new Font("Segoe UI", Font.BOLD, 12));
         lblModulos.setForeground(new Color(75, 115, 95));
         lblModulos.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -247,9 +247,9 @@ public class PanelGestionRoles extends JPanel {
             // Cargar de base de datos a memoria
             permisosRolSeleccionado = usuarioDAO.cargarPermisosRol(rolSeleccionado.getIdRol());
             
-            // Actualizar visualmente si hay algún panel abierto
+            // Actualizar visualmente si hay alg\u00FAn panel abierto
             panelPermisos.removeAll();
-            JLabel lblSelect = new JLabel("Seleccione un módulo a la izquierda para configurar sus permisos.");
+            JLabel lblSelect = new JLabel("Seleccione un m\u00F3dulo a la izquierda para configurar sus permisos.");
             lblSelect.setFont(new Font("Segoe UI", Font.ITALIC, 14));
             lblSelect.setForeground(Color.GRAY);
             panelPermisos.add(lblSelect);
@@ -262,7 +262,7 @@ public class PanelGestionRoles extends JPanel {
         Rol rolSeleccionado = (Rol) cbRoles.getSelectedItem();
         if (rolSeleccionado == null || !btnGuardar.isEnabled()) return;
         
-        // Antes de cambiar de módulo, guardamos en memoria RAM lo que el usuario haya cliqueado en el módulo anterior
+        // Antes de cambiar de m\u00F3dulo, guardamos en memoria RAM lo que el usuario haya cliqueado en el m\u00F3dulo anterior
         sincronizarCheckboxesAMemoria();
         
         panelPermisos.removeAll();
@@ -284,7 +284,7 @@ public class PanelGestionRoles extends JPanel {
             chk.setFocusPainted(false);
             chk.setCursor(new Cursor(Cursor.HAND_CURSOR));
             
-            // Si el permiso está en la lista de memoria, lo marcamos
+            // Si el permiso est\u00E1 en la lista de memoria, lo marcamos
             if (permisosRolSeleccionado.contains(p)) {
                 chk.setSelected(true);
             }
@@ -332,9 +332,9 @@ public class PanelGestionRoles extends JPanel {
                 try {
                     boolean exito = get();
                     if (exito) {
-                        utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "¡Permisos guardados correctamente para el rol: " + rolSeleccionado.getNombreRol() + "!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                        utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "\u00A1Permisos guardados correctamente para el rol: " + rolSeleccionado.getNombreRol() + "!", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Ocurrió un error al guardar los permisos.", "Error", JOptionPane.ERROR_MESSAGE);
+                        utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Ocurri\u00F3 un error al guardar los permisos.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (Exception ex) {
                     utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Error: " + ex.getMessage());
@@ -362,7 +362,7 @@ public class PanelGestionRoles extends JPanel {
                     try {
                         int idGenerado = get();
                         if (idGenerado > 0) {
-                            utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Rol creado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                            utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Rol creado exitosamente.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
                             cargarRoles();
                         } else {
                             utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Error al crear el rol o el rol ya existe.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -396,10 +396,10 @@ public class PanelGestionRoles extends JPanel {
                     try {
                         boolean exito = get();
                         if (exito) {
-                            utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Rol editado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                            utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Rol editado exitosamente.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
                             cargarRoles();
                         } else {
-                            utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Ocurrió un error al editar el rol.", "Error", JOptionPane.ERROR_MESSAGE);
+                            utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Ocurri\u00F3 un error al editar el rol.", "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     } catch (Exception ex) {
                         utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Error: " + ex.getMessage());
@@ -416,7 +416,7 @@ public class PanelGestionRoles extends JPanel {
         Rol rolSeleccionado = (Rol) cbRoles.getSelectedItem();
         if (rolSeleccionado == null) return;
 
-        int confirmacion = utilidades.Mensajes.showConfirmDialog(this, "¿Está seguro que desea eliminar el rol '" + rolSeleccionado.getNombreRol() + "'? Esta acción eliminará los permisos asociados.\nNota: Fallará si existen usuarios asignados a este rol.", "Eliminar Rol", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        int confirmacion = utilidades.Mensajes.showConfirmDialog(this, "\u00BFEst\u00E1 seguro que desea eliminar el rol '" + rolSeleccionado.getNombreRol() + "'? Esta acci\u00F3n eliminar\u00E1 los permisos asociados.\nNota: Fallar\u00E1 si existen usuarios asignados a este rol.", "Eliminar Rol", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (confirmacion == JOptionPane.YES_OPTION) {
             boton.setEnabled(false);
             SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
@@ -430,10 +430,10 @@ public class PanelGestionRoles extends JPanel {
                     try {
                         boolean exito = get();
                         if (exito) {
-                            utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Rol eliminado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                            utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Rol eliminado exitosamente.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
                             cargarRoles();
                         } else {
-                            utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "No se pudo eliminar el rol. Verifique que no haya usuarios asignados a él.", "Error", JOptionPane.ERROR_MESSAGE);
+                            utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "No se pudo eliminar el rol. Verifique que no haya usuarios asignados a \u00E9l.", "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     } catch (Exception ex) {
                         utilidades.Mensajes.showMessageDialog(PanelGestionRoles.this, "Error: " + ex.getMessage());

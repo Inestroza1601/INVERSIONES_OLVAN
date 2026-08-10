@@ -15,14 +15,14 @@ import java.util.List;
 public class DialogoBuscarProductoSustituto extends JDialog {
     private Producto productoSeleccionado = null;
     
-    // Caché y estado para Lazy Loading con Shimmer
+    // Cach\u00E9 y estado para Lazy Loading con Shimmer
     private java.util.Map<Integer, ImageIcon> cacheImagenes = new java.util.concurrent.ConcurrentHashMap<>();
     private java.util.Set<Integer> imagenesEnProceso = java.util.Collections.synchronizedSet(new java.util.HashSet<>());
     private float animacionShimmerPhase = 0f;
     private Timer timerShimmer;
 
     public DialogoBuscarProductoSustituto(Window parent) {
-        super(parent, "Catálogo Rápido - Selección de Sustituto", Dialog.ModalityType.APPLICATION_MODAL);
+        super(parent, "Cat\u00E1logo R\u00E1pido - Selecci\u00F3n de Sustituto", Dialog.ModalityType.APPLICATION_MODAL);
         setSize(600, 500);
         setLocationRelativeTo(parent);
         getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
@@ -37,11 +37,11 @@ public class DialogoBuscarProductoSustituto extends JDialog {
         txtB.setCaretColor(new Color(45, 45, 45));
         txtB.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(180, 208, 192)), BorderFactory.createEmptyBorder(0, 8, 0, 8)));
         txtB.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        txtB.putClientProperty("JTextField.placeholderText", "Buscar por Nombre o Código...");
+        txtB.putClientProperty("JTextField.placeholderText", "Buscar por Nombre o C\u00F3digo...");
         pnlTop.add(txtB, BorderLayout.CENTER);
         add(pnlTop, BorderLayout.NORTH);
 
-        String[] cols = {"ID", "Foto", "Código", "Producto", "Precio", "Stock"};
+        String[] cols = {"ID", "Foto", "C\u00F3digo", "Producto", "Precio", "Stock"};
         DefaultTableModel mod = new DefaultTableModel(null, cols) {
             @Override
             public boolean isCellEditable(int r, int c) { return false; }
@@ -102,7 +102,7 @@ public class DialogoBuscarProductoSustituto extends JDialog {
                     int filaModelo = tab.convertRowIndexToModel(tab.getSelectedRow());
                     int stockActual = (int) mod.getValueAt(filaModelo, 5);
                     if (stockActual <= 0) {
-                        utilidades.Mensajes.showMessageDialog(DialogoBuscarProductoSustituto.this, "No puede seleccionar este artículo porque no cuenta con existencias en el inventario.", "Falta de Stock", JOptionPane.WARNING_MESSAGE);
+                        utilidades.Mensajes.showMessageDialog(DialogoBuscarProductoSustituto.this, "No puede seleccionar este art\u00EDculo porque no cuenta con existencias en el inventario.", "Falta de Stock", JOptionPane.WARNING_MESSAGE);
                         return;
                     }
                     int idSelec = (int) mod.getValueAt(filaModelo, 0);

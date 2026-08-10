@@ -18,18 +18,18 @@ public class MigradorBase64 {
                 return;
             }
             
-            System.out.println("--- INICIANDO MIGRACIÓN DE IMÁGENES A BASE64 ---");
+            System.out.println("--- INICIANDO MIGRACI\u00D3N DE IM\u00C1GENES A BASE64 ---");
             
             try (Statement st = con.createStatement()) {
-                System.out.println("Añadiendo nuevas columnas...");
+                System.out.println("A\u00F1adiendo nuevas columnas...");
                 try {
                     st.execute("ALTER TABLE INVENTARIO ADD imagen_producto VARCHAR(MAX)");
-                    System.out.println("Columna imagen_producto añadida a INVENTARIO.");
+                    System.out.println("Columna imagen_producto a\u00F1adida a INVENTARIO.");
                 } catch(Exception e) { System.out.println("La columna imagen_producto ya existe o hubo error: " + e.getMessage()); }
                 
                 try {
                     st.execute("ALTER TABLE EMPRESA ADD imagen_logo VARCHAR(MAX)");
-                    System.out.println("Columna imagen_logo añadida a EMPRESA.");
+                    System.out.println("Columna imagen_logo a\u00F1adida a EMPRESA.");
                 } catch(Exception e) { System.out.println("La columna imagen_logo ya existe o hubo error: " + e.getMessage()); }
             }
 
@@ -100,7 +100,7 @@ public class MigradorBase64 {
                 System.out.println("Columna logo_empresa_ruta eliminada.");
             } catch(Exception e) { System.out.println("Error eliminando logo_empresa_ruta: " + e.getMessage()); }
             
-            System.out.println("--- MIGRACIÓN COMPLETADA ---");
+            System.out.println("--- MIGRACI\u00D3N COMPLETADA ---");
             
         } catch (Exception e) {
             e.printStackTrace();

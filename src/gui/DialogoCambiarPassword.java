@@ -17,7 +17,7 @@ public class DialogoCambiarPassword extends JDialog {
     private Usuario usuario;
     
     public DialogoCambiarPassword(Frame parent, Usuario usuario) {
-        super(parent, "Cambiar Contraseña", true);
+        super(parent, "Cambiar Contrase\u00F1a", true);
         this.usuario = usuario;
         iniciarDiseno();
         pack();
@@ -34,11 +34,11 @@ public class DialogoCambiarPassword extends JDialog {
         gbc.insets = new Insets(10, 5, 5, 5);
         gbc.gridx = 0;
         
-        JLabel lblTitulo = new JLabel("Ingresa tu nueva contraseña");
+        JLabel lblTitulo = new JLabel("Ingresa tu nueva contrase\u00F1a");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 22));
         lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         
-        JLabel lblSub = new JLabel("<html><body>Hemos enviado un código de 6 dígitos a su correo.<br>Ingrese el código y su nueva contraseña.</body></html>");
+        JLabel lblSub = new JLabel("<html><body>Hemos enviado un c\u00F3digo de 6 d\u00EDgitos a su correo.<br>Ingrese el c\u00F3digo y su nueva contrase\u00F1a.</body></html>");
         lblSub.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         lblSub.setForeground(utilidades.EfectosUI.COLOR_TEXTO_SUBTITULO);
         
@@ -47,8 +47,8 @@ public class DialogoCambiarPassword extends JDialog {
         
         // Campos
         txtToken = new JTextField(25);
-        prepararCampo(txtToken, "Código de 6 dígitos");
-        // Permitir solo números y máx 6
+        prepararCampo(txtToken, "C\u00F3digo de 6 d\u00EDgitos");
+        // Permitir solo n\u00FAmeros y m\u00E1x 6
         txtToken.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
                 if(txtToken.getText().length() >= 6 || !Character.isDigit(e.getKeyChar())) e.consume();
@@ -56,24 +56,24 @@ public class DialogoCambiarPassword extends JDialog {
         });
         
         txtNuevaClave = new JPasswordField(25);
-        prepararCampo(txtNuevaClave, "Nueva contraseña");
+        prepararCampo(txtNuevaClave, "Nueva contrase\u00F1a");
         txtNuevaClave.putClientProperty("JTextField.showRevealButton", true);
         
         txtConfirmarClave = new JPasswordField(25);
-        prepararCampo(txtConfirmarClave, "Confirmar contraseña");
+        prepararCampo(txtConfirmarClave, "Confirmar contrase\u00F1a");
         txtConfirmarClave.putClientProperty("JTextField.showRevealButton", true);
         
-        gbc.gridy = 2; pnlFondo.add(new JLabel("Código de Seguridad:"), gbc);
+        gbc.gridy = 2; pnlFondo.add(new JLabel("C\u00F3digo de Seguridad:"), gbc);
         gbc.insets = new Insets(0, 5, 10, 5);
         gbc.gridy = 3; pnlFondo.add(txtToken, gbc);
         
         gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.gridy = 4; pnlFondo.add(new JLabel("Nueva Contraseña:"), gbc);
+        gbc.gridy = 4; pnlFondo.add(new JLabel("Nueva Contrase\u00F1a:"), gbc);
         gbc.insets = new Insets(0, 5, 10, 5);
         gbc.gridy = 5; pnlFondo.add(txtNuevaClave, gbc);
         
         gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.gridy = 6; pnlFondo.add(new JLabel("Confirmar Contraseña:"), gbc);
+        gbc.gridy = 6; pnlFondo.add(new JLabel("Confirmar Contrase\u00F1a:"), gbc);
         gbc.insets = new Insets(0, 5, 15, 5);
         gbc.gridy = 7; pnlFondo.add(txtConfirmarClave, gbc);
         
@@ -88,7 +88,7 @@ public class DialogoCambiarPassword extends JDialog {
         btnCancelar.setFocusPainted(false);
         btnCancelar.addActionListener(e -> dispose());
         
-        btnGuardar = utilidades.EfectosUI.crearBotonVerde("Cambiar Contraseña");
+        btnGuardar = utilidades.EfectosUI.crearBotonVerde("Cambiar Contrase\u00F1a");
         btnGuardar.setFont(new Font("Segoe UI", Font.BOLD, 14));
         btnGuardar.setPreferredSize(new Dimension(180, 40));
         btnGuardar.putClientProperty("JButton.buttonType", "roundRect");
@@ -117,27 +117,27 @@ public class DialogoCambiarPassword extends JDialog {
         String conf = new String(txtConfirmarClave.getPassword());
         
         if (token.isEmpty() || pass.isEmpty() || conf.isEmpty()) {
-            utilidades.Mensajes.showMessageDialog(this, "Todos los campos son obligatorios.", "Campos vacíos", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Todos los campos son obligatorios.", "Campos vac\u00EDos", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         if (!pass.equals(conf)) {
-            utilidades.Mensajes.showMessageDialog(this, "Las contraseñas no coinciden.", "Error de validación", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Las contrase\u00F1as no coinciden.", "Error de validaci\u00F3n", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
         UsuarioDAO dao = new UsuarioDAO();
         
         if (!dao.validarTokenRecuperacion(usuario.getIdUsuario(), token)) {
-            utilidades.Mensajes.showMessageDialog(this, "El código de seguridad es inválido o ha expirado.", "Código Incorrecto", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "El c\u00F3digo de seguridad es inv\u00E1lido o ha expirado.", "C\u00F3digo Incorrecto", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
         if (dao.actualizarPassword(usuario.getIdUsuario(), pass)) {
-            utilidades.Mensajes.showMessageDialog(this, "¡Su contraseña se ha actualizado correctamente!\nPuede iniciar sesión con su nueva clave.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "\u00A1Su contrase\u00F1a se ha actualizado correctamente!\nPuede iniciar sesi\u00F3n con su nueva clave.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
             dispose();
         } else {
-            utilidades.Mensajes.showMessageDialog(this, "Ocurrió un error al actualizar la contraseña.", "Error", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Ocurri\u00F3 un error al actualizar la contrase\u00F1a.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

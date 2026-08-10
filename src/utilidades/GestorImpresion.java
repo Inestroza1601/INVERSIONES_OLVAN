@@ -41,7 +41,7 @@ public class GestorImpresion {
         // 1. Siempre abrir el PDF primero
         abrirPDF(archivoPdf);
 
-        // 2. Verificar si la impresora está conectada antes de preguntar
+        // 2. Verificar si la impresora est\u00E1 conectada antes de preguntar
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         boolean impresoraEncontrada = false;
         for (PrintService s : services) {
@@ -53,15 +53,15 @@ public class GestorImpresion {
 
         if (!impresoraEncontrada) {
             utilidades.Mensajes.showMessageDialog(null, 
-                "Advertencia: No se encontró la impresora o está desconectada (" + impresoraConfigurada + ").\n\nPuede imprimir manualmente desde el visor de PDF que se acaba de abrir.", 
+                "Advertencia: No se encontr\u00F3 la impresora o est\u00E1 desconectada (" + impresoraConfigurada + ").\n\nPuede imprimir manualmente desde el visor de PDF que se acaba de abrir.", 
                 "Impresora no encontrada", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // 3. Si la encontró, preguntar confirmación
+        // 3. Si la encontr\u00F3, preguntar confirmaci\u00F3n
         int respuesta = utilidades.Mensajes.showConfirmDialog(null, 
-            "El documento se ha abierto para revisión.\n\n¿Está seguro de imprimir este documento en:\n" + impresoraConfigurada + "?", 
-            "Confirmar Impresión Directa", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            "El documento se ha abierto para revisi\u00F3n.\n\n\u00BFEst\u00E1 seguro de imprimir este documento en:\n" + impresoraConfigurada + "?", 
+            "Confirmar Impresi\u00F3n Directa", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             
         if (respuesta == JOptionPane.YES_OPTION) {
             imprimirConPDFBox(archivoPdf, impresoraConfigurada);
@@ -70,7 +70,7 @@ public class GestorImpresion {
 
     private static void imprimirConPDFBox(File archivoPdf, String nombreImpresora) {
         try {
-            // Verificar si la impresora está disponible
+            // Verificar si la impresora est\u00E1 disponible
             PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
             PrintService servicioSeleccionado = null;
             
@@ -83,7 +83,7 @@ public class GestorImpresion {
 
             if (servicioSeleccionado == null) {
                 utilidades.Mensajes.showMessageDialog(null, 
-                    "No se encontró la impresora o está desconectada: " + nombreImpresora + "\nSe abrirá el documento PDF.", 
+                    "No se encontr\u00F3 la impresora o est\u00E1 desconectada: " + nombreImpresora + "\nSe abrir\u00E1 el documento PDF.", 
                     "Impresora no encontrada", JOptionPane.WARNING_MESSAGE);
                 abrirPDF(archivoPdf);
                 return;
@@ -101,8 +101,8 @@ public class GestorImpresion {
             System.err.println("Error al intentar imprimir el PDF: " + e.getMessage());
             e.printStackTrace();
             utilidades.Mensajes.showMessageDialog(null, 
-                "Ocurrió un error al intentar imprimir. Se abrirá el documento PDF.\nDetalle: " + e.getMessage(), 
-                "Error de Impresión", JOptionPane.ERROR_MESSAGE);
+                "Ocurri\u00F3 un error al intentar imprimir. Se abrir\u00E1 el documento PDF.\nDetalle: " + e.getMessage(), 
+                "Error de Impresi\u00F3n", JOptionPane.ERROR_MESSAGE);
             abrirPDF(archivoPdf);
         }
     }
@@ -112,14 +112,14 @@ public class GestorImpresion {
             if (Desktop.isDesktopSupported()) {
                 Desktop.getDesktop().open(archivoPdf);
             } else {
-                utilidades.Mensajes.showMessageDialog(null, "Apertura automática no soportada en este sistema.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(null, "Apertura autom\u00E1tica no soportada en este sistema.", "Aviso", JOptionPane.WARNING_MESSAGE);
             }
         } catch (Exception ex) {
             System.err.println("No se pudo abrir el PDF: " + ex.getMessage());
         }
     }
     
-    // Métodos para el panel de configuración
+    // M\u00E9todos para el panel de configuraci\u00F3n
     public static void guardarImpresoraTicket(String nombre) {
         Preferences.userNodeForPackage(GestorImpresion.class).put(PREF_IMPRESORA_TICKET, nombre);
     }

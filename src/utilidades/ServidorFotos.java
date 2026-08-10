@@ -68,7 +68,7 @@ public class ServidorFotos extends NanoHTTPD {
         sb.append("</head>\n");
         sb.append("<body>\n");
         sb.append("    <div class=\"container\" id=\"mainContainer\">\n");
-        sb.append("        <h2>Cámara</h2>\n");
+        sb.append("        <h2>C\u00E1mara</h2>\n");
         if (maxFotos > 1) {
             sb.append("        <p>Toca los recuadros para capturar fotos.</p>\n");
         } else {
@@ -78,7 +78,7 @@ public class ServidorFotos extends NanoHTTPD {
         for (int i = 1; i <= maxFotos; i++) {
             sb.append("            <div class=\"slot\" id=\"slot" + i + "\" onclick=\"handleSlotClick(" + (i - 1) + ")\">\n");
             sb.append("                <div style=\"text-align: center;\">\n");
-            sb.append("                    <span class=\"slot-icon\">📷</span>\n");
+            sb.append("                    <span class=\"slot-icon\">\uD83D\uDCF7</span>\n");
             sb.append("                    <span class=\"slot-text\">Foto " + (maxFotos > 1 ? i : "") + "</span>\n");
             sb.append("                </div>\n");
             sb.append("                <img id=\"preview" + i + "\" src=\"\" alt=\"\">\n");
@@ -89,13 +89,13 @@ public class ServidorFotos extends NanoHTTPD {
         // Modal HTML
         sb.append("        <div class=\"modal-overlay\" id=\"modalMenu\" onclick=\"if(event.target === this) closeModal()\">\n");
         sb.append("            <div class=\"modal\">\n");
-        sb.append("                <h3>Opciones de Fotografía</h3>\n");
+        sb.append("                <h3>Opciones de Fotograf\u00EDa</h3>\n");
         sb.append("                <div class=\"modal-buttons\">\n");
-        sb.append("                    <button class=\"modal-btn\" style=\"background:#10b981; color:#fff;\" onclick=\"actionRetake()\">📷 Tomar de nuevo</button>\n");
+        sb.append("                    <button class=\"modal-btn\" style=\"background:#10b981; color:#fff;\" onclick=\"actionRetake()\">\uD83D\uDCF7 Tomar de nuevo</button>\n");
         if (mostrarGaleria) {
-            sb.append("                    <button class=\"modal-btn\" style=\"background:#d1fae5; color:#064e3b;\" onclick=\"actionUpload()\">🖼️ Subir desde el teléfono</button>\n");
+            sb.append("                    <button class=\"modal-btn\" style=\"background:#d1fae5; color:#064e3b;\" onclick=\"actionUpload()\">\uD83D\uDDBC\uFE0F Subir desde el tel\u00E9fono</button>\n");
         }
-        sb.append("                    <button class=\"modal-btn\" style=\"background:#fee2e2; color:#dc2626;\" onclick=\"actionDelete()\">🗑️ Eliminar foto</button>\n");
+        sb.append("                    <button class=\"modal-btn\" style=\"background:#fee2e2; color:#dc2626;\" onclick=\"actionDelete()\">\uD83D\uDDD1\uFE0F Eliminar foto</button>\n");
         sb.append("                    <button class=\"modal-btn\" style=\"background:#f3f4f6; color:#4b5563; margin-top: 10px;\" onclick=\"closeModal()\">Cancelar</button>\n");
         sb.append("                </div>\n");
         sb.append("            </div>\n");
@@ -128,10 +128,10 @@ public class ServidorFotos extends NanoHTTPD {
         sb.append("        function handleSlotClick(slotIndex) {\n");
         sb.append("            currentTargetSlot = slotIndex;\n");
         sb.append("            if (fotosBase64[slotIndex] !== null) {\n");
-        sb.append("                // Si ya hay foto, mostrar menú modal\n");
+        sb.append("                // Si ya hay foto, mostrar men\u00FA modal\n");
         sb.append("                modalMenu.style.display = 'flex';\n");
         sb.append("            } else {\n");
-        sb.append("                // Si está vacío, abrir cámara directamente\n");
+        sb.append("                // Si est\u00E1 vac\u00EDo, abrir c\u00E1mara directamente\n");
         sb.append("                inputCamara.click();\n");
         sb.append("            }\n");
         sb.append("        }\n");
@@ -227,7 +227,7 @@ public class ServidorFotos extends NanoHTTPD {
         sb.append("                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },\n");
         sb.append("                    body: 'fotoBase64=' + encodeURIComponent(combinedBase64)\n");
         sb.append("                }).then(response => response.text()).then(text => {\n");
-        sb.append("                    mainContainer.innerHTML = '<h2><span style=\"font-size:50px; color:#10b981;\">✓</span><br>¡Fotos Subidas!</h2><p style=\"font-size:16px;\">Las fotos fueron procesadas exitosamente.<br><b>Ya puedes cerrar esta ventana.</b></p>';\n");
+        sb.append("                    mainContainer.innerHTML = '<h2><span style=\"font-size:50px; color:#10b981;\">\u2713</span><br>\u00A1Fotos Subidas!</h2><p style=\"font-size:16px;\">Las fotos fueron procesadas exitosamente.<br><b>Ya puedes cerrar esta ventana.</b></p>';\n");
         sb.append("                }).catch(err => {\n");
         sb.append("                    alert('Error al subir las fotos: ' + err);\n");
         sb.append("                    btnSubmit.style.display = 'block';\n");
@@ -257,7 +257,7 @@ public class ServidorFotos extends NanoHTTPD {
                     }
                     return newFixedLengthResponse(Response.Status.OK, "text/plain", "OK");
                 }
-                return newFixedLengthResponse(Response.Status.BAD_REQUEST, "text/plain", "No se recibió archivo.");
+                return newFixedLengthResponse(Response.Status.BAD_REQUEST, "text/plain", "No se recibi\u00F3 archivo.");
             } catch (Exception e) {
                 e.printStackTrace();
                 return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, "text/plain", "Error al procesar la foto.");

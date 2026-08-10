@@ -16,7 +16,7 @@ public class PanelCargaOverlay extends JPanel {
         setBackground(new Color(232, 243, 236)); // Color fondo app (Verde Pastel Suave)
 
         timer = new Timer(15, e -> {
-            angle += 5; // Velocidad de rotación
+            angle += 5; // Velocidad de rotaci\u00F3n
             if (angle >= 360) {
                 angle -= 360;
             }
@@ -50,10 +50,10 @@ public class PanelCargaOverlay extends JPanel {
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         int centerX = getWidth() / 2;
-        int centerY = getHeight() / 2 - 30; // Un poco más arriba para centrar con el texto
-        int size = 60; // Tamaño del spinner
+        int centerY = getHeight() / 2 - 30; // Un poco m\u00E1s arriba para centrar con el texto
+        int size = 60; // Tama\u00F1o del spinner
 
-        // Fondo del spinner (Círculo tenue)
+        // Fondo del spinner (C\u00EDrculo tenue)
         g2.setColor(new Color(180, 208, 192, 100));
         g2.setStroke(new BasicStroke(6, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         g2.draw(new Ellipse2D.Double(centerX - size / 2.0, centerY - size / 2.0, size, size));

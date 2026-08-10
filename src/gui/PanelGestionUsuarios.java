@@ -40,8 +40,8 @@ public class PanelGestionUsuarios extends JPanel {
         this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); // Verde Vintage
         this.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Título Superior
-        JLabel lblTitulo = new JLabel("Gestión y Roles de Usuarios");
+        // T\u00EDtulo Superior
+        JLabel lblTitulo = new JLabel("Gesti\u00F3n y Roles de Usuarios");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
         lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         this.add(lblTitulo, BorderLayout.NORTH);
@@ -78,7 +78,7 @@ public class PanelGestionUsuarios extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Inicializar campos básicos
+        // Inicializar campos b\u00E1sicos
         txtIdentidad = new JTextField(15);
         txtIdentidad.setEditable(false); 
         txtIdentidad.setBackground(new Color(240, 242, 245)); // Gris Nube para campo inactivo
@@ -90,7 +90,7 @@ public class PanelGestionUsuarios extends JPanel {
         
         txtEmail = new JTextField(20);
         
-        // --- 🚀 COMBOBOX Y BOTÓN NUEVO ROL (UNIFICADO) ---
+        // --- \uD83D\uDE80 COMBOBOX Y BOT\u00D3N NUEVO ROL (UNIFICADO) ---
         cmbRol = new JComboBox<>();
         // cmbRol.setEditable(true); // Deshabilitado para que solo se pueda seleccionar
 
@@ -114,17 +114,17 @@ public class PanelGestionUsuarios extends JPanel {
         panelContenedorRol.add(cmbRol, BorderLayout.CENTER);
         panelContenedorRol.add(btnNuevoRol, BorderLayout.EAST);
 
-        // --- CHECKBOX Y CONTRASEÑA ---
+        // --- CHECKBOX Y CONTRASE\u00D1A ---
         chkAccesoSistema = new JCheckBox("Usuario con acceso al sistema");
         chkAccesoSistema.setBackground(new Color(255, 255, 255)); // Blanco puro
         chkAccesoSistema.setForeground(new Color(45, 45, 45)); // Gris oscuro
         chkAccesoSistema.setSelected(true); 
 
         txtPassword = new JPasswordField(20);
-        lblPassword = new JLabel("Contraseña:");
+        lblPassword = new JLabel("Contrase\u00F1a:");
         lblPassword.setForeground(new Color(45, 45, 45)); // Gris oscuro
 
-        // --- 🔒 LÓGICA DE SEGURIDAD PARA ADMINISTRADOR ---
+        // --- \uD83D\uDD12 L\u00D3GICA DE SEGURIDAD PARA ADMINISTRADOR ---
         cmbRol.addActionListener(e -> {
             if (cmbRol.getSelectedItem() != null) {
                 String rolSeleccionado = cmbRol.getSelectedItem().toString().toLowerCase();
@@ -144,7 +144,7 @@ public class PanelGestionUsuarios extends JPanel {
             }
         });
 
-        // --- LÓGICA DINÁMICA DEL CHECKBOX ---
+        // --- L\u00D3GICA DIN\u00C1MICA DEL CHECKBOX ---
         chkAccesoSistema.addActionListener(e -> {
             boolean tieneAcceso = chkAccesoSistema.isSelected();
             lblPassword.setVisible(tieneAcceso);
@@ -156,11 +156,11 @@ public class PanelGestionUsuarios extends JPanel {
             panelForm.repaint();
         });
 
-        // Agregar al layout (MIRA CÓMO AHORA SOLO AGREGAMOS panelContenedorRol)
+        // Agregar al layout (MIRA C\u00D3MO AHORA SOLO AGREGAMOS panelContenedorRol)
         int fila = 0;
         agregarFilaFormulario(panelForm, gbc, fila++, "ID Usuario:", txtIdentidad);
         agregarFilaFormulario(panelForm, gbc, fila++, "Nombre Completo:", txtNombre);
-        agregarFilaFormulario(panelForm, gbc, fila++, "Correo Electrónico:", txtEmail);
+        agregarFilaFormulario(panelForm, gbc, fila++, "Correo Electr\u00F3nico:", txtEmail);
         agregarFilaFormulario(panelForm, gbc, fila++, "Rol del Usuario:", panelContenedorRol);
         
         gbc.gridy = fila++; gbc.gridx = 0; gbc.gridwidth = 2;
@@ -229,7 +229,7 @@ public class PanelGestionUsuarios extends JPanel {
     private void agregarFilaFormulario(JPanel panel, GridBagConstraints gbc, int fila, String etiqueta, JComponent campo) {
         gbc.gridy = fila;
         gbc.gridx = 0;
-        if (!etiqueta.equals("Contraseña:")) {
+        if (!etiqueta.equals("Contrase\u00F1a:")) {
             JLabel lbl = new JLabel(etiqueta);
             lbl.setForeground(new Color(45, 45, 45)); // Gris oscuro
             panel.add(lbl, gbc);
@@ -250,7 +250,7 @@ public class PanelGestionUsuarios extends JPanel {
     }
     
     // =========================================================
-    // LÓGICA DE NEGOCIO Y BASE DE DATOS
+    // L\u00D3GICA DE NEGOCIO Y BASE DE DATOS
     // =========================================================
 
     private void cargarTabla() {
@@ -269,8 +269,8 @@ public class PanelGestionUsuarios extends JPanel {
                 // Si el hash coincide con el de su nombre, es la clave de respaldo (NO tiene acceso)
                 fila[4] = "No";
             } else if (u.getPasswordHash() != null && !u.getPasswordHash().isEmpty()) {
-                // Si tiene otra clave distinta, SÍ tiene acceso
-                fila[4] = "Sí";
+                // Si tiene otra clave distinta, S\u00CD tiene acceso
+                fila[4] = "S\u00ED";
             } else {
                 fila[4] = "No";
             }
@@ -290,7 +290,7 @@ public class PanelGestionUsuarios extends JPanel {
         
         txtEmail.setText(tablaUsuarios.getValueAt(fila, 3).toString());
         
-        boolean tieneAcceso = tablaUsuarios.getValueAt(fila, 4).toString().equals("Sí");
+        boolean tieneAcceso = tablaUsuarios.getValueAt(fila, 4).toString().equals("S\u00ED");
         
         // Reforzamos la regla al cargar datos
         if(rolT.contains("admin")){
@@ -351,7 +351,7 @@ public class PanelGestionUsuarios extends JPanel {
         }
 
         if (chkAccesoSistema.isSelected() && txtEmail.getText().trim().isEmpty()) {
-            utilidades.Mensajes.showMessageDialog(this, "El correo electrónico es obligatorio para usuarios con acceso al sistema.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "El correo electr\u00F3nico es obligatorio para usuarios con acceso al sistema.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -362,7 +362,7 @@ public class PanelGestionUsuarios extends JPanel {
                 String idTexto = txtIdentidad.getText().trim();
                 u.setIdUsuario(Integer.parseInt(idTexto)); 
             } catch (NumberFormatException e) {
-                utilidades.Mensajes.showMessageDialog(this, "El ID del usuario no es válido.");
+                utilidades.Mensajes.showMessageDialog(this, "El ID del usuario no es v\u00E1lido.");
                 return;
             }
         }
@@ -377,32 +377,32 @@ public class PanelGestionUsuarios extends JPanel {
 
         String passEscrita = new String(txtPassword.getPassword());
         
-        // --- 🚀 CORRECCIÓN: VALIDACIÓN MEJORADA AL ACTUALIZAR ACCESOS ---
+        // --- \uD83D\uDE80 CORRECCI\u00D3N: VALIDACI\u00D3N MEJORADA AL ACTUALIZAR ACCESOS ---
         if (chkAccesoSistema.isSelected()) {
             
             boolean teniaAccesoAntes = false;
             if (btnGuardar.getText().equals("Actualizar")) {
                 int filaSelec = tablaUsuarios.getSelectedRow();
                 if (filaSelec != -1) {
-                    teniaAccesoAntes = tablaUsuarios.getValueAt(filaSelec, 4).toString().equals("Sí");
+                    teniaAccesoAntes = tablaUsuarios.getValueAt(filaSelec, 4).toString().equals("S\u00ED");
                 }
             }
 
             if (passEscrita.isEmpty()) {
-                // Si lo estamos creando nuevo, O si antes NO tenía acceso y ahora se lo dimos:
+                // Si lo estamos creando nuevo, O si antes NO ten\u00EDa acceso y ahora se lo dimos:
                 if (btnGuardar.getText().equals("Guardar") || !teniaAccesoAntes) {
-                    utilidades.Mensajes.showMessageDialog(this, "Debe ingresar una contraseña para habilitar el acceso al sistema.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Debe ingresar una contrase\u00F1a para habilitar el acceso al sistema.", "Advertencia", JOptionPane.WARNING_MESSAGE);
                     return;
                 } 
-                // Si ya tenía acceso y deja la caja vacía, el DAO conserva la clave anterior
+                // Si ya ten\u00EDa acceso y deja la caja vac\u00EDa, el DAO conserva la clave anterior
                 u.setPasswordHash(""); 
             } else {
-                // Validar que la contraseña no se repita con la de otro usuario
+                // Validar que la contrase\u00F1a no se repita con la de otro usuario
                 if (dao.existePassword(passEscrita)) {
-                    utilidades.Mensajes.showMessageDialog(this, "Contraseña no admitida por falta de seguridad. Ingrese una distinta.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Contrase\u00F1a no admitida por falta de seguridad. Ingrese una distinta.", "Advertencia", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-                // Si escribió una clave nueva y es válida, la encriptamos
+                // Si escribi\u00F3 una clave nueva y es v\u00E1lida, la encriptamos
                 u.setPasswordHash(Seguridad.encriptarSHA256(passEscrita));
             }
         } else {
@@ -418,7 +418,7 @@ public class PanelGestionUsuarios extends JPanel {
         }
 
         if (exito) {
-            utilidades.Mensajes.showMessageDialog(this, "Operación realizada con éxito.");
+            utilidades.Mensajes.showMessageDialog(this, "Operaci\u00F3n realizada con \u00E9xito.");
             limpiarFormulario();
             cargarTabla(); 
         } else {
@@ -440,7 +440,7 @@ public class PanelGestionUsuarios extends JPanel {
             UsuarioDAO dao = new UsuarioDAO();
             
             if (estado.equals("Activo")) {
-                if (utilidades.Mensajes.showConfirmDialog(this, "¿Está seguro de desactivar ID " + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                if (utilidades.Mensajes.showConfirmDialog(this, "\u00BFEst\u00E1 seguro de desactivar ID " + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                     if (dao.desactivarUsuario(id)) {
                         utilidades.Mensajes.showMessageDialog(this, "Usuario desactivado.");
                         limpiarFormulario();
@@ -448,7 +448,7 @@ public class PanelGestionUsuarios extends JPanel {
                     }
                 }
             } else {
-                if (utilidades.Mensajes.showConfirmDialog(this, "¿Está seguro de activar ID " + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                if (utilidades.Mensajes.showConfirmDialog(this, "\u00BFEst\u00E1 seguro de activar ID " + id + "?", "Confirmar", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                     if (dao.activarUsuario(id)) {
                         utilidades.Mensajes.showMessageDialog(this, "Usuario activado.");
                         limpiarFormulario();

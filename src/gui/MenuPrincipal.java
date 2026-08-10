@@ -26,12 +26,12 @@ public class MenuPrincipal extends JFrame {
     private JButton btnCerrarSesion;
     private JButton botonActivo = null;
 
-    // --- PALETA CROMÁTICA OFICIAL: VERDE VINTAGE ELEGANTE Y BLANCO ---
+    // --- PALETA CROM\u00C1TICA OFICIAL: VERDE VINTAGE ELEGANTE Y BLANCO ---
     private final Color COLOR_FONDO_SIDEBAR = new Color(213, 233, 222);     // Verde Pastel Salvia para Sidebar
     private final Color COLOR_FONDO_APP = new Color(232, 243, 236);         // Verde Pastel Suave para Fondos
     private final Color COLOR_TEXTO_MENU = new Color(28, 59, 45);          // Forest vintage suave para opciones
     private final Color COLOR_VERDE_EMERALD = new Color(45, 106, 79);      // Verde Bosque Vintage Elegante
-    private final Color COLOR_VERDE_OSCURO = Color.BLACK;                  // Negro puro para opción activa
+    private final Color COLOR_VERDE_OSCURO = Color.BLACK;                  // Negro puro para opci\u00F3n activa
     private final Color COLOR_VERDE_HOVER = new Color(192, 218, 204);      // Verde vintage suave hover
     private final Color COLOR_ROJO_PELIGRO = new Color(239, 68, 68);
     private final Color COLOR_ROJO_HOVER = new Color(254, 226, 226);
@@ -83,7 +83,7 @@ public class MenuPrincipal extends JFrame {
 
         modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
         String nombreUser = (uAct != null && uAct.getNombreUsuario() != null && !uAct.getNombreUsuario().isEmpty()) ? uAct.getNombreUsuario() : "Administrador";
-        String rolUser = (uAct != null && uAct.getNombreRol() != null && !uAct.getNombreRol().isEmpty()) ? uAct.getNombreRol() : "Soporte Técnico";
+        String rolUser = (uAct != null && uAct.getNombreRol() != null && !uAct.getNombreRol().isEmpty()) ? uAct.getNombreRol() : "Soporte T\u00E9cnico";
         String emailUser = (uAct != null && uAct.getEmailUsuario() != null && !uAct.getEmailUsuario().isEmpty()) ? uAct.getEmailUsuario() : "admin@sistema.com";
         String inicial = nombreUser.substring(0, 1).toUpperCase();
 
@@ -138,23 +138,23 @@ public class MenuPrincipal extends JFrame {
         panelPerfil.add(lblAvatar, BorderLayout.WEST);
         panelPerfil.add(pnlInfoUser, BorderLayout.CENTER);
 
-        JLabel lblMenu = new JLabel("MENÚ PRINCIPAL");
+        JLabel lblMenu = new JLabel("MEN\u00DA PRINCIPAL");
         lblMenu.setFont(new Font("Segoe UI", Font.BOLD, 11));
         lblMenu.setForeground(new Color(140, 145, 150));
         lblMenu.setAlignmentX(Component.LEFT_ALIGNMENT);
         lblMenu.setBorder(BorderFactory.createEmptyBorder(0, 25, 12, 0));
 
-        // Creación de botones con micro-animaciones fluidas
-        btnAdministracion = crearBotonWebAnimado("Administración", new IconoMenu(1), false);
+        // Creaci\u00F3n de botones con micro-animaciones fluidas
+        btnAdministracion = crearBotonWebAnimado("Administraci\u00F3n", new IconoMenu(1), false);
         btnClientes = crearBotonWebAnimado("Clientes", new IconoMenu(2), false);
         btnInventario = crearBotonWebAnimado("Inventario", new IconoMenu(3), false);
         btnPuntoVenta = crearBotonWebAnimado("Punto de Venta", new IconoMenu(4), false);
         btnControlCaja = crearBotonWebAnimado("Control de Caja", new IconoMenu(8), false);
         btnApartados = crearBotonWebAnimado("Apartados", new IconoMenu(10), false);
         btnHistorialVentas = crearBotonWebAnimado("Historial de Ventas", new IconoMenu(9), false);
-        btnGarantias = crearBotonWebAnimado("Garantías", new IconoMenu(5), false);
-        btnEstadisticas = crearBotonWebAnimado("Estadísticas", new IconoMenu(7), false);
-        btnCerrarSesion = crearBotonWebAnimado("Cerrar Sesión", new IconoMenu(6), true);
+        btnGarantias = crearBotonWebAnimado("Garant\u00EDas", new IconoMenu(5), false);
+        btnEstadisticas = crearBotonWebAnimado("Estad\u00EDsticas", new IconoMenu(7), false);
+        btnCerrarSesion = crearBotonWebAnimado("Cerrar Sesi\u00F3n", new IconoMenu(6), true);
 
         // uAct ya fue declarado arriba
         
@@ -236,7 +236,7 @@ public class MenuPrincipal extends JFrame {
         panelContenedor.add(appAnimada, "APP");
         cardLayout.show(panelContenedor, "APP");
 
-        // Eventos de apertura de módulos con animación y carga asíncrona
+        // Eventos de apertura de m\u00F3dulos con animaci\u00F3n y carga as\u00EDncrona
         btnAdministracion.addActionListener(e -> abrirPanelAsync(() -> new PanelAdministracion()));
         btnClientes.addActionListener(e -> abrirPanelAsync(() -> new PanelGestionClientes()));
         btnInventario.addActionListener(e -> abrirPanelAsync(() -> new PanelInventario()));
@@ -252,10 +252,10 @@ public class MenuPrincipal extends JFrame {
         btnEstadisticas.addActionListener(e -> abrirPanelAsync(() -> new PanelEstadisticas()));
 
         btnCerrarSesion.addActionListener(e -> {
-            Object[] opciones = { "Sí, cerrar sesión", "Cancelar" };
+            Object[] opciones = { "S\u00ED, cerrar sesi\u00F3n", "Cancelar" };
             int opcion = JOptionPane.showOptionDialog(this,
-                    "¿Estás seguro de que deseas cerrar tu sesión actual?",
-                    "Confirmar Cierre de Sesión",
+                    "\u00BFEst\u00E1s seguro de que deseas cerrar tu sesi\u00F3n actual?",
+                    "Confirmar Cierre de Sesi\u00F3n",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
                     null,
@@ -275,7 +275,7 @@ public class MenuPrincipal extends JFrame {
     private boolean validarCajaPrevia() {
         try {
             if (new dao.ControlCajaDAO().existeCajaAbiertaAnterior()) {
-                utilidades.Mensajes.showMessageDialog(this, "ATENCIÓN: Se ha detectado un turno de caja de una fecha anterior que aún NO se ha cerrado.\n\nPor favor, diríjase al módulo 'Control de Caja' y realice el cierre del turno anterior para evitar descuadres en sus finanzas antes de registrar nuevas ventas.", "Cierre de Caja Requerido", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "ATENCI\u00D3N: Se ha detectado un turno de caja de una fecha anterior que a\u00FAn NO se ha cerrado.\n\nPor favor, dir\u00EDjase al m\u00F3dulo 'Control de Caja' y realice el cierre del turno anterior para evitar descuadres en sus finanzas antes de registrar nuevas ventas.", "Cierre de Caja Requerido", JOptionPane.WARNING_MESSAGE);
                 return false;
             }
         } catch(java.sql.SQLException ex) {
@@ -286,7 +286,7 @@ public class MenuPrincipal extends JFrame {
     }
 
     // =========================================================================
-    // ANIMACIÓN DE TRANSICIÓN AL ABRIR VENTANAS (FADE-IN + SLIDE SUAVE)
+    // ANIMACI\u00D3N DE TRANSICI\u00D3N AL ABRIR VENTANAS (FADE-IN + SLIDE SUAVE)
     // =========================================================================
     public void mostrarPanelHijo(JPanel nuevoPanel) {
         panelCentral.removeAll();
@@ -299,12 +299,12 @@ public class MenuPrincipal extends JFrame {
     }
 
     // =========================================================================
-    // CARGA ASÍNCRONA DE PANELES (NUEVO SISTEMA ANTI-FREEZE)
+    // CARGA AS\u00CDNCRONA DE PANELES (NUEVO SISTEMA ANTI-FREEZE)
     // =========================================================================
     public void abrirPanelAsync(java.util.function.Supplier<JPanel> panelSupplier) {
         panelCentral.removeAll();
         
-        PanelCargaOverlay loader = new PanelCargaOverlay("Cargando módulo...");
+        PanelCargaOverlay loader = new PanelCargaOverlay("Cargando m\u00F3dulo...");
         panelCentral.add(loader, BorderLayout.CENTER);
         panelCentral.revalidate();
         panelCentral.repaint();
@@ -313,7 +313,7 @@ public class MenuPrincipal extends JFrame {
         SwingWorker<JPanel, Void> worker = new SwingWorker<JPanel, Void>() {
             @Override
             protected JPanel doInBackground() throws Exception {
-                // Instancia el panel en segundo plano (las DB queries del constructor corren aquí)
+                // Instancia el panel en segundo plano (las DB queries del constructor corren aqu\u00ED)
                 return panelSupplier.get();
             }
 
@@ -322,12 +322,12 @@ public class MenuPrincipal extends JFrame {
                 try {
                     JPanel nuevoPanel = get();
                     loader.detenerAnimacion();
-                    mostrarPanelHijo(nuevoPanel); // Reutilizamos mostrarPanelHijo para la transición de entrada
+                    mostrarPanelHijo(nuevoPanel); // Reutilizamos mostrarPanelHijo para la transici\u00F3n de entrada
                 } catch (Exception e) {
                     e.printStackTrace();
                     loader.detenerAnimacion();
                     panelCentral.removeAll();
-                    JLabel lblError = new JLabel("Error al cargar el módulo: " + e.getMessage());
+                    JLabel lblError = new JLabel("Error al cargar el m\u00F3dulo: " + e.getMessage());
                     lblError.setForeground(COLOR_ROJO_TEXTO);
                     lblError.setHorizontalAlignment(SwingConstants.CENTER);
                     panelCentral.add(lblError, BorderLayout.CENTER);
@@ -340,7 +340,7 @@ public class MenuPrincipal extends JFrame {
     }
 
     // =========================================================================
-    // CREACIÓN DE BOTONES CON ANIMACIÓN SUAVE DE HOVER (INTERPOLACIÓN 60 FPS)
+    // CREACI\u00D3N DE BOTONES CON ANIMACI\u00D3N SUAVE DE HOVER (INTERPOLACI\u00D3N 60 FPS)
     // =========================================================================
     private JButton crearBotonWebAnimado(String texto, Icon icono, boolean esPeligro) {
         JButton boton = new JButton(texto);
@@ -365,7 +365,7 @@ public class MenuPrincipal extends JFrame {
         Color targetColorBorde = esPeligro ? COLOR_ROJO_PELIGRO : COLOR_VERDE_EMERALD;
         Color targetColorTexto = Color.BLACK; // Texto negro al pasar el cursor (hover)
 
-        // Controlador de micro-animación fluida de color y barra indicadora
+        // Controlador de micro-animaci\u00F3n fluida de color y barra indicadora
         class AnimadorHover {
             private float progreso = 0.0f;
             private Timer timer;
@@ -472,7 +472,7 @@ public class MenuPrincipal extends JFrame {
     }
 
     // =========================================================================
-    // PANEL CONTENEDOR CON ANIMACIÓN SUAVE DE ENTRADA (FADE-IN Y SLIDE)
+    // PANEL CONTENEDOR CON ANIMACI\u00D3N SUAVE DE ENTRADA (FADE-IN Y SLIDE)
     // =========================================================================
     private class PanelTransicionSuave extends JPanel {
         private float opacidad = 0.05f;
@@ -510,7 +510,7 @@ public class MenuPrincipal extends JFrame {
             g2.setColor(getBackground());
             g2.fillRect(0, 0, getWidth(), getHeight());
 
-            // Efecto de aparición con transparencia gradual y deslizamiento suave
+            // Efecto de aparici\u00F3n con transparencia gradual y deslizamiento suave
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Math.min(1.0f, Math.max(0.0f, opacidad))));
             g2.translate(0, desplazamientoY);
             super.paint(g2);
@@ -519,7 +519,7 @@ public class MenuPrincipal extends JFrame {
     }
 
     // =========================================================================
-    // ÍCONOS VECTORIALES NÍPIDOS DEL MENÚ
+    // \u00CDCONOS VECTORIALES N\u00CDPIDOS DEL MEN\u00DA
     // =========================================================================
     private class IconoMenu implements Icon {
         private int tipo;
@@ -548,7 +548,7 @@ public class MenuPrincipal extends JFrame {
             g2.setStroke(new BasicStroke(1.9f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
             switch (tipo) {
-                case 1: // Administración
+                case 1: // Administraci\u00F3n
                     g2.drawLine(x + 2, y + 6, x + 18, y + 6);
                     g2.drawOval(x + 12, y + 3, 4, 5);
                     g2.drawLine(x + 2, y + 14, x + 18, y + 14);
@@ -568,17 +568,17 @@ public class MenuPrincipal extends JFrame {
                             new int[] { y + 10, y + 2, y + 10, y + 18 }, 4);
                     g2.drawOval(x + 6, y + 9, 2, 2);
                     break;
-                case 5: // Garantías
+                case 5: // Garant\u00EDas
                     g2.drawPolygon(new int[] { x + 2, x + 18, x + 18, x + 10, x + 2 },
                             new int[] { y + 2, y + 2, y + 10, y + 18, y + 10 }, 5);
                     g2.drawLine(x + 7, y + 9, x + 10, y + 12);
                     g2.drawLine(x + 10, y + 12, x + 14, y + 6);
                     break;
-                case 6: // Cerrar Sesión
+                case 6: // Cerrar Sesi\u00F3n
                     g2.drawArc(x + 3, y + 3, 14, 14, -240, 300);
                     g2.drawLine(x + 10, y + 1, x + 10, y + 9);
                     break;
-                case 7: // Estadísticas
+                case 7: // Estad\u00EDsticas
                     g2.drawLine(x + 2, y + 18, x + 18, y + 18);
                     g2.fillRect(x + 3, y + 9, 3, 9);
                     g2.fillRect(x + 8, y + 4, 3, 14);
@@ -608,7 +608,7 @@ public class MenuPrincipal extends JFrame {
 
     public static void main(String[] args) {
         try {
-            // --- CONFIGURACIÓN GLOBAL: TEMA VERDE PASTEL ELEGANTE Y BLANCO ---
+            // --- CONFIGURACI\u00D3N GLOBAL: TEMA VERDE PASTEL ELEGANTE Y BLANCO ---
             UIManager.put("Button.arc", 12);
             UIManager.put("Component.arc", 12);
             UIManager.put("ProgressBar.arc", 12);
@@ -619,7 +619,7 @@ public class MenuPrincipal extends JFrame {
             UIManager.put("ScrollBar.thumb", new Color(185, 215, 198)); // Verde pastel medio
             UIManager.put("ScrollBar.hoverThumbColor", new Color(42, 157, 114)); // Esmeralda al pasar cursor
 
-            // Fondo general de paneles y ventanas emergentes (diálogos, popups, alert boxes)
+            // Fondo general de paneles y ventanas emergentes (di\u00E1logos, popups, alert boxes)
             UIManager.put("Panel.background", new Color(232, 243, 236));
             UIManager.put("ScrollPane.background", new Color(232, 243, 236));
             UIManager.put("Viewport.background", new Color(255, 255, 255));
@@ -657,11 +657,11 @@ public class MenuPrincipal extends JFrame {
             UIManager.put("ComboBox.focusedBorderColor", new Color(45, 106, 79));
             UIManager.put("Spinner.focusedBorderColor", new Color(45, 106, 79));
 
-            // --- TABLAS BLANCAS NÍTIDAS SOBRE FONDO VERDE PASTEL ---
-            UIManager.put("TableHeader.background", new Color(240, 248, 244)); // Fondo claro nítido
+            // --- TABLAS BLANCAS N\u00CDTIDAS SOBRE FONDO VERDE PASTEL ---
+            UIManager.put("TableHeader.background", new Color(240, 248, 244)); // Fondo claro n\u00EDtido
             UIManager.put("TableHeader.foreground", new Color(19, 58, 42));     // Verde forestal elegante
             UIManager.put("TableHeader.separatorColor", new Color(210, 230, 220));
-            UIManager.put("TableHeader.bottomSeparatorColor", new Color(42, 157, 114)); // Línea viva esmeralda
+            UIManager.put("TableHeader.bottomSeparatorColor", new Color(42, 157, 114)); // L\u00EDnea viva esmeralda
             UIManager.put("TableHeader.height", 42);
 
             UIManager.put("Table.background", new Color(255, 255, 255)); // Tablas 100% Blancas

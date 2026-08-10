@@ -10,7 +10,7 @@ import java.util.Properties;
 import javax.swing.JOptionPane;
 
 /**
- * Factory para la conexión a la base de datos (SQL Server)
+ * Factory para la conexi\u00F3n a la base de datos (SQL Server)
  * Proyecto: Multiservicios WYS - Sistema de Control de Motos / NexarBD
  */
 public class ConexionFactory {
@@ -33,14 +33,14 @@ public class ConexionFactory {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         } catch (ClassNotFoundException e) {
             utilidades.Mensajes.showMessageDialog(null, 
-                "Falta el archivo mssql-jdbc.jar en las librerías del proyecto.", 
+                "Falta el archivo mssql-jdbc.jar en las librer\u00EDas del proyecto.", 
                 "Error de Driver", JOptionPane.ERROR_MESSAGE);
         }
 
-        // 2. Cargar configuración desde el archivo externo (raíz del programa)
+        // 2. Cargar configuraci\u00F3n desde el archivo externo (ra\u00EDz del programa)
         Properties config = new Properties();
         
-        // Apuntamos al archivo físico en la carpeta donde se está ejecutando el programa
+        // Apuntamos al archivo f\u00EDsico en la carpeta donde se est\u00E1 ejecutando el programa
         File archivoConfig = new File("config.properties");
         
         if (archivoConfig.exists()) {
@@ -55,13 +55,13 @@ public class ConexionFactory {
                 System.out.println("Error al leer el archivo de propiedades: " + e.getMessage());
             }
         } else {
-            System.out.println("ATENCIÓN: No se encontró el archivo físico en: " + archivoConfig.getAbsolutePath());
-            System.out.println("Usando credenciales por defecto incrustadas en el código.");
+            System.out.println("ATENCI\u00D3N: No se encontr\u00F3 el archivo f\u00EDsico en: " + archivoConfig.getAbsolutePath());
+            System.out.println("Usando credenciales por defecto incrustadas en el c\u00F3digo.");
         }
     }
 
     /**
-     * Obtiene una conexión activa analizando todos los escenarios de fallo. 
+     * Obtiene una conexi\u00F3n activa analizando todos los escenarios de fallo. 
      */
     public Connection getConexion() throws SQLException {
         String url = "jdbc:sqlserver://" + host + ":" + port + 
@@ -72,17 +72,17 @@ public class ConexionFactory {
             Connection con = DriverManager.getConnection(url, usuario, password);
             
             if (huboFalloConexion) {
-                utilidades.Mensajes.showMessageDialog(null, "Conexión Restablecida exitosamente con el servidor.", "Conexión Recuperada", JOptionPane.INFORMATION_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(null, "Conexi\u00F3n Restablecida exitosamente con el servidor.", "Conexi\u00F3n Recuperada", JOptionPane.INFORMATION_MESSAGE);
                 huboFalloConexion = false; 
             }
             return con;
             
         } catch (SQLException e) {
             huboFalloConexion = true;
-            analizarErrorSQL(e); // Llamamos a nuestro nuevo método detector de errores
+            analizarErrorSQL(e); // Llamamos a nuestro nuevo m\u00E9todo detector de errores
             
             if (!hiloVigilanteActivo) {
-                System.out.println("Iniciando Vigilante Fantasma... Nexar buscará el servidor en segundo plano.");
+                System.out.println("Iniciando Vigilante Fantasma... Nexar buscar\u00E1 el servidor en segundo plano.");
                 iniciarVigilanteFantasma(url); 
             }
             throw e; 
@@ -101,33 +101,33 @@ public class ConexionFactory {
             String msjTraducido;
             String tituloAlerta;
 
-            if (msjOriginal.contains("tcp/ip") || msjOriginal.contains("connection refused") || msjOriginal.contains("se ha denegado la conexión")) {
-                tituloAlerta = "El Servidor está Apagado o Bloqueado (TCP/IP)";
+            if (msjOriginal.contains("tcp/ip") || msjOriginal.contains("connection refused") || msjOriginal.contains("se ha denegado la conexi\u00F3n")) {
+                tituloAlerta = "El Servidor est\u00E1 Apagado o Bloqueado (TCP/IP)";
                 msjTraducido = "ORION SYSTEMS no puede alcanzar la base de datos.\n\n"
                              + "SOLUCIONES SUGERIDAS:\n"
-                             + "1. El servicio de SQL Server no está iniciado.\n"
-                             + "2. El protocolo TCP/IP está deshabilitado en el 'SQL Server Configuration Manager'.\n"
-                             + "3. El puerto " + port + " está bloqueado por el Firewall de Windows.\n"
+                             + "1. El servicio de SQL Server no est\u00E1 iniciado.\n"
+                             + "2. El protocolo TCP/IP est\u00E1 deshabilitado en el 'SQL Server Configuration Manager'.\n"
+                             + "3. El puerto " + port + " est\u00E1 bloqueado por el Firewall de Windows.\n"
                              + "4. La IP/Host (" + host + ") es incorrecta.";
                              
-            } else if (msjOriginal.contains("login failed") || msjOriginal.contains("error de inicio de sesión")) {
-                tituloAlerta = "Error de Autenticación";
+            } else if (msjOriginal.contains("login failed") || msjOriginal.contains("error de inicio de sesi\u00F3n")) {
+                tituloAlerta = "Error de Autenticaci\u00F3n";
                 msjTraducido = "Las credenciales son incorrectas.\n\n"
-                             + "Verifique que el usuario '" + usuario + "' y la contraseña sean correctos en el archivo config.properties.";
+                             + "Verifique que el usuario '" + usuario + "' y la contrase\u00F1a sean correctos en el archivo config.properties.";
                              
             } else if (msjOriginal.contains("database") && (msjOriginal.contains("not found") || msjOriginal.contains("no existe"))) {
                 tituloAlerta = "Base de Datos no encontrada";
-                msjTraducido = "Se logró conectar al servidor, pero la base de datos '" + database + "' no existe.\n\n"
-                             + "Asegúrese de haber ejecutado el script de creación de NexarBD en SQL Server.";
+                msjTraducido = "Se logr\u00F3 conectar al servidor, pero la base de datos '" + database + "' no existe.\n\n"
+                             + "Aseg\u00FArese de haber ejecutado el script de creaci\u00F3n de NexarBD en SQL Server.";
                              
             } else if (msjOriginal.contains("certificate") || msjOriginal.contains("ssl")) {
                 tituloAlerta = "Error de Certificado de Seguridad";
-                msjTraducido = "Hubo un problema con la encriptación SSL de Java hacia SQL Server.\n"
-                             + "Asegúrese de que 'trustServerCertificate=true' esté en la URL.";
+                msjTraducido = "Hubo un problema con la encriptaci\u00F3n SSL de Java hacia SQL Server.\n"
+                             + "Aseg\u00FArese de que 'trustServerCertificate=true' est\u00E9 en la URL.";
                              
             } else {
                 tituloAlerta = "Error Desconocido de Base de Datos";
-                msjTraducido = "Código de error: " + e.getErrorCode() + "\nDetalle: " + e.getMessage();
+                msjTraducido = "C\u00F3digo de error: " + e.getErrorCode() + "\nDetalle: " + e.getMessage();
             }
 
             utilidades.Mensajes.showMessageDialog(null, msjTraducido, tituloAlerta, JOptionPane.ERROR_MESSAGE);

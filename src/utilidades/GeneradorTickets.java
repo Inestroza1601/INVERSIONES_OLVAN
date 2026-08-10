@@ -25,20 +25,20 @@ import java.io.FileOutputStream;
 public class GeneradorTickets {
 
     /**
-     * Construye la vista previa del ticket para la interfaz gráfica.
+     * Construye la vista previa del ticket para la interfaz gr\u00E1fica.
      * Ahora estructurado exactamente igual que el PDF generado.
      */
     /**
      * VISTA PREVIA EDITABLE: Usado exclusivamente por PanelConfiguracionImpresion
-     * para mostrar datos ficticios y permitir editar el pie de página.
+     * para mostrar datos ficticios y permitir editar el pie de p\u00E1gina.
      */
    /**
      * VISTA PREVIA EDITABLE: Usado exclusivamente por PanelConfiguracionImpresion
-     * para mostrar datos ficticios y permitir editar el pie de página.
+     * para mostrar datos ficticios y permitir editar el pie de p\u00E1gina.
      */
     /**
      * VISTA PREVIA EDITABLE: Usado exclusivamente por PanelConfiguracionImpresion
-     * para mostrar datos ficticios y permitir editar el pie de página.
+     * para mostrar datos ficticios y permitir editar el pie de p\u00E1gina.
      */
     public static JPanel crearTicketVistaPrevia(String tituloDocumento, JTextArea txtAreaEditable) {
         JPanel panelCentrador = new JPanel(new GridBagLayout());
@@ -63,13 +63,13 @@ public class GeneradorTickets {
         modelo.Empresa emp = utilidades.SesionGlobal.getEmpresaActual();
         
         String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
-        String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
+        String empDue\u00F1o = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
         String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
         
         pnlTicket.add(crearLabelCentrado(empNombre, fTitulo, Color.BLACK));
         pnlTicket.add(Box.createVerticalStrut(5));
         
-        if (!empDueño.isEmpty()) pnlTicket.add(crearLabelCentrado(empDueño, fBold, Color.DARK_GRAY));
+        if (!empDue\u00F1o.isEmpty()) pnlTicket.add(crearLabelCentrado(empDue\u00F1o, fBold, Color.DARK_GRAY));
         pnlTicket.add(crearLabelCentrado(empRtn, fBold, Color.DARK_GRAY));
         pnlTicket.add(Box.createVerticalStrut(10));
 
@@ -126,7 +126,7 @@ public class GeneradorTickets {
         JPanel pnlTicket = new JPanel();
         pnlTicket.setLayout(new BoxLayout(pnlTicket, BoxLayout.Y_AXIS));
         pnlTicket.setBackground(Color.WHITE);
-        // Aumentamos el tamaño para que quepa toda la nueva cabecera
+        // Aumentamos el tama\u00F1o para que quepa toda la nueva cabecera
         pnlTicket.setPreferredSize(new Dimension(300, 600));
         pnlTicket.setMinimumSize(new Dimension(300, 600));
         pnlTicket.setMaximumSize(new Dimension(300, 600));
@@ -142,19 +142,19 @@ public class GeneradorTickets {
 
         modelo.Empresa emp = SesionGlobal.getEmpresaActual();
         
-        // --- 1. EXTRACCIÓN EXACTA COMO EN EL PDF ---
+        // --- 1. EXTRACCI\u00D3N EXACTA COMO EN EL PDF ---
         String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
-        String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
+        String empDue\u00F1o = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
         String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
         
         pnlTicket.add(crearLabelCentrado(empNombre, fTitulo, Color.BLACK));
         pnlTicket.add(Box.createVerticalStrut(5));
         
-        if (!empDueño.isEmpty()) pnlTicket.add(crearLabelCentrado(empDueño, fBold, Color.DARK_GRAY));
+        if (!empDue\u00F1o.isEmpty()) pnlTicket.add(crearLabelCentrado(empDue\u00F1o, fBold, Color.DARK_GRAY));
         pnlTicket.add(crearLabelCentrado(empRtn, fBold, Color.DARK_GRAY));
         pnlTicket.add(Box.createVerticalStrut(10));
 
-        // --- 2. DIBUJO DE ÍCONOS VECTORIALES CON JAVA 2D ---
+        // --- 2. DIBUJO DE \u00CDCONOS VECTORIALES CON JAVA 2D ---
         if (emp != null) {
             if (emp.getDireccionEmpresa() != null && !emp.getDireccionEmpresa().isEmpty()) 
                 pnlTicket.add(crearLabelConIcono("dir", emp.getDireccionEmpresa(), fNormal, Color.BLACK));
@@ -172,7 +172,7 @@ public class GeneradorTickets {
                 pnlTicket.add(crearLabelConIcono("web", emp.getWeb(), fNormal, Color.BLACK));
         }
         
-       // --- 3. DATOS REALES ASIGNADOS HISTÓRICAMENTE ---
+       // --- 3. DATOS REALES ASIGNADOS HIST\u00D3RICAMENTE ---
         pnlTicket.add(crearLabelCentrado("Cliente: " + cliente, fNormal, Color.BLACK));
         pnlTicket.add(crearLabelCentrado("Fecha: " + fecha, fNormal, Color.BLACK));
         
@@ -236,10 +236,10 @@ public class GeneradorTickets {
     }
 
     /**
-     * Genera el archivo PDF físico del ticket de venta utilizando iTextPDF.
-     * Incorpora dibujos vectoriales para las redes sociales y salto de línea en descripciones largas.
+     * Genera el archivo PDF f\u00EDsico del ticket de venta utilizando iTextPDF.
+     * Incorpora dibujos vectoriales para las redes sociales y salto de l\u00EDnea en descripciones largas.
      */
-    public static void generarTicketVentaPDF(String rutaDestino, String nombreCliente, String fecha, java.util.List<Object[]> detalles, double subtotal, double isv, double total, boolean esFactura, String metodoPago, String referenciaPago, String bancoPago) throws Exception {        Rectangle tamanoTicket = new Rectangle(226, 800); // Formato de ticket térmico 80mm
+    public static void generarTicketVentaPDF(String rutaDestino, String nombreCliente, String fecha, java.util.List<Object[]> detalles, double subtotal, double isv, double total, boolean esFactura, String metodoPago, String referenciaPago, String bancoPago) throws Exception {        Rectangle tamanoTicket = new Rectangle(226, 800); // Formato de ticket t\u00E9rmico 80mm
         Document documento = new Document(tamanoTicket, 10, 10, 10, 10);
         PdfWriter writer = PdfWriter.getInstance(documento, new FileOutputStream(rutaDestino));
         documento.open();
@@ -251,23 +251,23 @@ public class GeneradorTickets {
         Empresa emp = SesionGlobal.getEmpresaActual();
         
         String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
-        String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
+        String empDue\u00F1o = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
         String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
 
-        // Título Principal
+        // T\u00EDtulo Principal
         Paragraph parrafoNombre = new Paragraph(empNombre + "\n", fTitulo);
         parrafoNombre.setAlignment(Element.ALIGN_CENTER);
         documento.add(parrafoNombre);
 
-        // Cabecera Texto Plano (Dueño y RTN)
+        // Cabecera Texto Plano (Due\u00F1o y RTN)
         Paragraph cabeceraTexto = new Paragraph();
         cabeceraTexto.setAlignment(Element.ALIGN_CENTER);
         cabeceraTexto.setFont(fBold);
-        if (!empDueño.isEmpty()) cabeceraTexto.add(new Chunk(empDueño + "\n"));
+        if (!empDue\u00F1o.isEmpty()) cabeceraTexto.add(new Chunk(empDue\u00F1o + "\n"));
         cabeceraTexto.add(new Chunk(empRtn + "\n\n"));
         documento.add(cabeceraTexto);
 
-        // --- SECCIÓN DE DATOS CON ÍCONOS DIBUJADOS ---
+        // --- SECCI\u00D3N DE DATOS CON \u00CDCONOS DIBUJADOS ---
         Paragraph cabeceraIconos = new Paragraph();
         cabeceraIconos.setAlignment(Element.ALIGN_CENTER);
         cabeceraIconos.setFont(fNormal);
@@ -283,17 +283,17 @@ public class GeneradorTickets {
         }
         documento.add(cabeceraIconos);
 
-        // Título del Documento
+        // T\u00EDtulo del Documento
         String tituloDocumento = esFactura ? "FACTURA" : "COMPROBANTE DE VENTA";
         Paragraph tituloDoc = new Paragraph("===============================\n" + tituloDocumento + "\n===============================\n", fBold);
         tituloDoc.setAlignment(Element.ALIGN_CENTER);
         documento.add(tituloDoc);
 
-        // Información de Venta y Control de Pago
+        // Informaci\u00F3n de Venta y Control de Pago
         StringBuilder sbInfo = new StringBuilder();
         sbInfo.append("Cliente: ").append(nombreCliente).append("\n");
         
-        // CORRECCIÓN: Fijamos la fecha histórica provista por el parámetro
+        // CORRECCI\u00D3N: Fijamos la fecha hist\u00F3rica provista por el par\u00E1metro
         sbInfo.append("Fecha: ").append(fecha).append("\n");
         
         sbInfo.append("Pago via: ").append(metodoPago).append("\n");
@@ -309,12 +309,12 @@ public class GeneradorTickets {
         info.setAlignment(Element.ALIGN_LEFT);
         documento.add(info);
 
-        // --- DETALLES DE PRODUCTOS CON SALTO DE LÍNEA E IDENTIFICADORES ---
+        // --- DETALLES DE PRODUCTOS CON SALTO DE L\u00CDNEA E IDENTIFICADORES ---
         StringBuilder sbDetalles = new StringBuilder();
         sbDetalles.append(String.format("%-2s %-15s %6s\n", "C.", "DESCRIPCION", "TOTAL"));
         sbDetalles.append("-------------------------------\n");
         
-        boolean ticketTieneGarantias = false; // Bandera para saber si imprimimos políticas al final
+        boolean ticketTieneGarantias = false; // Bandera para saber si imprimimos pol\u00EDticas al final
         
         for (Object[] fila : detalles) {
             String imei = (fila[1] != null) ? fila[1].toString() : "";
@@ -338,14 +338,14 @@ public class GeneradorTickets {
                 }
             }
             
-            // 2. Imprimir Identificador y Vencimiento de Garantía (Si Aplica)
+            // 2. Imprimir Identificador y Vencimiento de Garant\u00EDa (Si Aplica)
             if (!imei.isEmpty() || diasGarantia > 0) {
                 ticketTieneGarantias = true;
                 if (!imei.isEmpty()) {
                     sbDetalles.append(String.format("   S/N: %s\n", imei));
                 }
                 if (diasGarantia > 0) {
-                    // Calculamos automáticamente la fecha de vencimiento
+                    // Calculamos autom\u00E1ticamente la fecha de vencimiento
                     java.util.Calendar cal = java.util.Calendar.getInstance();
                     cal.add(java.util.Calendar.DAY_OF_YEAR, diasGarantia);
                     String fechaVence = new java.text.SimpleDateFormat("dd/MM/yy").format(cal.getTime());
@@ -357,14 +357,14 @@ public class GeneradorTickets {
         Paragraph parrafoDetalles = new Paragraph(sbDetalles.toString(), fNormal);
         documento.add(parrafoDetalles);
         if (ticketTieneGarantias) {
-            String textoPoliticas = emp != null && emp.getPoliticasGarantia() != null ? emp.getPoliticasGarantia() : "Conserve este ticket. La garantía no aplica por daños físicos, humedad, exposición a líquidos o manipulación por terceros.";
+            String textoPoliticas = emp != null && emp.getPoliticasGarantia() != null ? emp.getPoliticasGarantia() : "Conserve este ticket. La garant\u00EDa no aplica por da\u00F1os f\u00EDsicos, humedad, exposici\u00F3n a l\u00EDquidos o manipulaci\u00F3n por terceros.";
             
-            // 1. Título Centrado y en Negrita (Usa fBold)
+            // 1. T\u00EDtulo Centrado y en Negrita (Usa fBold)
             Paragraph tituloGarantia = new Paragraph("--- POLITICAS DE GARANTIA ---\n", fBold);
             tituloGarantia.setAlignment(Element.ALIGN_CENTER);
             documento.add(tituloGarantia);
 
-            // 2. Texto de las políticas Justificado y Normal (Usa fNormal)
+            // 2. Texto de las pol\u00EDticas Justificado y Normal (Usa fNormal)
             Paragraph parrafoGarantia = new Paragraph(textoPoliticas + "\n\n", fNormal);
             parrafoGarantia.setAlignment(Element.ALIGN_JUSTIFIED);
             documento.add(parrafoGarantia);
@@ -379,8 +379,8 @@ public class GeneradorTickets {
         totales.setAlignment(Element.ALIGN_RIGHT);
         documento.add(totales);
 
-        // Pie de Página
-        String msjPie = emp != null && emp.getMensajeTicketPieFactura() != null ? emp.getMensajeTicketPieFactura() : "¡Gracias por su preferencia!";
+        // Pie de P\u00E1gina
+        String msjPie = emp != null && emp.getMensajeTicketPieFactura() != null ? emp.getMensajeTicketPieFactura() : "\u00A1Gracias por su preferencia!";
         if (!esFactura) {
             msjPie = emp != null && emp.getMensajeTicketPieRecibo() != null ? emp.getMensajeTicketPieRecibo() : "Este documento no es valido como factura.";
         }
@@ -396,7 +396,7 @@ public class GeneradorTickets {
     // ==============================================================================
 
     /**
-     * Agrega el bloque de ícono + texto alineado a la cabecera.
+     * Agrega el bloque de \u00EDcono + texto alineado a la cabecera.
      */
     private static void agregarLineaIcono(Paragraph p, PdfWriter writer, String tipo, String texto) throws Exception {
         if (texto != null && !texto.trim().isEmpty()) {
@@ -407,7 +407,7 @@ public class GeneradorTickets {
     }
 
     /**
-     * Dibuja los iconos literalmente a través de figuras geométricas usando PdfContentByte.
+     * Dibuja los iconos literalmente a trav\u00E9s de figuras geom\u00E9tricas usando PdfContentByte.
      */
     private static Image crearIconoVectorial(PdfWriter writer, String tipo) throws Exception {
         PdfContentByte cb = writer.getDirectContent();
@@ -418,21 +418,21 @@ public class GeneradorTickets {
 
         switch (tipo) {
             case "tel":
-                // Dibuja un teléfono móvil clásico (Bordes redondeados y la rayita del altavoz)
+                // Dibuja un tel\u00E9fono m\u00F3vil cl\u00E1sico (Bordes redondeados y la rayita del altavoz)
                 tp.roundRectangle(2, 1, 6, 8, 1); 
                 tp.stroke();
                 tp.moveTo(4, 2); tp.lineTo(6, 2); 
                 tp.stroke();
                 break;
             case "wa":
-                // Dibuja una burbuja de chat de WhatsApp (Círculo con colita)
+                // Dibuja una burbuja de chat de WhatsApp (C\u00EDrculo con colita)
                 tp.circle(5, 5, 4); 
                 tp.stroke();
                 tp.moveTo(2, 3); tp.lineTo(1, 1); tp.lineTo(3, 2); 
                 tp.stroke();
                 break;
             case "fb":
-                // Dibuja la 'f' característica de Facebook en un bloque cuadrado
+                // Dibuja la 'f' caracter\u00EDstica de Facebook en un bloque cuadrado
                 tp.rectangle(1, 1, 8, 8); 
                 tp.fill();
                 tp.setColorStroke(BaseColor.WHITE); 
@@ -441,21 +441,21 @@ public class GeneradorTickets {
                 tp.moveTo(3, 5); tp.lineTo(6, 5); tp.stroke();
                 break;
             case "mail":
-                // Dibuja el sobre de un correo electrónico
+                // Dibuja el sobre de un correo electr\u00F3nico
                 tp.rectangle(1, 2, 8, 6); 
                 tp.stroke();
                 tp.moveTo(1, 8); tp.lineTo(5, 5); tp.lineTo(9, 8); 
                 tp.stroke();
                 break;
             case "web":
-                // Dibuja un ícono global (El mundo de internet)
+                // Dibuja un \u00EDcono global (El mundo de internet)
                 tp.circle(5, 5, 4); 
                 tp.stroke();
                 tp.moveTo(1, 5); tp.lineTo(9, 5); tp.stroke();
                 tp.moveTo(5, 1); tp.lineTo(5, 9); tp.stroke();
                 break;
             case "dir":
-                // Dibuja un pin de ubicación (Globo con pico hacia abajo)
+                // Dibuja un pin de ubicaci\u00F3n (Globo con pico hacia abajo)
                 tp.circle(5, 7, 2.5f); 
                 tp.stroke();
                 tp.moveTo(3.2f, 5.2f); tp.lineTo(5, 1); tp.lineTo(6.8f, 5.2f); 
@@ -466,7 +466,7 @@ public class GeneradorTickets {
     }
     
     // ==============================================================================
-    // DIBUJO DE ÍCONOS VECTORIALES PARA LA VISTA PREVIA (INTERFAZ GRÁFICA)
+    // DIBUJO DE \u00CDCONOS VECTORIALES PARA LA VISTA PREVIA (INTERFAZ GR\u00C1FICA)
     // ==============================================================================
     private static class IconoVectorialUI implements Icon {
         private String tipo;
@@ -527,7 +527,7 @@ public class GeneradorTickets {
     }
     
     // ==============================================================================
-    // GENERACIÓN AUTOMÁTICA DESDE LA BASE DE DATOS
+    // GENERACI\u00D3N AUTOM\u00C1TICA DESDE LA BASE DE DATOS
     // ==============================================================================
 
     public static java.io.File generarFactura(int idVenta) throws Exception {
@@ -584,7 +584,7 @@ public class GeneradorTickets {
             }
         }
         
-        // Llamamos a tu método maestro que ya dibuja el PDF maravillosamente
+        // Llamamos a tu m\u00E9todo maestro que ya dibuja el PDF maravillosamente
         generarTicketVentaPDF(ruta, cliente.trim(), fecha, detalles, subtotal, isv, total, true, metodo, ref, banco);
         return new java.io.File(ruta);
     }
@@ -637,9 +637,9 @@ public class GeneradorTickets {
             }
         }
 
-        // --- CONFIGURACIÓN IDÉNTICA AL COMPROBANTE (80mm) ---
+        // --- CONFIGURACI\u00D3N ID\u00C9NTICA AL COMPROBANTE (80mm) ---
         Rectangle tamanoTicket = new Rectangle(226, 800); 
-        // Usamos los mismos márgenes (10) de tu método principal
+        // Usamos los mismos m\u00E1rgenes (10) de tu m\u00E9todo principal
         Document documento = new Document(tamanoTicket, 10, 10, 10, 10);
         PdfWriter writer = PdfWriter.getInstance(documento, new FileOutputStream(ruta));
         documento.open();
@@ -651,23 +651,23 @@ public class GeneradorTickets {
 
         Empresa emp = SesionGlobal.getEmpresaActual();
         String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "ORION SYSTEM";
-        String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
+        String empDue\u00F1o = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
         String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "";
 
-        // 1. TÍTULO PRINCIPAL
+        // 1. T\u00CDTULO PRINCIPAL
         Paragraph parrafoNombre = new Paragraph(empNombre + "\n", fTitulo);
         parrafoNombre.setAlignment(Element.ALIGN_CENTER);
         documento.add(parrafoNombre);
 
-        // 2. DUEÑO Y RTN
+        // 2. DUE\u00D1O Y RTN
         Paragraph cabeceraTexto = new Paragraph();
         cabeceraTexto.setAlignment(Element.ALIGN_CENTER);
         cabeceraTexto.setFont(fBold);
-        if (!empDueño.isEmpty()) cabeceraTexto.add(new Chunk(empDueño + "\n"));
+        if (!empDue\u00F1o.isEmpty()) cabeceraTexto.add(new Chunk(empDue\u00F1o + "\n"));
         if (!empRtn.isEmpty()) cabeceraTexto.add(new Chunk(empRtn + "\n\n"));
         documento.add(cabeceraTexto);
 
-        // 3. SECCIÓN DE ÍCONOS VECTORIALES (Igual que en el recibo)
+        // 3. SECCI\u00D3N DE \u00CDCONOS VECTORIALES (Igual que en el recibo)
         Paragraph cabeceraIconos = new Paragraph();
         cabeceraIconos.setAlignment(Element.ALIGN_CENTER);
         cabeceraIconos.setFont(fNormal);
@@ -681,12 +681,12 @@ public class GeneradorTickets {
         }
         documento.add(cabeceraIconos);
 
-        // 4. SEPARADOR Y TÍTULO DEL DOCUMENTO
+        // 4. SEPARADOR Y T\u00CDTULO DEL DOCUMENTO
         Paragraph pTitulo = new Paragraph("===============================\nCERTIFICADO DE GARANTIA\n===============================\n", fBold);
         pTitulo.setAlignment(Element.ALIGN_CENTER);
         documento.add(pTitulo);
 
-        // 5. CUERPO DEL DOCUMENTO (Usando la misma estética de guiones)
+        // 5. CUERPO DEL DOCUMENTO (Usando la misma est\u00E9tica de guiones)
         StringBuilder sbInfo = new StringBuilder();
         sbInfo.append("Cliente: ").append(cliente.trim()).append("\n");
         sbInfo.append("Factura: ").append(idVentaReal).append("\n");
@@ -717,8 +717,8 @@ public class GeneradorTickets {
         info2.setAlignment(Element.ALIGN_LEFT);
         documento.add(info2);
 
-        // 6. POLÍTICAS DE GARANTÍA
-        String textoPoliticas = emp != null && emp.getPoliticasGarantia() != null ? emp.getPoliticasGarantia() : "Conserve este ticket. La garantía no aplica por daños físicos, humedad, exposición a líquidos o manipulación por terceros.";
+        // 6. POL\u00CDTICAS DE GARANT\u00CDA
+        String textoPoliticas = emp != null && emp.getPoliticasGarantia() != null ? emp.getPoliticasGarantia() : "Conserve este ticket. La garant\u00EDa no aplica por da\u00F1os f\u00EDsicos, humedad, exposici\u00F3n a l\u00EDquidos o manipulaci\u00F3n por terceros.";
         
         Paragraph tituloPol = new Paragraph("--- POLITICAS DE GARANTIA ---\n", fBold);
         tituloPol.setAlignment(Element.ALIGN_CENTER);
@@ -738,7 +738,7 @@ public class GeneradorTickets {
     }
 
     public static void generarTicketApartadoPDF(String rutaDestino, String nombreCliente, String fecha, String fechaLimite, java.util.List<Object[]> detalles, double total, double abono, double saldo, String metodoPago) throws Exception {
-        Rectangle tamanoTicket = new Rectangle(226, 800); // Formato de ticket térmico 80mm
+        Rectangle tamanoTicket = new Rectangle(226, 800); // Formato de ticket t\u00E9rmico 80mm
         Document documento = new Document(tamanoTicket, 10, 10, 10, 10);
         PdfWriter writer = PdfWriter.getInstance(documento, new FileOutputStream(rutaDestino));
         documento.open();
@@ -750,23 +750,23 @@ public class GeneradorTickets {
         Empresa emp = SesionGlobal.getEmpresaActual();
         
         String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
-        String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
+        String empDue\u00F1o = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
         String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
 
-        // Título Principal
+        // T\u00EDtulo Principal
         Paragraph parrafoNombre = new Paragraph(empNombre + "\n", fTitulo);
         parrafoNombre.setAlignment(Element.ALIGN_CENTER);
         documento.add(parrafoNombre);
 
-        // Cabecera Texto Plano (Dueño y RTN)
+        // Cabecera Texto Plano (Due\u00F1o y RTN)
         Paragraph cabeceraTexto = new Paragraph();
         cabeceraTexto.setAlignment(Element.ALIGN_CENTER);
         cabeceraTexto.setFont(fBold);
-        if (!empDueño.isEmpty()) cabeceraTexto.add(new Chunk(empDueño + "\n"));
+        if (!empDue\u00F1o.isEmpty()) cabeceraTexto.add(new Chunk(empDue\u00F1o + "\n"));
         cabeceraTexto.add(new Chunk(empRtn + "\n\n"));
         documento.add(cabeceraTexto);
 
-        // --- SECCIÓN DE DATOS CON ÍCONOS DIBUJADOS ---
+        // --- SECCI\u00D3N DE DATOS CON \u00CDCONOS DIBUJADOS ---
         Paragraph cabeceraIconos = new Paragraph();
         cabeceraIconos.setAlignment(Element.ALIGN_CENTER);
         cabeceraIconos.setFont(fNormal);
@@ -782,12 +782,12 @@ public class GeneradorTickets {
         tituloDoc.setAlignment(Element.ALIGN_CENTER);
         documento.add(tituloDoc);
 
-        // Información de Apartado
+        // Informaci\u00F3n de Apartado
         StringBuilder sbInfo = new StringBuilder();
         sbInfo.append("Cliente:      ").append(nombreCliente).append("\n");
         sbInfo.append("Fecha:        ").append(fecha).append("\n");
-        sbInfo.append("Límite Pago:  ").append(fechaLimite).append("\n");
-        sbInfo.append("Pago Vía:     ").append(metodoPago).append("\n");
+        sbInfo.append("L\u00EDmite Pago:  ").append(fechaLimite).append("\n");
+        sbInfo.append("Pago V\u00EDa:     ").append(metodoPago).append("\n");
         sbInfo.append("-------------------------------\n");
 
         Paragraph info = new Paragraph(sbInfo.toString(), fNormal);
@@ -933,7 +933,7 @@ public class GeneradorTickets {
     }
 
     public static void generarTicketApartadoPDF(String rutaDestino, String cliente, String fecha, double total, double saldoPendiente, int idApartado, java.util.List<modelo.DetalleApartado> detalles, java.util.List<modelo.AbonoApartado> abonosHistoricos) throws Exception {
-        Rectangle tamanoTicket = new Rectangle(226, 800); // Formato de ticket térmico 80mm
+        Rectangle tamanoTicket = new Rectangle(226, 800); // Formato de ticket t\u00E9rmico 80mm
         Document documento = new Document(tamanoTicket, 10, 10, 10, 10);
         PdfWriter writer = PdfWriter.getInstance(documento, new FileOutputStream(rutaDestino));
         documento.open();
@@ -945,23 +945,23 @@ public class GeneradorTickets {
         Empresa emp = SesionGlobal.getEmpresaActual();
         
         String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
-        String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
+        String empDue\u00F1o = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
         String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
 
-        // Título Principal
+        // T\u00EDtulo Principal
         Paragraph parrafoNombre = new Paragraph(empNombre + "\n", fTitulo);
         parrafoNombre.setAlignment(Element.ALIGN_CENTER);
         documento.add(parrafoNombre);
 
-        // Cabecera Texto Plano (Dueño y RTN)
+        // Cabecera Texto Plano (Due\u00F1o y RTN)
         Paragraph cabeceraTexto = new Paragraph();
         cabeceraTexto.setAlignment(Element.ALIGN_CENTER);
         cabeceraTexto.setFont(fBold);
-        if (!empDueño.isEmpty()) cabeceraTexto.add(new Chunk(empDueño + "\n"));
+        if (!empDue\u00F1o.isEmpty()) cabeceraTexto.add(new Chunk(empDue\u00F1o + "\n"));
         cabeceraTexto.add(new Chunk(empRtn + "\n\n"));
         documento.add(cabeceraTexto);
 
-        // --- SECCIÓN DE DATOS CON ÍCONOS DIBUJADOS ---
+        // --- SECCI\u00D3N DE DATOS CON \u00CDCONOS DIBUJADOS ---
         Paragraph cabeceraIconos = new Paragraph();
         cabeceraIconos.setAlignment(Element.ALIGN_CENTER);
         cabeceraIconos.setFont(fNormal);
@@ -1037,7 +1037,7 @@ public class GeneradorTickets {
         documento.add(totales);
 
         String msjPie = emp != null && emp.getMensajeTicketPieRecibo() != null ? emp.getMensajeTicketPieRecibo() : "Conserve este ticket para reclamar su producto.";
-        Paragraph pie = new Paragraph(msjPie + "\n\n* POLÍTICA: No se aceptan reembolsos\nuna vez realizado el apartado.\n\n\n", fNormal);
+        Paragraph pie = new Paragraph(msjPie + "\n\n* POL\u00CDTICA: No se aceptan reembolsos\nuna vez realizado el apartado.\n\n\n", fNormal);
         pie.setAlignment(Element.ALIGN_CENTER);
         documento.add(pie);
 
@@ -1057,23 +1057,23 @@ public class GeneradorTickets {
         Empresa emp = SesionGlobal.getEmpresaActual();
         
         String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
-        String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
+        String empDue\u00F1o = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
         String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
 
-        // Título Principal
+        // T\u00EDtulo Principal
         Paragraph parrafoNombre = new Paragraph(empNombre + "\n", fTitulo);
         parrafoNombre.setAlignment(Element.ALIGN_CENTER);
         documento.add(parrafoNombre);
 
-        // Cabecera Texto Plano (Dueño y RTN)
+        // Cabecera Texto Plano (Due\u00F1o y RTN)
         Paragraph cabeceraTexto = new Paragraph();
         cabeceraTexto.setAlignment(Element.ALIGN_CENTER);
         cabeceraTexto.setFont(fBold);
-        if (!empDueño.isEmpty()) cabeceraTexto.add(new Chunk(empDueño + "\n"));
+        if (!empDue\u00F1o.isEmpty()) cabeceraTexto.add(new Chunk(empDue\u00F1o + "\n"));
         cabeceraTexto.add(new Chunk(empRtn + "\n\n"));
         documento.add(cabeceraTexto);
 
-        // --- SECCIÓN DE DATOS CON ÍCONOS DIBUJADOS ---
+        // --- SECCI\u00D3N DE DATOS CON \u00CDCONOS DIBUJADOS ---
         Paragraph cabeceraIconos = new Paragraph();
         cabeceraIconos.setAlignment(Element.ALIGN_CENTER);
         cabeceraIconos.setFont(fNormal);
@@ -1113,7 +1113,7 @@ public class GeneradorTickets {
         totales.setAlignment(Element.ALIGN_RIGHT);
         documento.add(totales);
 
-        Paragraph footer = new Paragraph("Comprobante oficial de pago.\n\n* POLÍTICA: No se aceptan reembolsos\nuna vez realizado el apartado.\n\n\n", fNormal);
+        Paragraph footer = new Paragraph("Comprobante oficial de pago.\n\n* POL\u00CDTICA: No se aceptan reembolsos\nuna vez realizado el apartado.\n\n\n", fNormal);
         footer.setAlignment(Element.ALIGN_CENTER);
         documento.add(footer);
 
@@ -1137,7 +1137,7 @@ public class GeneradorTickets {
             
             modelo.Empresa emp = utilidades.SesionGlobal.getEmpresaActual();
             String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
-            String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
+            String empDue\u00F1o = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
             String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
 
             // Cabecera Empresa
@@ -1148,7 +1148,7 @@ public class GeneradorTickets {
             Paragraph cabeceraTexto = new Paragraph();
             cabeceraTexto.setAlignment(Element.ALIGN_CENTER);
             cabeceraTexto.setFont(fBold);
-            if (!empDueño.isEmpty()) cabeceraTexto.add(new Chunk(empDueño + "\n"));
+            if (!empDue\u00F1o.isEmpty()) cabeceraTexto.add(new Chunk(empDue\u00F1o + "\n"));
             cabeceraTexto.add(new Chunk(empRtn + "\n\n"));
             documento.add(cabeceraTexto);
 
@@ -1163,12 +1163,12 @@ public class GeneradorTickets {
             }
             documento.add(cabeceraIconos);
             
-            // Título del Documento
+            // T\u00EDtulo del Documento
             Paragraph tituloDoc = new Paragraph("===============================\nCOMPROBANTE DE CAMBIO\n===============================\n", fBold);
             tituloDoc.setAlignment(Element.ALIGN_CENTER);
             documento.add(tituloDoc);
             
-            // Información de Venta
+            // Informaci\u00F3n de Venta
             StringBuilder sbInfo = new StringBuilder();
             sbInfo.append("Fecha: ").append(new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date())).append("\n");
             sbInfo.append("Venta Orig: #").append(idDetalleOriginal).append("\n");
@@ -1216,7 +1216,7 @@ public class GeneradorTickets {
             totales.setAlignment(Element.ALIGN_RIGHT);
             documento.add(totales);
             
-            // Pie de Página
+            // Pie de P\u00E1gina
             String msjPie = emp != null && emp.getMensajeTicketCambio() != null && !emp.getMensajeTicketCambio().isEmpty() ? emp.getMensajeTicketCambio() : "Gracias por su preferencia.";
             Paragraph footer = new Paragraph("Firma Cliente: ________________\n\nFirma Cajero: ________________\n\n" + msjPie, fNormal);
             footer.setAlignment(Element.ALIGN_CENTER);
@@ -1250,7 +1250,7 @@ public class GeneradorTickets {
             
             modelo.Empresa emp = utilidades.SesionGlobal.getEmpresaActual();
             String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
-            String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
+            String empDue\u00F1o = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
             String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
 
             // Cabecera Empresa
@@ -1261,7 +1261,7 @@ public class GeneradorTickets {
             Paragraph cabeceraTexto = new Paragraph();
             cabeceraTexto.setAlignment(Element.ALIGN_CENTER);
             cabeceraTexto.setFont(fBold);
-            if (!empDueño.isEmpty()) cabeceraTexto.add(new Chunk(empDueño + "\n"));
+            if (!empDue\u00F1o.isEmpty()) cabeceraTexto.add(new Chunk(empDue\u00F1o + "\n"));
             cabeceraTexto.add(new Chunk(empRtn + "\n\n"));
             documento.add(cabeceraTexto);
 
@@ -1276,12 +1276,12 @@ public class GeneradorTickets {
             }
             documento.add(cabeceraIconos);
             
-            // Título del Documento
+            // T\u00EDtulo del Documento
             Paragraph tituloDoc = new Paragraph("===============================\nRECIBO DE RECLAMO\n===============================\n", fBold);
             tituloDoc.setAlignment(Element.ALIGN_CENTER);
             documento.add(tituloDoc);
             
-            // Información del Reclamo
+            // Informaci\u00F3n del Reclamo
             StringBuilder sbInfo = new StringBuilder();
             sbInfo.append("Fecha: ").append(new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date())).append("\n");
             sbInfo.append("Venta Orig: #").append(idDetalleOriginal).append("\n");
@@ -1300,7 +1300,7 @@ public class GeneradorTickets {
             sbDetalles.append("===============================\n");
             documento.add(new Paragraph(sbDetalles.toString(), fNormal));
             
-            // Pie de Página
+            // Pie de P\u00E1gina
             String msjPie = emp != null && emp.getMensajeTicketReclamo() != null && !emp.getMensajeTicketReclamo().isEmpty() ? emp.getMensajeTicketReclamo() : "Su caso sera procesado. Gracias.";
             Paragraph footer = new Paragraph("Firma Cliente: ________________\n\nFirma Tecnico: ________________\n\n" + msjPie, fNormal);
             footer.setAlignment(Element.ALIGN_CENTER);
@@ -1334,7 +1334,7 @@ public class GeneradorTickets {
             
             modelo.Empresa emp = utilidades.SesionGlobal.getEmpresaActual();
             String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase() : "INVERSIONES OLVAN";
-            String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
+            String empDue\u00F1o = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
             String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
 
             // Cabecera Empresa
@@ -1345,7 +1345,7 @@ public class GeneradorTickets {
             Paragraph cabeceraTexto = new Paragraph();
             cabeceraTexto.setAlignment(Element.ALIGN_CENTER);
             cabeceraTexto.setFont(fBold);
-            if (!empDueño.isEmpty()) cabeceraTexto.add(new Chunk(empDueño + "\n"));
+            if (!empDue\u00F1o.isEmpty()) cabeceraTexto.add(new Chunk(empDue\u00F1o + "\n"));
             cabeceraTexto.add(new Chunk(empRtn + "\n\n"));
             documento.add(cabeceraTexto);
 
@@ -1360,12 +1360,12 @@ public class GeneradorTickets {
             }
             documento.add(cabeceraIconos);
             
-            // Título del Documento
+            // T\u00EDtulo del Documento
             Paragraph tituloDoc = new Paragraph("===============================\nENTREGA DE EQUIPO\n===============================\n", fBold);
             tituloDoc.setAlignment(Element.ALIGN_CENTER);
             documento.add(tituloDoc);
             
-            // Información
+            // Informaci\u00F3n
             StringBuilder sbInfo = new StringBuilder();
             sbInfo.append("Fecha: ").append(new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date())).append("\n");
             sbInfo.append("-------------------------------\n");
@@ -1383,9 +1383,9 @@ public class GeneradorTickets {
             sbDetalles.append("===============================\n");
             documento.add(new Paragraph(sbDetalles.toString(), fNormal));
             
-            // Pie de Página
+            // Pie de P\u00E1gina
             String msjPie = emp != null && emp.getMensajeTicketEntrega() != null && !emp.getMensajeTicketEntrega().isEmpty() ? emp.getMensajeTicketEntrega() : "Gracias por su paciencia.";
-            Paragraph footer = new Paragraph("Firma Cliente: _________________\n\nRecibí conforme: _________________\n\n" + msjPie, fNormal);
+            Paragraph footer = new Paragraph("Firma Cliente: _________________\n\nRecib\u00ED conforme: _________________\n\n" + msjPie, fNormal);
             footer.setAlignment(Element.ALIGN_CENTER);
             documento.add(footer);
             

@@ -31,8 +31,8 @@ public class PanelGestionClientes extends JPanel {
         this.setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL); // Verde Vintage
         this.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
-        // --- 1. PANEL SUPERIOR (Título, Búsqueda y Botón Nuevo) ---
-        JPanel panelSuperior = new JPanel(new BorderLayout(20, 0)); // 20px de separación horizontal
+        // --- 1. PANEL SUPERIOR (T\u00EDtulo, B\u00FAsqueda y Bot\u00F3n Nuevo) ---
+        JPanel panelSuperior = new JPanel(new BorderLayout(20, 0)); // 20px de separaci\u00F3n horizontal
         panelSuperior.setOpaque(false);
 
         JLabel lblTitulo = new JLabel("Directorio de Clientes");
@@ -68,9 +68,9 @@ public class PanelGestionClientes extends JPanel {
         panelSuperior.add(btnNuevoCliente, BorderLayout.EAST);
 
         this.add(panelSuperior, BorderLayout.NORTH);
-        // --- 2. CONFIGURACIÓN DE LA TABLA ESTILO WEB ---
+        // --- 2. CONFIGURACI\u00D3N DE LA TABLA ESTILO WEB ---
         // Eliminamos la columna "Acciones" y recorremos los ocultos
-        String[] columnas = {"ID", "", "Nombre Completo", "Identidad/RTN", "Teléfono", "Correo Electrónico", "NombreRaw", "ApellidoRaw"};
+        String[] columnas = {"ID", "", "Nombre Completo", "Identidad/RTN", "Tel\u00E9fono", "Correo Electr\u00F3nico", "NombreRaw", "ApellidoRaw"};
         modeloTabla = new DefaultTableModel(null, columnas) {
             @Override public boolean isCellEditable(int row, int column) { return false; } // Nada es editable directamente
         };
@@ -102,14 +102,14 @@ public class PanelGestionClientes extends JPanel {
         tablaClientes.getColumnModel().getColumn(1).setMaxWidth(60);
         tablaClientes.getColumnModel().getColumn(1).setCellRenderer(new AvatarRenderer());
 
-        // --- NUEVA LÓGICA DE MENÚ CONTEXTUAL ---
+        // --- NUEVA L\u00D3GICA DE MEN\u00DA CONTEXTUAL ---
         tablaClientes.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 int fila = tablaClientes.rowAtPoint(e.getPoint());
                 if (fila >= 0) {
                     tablaClientes.setRowSelectionInterval(fila, fila); // Selecciona visualmente la fila
-                    // Mostrar menú con doble clic o clic derecho
+                    // Mostrar men\u00FA con doble clic o clic derecho
                     if ((SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) || SwingUtilities.isRightMouseButton(e)) {
                         mostrarMenuOpciones(e.getComponent(), e.getX(), e.getY(), fila);
                     }
@@ -117,7 +117,7 @@ public class PanelGestionClientes extends JPanel {
             }
         });
 
-        // LÓGICA DEL BUSCADOR EN TIEMPO REAL
+        // L\u00D3GICA DEL BUSCADOR EN TIEMPO REAL
         sorter = new TableRowSorter<>(modeloTabla);
         tablaClientes.setRowSorter(sorter);
         txtBusqueda.getDocument().addDocumentListener(new DocumentListener() {
@@ -133,7 +133,7 @@ public class PanelGestionClientes extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(tablaClientes);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225), 1, true));
-        scrollPane.getViewport().setBackground(new Color(255, 255, 255)); // Fondo del área sin filas
+        scrollPane.getViewport().setBackground(new Color(255, 255, 255)); // Fondo del \u00E1rea sin filas
 
         this.add(scrollPane, BorderLayout.CENTER);
 
@@ -158,7 +158,7 @@ public class PanelGestionClientes extends JPanel {
                 nombreCompleto,             // 1: Avatar
                 nombreCompleto,             // 2: Nombre Completo
                 c.getIdentidadCliente(),    // 3: Identidad
-                c.getTelefonoCliente(),     // 4: Teléfono
+                c.getTelefonoCliente(),     // 4: Tel\u00E9fono
                 c.getCorreoCliente(),       // 5: Correo
                 c.getNombreCliente(),       // 6: Nombre Real Oculto
                 apellido                    // 7: Apellido Real Oculto
@@ -179,7 +179,7 @@ public class PanelGestionClientes extends JPanel {
         SwingWorker<PanelFormularioCliente, Void> worker = new SwingWorker<PanelFormularioCliente, Void>() {
             @Override
             protected PanelFormularioCliente doInBackground() throws Exception {
-                // Instancia el panel en segundo plano (las DB queries corren aquí)
+                // Instancia el panel en segundo plano (las DB queries corren aqu\u00ED)
                 return new PanelFormularioCliente(dialog, PanelGestionClientes.this, cliente);
             }
 
@@ -242,7 +242,7 @@ public class PanelGestionClientes extends JPanel {
     }
 
     // =========================================================
-    // LÓGICA Y MENÚ CONTEXTUAL DE OPCIONES
+    // L\u00D3GICA Y MEN\u00DA CONTEXTUAL DE OPCIONES
     // =========================================================
     private void mostrarMenuOpciones(Component componente, int x, int y, int filaVista) {
         JPopupMenu menu = new JPopupMenu();
@@ -293,7 +293,7 @@ public class PanelGestionClientes extends JPanel {
         String nombre = modeloTabla.getValueAt(filaModelo, 2).toString();
         
         int confirmacion = utilidades.Mensajes.showConfirmDialog(this, 
-            "¿Está seguro de desactivar al cliente: " + nombre + "?", 
+            "\u00BFEst\u00E1 seguro de desactivar al cliente: " + nombre + "?", 
             "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             
         if (confirmacion == JOptionPane.YES_OPTION) {
@@ -328,7 +328,7 @@ public class PanelGestionClientes extends JPanel {
     }
 
     // =========================================================
-    // ÍCONOS VECTORIALES (JAVA 2D)
+    // \u00CDCONOS VECTORIALES (JAVA 2D)
     // =========================================================
     private class IconoLapiz implements Icon {
         @Override public int getIconWidth() { return 20; }
@@ -339,7 +339,7 @@ public class PanelGestionClientes extends JPanel {
             // Hereda el color del texto del item (gris oscuro o blanco si tiene hover)
             g2.setColor(c.getForeground()); 
             g2.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            // Lápiz de edición diagonal
+            // L\u00E1piz de edici\u00F3n diagonal
             g2.drawPolygon(new int[]{x+14, x+17, x+6, x+3, x+3}, new int[]{y+3, y+6, y+17, y+17, y+14}, 5);
             g2.drawLine(x+11, y+6, x+14, y+9); 
             g2.drawLine(x+3, y+17, x+6, y+14); 

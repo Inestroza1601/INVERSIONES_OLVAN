@@ -31,7 +31,7 @@ public class PanelGestionGarantias extends JPanel {
         JPanel panelSuperior = new JPanel(new BorderLayout(20, 0));
         panelSuperior.setOpaque(false);
 
-        JLabel lblTitulo = new JLabel("Control de Garantías");
+        JLabel lblTitulo = new JLabel("Control de Garant\u00EDas");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 28));
         lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
 
@@ -72,7 +72,7 @@ public class PanelGestionGarantias extends JPanel {
 
         this.add(panelSuperior, BorderLayout.NORTH);
 
-        // --- 2. CONFIGURACIÓN DE LA TABLA ---
+        // --- 2. CONFIGURACI\u00D3N DE LA TABLA ---
         String[] columnas = {"Venta #", "Cliente", "Producto", "Serie / IMEI", "Fecha Compra", "Vencimiento", "Estado", "ID Venta Oculto", "ID Detalle Oculto"};
         modeloTabla = new DefaultTableModel(null, columnas) {
             @Override public boolean isCellEditable(int row, int column) { return false; }
@@ -101,7 +101,7 @@ public class PanelGestionGarantias extends JPanel {
         // Renderizador para la columna Estado (VIGENTE / VENCIDA)
         tablaGarantias.getColumnModel().getColumn(6).setCellRenderer(new EstadoGarantiaRenderer());
 
-        // --- LÓGICA DE MENÚ CONTEXTUAL ---
+        // --- L\u00D3GICA DE MEN\u00DA CONTEXTUAL ---
         tablaGarantias.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
@@ -167,7 +167,7 @@ public class PanelGestionGarantias extends JPanel {
     }
 
     // =========================================================
-    // MENÚ CONTEXTUAL Y ACCIONES
+    // MEN\u00DA CONTEXTUAL Y ACCIONES
     // =========================================================
     
     public void cargarDatosDesdeBD() {
@@ -193,13 +193,13 @@ public class PanelGestionGarantias extends JPanel {
         itemRecibo.addActionListener(e -> verReciboOriginal(filaModelo));
         itemCertificado.addActionListener(e -> imprimirCertificado(filaModelo));
         
-        // Solo habilitamos el botón de reclamar si la garantía está VIGENTE y tiene permiso
+        // Solo habilitamos el bot\u00F3n de reclamar si la garant\u00EDa est\u00E1 VIGENTE y tiene permiso
         modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
         if (estado.equals("VIGENTE")) {
             itemReclamar.addActionListener(e -> reclamarGarantia(filaModelo));
             if (uAct != null && !uAct.tienePermiso("EDITAR_GARANTIAS")) {
                 itemReclamar.setEnabled(false);
-                itemReclamar.setToolTipText("No tienes permiso para registrar o editar garantías.");
+                itemReclamar.setToolTipText("No tienes permiso para registrar o editar garant\u00EDas.");
             }
             menu.add(itemReclamar);
             menu.addSeparator();
@@ -237,7 +237,7 @@ public class PanelGestionGarantias extends JPanel {
         }
     }
 
-    // Método que abre el PDF en el visor de Windows
+    // M\u00E9todo que abre el PDF en el visor de Windows
     private void longitudAbrirArchivo(java.io.File archivo) {
         try {
             if (Desktop.isDesktopSupported()) {
@@ -260,7 +260,7 @@ public class PanelGestionGarantias extends JPanel {
         dialogo.setVisible(true);
 
         if (dialogo.isExito()) {
-            utilidades.Mensajes.showMessageDialog(this, "Garantía reclamada exitosamente.", "Orion Systems", JOptionPane.INFORMATION_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Garant\u00EDa reclamada exitosamente.", "Orion Systems", JOptionPane.INFORMATION_MESSAGE);
             cargarDatosDesdeBD(); // Recargamos la tabla para ver el cambio
         }
     }
@@ -312,7 +312,7 @@ public class PanelGestionGarantias extends JPanel {
     }
 
     // =========================================================
-    // ÍCONOS VECTORIALES (JAVA 2D)
+    // \u00CDCONOS VECTORIALES (JAVA 2D)
     // =========================================================
     private class IconoRecibo implements Icon {
         @Override public int getIconWidth() { return 20; }
@@ -320,7 +320,7 @@ public class PanelGestionGarantias extends JPanel {
         @Override public void paintIcon(Component c, Graphics g, int x, int y) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(c.getForeground()); // Dinámico
+            g2.setColor(c.getForeground()); // Din\u00E1mico
             g2.setStroke(new BasicStroke(1.5f));
             g2.drawRect(x + 4, y + 2, 12, 16);
             g2.drawLine(x + 7, y + 6, x + 13, y + 6);
@@ -335,7 +335,7 @@ public class PanelGestionGarantias extends JPanel {
         @Override public void paintIcon(Component c, Graphics g, int x, int y) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(c.getForeground()); // Dinámico
+            g2.setColor(c.getForeground()); // Din\u00E1mico
             g2.setStroke(new BasicStroke(1.5f));
             g2.drawRoundRect(x + 2, y + 4, 16, 12, 2, 2);
             g2.drawOval(x + 12, y + 10, 4, 4); // Sello
@@ -350,7 +350,7 @@ public class PanelGestionGarantias extends JPanel {
         @Override public void paintIcon(Component c, Graphics g, int x, int y) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(c.getForeground()); // Dinámico
+            g2.setColor(c.getForeground()); // Din\u00E1mico
             g2.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             g2.drawLine(x + 4, y + 16, x + 12, y + 8); // Mango
             g2.drawOval(x + 12, y + 4, 4, 4); // Cabeza llave

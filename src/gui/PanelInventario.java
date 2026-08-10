@@ -47,7 +47,7 @@ public class PanelInventario extends JPanel {
                 BorderFactory.createEmptyBorder(10, 12, 20, 12)
         ));
 
-        // 3. Botones del sub-menú (verdes vintage, mismo tamaño)
+        // 3. Botones del sub-men\u00FA (verdes vintage, mismo tama\u00F1o)
         btnBuscarProducto = utilidades.EfectosUI.crearBotonVerde("Buscar Producto / Inventario");
         btnCrearProducto = utilidades.EfectosUI.crearBotonVerde("Crear Producto");
         btnInventarioDefectuoso = utilidades.EfectosUI.crearBotonVerde("Inventario Defectuoso");
@@ -72,9 +72,9 @@ public class PanelInventario extends JPanel {
         }
 
         this.add(panelContenedorInventario, BorderLayout.CENTER);
-        this.add(panelSubMenu, BorderLayout.SOUTH);  // Botones abajo (con elevación)
+        this.add(panelSubMenu, BorderLayout.SOUTH);  // Botones abajo (con elevaci\u00F3n)
 
-        // 4. Configurar los Eventos con Carga Asíncrona
+        // 4. Configurar los Eventos con Carga As\u00EDncrona
         btnBuscarProducto.addActionListener(e -> {
             cambiarBotonActivo(btnBuscarProducto);
             abrirSubPanelAsync(() -> new PanelBuscarProducto());
@@ -119,7 +119,7 @@ public class PanelInventario extends JPanel {
                     e.printStackTrace();
                     loader.detenerAnimacion();
                     panelContenedorInventario.removeAll();
-                    JLabel lblError = new JLabel("Error al cargar el módulo: " + e.getMessage());
+                    JLabel lblError = new JLabel("Error al cargar el m\u00F3dulo: " + e.getMessage());
                     lblError.setHorizontalAlignment(SwingConstants.CENTER);
                     lblError.setForeground(Color.RED);
                     panelContenedorInventario.add(lblError, BorderLayout.CENTER);

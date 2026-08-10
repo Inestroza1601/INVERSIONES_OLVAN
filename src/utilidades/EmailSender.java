@@ -15,7 +15,7 @@ import javax.mail.internet.MimeMultipart;
 
 public class EmailSender {
 
-    // Configuración del correo emisor
+    // Configuraci\u00F3n del correo emisor
     private static final String EMAIL_FROM = "miguel.ineztroda@gmail.com";
     private static final String PASSWORD = "jdxt dlgl avdt hapq"; 
 
@@ -40,12 +40,12 @@ public class EmailSender {
             Message message = new MimeMessage(getSession());
             message.setFrom(new InternetAddress(EMAIL_FROM));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(emailDestino));
-            message.setSubject("Recuperación de Contraseña - Inversiones Olvan");
+            message.setSubject("Recuperaci\u00F3n de Contrase\u00F1a - Inversiones Olvan");
             
-            String htmlContent = "<h2>Solicitud de Recuperación de Contraseña</h2>"
-                    + "<p>Has solicitado recuperar tu contraseña en el Sistema de Inversiones Olvan.</p>"
-                    + "<p>Tu código de recuperación es: <strong>" + token + "</strong></p>"
-                    + "<p>Este código expirará en 15 minutos.</p>"
+            String htmlContent = "<h2>Solicitud de Recuperaci\u00F3n de Contrase\u00F1a</h2>"
+                    + "<p>Has solicitado recuperar tu contrase\u00F1a en el Sistema de Inversiones Olvan.</p>"
+                    + "<p>Tu c\u00F3digo de recuperaci\u00F3n es: <strong>" + token + "</strong></p>"
+                    + "<p>Este c\u00F3digo expirar\u00E1 en 15 minutos.</p>"
                     + "<p>Si no solicitaste esto, puedes ignorar este correo.</p>";
 
             message.setContent(htmlContent, "text/html; charset=utf-8");
@@ -68,8 +68,8 @@ public class EmailSender {
 
             // Cuerpo del correo
             MimeBodyPart mimeBodyPart = new MimeBodyPart();
-            String htmlContent = "<h2>Adjunto encontrará su reporte: " + tituloReporte + "</h2>"
-                    + "<p>Este es un reporte generado automáticamente desde el Sistema de Inversiones Olvan.</p>"
+            String htmlContent = "<h2>Adjunto encontrar\u00E1 su reporte: " + tituloReporte + "</h2>"
+                    + "<p>Este es un reporte generado autom\u00E1ticamente desde el Sistema de Inversiones Olvan.</p>"
                     + "<p>Saludos.</p>";
             mimeBodyPart.setContent(htmlContent, "text/html; charset=utf-8");
 

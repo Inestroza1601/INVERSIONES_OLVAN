@@ -10,7 +10,7 @@ import java.util.List;
 
 public class DialogoKardex extends JDialog {
 
-    // Aquí están las variables que te daban error
+    // Aqu\u00ED est\u00E1n las variables que te daban error
     private Producto productoActual;
     private JTable tablaHistorial;
     private DefaultTableModel modeloTabla;
@@ -59,7 +59,7 @@ public class DialogoKardex extends JDialog {
         this.add(pnlTop, BorderLayout.NORTH);
 
         // --- TABLA DE HISTORIAL 
-        String[] columnas = {"Fecha", "Tipo", "Cant.", "Stock Rest.", "Observación", "Usuario/Firma"};
+        String[] columnas = {"Fecha", "Tipo", "Cant.", "Stock Rest.", "Observaci\u00F3n", "Usuario/Firma"};
         modeloTabla = new DefaultTableModel(null, columnas) {
             @Override public boolean isCellEditable(int row, int column) { return false; }
         };
@@ -73,12 +73,12 @@ public class DialogoKardex extends JDialog {
         tablaHistorial.setSelectionBackground(new Color(205, 235, 218));
         tablaHistorial.setSelectionForeground(Color.BLACK);
         
-        // --- LÓGICA DE CURSORES (MANITA) SOBRE REFERENCIA DE VENTA ---
+        // --- L\u00D3GICA DE CURSORES (MANITA) SOBRE REFERENCIA DE VENTA ---
         tablaHistorial.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             @Override
             public void mouseMoved(java.awt.event.MouseEvent e) {
                 int col = tablaHistorial.columnAtPoint(e.getPoint());
-                if (col == 4) { // Columna "Observación"
+                if (col == 4) { // Columna "Observaci\u00F3n"
                     int row = tablaHistorial.rowAtPoint(e.getPoint());
                     if (row >= 0) {
                         Object obs = tablaHistorial.getValueAt(row, col);
@@ -92,19 +92,19 @@ public class DialogoKardex extends JDialog {
             }
         });
 
-        // --- LÓGICA DE CLIC PARA ABRIR PREVISUALIZACIÓN ---
+        // --- L\u00D3GICA DE CLIC PARA ABRIR PREVISUALIZACI\u00D3N ---
         tablaHistorial.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 int col = tablaHistorial.columnAtPoint(e.getPoint());
-                if (col == 4 && e.getClickCount() == 1) { // Un clic sobre observación
+                if (col == 4 && e.getClickCount() == 1) { // Un clic sobre observaci\u00F3n
                     int row = tablaHistorial.rowAtPoint(e.getPoint());
                     Object obs = tablaHistorial.getValueAt(row, col);
                     if (obs != null && obs.toString().startsWith("Venta #")) {
                         try {
                             String textoObs = obs.toString();
                             int idVenta = Integer.parseInt(textoObs.substring(textoObs.indexOf("#") + 1));
-                            mostrarVistaPreviaRecibo(idVenta); // Nuevo método que agregaremos abajo
+                            mostrarVistaPreviaRecibo(idVenta); // Nuevo m\u00E9todo que agregaremos abajo
                         } catch (Exception ex) {}
                     }
                 }
@@ -118,7 +118,7 @@ public class DialogoKardex extends JDialog {
         
     }
 
-    // --- MÉTODOS QUE FALTABAN ---
+    // --- M\u00C9TODOS QUE FALTABAN ---
     public void cargarHistorial() {
         modeloTabla.setRowCount(0);
         KardexDAO dao = new KardexDAO();
@@ -139,7 +139,7 @@ public class DialogoKardex extends JDialog {
     }
     
     // =========================================================
-    // VENTANA DE PREVISUALIZACIÓN DE RECIBO (MODO AUDITORÍA)
+    // VENTANA DE PREVISUALIZACI\u00D3N DE RECIBO (MODO AUDITOR\u00CDA)
     // =========================================================
     private void mostrarVistaPreviaRecibo(int idVenta) {
         dao.VentasDAO vDao = new dao.VentasDAO();
@@ -161,13 +161,13 @@ public class DialogoKardex extends JDialog {
         @SuppressWarnings("unchecked")
         List<Object[]> detalles = (List<Object[]>) datos.get("detalles");
 
-        JDialog previewDialog = new JDialog(this, "Previsualización Venta #" + idVenta, true);
+        JDialog previewDialog = new JDialog(this, "Previsualizaci\u00F3n Venta #" + idVenta, true);
         previewDialog.setSize(350, 650);
         previewDialog.setLocationRelativeTo(this);
         previewDialog.setLayout(new BorderLayout(10, 10));
         previewDialog.getContentPane().setBackground(utilidades.EfectosUI.COLOR_FONDO_PANEL);
 
-        // Pasamos la fecha histórica exacta a la previsualización del ticket en pantalla
+        // Pasamos la fecha hist\u00F3rica exacta a la previsualizaci\u00F3n del ticket en pantalla
         JPanel pnlTicket = utilidades.GeneradorTickets.crearTicketVistaPrevia("Venta #" + idVenta, cliente, fechaHistorica, detalles, subtotal, isv, total, metodo, ref, banco);
         
         JScrollPane scrollPreview = new JScrollPane(pnlTicket);
@@ -188,10 +188,10 @@ public class DialogoKardex extends JDialog {
             try {
                 String rutaTemp = System.getProperty("java.io.tmpdir") + "Copia_Venta_" + idVenta + ".pdf";
                 
-                // Pasamos la fecha histórica exacta al regenerador de PDF físico
+                // Pasamos la fecha hist\u00F3rica exacta al regenerador de PDF f\u00EDsico
                 utilidades.GeneradorTickets.generarTicketVentaPDF(rutaTemp, cliente, fechaHistorica, detalles, subtotal, isv, total, true, metodo, ref, banco);
                 
-                utilidades.Mensajes.showMessageDialog(previewDialog, "Copia de recibo generada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(previewDialog, "Copia de recibo generada exitosamente.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
                 if (Desktop.isDesktopSupported()) utilidades.GestorImpresion.procesarImpresion(new File(rutaTemp), utilidades.GestorImpresion.TIPO_A4);
                 
             } catch (Exception err) {

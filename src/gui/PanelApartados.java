@@ -38,7 +38,7 @@ public class PanelApartados extends JPanel {
         JPanel pnlCabecera = new JPanel(new BorderLayout());
         pnlCabecera.setOpaque(false);
 
-        JLabel lblTitulo = new JLabel("Módulo de Apartados y Abonos");
+        JLabel lblTitulo = new JLabel("M\u00F3dulo de Apartados y Abonos");
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
         lblTitulo.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO);
         pnlCabecera.add(lblTitulo, BorderLayout.WEST);
@@ -66,7 +66,7 @@ public class PanelApartados extends JPanel {
         this.add(pnlCabecera, BorderLayout.NORTH);
 
         // Tabla
-        String[] cols = {"ID", "Fecha", "Fecha Límite", "Cliente", "Total", "Abonado", "Saldo Pendiente", "Estado"};
+        String[] cols = {"ID", "Fecha", "Fecha L\u00EDmite", "Cliente", "Total", "Abonado", "Saldo Pendiente", "Estado"};
         modeloTabla = new DefaultTableModel(null, cols) { @Override public boolean isCellEditable(int r, int c) { return false; } };
         tablaApartados = new JTable(modeloTabla);
         tablaApartados.setRowHeight(32);
@@ -127,7 +127,7 @@ public class PanelApartados extends JPanel {
         btnAbonar.setPreferredSize(new Dimension(210, 50));
         btnAbonar.addActionListener(e -> registrarAbonoRapido());
 
-        JButton btnEntregar = new JButton("Entregar Artículos", new IconoBoton(3));
+        JButton btnEntregar = new JButton("Entregar Art\u00EDculos", new IconoBoton(3));
         btnEntregar.setBackground(new Color(41, 128, 185)); // Azul
         btnEntregar.setForeground(Color.WHITE);
         btnEntregar.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -145,7 +145,7 @@ public class PanelApartados extends JPanel {
         btnCancelar.setPreferredSize(new Dimension(230, 50));
         btnCancelar.addActionListener(e -> cancelarApartadoCompleto());
 
-        // Restringir botón de cancelar según permisos
+        // Restringir bot\u00F3n de cancelar seg\u00FAn permisos
         modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
         if (uAct != null && !uAct.tienePermiso("ELIMINAR_APARTADOS")) {
             btnCancelar.setEnabled(false);
@@ -157,7 +157,7 @@ public class PanelApartados extends JPanel {
         }
         if (uAct != null && !uAct.tienePermiso("EDITAR_APARTADOS")) {
             btnEntregar.setEnabled(false);
-            btnEntregar.setToolTipText("No tienes permiso para entregar artículos.");
+            btnEntregar.setToolTipText("No tienes permiso para entregar art\u00EDculos.");
         }
 
         pnlBotones.add(btnDetalles);
@@ -250,7 +250,7 @@ public class PanelApartados extends JPanel {
         // Check active cash session
         modelo.ControlCaja CCActiva = new dao.ControlCajaDAO().obtenerSesionActiva();
         if (CCActiva == null) {
-            utilidades.Mensajes.showMessageDialog(this, "Operación denegada: El turno de caja no está abierto. Abra la caja antes de registrar cobros.", "Caja Cerrada", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Operaci\u00F3n denegada: El turno de caja no est\u00E1 abierto. Abra la caja antes de registrar cobros.", "Caja Cerrada", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -291,7 +291,7 @@ public class PanelApartados extends JPanel {
 
         if (ap == null) return;
         if (ap.getSaldoPendiente() > 0.05) {
-            utilidades.Mensajes.showMessageDialog(this, "No se puede entregar la mercancía de un apartado con saldo pendiente (L " + String.format("%,.2f", ap.getSaldoPendiente()) + ").", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "No se puede entregar la mercanc\u00EDa de un apartado con saldo pendiente (L " + String.format("%,.2f", ap.getSaldoPendiente()) + ").", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -305,8 +305,8 @@ public class PanelApartados extends JPanel {
         }
 
         Object[] msj = {
-            "¿Confirmar que la mercancía ha sido entregada físicamente al cliente?",
-            "Esta acción registrará oficialmente los ingresos en el Historial de Ventas."
+            "\u00BFConfirmar que la mercanc\u00EDa ha sido entregada f\u00EDsicamente al cliente?",
+            "Esta acci\u00F3n registrar\u00E1 oficialmente los ingresos en el Historial de Ventas."
         };
         int opt = utilidades.Mensajes.showConfirmDialog(this, msj, "Entregar Apartado y Registrar Venta", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
         
@@ -322,7 +322,7 @@ public class PanelApartados extends JPanel {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-                utilidades.Mensajes.showMessageDialog(this, "Apartado completado, entregado y Comprobante registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Apartado completado, entregado y Comprobante registrado exitosamente.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
                 cargarApartados();
             } else {
                 utilidades.Mensajes.showMessageDialog(this, "Error de base de datos al entregar apartado y generar venta.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -345,26 +345,26 @@ public class PanelApartados extends JPanel {
             return;
         }
 
-        int opt = utilidades.Mensajes.showConfirmDialog(this, "Al cancelar, los productos se devolverán al inventario activo. ¿Desea continuar?", "Cancelar Apartado", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        int opt = utilidades.Mensajes.showConfirmDialog(this, "Al cancelar, los productos se devolver\u00E1n al inventario activo. \u00BFDesea continuar?", "Cancelar Apartado", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (opt == JOptionPane.YES_OPTION) {
             // Password signature
             JPasswordField pfPass = new JPasswordField();
-            int opSign = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Ingrese su contraseña para firmar la cancelación:", pfPass}, "Firma Requerida", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            int opSign = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Ingrese su contrase\u00F1a para firmar la cancelaci\u00F3n:", pfPass}, "Firma Requerida", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (opSign != JOptionPane.OK_OPTION) return;
 
             String pass = new String(pfPass.getPassword());
             int idUserFirma = new KardexDAO().validarFirmaUsuario(pass);
 
             if (idUserFirma <= 0) {
-                utilidades.Mensajes.showMessageDialog(this, "Contraseña incorrecta o usuario inactivo.", "Firma Rechazada", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Contrase\u00F1a incorrecta o usuario inactivo.", "Firma Rechazada", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             if (dao.cancelarApartado(id, idUserFirma)) {
-                utilidades.Mensajes.showMessageDialog(this, "Apartado cancelado exitosamente y stock retornado al inventario.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Apartado cancelado exitosamente y stock retornado al inventario.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
                 cargarApartados();
             } else {
-                utilidades.Mensajes.showMessageDialog(this, "Error al registrar cancelación.", "Error", JOptionPane.ERROR_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "Error al registrar cancelaci\u00F3n.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
