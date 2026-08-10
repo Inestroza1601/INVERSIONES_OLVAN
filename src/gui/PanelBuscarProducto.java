@@ -188,7 +188,7 @@ public class PanelBuscarProducto extends JPanel {
 
             modeloTabla.addRow(new Object[]{
                 p.getIdProducto(),       // 0: ID
-                p.getRutaImagen(),       // 1: Ruta Foto
+                p.getImagen_producto(),       // 1: Ruta Foto
                 p.getCodigoBarras(),     // 2: Código
                 p.getNombreProducto(),   // 3: Nombre
                 pCompra,                 // 4: Precio Compra
@@ -235,11 +235,17 @@ public class PanelBuscarProducto extends JPanel {
                     protected ImageIcon doInBackground() throws Exception {
                         String imgVal = new InventarioDAO().obtenerRutaImagenBase64(idProducto);
                         if (imgVal == null || imgVal.trim().isEmpty()) {
-                            if (SesionGlobal.getEmpresaActual() != null && SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
-                                imgVal = SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
+                            if (SesionGlobal.getEmpresaActual() != null && SesionGlobal.getEmpresaActual().getImagen_logo() != null) {
+                                imgVal = SesionGlobal.getEmpresaActual().getImagen_logo();
                             }
                         }
-                        if (imgVal == null || imgVal.trim().isEmpty()) return null;
+                        if (imgVal == null || imgVal.trim().isEmpty()) {
+                              java.net.URL defaultLogo = getClass().getResource("/image/logo.png");
+                              if (defaultLogo != null) {
+                                  return new ImageIcon(new ImageIcon(defaultLogo).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH));
+                              }
+                              return null;
+                        }
                         
                         String valProcesar = imgVal;
                         if (valProcesar.contains("|")) {
@@ -303,8 +309,8 @@ public class PanelBuscarProducto extends JPanel {
     private void mostrarZoomImagen(int idProducto) {
         String imgVal = new InventarioDAO().obtenerRutaImagenBase64(idProducto);
         if (imgVal == null || imgVal.trim().isEmpty()) {
-            if (SesionGlobal.getEmpresaActual() != null && SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
-                imgVal = SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
+            if (SesionGlobal.getEmpresaActual() != null && SesionGlobal.getEmpresaActual().getImagen_logo() != null) {
+                imgVal = SesionGlobal.getEmpresaActual().getImagen_logo();
             }
         }
         if (imgVal == null || imgVal.trim().isEmpty()) return;

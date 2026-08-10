@@ -79,7 +79,7 @@ public class VentasDAO {
                     p.setNombreProducto(rs.getString("nombre_producto"));
                     p.setPrecioVenta(rs.getDouble("precio_venta_producto"));
                     p.setStockProducto(rs.getInt("stock_producto"));
-                    p.setRutaImagen(rs.getString("ruta_imagen_producto"));
+                    p.setImagen_producto(rs.getString("imagen_producto"));
                     p.setDiasGarantia(rs.getInt("dias_garantia"));
                     p.setRequiereSerie(rs.getBoolean("requiere_serie"));
                     p.setIncluyeImpuesto(rs.getBoolean("incluye_impuesto"));

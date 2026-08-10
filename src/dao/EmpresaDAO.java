@@ -88,7 +88,7 @@ public class EmpresaDAO {
         emp.setMensajeTicketPieRecibo(rs.getString("mensaje_ticket_pie_recibo"));
         emp.setMensajeTicketEntrega(rs.getString("mensaje_ticket_entrega"));
         emp.setMensajeTicketPieCotizacion(rs.getString("mensaje_ticket_pie_cotizacion"));
-        emp.setLogoEmpresaRuta(rs.getString("logo_empresa_ruta"));
+        emp.setImagen_logo(rs.getString("imagen_logo"));
         
         // Nuevos campos para garantías y cambios
         emp.setPoliticasGarantia(rs.getString("politicas_garantia"));
@@ -111,7 +111,7 @@ public class EmpresaDAO {
             sql = "INSERT INTO EMPRESA (nombre_empresa, rtn_empresa, dueño_empresa, direccion_empresa, estado_empresa, "
                 + "habilitar_facturacion_empresa, numero_telefono, telefono_secundario, whatsapp_empresa, "
                 + "email_empresa, web_empresa, facebook_empresa, mensaje_ticket_pie_factura, "
-                + "mensaje_ticket_pie_recibo, mensaje_ticket_entrega, mensaje_ticket_pie_cotizacion, logo_empresa_ruta, "
+                + "mensaje_ticket_pie_recibo, mensaje_ticket_entrega, mensaje_ticket_pie_cotizacion, imagen_logo, "
                 + "politicas_garantia, mensaje_ticket_cambio, mensaje_ticket_reclamo) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         } else {
@@ -120,7 +120,7 @@ public class EmpresaDAO {
                 + "estado_empresa=?, habilitar_facturacion_empresa=?, numero_telefono=?, telefono_secundario=?, "
                 + "whatsapp_empresa=?, email_empresa=?, web_empresa=?, facebook_empresa=?, "
                 + "mensaje_ticket_pie_factura=?, mensaje_ticket_pie_recibo=?, mensaje_ticket_entrega=?, "
-                + "mensaje_ticket_pie_cotizacion=?, logo_empresa_ruta=?, politicas_garantia=?, mensaje_ticket_cambio=?, mensaje_ticket_reclamo=? WHERE id_empresa=?";
+                + "mensaje_ticket_pie_cotizacion=?, imagen_logo=?, politicas_garantia=?, mensaje_ticket_cambio=?, mensaje_ticket_reclamo=? WHERE id_empresa=?";
         }
 
         try (Connection con = factory.getConexion();
@@ -142,7 +142,7 @@ public class EmpresaDAO {
             ps.setString(14, emp.getMensajeTicketPieRecibo());
             ps.setString(15, emp.getMensajeTicketEntrega());
             ps.setString(16, emp.getMensajeTicketPieCotizacion());
-            ps.setString(17, emp.getLogoEmpresaRuta());
+            ps.setString(17, emp.getImagen_logo());
             ps.setString(18, emp.getPoliticasGarantia());
             ps.setString(19, emp.getMensajeTicketCambio());
             ps.setString(20, emp.getMensajeTicketReclamo());

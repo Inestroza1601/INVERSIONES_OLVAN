@@ -22,7 +22,7 @@ public class Empresa {
     private String mensajeTicketPieCotizacion;
     private String mensajeTicketCambio;
     private String mensajeTicketReclamo;
-    private String logoEmpresaRuta;
+    private String imagen_logo;
     private String politicasGarantia;
 
     // Constructores vacíos
@@ -80,8 +80,8 @@ public class Empresa {
     public String getMensajeTicketPieCotizacion() { return mensajeTicketPieCotizacion; }
     public void setMensajeTicketPieCotizacion(String mensajeTicketPieCotizacion) { this.mensajeTicketPieCotizacion = mensajeTicketPieCotizacion; }
 
-    public String getLogoEmpresaRuta() { return logoEmpresaRuta; }
-    public void setLogoEmpresaRuta(String logoEmpresaRuta) { this.logoEmpresaRuta = logoEmpresaRuta; }
+    public String getImagen_logo() { return imagen_logo; }
+    public void setImagen_logo(String imagen_logo) { this.imagen_logo = imagen_logo; }
     
     public String getPoliticasGarantia() { return politicasGarantia; }
     public void setPoliticasGarantia(String politicasGarantia) { this.politicasGarantia = politicasGarantia; }

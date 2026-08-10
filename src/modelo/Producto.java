@@ -12,7 +12,7 @@ public class Producto {
     private double precioMayorista; // Será 0 si no se aplica
     private int stockMinimo;
     private int stockProducto;
-    private String rutaImagen;
+    private String imagen_producto;
     private boolean eliminado; // 0 = Activo, 1 = Eliminado (Soft Delete)
     private int diasGarantia;
     private boolean requiereSerie;
@@ -54,8 +54,8 @@ public class Producto {
     public int getStockProducto() { return stockProducto; }
     public void setStockProducto(int stockProducto) { this.stockProducto = stockProducto; }
 
-    public String getRutaImagen() { return rutaImagen; }
-    public void setRutaImagen(String rutaImagen) { this.rutaImagen = rutaImagen; }
+    public String getImagen_producto() { return imagen_producto; }
+    public void setImagen_producto(String imagen_producto) { this.imagen_producto = imagen_producto; }
 
     public boolean isEliminado() { return eliminado; }
     public void setEliminado(boolean eliminado) { this.eliminado = eliminado; }

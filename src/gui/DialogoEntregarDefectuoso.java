@@ -2,7 +2,7 @@ package gui;
 
 import dao.InventarioDefectuosoDAO;
 import utilidades.GeneradorTickets;
-import utilidades.SesionGlobal;
+
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

@@ -22,7 +22,7 @@ public class PanelConfiguracionImpresion extends JPanel {
     private JTextArea txtMensajeGarantia;
     private JTextArea txtMensajeCambio;
     private JTextArea txtMensajeReclamo;
-    private JTextField txtRutaLogo;
+    private String imagenLogoBase64 = null;
     private Empresa empresaActiva;
     private JPanel panelTarjetas;
 
@@ -64,8 +64,6 @@ public class PanelConfiguracionImpresion extends JPanel {
         txtMensajeGarantia = crearTextAreaEditable("Conserve este documento. La garantía no aplica por daños físicos, humedad, exposición a líquidos o manipulación por terceros.");
         txtMensajeCambio = crearTextAreaEditable("Este comprobante avala el cambio de su producto por garantía.");
         txtMensajeReclamo = crearTextAreaEditable("Su reclamo de garantía ha sido recibido y será procesado. Gracias.");
-        txtRutaLogo = new JTextField(); 
-
         CardLayout cardLayout = new CardLayout();
         panelTarjetas = new JPanel(cardLayout);
         panelTarjetas.setBackground(new Color(255, 255, 255)); // Blanco Puro
@@ -153,7 +151,7 @@ public class PanelConfiguracionImpresion extends JPanel {
             if (emp.getMensajeTicketCambio() != null) txtMensajeCambio.setText(emp.getMensajeTicketCambio());
             if (emp.getMensajeTicketReclamo() != null) txtMensajeReclamo.setText(emp.getMensajeTicketReclamo());
             
-            if (emp.getLogoEmpresaRuta() != null) txtRutaLogo.setText(emp.getLogoEmpresaRuta());
+            if (emp.getImagen_logo() != null) imagenLogoBase64 = emp.getImagen_logo();
         }
     }
 
@@ -177,7 +175,7 @@ public class PanelConfiguracionImpresion extends JPanel {
         emp.setMensajeTicketCambio(txtMensajeCambio.getText().trim());
         emp.setMensajeTicketReclamo(txtMensajeReclamo.getText().trim());
         
-        emp.setLogoEmpresaRuta(txtRutaLogo.getText().trim());
+        emp.setImagen_logo(imagenLogoBase64);
 
         EmpresaDAO dao = new EmpresaDAO();
         if (dao.guardarOActualizar(emp)) {
@@ -195,14 +193,13 @@ public class PanelConfiguracionImpresion extends JPanel {
         
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File archivo = chooser.getSelectedFile();
-            String ruta = archivo.getAbsolutePath();
-            txtRutaLogo.setText(ruta);
+            imagenLogoBase64 = utilidades.ImagenHelper.comprimirYConvertirABase64(archivo);
             
             // USAR LA NUEVA VARIABLE AQUÍ TAMBIÉN
             Empresa emp = (this.empresaActiva != null) ? this.empresaActiva : SesionGlobal.getEmpresaActual();
             
             if (emp != null) {
-                emp.setLogoEmpresaRuta(ruta);
+                emp.setImagen_logo(imagenLogoBase64);
                 EmpresaDAO dao = new EmpresaDAO();
                 
                 if (dao.guardarOActualizar(emp)) {
@@ -352,7 +349,7 @@ public class PanelConfiguracionImpresion extends JPanel {
             txtMensajeCotizacion.setText(emp.getMensajeTicketPieCotizacion() != null ? emp.getMensajeTicketPieCotizacion() : "");
             txtMensajeGarantia.setText(emp.getPoliticasGarantia() != null ? emp.getPoliticasGarantia() : "");
             
-            txtRutaLogo.setText(emp.getLogoEmpresaRuta() != null ? emp.getLogoEmpresaRuta() : "");
+            if (emp.getImagen_logo() != null) imagenLogoBase64 = emp.getImagen_logo();
             
             recargarVistaPrevia();
         }

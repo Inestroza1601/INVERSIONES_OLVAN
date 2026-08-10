@@ -35,7 +35,7 @@ public class PanelCrearProducto extends JPanel {
     private JTextField txtStockMinimo;
     
     private JLabel lblVistaPreviaImagen;
-    private String rutaImagenSeleccionada = null; 
+    private String imagenSeleccionada = null; 
     private JButton btnGuardar;
     private java.util.List<String> imagenesSeleccionadas = new java.util.ArrayList<>();
     private int indiceImagenActual = -1;
@@ -452,9 +452,9 @@ public class PanelCrearProducto extends JPanel {
             p.setStockProducto(Integer.parseInt(txtStockInicial.getText().trim()));
             p.setStockMinimo(Integer.parseInt(txtStockMinimo.getText().trim()));
             if (imagenesSeleccionadas.isEmpty()) {
-                p.setRutaImagen(null);
+                p.setImagen_producto(null);
             } else {
-                p.setRutaImagen(String.join("|", imagenesSeleccionadas));
+                p.setImagen_producto(String.join("|", imagenesSeleccionadas));
             }
             p.setDiasGarantia(valoresGarantia[cmbDiasGarantia.getSelectedIndex()]);
             p.setRequiereSerie(chkRequiereSerie.isSelected());
@@ -523,8 +523,8 @@ public class PanelCrearProducto extends JPanel {
         cmbDiasGarantia.setSelectedIndex(index);
         
         imagenesSeleccionadas.clear();
-        if(productoAEditar.getRutaImagen() != null && !productoAEditar.getRutaImagen().trim().isEmpty()) {
-            String rawImg = productoAEditar.getRutaImagen();
+        if(productoAEditar.getImagen_producto() != null && !productoAEditar.getImagen_producto().trim().isEmpty()) {
+            String rawImg = productoAEditar.getImagen_producto();
             if (rawImg.contains("|")) {
                 String[] parts = rawImg.split("\\|");
                 for (String part : parts) {
@@ -790,10 +790,10 @@ public class PanelCrearProducto extends JPanel {
             btnAnteriorImg.setEnabled(false);
             btnSiguienteImg.setEnabled(false);
             btnEliminarImg.setEnabled(false);
-            rutaImagenSeleccionada = null;
+            imagenSeleccionada = null;
         } else {
             String imgBase64 = imagenesSeleccionadas.get(indiceImagenActual);
-            rutaImagenSeleccionada = imgBase64;
+            imagenSeleccionada = imgBase64;
             ImageIcon icon = utilidades.ImagenHelper.obtenerIcono(imgBase64, 150, 150);
             if (icon != null) {
                 lblVistaPreviaImagen.setText("");

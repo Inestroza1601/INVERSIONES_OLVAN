@@ -384,8 +384,8 @@ public class PanelPuntoVenta extends JPanel {
 
         // Si requiere serie, o es un repuesto nuevo, lo agregamos como fila independiente
         modeloTablaVentas.addRow(new Object[]{ 
-            p.getIdProducto(), p.getRutaImagen(), p.getNombreProducto(), 1, 
-            p.getPrecioVenta(), p.getPrecioVenta(), p.getStockProducto(), p.getRutaImagen(), 
+            p.getIdProducto(), p.getImagen_producto(), p.getNombreProducto(), 1, 
+            p.getPrecioVenta(), p.getPrecioVenta(), p.getStockProducto(), p.getImagen_producto(), 
             imei, p.getDiasGarantia(), p.isIncluyeImpuesto()
         });
         recalcularTotales();
@@ -774,11 +774,17 @@ public class PanelPuntoVenta extends JPanel {
                     protected ImageIcon doInBackground() throws Exception {
                         String imgVal = new InventarioDAO().obtenerRutaImagenBase64(idProducto);
                         if (imgVal == null || imgVal.trim().isEmpty()) {
-                            if (utilidades.SesionGlobal.getEmpresaActual() != null && utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
-                                imgVal = utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
+                            if (utilidades.SesionGlobal.getEmpresaActual() != null && utilidades.SesionGlobal.getEmpresaActual().getImagen_logo() != null) {
+                                imgVal = utilidades.SesionGlobal.getEmpresaActual().getImagen_logo();
                             }
                         }
-                        if (imgVal == null || imgVal.trim().isEmpty()) return null;
+                          if (imgVal == null || imgVal.trim().isEmpty()) {
+                              java.net.URL defaultLogo = getClass().getResource("/image/logo.png");
+                              if (defaultLogo != null) {
+                                  return new ImageIcon(new ImageIcon(defaultLogo).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH));
+                              }
+                              return null;
+                          }
                         
                         String valProcesar = imgVal;
                         if (valProcesar.contains("|")) {
@@ -840,7 +846,7 @@ public class PanelPuntoVenta extends JPanel {
 
         public DialogoConfirmacionCliente(Frame parent, String mensajeInfo) {
             super(parent, "Confirmación de Cliente", true);
-            setSize(450, 240);
+            setSize(450, 290);
             setLocationRelativeTo(parent);
             setUndecorated(true); // Sin marcos para un diseño limpio y moderno
             
@@ -1125,7 +1131,7 @@ public class PanelPuntoVenta extends JPanel {
             for (Producto p : lista) { 
                 // FILTRO ESTRICTO: Si está eliminado lógicamente (eliminado_producto == 1), NO se añade a la lista
                 // Nota: Si tu método en el modelo se llama diferente (ej: isEliminadoProducto()), adáptalo aquí
-                mod.addRow(new Object[]{p.getIdProducto(), p.getRutaImagen(), p.getCodigoBarras(), p.getNombreProducto(), String.format("L %,.2f", p.getPrecioVenta()), p.getStockProducto()}); 
+                mod.addRow(new Object[]{p.getIdProducto(), p.getImagen_producto(), p.getCodigoBarras(), p.getNombreProducto(), String.format("L %,.2f", p.getPrecioVenta()), p.getStockProducto()}); 
             }
             
             tab.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -1171,8 +1177,8 @@ public class PanelPuntoVenta extends JPanel {
     private void mostrarZoomImagen(int idProducto) {
         String imgVal = new InventarioDAO().obtenerRutaImagenBase64(idProducto);
         if (imgVal == null || imgVal.trim().isEmpty()) {
-            if (utilidades.SesionGlobal.getEmpresaActual() != null && utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
-                imgVal = utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
+            if (utilidades.SesionGlobal.getEmpresaActual() != null && utilidades.SesionGlobal.getEmpresaActual().getImagen_logo() != null) {
+                imgVal = utilidades.SesionGlobal.getEmpresaActual().getImagen_logo();
             }
         }
         if (imgVal == null || imgVal.trim().isEmpty()) return;

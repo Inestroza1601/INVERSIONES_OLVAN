@@ -93,7 +93,7 @@ public class DialogoBuscarProductoSustituto extends JDialog {
 
         List<Producto> lista = new InventarioDAO().listarProductosActivos();
         for (Producto p : lista) {
-            mod.addRow(new Object[]{p.getIdProducto(), p.getRutaImagen(), p.getCodigoBarras(), p.getNombreProducto(), String.format("L %,.2f", p.getPrecioVenta()), p.getStockProducto()});
+            mod.addRow(new Object[]{p.getIdProducto(), p.getImagen_producto(), p.getCodigoBarras(), p.getNombreProducto(), String.format("L %,.2f", p.getPrecioVenta()), p.getStockProducto()});
         }
 
         tab.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -162,11 +162,17 @@ public class DialogoBuscarProductoSustituto extends JDialog {
                     protected ImageIcon doInBackground() throws Exception {
                         String imgVal = new InventarioDAO().obtenerRutaImagenBase64(idProducto);
                         if (imgVal == null || imgVal.trim().isEmpty()) {
-                            if (utilidades.SesionGlobal.getEmpresaActual() != null && utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta() != null) {
-                                imgVal = utilidades.SesionGlobal.getEmpresaActual().getLogoEmpresaRuta();
+                            if (utilidades.SesionGlobal.getEmpresaActual() != null && utilidades.SesionGlobal.getEmpresaActual().getImagen_logo() != null) {
+                                imgVal = utilidades.SesionGlobal.getEmpresaActual().getImagen_logo();
                             }
                         }
-                        if (imgVal == null || imgVal.trim().isEmpty()) return null;
+                          if (imgVal == null || imgVal.trim().isEmpty()) {
+                              java.net.URL defaultLogo = getClass().getResource("/image/logo.png");
+                              if (defaultLogo != null) {
+                                  return new ImageIcon(new ImageIcon(defaultLogo).getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH));
+                              }
+                              return null;
+                          }
                         
                         String valProcesar = imgVal;
                         if (valProcesar.contains("|")) {

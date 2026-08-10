@@ -45,7 +45,7 @@ public class InventarioDAO {
     public boolean registrarProducto(Producto p) {
         String sql = "INSERT INTO INVENTARIO (codigo_barras_producto, nombre_producto, id_categoria, id_proveedor, "
                    + "id_ubicacion, precio_compra_producto, precio_venta_producto, precio_mayorista_producto, "
-                   + "stock_minimo_producto, stock_producto, ruta_imagen_producto, dias_garantia, requiere_serie, incluye_impuesto, eliminado_producto) "
+                   + "stock_minimo_producto, stock_producto, imagen_producto, dias_garantia, requiere_serie, incluye_impuesto, eliminado_producto) "
                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
 
         try (Connection con = factory.getConexion();
@@ -77,10 +77,10 @@ public class InventarioDAO {
             ps.setInt(10, p.getStockProducto());
 
             // 11. Ruta de imagen
-            if (p.getRutaImagen() == null || p.getRutaImagen().trim().isEmpty()) {
+            if (p.getImagen_producto() == null || p.getImagen_producto().trim().isEmpty()) {
                 ps.setNull(11, java.sql.Types.VARCHAR);
             } else {
-                ps.setString(11, p.getRutaImagen());
+                ps.setString(11, p.getImagen_producto());
             }
             
             ps.setInt(12, p.getDiasGarantia());
@@ -139,7 +139,7 @@ public class InventarioDAO {
                 p.setPrecioVenta(rs.getDouble("precio_venta_producto"));
                 p.setPrecioMayorista(rs.getDouble("precio_mayorista_producto"));
                 p.setStockProducto(rs.getInt("stock_producto"));
-                p.setRutaImagen(null);
+                p.setImagen_producto(null);
                 
                 // --- LAS DOS LÍNEAS QUE FALTABAN AQUÍ ---
                 p.setDiasGarantia(rs.getInt("dias_garantia"));
@@ -156,12 +156,12 @@ public class InventarioDAO {
     }
 
     public String obtenerRutaImagenBase64(int idProducto) {
-        String sql = "SELECT ruta_imagen_producto FROM INVENTARIO WHERE id_producto = ?";
+        String sql = "SELECT imagen_producto FROM INVENTARIO WHERE id_producto = ?";
         try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idProducto);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getString("ruta_imagen_producto");
+                    return rs.getString("imagen_producto");
                 }
             }
         } catch (SQLException e) {
@@ -211,7 +211,7 @@ public class InventarioDAO {
                     p.setPrecioMayorista(rs.getDouble("precio_mayorista_producto"));
                     p.setStockMinimo(rs.getInt("stock_minimo_producto"));
                     p.setStockProducto(rs.getInt("stock_producto"));
-                    p.setRutaImagen(rs.getString("ruta_imagen_producto"));
+                    p.setImagen_producto(rs.getString("imagen_producto"));
                     p.setDiasGarantia(rs.getInt("dias_garantia"));
                     p.setRequiereSerie(rs.getBoolean("requiere_serie"));
                     p.setIncluyeImpuesto(rs.getBoolean("incluye_impuesto"));
@@ -223,7 +223,7 @@ public class InventarioDAO {
     }
 
     public boolean actualizarProducto(Producto p) {
-        String sql = "UPDATE INVENTARIO SET codigo_barras_producto = ?, nombre_producto = ?, id_categoria = ?, id_proveedor = ?, id_ubicacion = ?, precio_compra_producto = ?, precio_venta_producto = ?, precio_mayorista_producto = ?, stock_minimo_producto = ?, ruta_imagen_producto = ?, dias_garantia = ?, requiere_serie = ?, incluye_impuesto = ? WHERE id_producto = ?";
+        String sql = "UPDATE INVENTARIO SET codigo_barras_producto = ?, nombre_producto = ?, id_categoria = ?, id_proveedor = ?, id_ubicacion = ?, precio_compra_producto = ?, precio_venta_producto = ?, precio_mayorista_producto = ?, stock_minimo_producto = ?, imagen_producto = ?, dias_garantia = ?, requiere_serie = ?, incluye_impuesto = ? WHERE id_producto = ?";
         try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
             if (p.getCodigoBarras() == null || p.getCodigoBarras().trim().isEmpty()) ps.setNull(1, java.sql.Types.VARCHAR);
             else ps.setString(1, p.getCodigoBarras().trim());
@@ -237,8 +237,8 @@ public class InventarioDAO {
             
             ps.setInt(9, p.getStockMinimo());
             
-            if (p.getRutaImagen() == null || p.getRutaImagen().trim().isEmpty()) ps.setNull(10, java.sql.Types.VARCHAR);
-            else ps.setString(10, p.getRutaImagen());
+            if (p.getImagen_producto() == null || p.getImagen_producto().trim().isEmpty()) ps.setNull(10, java.sql.Types.VARCHAR);
+            else ps.setString(10, p.getImagen_producto());
             
             ps.setInt(11, p.getDiasGarantia());
             ps.setBoolean(12, p.isRequiereSerie());
