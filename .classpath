@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="drivers/mssql-jdbc-12.4.2.jre11.jar"/>
 	<classpathentry kind="lib" path="drivers/nanohttpd-2.3.1.jar"/>
 	<classpathentry kind="lib" path="drivers/jcalendar-1.4.jar"/>
+	<classpathentry kind="lib" path="drivers/pdfbox-app-2.0.29.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -433,7 +433,6 @@ public class PanelHistorialVentas extends JPanel {
                     (String) venta.get("ref"),
                     (String) venta.get("banco"));
 
-            utilidades.Mensajes.showMessageDialog(this, "Reimpresi\u00F3n generada exitosamente.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
             if (Desktop.isDesktopSupported()) {
                 utilidades.GestorImpresion.procesarImpresion(archivoDestino, utilidades.GestorImpresion.TIPO_TICKET);
             }

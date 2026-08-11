@@ -38,34 +38,8 @@ public class GestorImpresion {
             return;
         }
 
-        // 1. Siempre abrir el PDF primero
-        abrirPDF(archivoPdf);
-
-        // 2. Verificar si la impresora est\u00E1 conectada antes de preguntar
-        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
-        boolean impresoraEncontrada = false;
-        for (PrintService s : services) {
-            if (s.getName().equalsIgnoreCase(impresoraConfigurada)) {
-                impresoraEncontrada = true;
-                break;
-            }
-        }
-
-        if (!impresoraEncontrada) {
-            utilidades.Mensajes.showMessageDialog(null, 
-                "Advertencia: No se encontr\u00F3 la impresora o est\u00E1 desconectada (" + impresoraConfigurada + ").\n\nPuede imprimir manualmente desde el visor de PDF que se acaba de abrir.", 
-                "Impresora no encontrada", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        // 3. Si la encontr\u00F3, preguntar confirmaci\u00F3n
-        int respuesta = utilidades.Mensajes.showConfirmDialog(null, 
-            "El documento se ha abierto para revisi\u00F3n.\n\n\u00BFEst\u00E1 seguro de imprimir este documento en:\n" + impresoraConfigurada + "?", 
-            "Confirmar Impresi\u00F3n Directa", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            
-        if (respuesta == JOptionPane.YES_OPTION) {
-            imprimirConPDFBox(archivoPdf, impresoraConfigurada);
-        }
+        // Imprimir directamente sin abrir el PDF ni preguntar confirmación
+        imprimirConPDFBox(archivoPdf, impresoraConfigurada);
     }
 
     private static void imprimirConPDFBox(File archivoPdf, String nombreImpresora) {

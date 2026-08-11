@@ -3,3 +3,8 @@
 /.idea/
 *.iml
 *.class
+
+bin/
+reportes/
+dist/
+build/

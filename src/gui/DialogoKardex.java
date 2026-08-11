@@ -191,7 +191,6 @@ public class DialogoKardex extends JDialog {
                 // Pasamos la fecha hist\u00F3rica exacta al regenerador de PDF f\u00EDsico
                 utilidades.GeneradorTickets.generarTicketVentaPDF(rutaTemp, cliente, fechaHistorica, detalles, subtotal, isv, total, true, metodo, ref, banco);
                 
-                utilidades.Mensajes.showMessageDialog(previewDialog, "Copia de recibo generada exitosamente.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
                 if (Desktop.isDesktopSupported()) utilidades.GestorImpresion.procesarImpresion(new File(rutaTemp), utilidades.GestorImpresion.TIPO_A4);
                 
             } catch (Exception err) {
