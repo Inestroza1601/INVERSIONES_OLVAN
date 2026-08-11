@@ -60,6 +60,7 @@ public class PanelPuntoVenta extends JPanel {
         }
         iniciarDiseno();
         cargarMetodosPago();
+        configurarAtajosTeclado();
     }
 
     private void iniciarDiseno() {
@@ -440,7 +441,9 @@ public class PanelPuntoVenta extends JPanel {
         int f = tablaVentas.getSelectedRow(); if(f < 0) return;
         
         // --- BLOQUEO DE SEGURIDAD PARA GARANT\u00CDAS Y SERIES ---
-        if (modeloTablaVentas.getValueAt(f, 9) != null || (int)modeloTablaVentas.getValueAt(f, 8) > 0) {
+        String imei = (String) modeloTablaVentas.getValueAt(f, 8);
+        int garant = (int) modeloTablaVentas.getValueAt(f, 9);
+        if ((imei != null && !imei.isEmpty()) || garant > 0) {
             utilidades.Mensajes.showMessageDialog(this, "No puede modificar la cantidad de un equipo que requiere Identificador o posee Garant\u00EDa.\nSi el cliente lleva varios, escanee el producto nuevamente.", "Acci\u00F3n Bloqueada", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -482,8 +485,83 @@ public class PanelPuntoVenta extends JPanel {
         modeloTablaVentas.removeRow(f); recalcularTotales();
     }
 
+    private void configurarAtajosTeclado() {
+        javax.swing.InputMap inputMapGlobal = this.getInputMap(javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW);
+        javax.swing.ActionMap actionMapGlobal = this.getActionMap();
+
+        inputMapGlobal.put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F12, 0), "cobrarVenta");
+        actionMapGlobal.put("cobrarVenta", new javax.swing.AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                if (!utilidades.Seguridad.tienePermiso("CREAR_VENTA")) return;
+                procesarVenta();
+            }
+        });
+
+        javax.swing.InputMap inputMapTabla = tablaVentas.getInputMap(javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        javax.swing.ActionMap actionMapTabla = tablaVentas.getActionMap();
+
+        javax.swing.Action accionAumentar = new javax.swing.AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                aumentarCantidadLocal();
+            }
+        };
+        inputMapTabla.put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ADD, 0), "aumentarCant");
+        inputMapTabla.put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PLUS, 0), "aumentarCant");
+        inputMapTabla.put(javax.swing.KeyStroke.getKeyStroke('+', java.awt.event.InputEvent.SHIFT_DOWN_MASK), "aumentarCant");
+        actionMapTabla.put("aumentarCant", accionAumentar);
+
+        javax.swing.Action accionDisminuir = new javax.swing.AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                disminuirCantidadLocal();
+            }
+        };
+        inputMapTabla.put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_SUBTRACT, 0), "disminuirCant");
+        inputMapTabla.put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_MINUS, 0), "disminuirCant");
+        actionMapTabla.put("disminuirCant", accionDisminuir);
+    }
+
+    private void aumentarCantidadLocal() {
+        int f = tablaVentas.getSelectedRow();
+        if (f < 0) return;
+        String imei = (String) modeloTablaVentas.getValueAt(f, 8);
+        int garant = (int) modeloTablaVentas.getValueAt(f, 9);
+        if ((imei != null && !imei.isEmpty()) || garant > 0) return; 
+
+        int cantActual = (int) modeloTablaVentas.getValueAt(f, 3);
+        int stockMax = (int) modeloTablaVentas.getValueAt(f, 6);
+        if (cantActual < stockMax) {
+            double precioUnit = (double) modeloTablaVentas.getValueAt(f, 4);
+            modeloTablaVentas.setValueAt(cantActual + 1, f, 3);
+            modeloTablaVentas.setValueAt((cantActual + 1) * precioUnit, f, 5);
+            recalcularTotales();
+        } else {
+            utilidades.Mensajes.showMessageDialog(this, "Stock insuficiente.", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void disminuirCantidadLocal() {
+        int f = tablaVentas.getSelectedRow();
+        if (f < 0) return;
+        String imei = (String) modeloTablaVentas.getValueAt(f, 8);
+        int garant = (int) modeloTablaVentas.getValueAt(f, 9);
+        if ((imei != null && !imei.isEmpty()) || garant > 0) return; 
+
+        int cantActual = (int) modeloTablaVentas.getValueAt(f, 3);
+        if (cantActual > 1) {
+            double precioUnit = (double) modeloTablaVentas.getValueAt(f, 4);
+            modeloTablaVentas.setValueAt(cantActual - 1, f, 3);
+            modeloTablaVentas.setValueAt((cantActual - 1) * precioUnit, f, 5);
+            recalcularTotales();
+        } else if (cantActual == 1) {
+            quitarProducto();
+        }
+    }
+
     private void procesarVenta() {
-        if(modeloTablaVentas.getRowCount() == 0) { utilidades.Mensajes.showMessageDialog(this, "La venta est\u00E1 vac\u00EDa.", "Aviso", JOptionPane.WARNING_MESSAGE); return; }
+        if(modeloTablaVentas.getRowCount() == 0) { utilidades.Mensajes.showMessageDialog(this, "La venta est\u00E1 vac\u00EDa.", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE); return; }
         
         // Validar que la caja est\u00E9 abierta
         modelo.ControlCaja CCActiva = new dao.ControlCajaDAO().obtenerSesionActiva();
