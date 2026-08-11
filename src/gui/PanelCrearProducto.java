@@ -590,7 +590,7 @@ public class PanelCrearProducto extends JPanel {
             agregarFilaDialog(pnlForm, gbc, 1, "Encargado:", txtEncargado);
             agregarFilaDialog(pnlForm, gbc, 2, "Tel\u00E9fono:", txtTel);
             agregarFilaDialog(pnlForm, gbc, 3, "Direcci\u00F3n:", txtDir);
-            agregarFilaDialog(pnlForm, gbc, 4, "Tipo Repuestos:", txtRepuestos);
+            agregarFilaDialog(pnlForm, gbc, 4, "Tipos de Productos:", txtRepuestos);
         }
 
         gbc.gridy = 10; gbc.weighty = 1.0; pnlForm.add(new JLabel(""), gbc);
@@ -860,7 +860,7 @@ public class PanelCrearProducto extends JPanel {
             agregarFilaDialog(pnlForm, gbc, 1, "Encargado:", txtEncargado);
             agregarFilaDialog(pnlForm, gbc, 2, "Tel\u00E9fono:", txtTel);
             agregarFilaDialog(pnlForm, gbc, 3, "Direcci\u00F3n:", txtDir);
-            agregarFilaDialog(pnlForm, gbc, 4, "Tipo Repuestos:", txtRepuestos);
+            agregarFilaDialog(pnlForm, gbc, 4, "Tipos de Productos:", txtRepuestos);
         }
 
         gbc.gridy = 10; gbc.weighty = 1.0; pnlForm.add(new JLabel(""), gbc);

@@ -123,7 +123,7 @@ public class GarantiaDAO {
             
             if (idProdOriginal != -1) {
                 if (resolucion.startsWith("Reparaci\u00F3n T\u00E9cnica")) {
-                    // Propiedad del cliente: entra a mermas con estado especial, no afecta KARDEX ni stock normal
+                    // Propiedad del cliente: entra a inventario defectuoso con estado especial, no afecta KARDEX ni stock normal
                     String sqlDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, id_detalle_venta, fecha_ingreso, cantidad, motivo_danio, estado_defecto) VALUES (?, ?, GETDATE(), 1, ?, 'En Bodega (Rep. Cliente)')";
                     try (PreparedStatement psDef = con.prepareStatement(sqlDefectuoso)) {
                         psDef.setInt(1, idProdOriginal);
@@ -132,7 +132,7 @@ public class GarantiaDAO {
                         psDef.executeUpdate();
                     }
                 } else if (resolucion.equals("Cambio por Producto Nuevo")) {
-                    // Propiedad de la empresa: entra a mermas, resta stock del producto nuevo entregado
+                    // Propiedad de la empresa: entra a inventario defectuoso, resta stock del producto nuevo entregado
                     if (reintegro) {
                         String sqlDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, id_detalle_venta, fecha_ingreso, cantidad, motivo_danio, estado_defecto) VALUES (?, ?, GETDATE(), 1, ?, 'En Bodega')";
                         try (PreparedStatement psDef = con.prepareStatement(sqlDefectuoso)) {

@@ -263,4 +263,24 @@ public class ServidorFotos extends NanoHTTPD {
         }
         return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/plain", "No encontrado");
     }
+
+    public static String guardarImagenDefectuosoDirecto(int idDefectuoso, String base64, int numFoto) {
+        try {
+            if (base64 == null || base64.isEmpty()) return null;
+            if (base64.contains(",")) base64 = base64.split(",")[1];
+            byte[] imageBytes = java.util.Base64.getDecoder().decode(base64);
+            
+            String fileName = "defectuoso_" + idDefectuoso + "_foto" + numFoto + ".jpg";
+            String userHome = System.getProperty("user.home");
+            java.io.File dir = new java.io.File(userHome + "/InversionesOlvan/Garantias");
+            if (!dir.exists()) dir.mkdirs();
+            
+            java.io.File destFile = new java.io.File(dir, fileName);
+            java.nio.file.Files.write(destFile.toPath(), imageBytes);
+            return destFile.getAbsolutePath();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

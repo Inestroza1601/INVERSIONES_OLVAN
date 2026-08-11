@@ -210,4 +210,107 @@ public class ReportesDAO {
         }
         return lista;
     }
+
+    // 5. Lista de Productos para ComboBox
+    public List<Object[]> obtenerListaProductosBreve() {
+        List<Object[]> lista = new ArrayList<>();
+        String sql = "SELECT id_producto, nombre_producto, codigo_barras_producto FROM INVENTARIO WHERE eliminado_producto = 0 ORDER BY nombre_producto";
+        try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                lista.add(new Object[]{
+                    rs.getInt("id_producto"),
+                    rs.getString("codigo_barras_producto") + " - " + rs.getString("nombre_producto")
+                });
+            }
+        } catch (Exception e) {
+            System.err.println("Error en obtenerListaProductosBreve: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    // 6. Reporte Kardex (General o Especifico)
+    public List<Object[]> obtenerReporteKardex(Integer idProducto, String fechaInicio, String fechaFin) {
+        List<Object[]> lista = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+            "SELECT k.fecha_movimiento_producto, p.nombre_producto, u.nombre_usuario as usuario, " +
+            "k.tipo_movimiento_producto, k.cantidad_producto, k.stock_restante_producto, k.referencia_producto " +
+            "FROM KARDEX k " +
+            "INNER JOIN INVENTARIO p ON k.id_producto = p.id_producto " +
+            "LEFT JOIN Usuarios u ON k.id_usuario = u.id_usuario " +
+            "WHERE CAST(k.fecha_movimiento_producto AS DATE) >= ? AND CAST(k.fecha_movimiento_producto AS DATE) <= ? "
+        );
+        if (idProducto != null) {
+            sql.append("AND k.id_producto = ? ");
+        }
+        sql.append("ORDER BY k.fecha_movimiento_producto DESC");
+        
+        try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql.toString())) {
+            ps.setString(1, fechaInicio);
+            ps.setString(2, fechaFin);
+            if (idProducto != null) {
+                ps.setInt(3, idProducto);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String tipo = rs.getString("tipo_movimiento_producto");
+                    int cant = rs.getInt("cantidad_producto");
+                    String cantidadFormato = tipo.equalsIgnoreCase("Entrada") ? "+" + cant : "-" + cant;
+                    
+                    lista.add(new Object[]{
+                        rs.getTimestamp("fecha_movimiento_producto"),
+                        rs.getString("nombre_producto"),
+                        rs.getString("usuario") != null ? rs.getString("usuario") : "Sistema",
+                        tipo,
+                        cantidadFormato,
+                        rs.getInt("stock_restante_producto"),
+                        rs.getString("referencia_producto")
+                    });
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error en obtenerReporteKardex: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    // 7. Reporte Productos Defectuosos
+    public List<Object[]> obtenerReporteDefectuosos(String fechaInicio, String fechaFin) {
+        List<Object[]> lista = new ArrayList<>();
+        String sql = "SELECT d.fecha_ingreso, i.nombre_producto, d.cantidad, " +
+                     "CASE WHEN c.nombre_cliente IS NULL THEN 'Falla de Fábrica' ELSE 'Garantía de Cliente' END as origen, " +
+                     "d.motivo_danio, v.observacion_garantia, d.estado_defecto, c.nombre_cliente " +
+                     "FROM INVENTARIO_DEFECTUOSO d " +
+                     "INNER JOIN INVENTARIO i ON d.id_producto = i.id_producto " +
+                     "LEFT JOIN DETALLES_VENTA v ON d.id_detalle_venta = v.id_detalle_venta " +
+                     "LEFT JOIN VENTAS ve ON v.id_ventas = ve.id_ventas " +
+                     "LEFT JOIN CLIENTES c ON ve.id_cliente_venta = c.id_cliente " +
+                     "WHERE CAST(d.fecha_ingreso AS DATE) >= ? AND CAST(d.fecha_ingreso AS DATE) <= ? " +
+                     "ORDER BY d.fecha_ingreso DESC";
+                     
+        try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, fechaInicio);
+            ps.setString(2, fechaFin);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String motivo = rs.getString("motivo_danio");
+                    if (motivo == null || motivo.trim().isEmpty()) {
+                        motivo = rs.getString("observacion_garantia");
+                    }
+                    
+                    lista.add(new Object[]{
+                        rs.getTimestamp("fecha_ingreso"),
+                        rs.getString("nombre_producto"),
+                        rs.getInt("cantidad"),
+                        rs.getString("origen"),
+                        motivo != null ? motivo : "Sin especificar",
+                        rs.getString("estado_defecto"),
+                        rs.getString("nombre_cliente") != null ? rs.getString("nombre_cliente") : "N/A"
+                    });
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error en obtenerReporteDefectuosos: " + e.getMessage());
+        }
+        return lista;
+    }
 }

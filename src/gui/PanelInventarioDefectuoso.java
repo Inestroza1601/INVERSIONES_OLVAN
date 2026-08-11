@@ -631,7 +631,7 @@ public class PanelInventarioDefectuoso extends JPanel {
         if (confirm == JOptionPane.YES_OPTION) {
             int idUsuario = SesionGlobal.getUsuarioActual() != null ? SesionGlobal.getUsuarioActual().getIdUsuario()
                     : 1;
-            if (dao.cambiarEstadoMermas(idProducto, estadoActual, nuevoEstado, idUsuario, kardexRef, cliente, idDefectuoso)) {
+            if (dao.cambiarEstadoDefectuoso(idProducto, estadoActual, nuevoEstado, idUsuario, kardexRef, cliente, idDefectuoso)) {
                 utilidades.Mensajes.showMessageDialog(this, "Estado actualizado con \u00E9xito.", "\u00C9xito",
                         JOptionPane.INFORMATION_MESSAGE);
                 cargarDatos();

@@ -25,6 +25,8 @@ public class PanelReportes extends JPanel {
     private JDateChooser dpFechaDiaria;
     private JDateChooser dpFechaDesde;
     private JDateChooser dpFechaHasta;
+    private JTextField txtProductoKardex;
+    private int idProductoSeleccionadoKardex = -1;
 
     private ReportesDAO reportesDAO;
     private List<Object[]> ultimosDatos;
@@ -51,8 +53,11 @@ public class PanelReportes extends JPanel {
         panelCabecera.add(lblTitulo, BorderLayout.NORTH);
 
         // CONTROLES DE REPORTE
-        JPanel panelControles = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
+        JPanel panelControles = new JPanel(new BorderLayout());
         panelControles.setOpaque(false);
+
+        JPanel panelFila1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
+        panelFila1.setOpaque(false);
 
         JLabel lblTipo = new JLabel("Tipo de Reporte:");
         lblTipo.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -61,14 +66,23 @@ public class PanelReportes extends JPanel {
             "1. Reporte de Caja Diario", 
             "2. Reporte Detallado de Ventas", 
             "3. Reporte Din\u00E1mico de Inventario", 
-            "4. Alertas (Stock Bajo / Estancados > 15 d\u00EDas)"
+            "4. Alertas (Stock Bajo / Estancados > 15 d\u00EDas)",
+            "5. Reporte Kardex General",
+            "6. Reporte Kardex Espec\u00EDfico",
+            "7. Reporte de Productos Defectuosos"
         };
         cmbTipoReporte = new JComboBox<>(tipos);
         cmbTipoReporte.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         cmbTipoReporte.addActionListener(e -> cambiarFiltros());
 
-        panelFiltros = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        panelFila1.add(lblTipo);
+        panelFila1.add(cmbTipoReporte);
+
+        panelFiltros = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 5));
         panelFiltros.setOpaque(false);
+
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 5));
+        panelBotones.setOpaque(false);
 
         JButton btnPrevisualizar = utilidades.EfectosUI.crearBotonVerde("Previsualizar Datos");
         btnPrevisualizar.addActionListener(e -> previsualizarReporte());
@@ -88,13 +102,14 @@ public class PanelReportes extends JPanel {
         btnEnviarWhatsapp.setEnabled(false);
         btnEnviarWhatsapp.addActionListener(e -> enviarPorWhatsapp());
 
-        panelControles.add(lblTipo);
-        panelControles.add(cmbTipoReporte);
-        panelControles.add(panelFiltros);
-        panelControles.add(btnPrevisualizar);
-        panelControles.add(btnGenerarPDF);
-        panelControles.add(btnEnviarCorreo);
-        panelControles.add(btnEnviarWhatsapp);
+        panelBotones.add(btnPrevisualizar);
+        panelBotones.add(btnGenerarPDF);
+        panelBotones.add(btnEnviarCorreo);
+        panelBotones.add(btnEnviarWhatsapp);
+
+        panelControles.add(panelFila1, BorderLayout.NORTH);
+        panelControles.add(panelFiltros, BorderLayout.CENTER);
+        panelControles.add(panelBotones, BorderLayout.SOUTH);
 
         panelCabecera.add(panelControles, BorderLayout.CENTER);
         this.add(panelCabecera, BorderLayout.NORTH);
@@ -126,13 +141,32 @@ public class PanelReportes extends JPanel {
             aplicarEstiloDateChooser(dpFechaDiaria);
             panelFiltros.add(dpFechaDiaria);
         } 
-        else if (index == 1) { // Detallado Ventas
-            java.util.List<Date> fechasVentas = reportesDAO.obtenerFechasConVentas();
+        else if (index == 1 || index >= 4) { // Detallado Ventas, Kardex, Defectuosos
+            if (index == 5) {
+                panelFiltros.add(new JLabel("Producto:"));
+                txtProductoKardex = new JTextField(20);
+                txtProductoKardex.setEditable(false);
+                txtProductoKardex.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+                panelFiltros.add(txtProductoKardex);
+                
+                JButton btnBuscarProd = utilidades.EfectosUI.crearBotonBlanco("Buscar");
+                btnBuscarProd.addActionListener(e -> {
+                    Window parentWindow = SwingUtilities.getWindowAncestor(this);
+                    gui.DialogoBuscarProductoSustituto dialog = new gui.DialogoBuscarProductoSustituto(parentWindow);
+                    dialog.setVisible(true);
+                    modelo.Producto p = dialog.getProductoSeleccionado();
+                    if (p != null) {
+                        idProductoSeleccionadoKardex = p.getIdProducto();
+                        txtProductoKardex.setText(p.getNombreProducto());
+                    }
+                });
+                panelFiltros.add(btnBuscarProd);
+            }
             
             panelFiltros.add(new JLabel("Desde:"));
             dpFechaDesde = new JDateChooser(new Date());
             dpFechaDesde.setMaxSelectableDate(new Date());
-            dpFechaDesde.getJCalendar().getDayChooser().addDateEvaluator(new FechasValidasEvaluator(fechasVentas));
+            if (index == 1) dpFechaDesde.getJCalendar().getDayChooser().addDateEvaluator(new FechasValidasEvaluator(reportesDAO.obtenerFechasConVentas()));
             dpFechaDesde.setDateFormatString("yyyy-MM-dd");
             aplicarEstiloDateChooser(dpFechaDesde);
             panelFiltros.add(dpFechaDesde);
@@ -140,7 +174,7 @@ public class PanelReportes extends JPanel {
             panelFiltros.add(new JLabel("Hasta:"));
             dpFechaHasta = new JDateChooser(new Date());
             dpFechaHasta.setMaxSelectableDate(new Date());
-            dpFechaHasta.getJCalendar().getDayChooser().addDateEvaluator(new FechasValidasEvaluator(fechasVentas));
+            if (index == 1) dpFechaHasta.getJCalendar().getDayChooser().addDateEvaluator(new FechasValidasEvaluator(reportesDAO.obtenerFechasConVentas()));
             dpFechaHasta.setDateFormatString("yyyy-MM-dd");
             aplicarEstiloDateChooser(dpFechaHasta);
             panelFiltros.add(dpFechaHasta);
@@ -302,7 +336,7 @@ public class PanelReportes extends JPanel {
             ultimosDatos = reportesDAO.obtenerReporteCajaDiario(fecha);
             ultimoTitulo = "Reporte Diario de Caja - " + fecha;
         } 
-        else if (index == 1) {
+        else if (index == 1 || index >= 4) {
             if (dpFechaDesde == null || dpFechaDesde.getDate() == null || dpFechaHasta == null || dpFechaHasta.getDate() == null) {
                 utilidades.Mensajes.showMessageDialog(this, "Por favor, seleccione un rango de fechas v\u00E1lido.", "Fecha Inv\u00E1lida", JOptionPane.WARNING_MESSAGE);
                 return;
@@ -316,9 +350,30 @@ public class PanelReportes extends JPanel {
             }
             String fDesde = new SimpleDateFormat("yyyy-MM-dd").format(dpFechaDesde.getDate());
             String fHasta = new SimpleDateFormat("yyyy-MM-dd").format(dpFechaHasta.getDate());
-            ultimasColumnas = new String[]{"Fecha", "Ticket", "Tipo Venta", "Producto", "Cantidad", "Subtotal (L.)"};
-            ultimosDatos = reportesDAO.obtenerReporteDetalladoVentas(fDesde, fHasta);
-            ultimoTitulo = "Reporte Detallado de Ventas (" + fDesde + " al " + fHasta + ")";
+            
+            if (index == 1) {
+                ultimasColumnas = new String[]{"Fecha", "Ticket", "Tipo Venta", "Producto", "Cantidad", "Subtotal (L.)"};
+                ultimosDatos = reportesDAO.obtenerReporteDetalladoVentas(fDesde, fHasta);
+                ultimoTitulo = "Reporte Detallado de Ventas (" + fDesde + " al " + fHasta + ")";
+            } else if (index == 4) {
+                ultimasColumnas = new String[]{"Fecha", "Producto", "Usuario", "Movimiento", "Cant.", "Stock Final", "Referencia"};
+                ultimosDatos = reportesDAO.obtenerReporteKardex(null, fDesde, fHasta);
+                ultimoTitulo = "Reporte Kardex General (" + fDesde + " al " + fHasta + ")";
+            } else if (index == 5) {
+                if (idProductoSeleccionadoKardex == -1) {
+                    utilidades.Mensajes.showMessageDialog(this, "Seleccione un producto del cat\u00E1logo.", "Error", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                int idProd = idProductoSeleccionadoKardex;
+                String nombreProd = txtProductoKardex.getText();
+                ultimasColumnas = new String[]{"Fecha", "Producto", "Usuario", "Movimiento", "Cant.", "Stock Final", "Referencia"};
+                ultimosDatos = reportesDAO.obtenerReporteKardex(idProd, fDesde, fHasta);
+                ultimoTitulo = "Kardex: " + nombreProd + " (" + fDesde + " al " + fHasta + ")";
+            } else if (index == 6) {
+                ultimasColumnas = new String[]{"Ingreso", "Producto", "Cant.", "Origen", "Motivo", "Estado", "Cliente"};
+                ultimosDatos = reportesDAO.obtenerReporteDefectuosos(fDesde, fHasta);
+                ultimoTitulo = "Reporte Productos Defectuosos (" + fDesde + " al " + fHasta + ")";
+            }
         }
         else if (index == 2) {
             ultimasColumnas = new String[]{"C\u00F3digo", "Producto", "Stock Actual", "Precio Venta (L.)"};

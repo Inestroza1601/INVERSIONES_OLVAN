@@ -120,7 +120,7 @@ public class InventarioDefectuosoDAO {
         return lista;
     }
 
-    public boolean cambiarEstadoMermas(int idProducto, String estadoActual, String nuevoEstado, int idUsuario, String kardexRef, String nombreCliente, int idDefectuoso) {
+    public boolean cambiarEstadoDefectuoso(int idProducto, String estadoActual, String nuevoEstado, int idUsuario, String kardexRef, String nombreCliente, int idDefectuoso) {
         String sqlUpdate;
         String sqlCount;
         boolean isEmpresa = ("INVERSIONES OLVAN (Empresa)".equals(nombreCliente) || nombreCliente == null || "Desconocido".equals(nombreCliente));
@@ -258,7 +258,7 @@ public class InventarioDefectuosoDAO {
                     psK.setInt(2, idUsuario);
                     psK.setInt(3, cantidadAfectada);
                     psK.setInt(4, stockReal);
-                    psK.setString(5, "RETORNO MERMA: " + observacion);
+                    psK.setString(5, "RETORNO DE DEFECTUOSO: " + observacion);
                     psK.executeUpdate();
                 }
             }
@@ -304,6 +304,73 @@ public class InventarioDefectuosoDAO {
             if(con != null) try{con.rollback();}catch(Exception ex){}
             e.printStackTrace();
             return false;
+        } finally {
+            if(con != null) try{con.setAutoCommit(true); con.close();}catch(Exception ex){}
+        }
+    }
+
+    public int reportarDefectuosoAlmacen(int idProducto, int cantidad, String motivo, int idUsuario) throws java.sql.SQLException {
+        String sqlCheckStock = "SELECT stock_producto FROM INVENTARIO WHERE id_producto = ?";
+        String sqlUpdateInv = "UPDATE INVENTARIO SET stock_producto = stock_producto - ? WHERE id_producto = ?";
+        String sqlInsertKardex = "INSERT INTO KARDEX (id_producto, id_usuario, fecha_movimiento_producto, tipo_movimiento_producto, cantidad_producto, stock_restante_producto, referencia_producto) VALUES (?, ?, GETDATE(), 'Salida', ?, ?, ?)";
+        String sqlInsertDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, fecha_ingreso, cantidad, motivo_danio, estado_defecto) VALUES (?, GETDATE(), ?, ?, 'En Bodega (Falla de F\u00E1brica)')";
+        
+        Connection con = null;
+        try {
+            con = factory.getConexion();
+            con.setAutoCommit(false);
+            
+            int stockActual = 0;
+            try(PreparedStatement psStock = con.prepareStatement(sqlCheckStock)){
+                psStock.setInt(1, idProducto);
+                try(ResultSet rs = psStock.executeQuery()){
+                    if(rs.next()) {
+                        stockActual = rs.getInt(1);
+                    } else {
+                        throw new java.sql.SQLException("Producto no encontrado en inventario.");
+                    }
+                }
+            }
+            
+            if (stockActual < cantidad) {
+                throw new java.sql.SQLException("No hay suficiente stock para reportar esta cantidad como defectuosa.");
+            }
+            
+            int nuevoStock = stockActual - cantidad;
+            
+            try(PreparedStatement psU = con.prepareStatement(sqlUpdateInv)){
+                psU.setInt(1, cantidad);
+                psU.setInt(2, idProducto);
+                psU.executeUpdate();
+            }
+            
+            try(PreparedStatement psK = con.prepareStatement(sqlInsertKardex)){
+                psK.setInt(1, idProducto);
+                psK.setInt(2, idUsuario);
+                psK.setInt(3, cantidad);
+                psK.setInt(4, nuevoStock);
+                psK.setString(5, "TRASLADO A DEFECTUOSO: " + motivo);
+                psK.executeUpdate();
+            }
+            
+            int idGenerado = -1;
+            try(PreparedStatement psD = con.prepareStatement(sqlInsertDefectuoso, java.sql.Statement.RETURN_GENERATED_KEYS)){
+                psD.setInt(1, idProducto);
+                psD.setInt(2, cantidad);
+                psD.setString(3, motivo);
+                psD.executeUpdate();
+                try (ResultSet rsKeys = psD.getGeneratedKeys()) {
+                    if (rsKeys.next()) {
+                        idGenerado = rsKeys.getInt(1);
+                    }
+                }
+            }
+            
+            con.commit();
+            return idGenerado;
+        } catch(java.sql.SQLException e) {
+            if(con != null) try{con.rollback();}catch(Exception ex){}
+            throw e;
         } finally {
             if(con != null) try{con.setAutoCommit(true); con.close();}catch(Exception ex){}
         }

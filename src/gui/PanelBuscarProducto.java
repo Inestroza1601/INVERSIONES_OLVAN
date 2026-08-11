@@ -361,9 +361,11 @@ public class PanelBuscarProducto extends JPanel {
 
         // Ahora inyectamos nuestros propios \u00EDconos dibujados en Java 2D
         JMenuItem itemEditar = crearMenuItem("Ver / Editar Producto", new Color(39, 174, 96), new IconoOjo()); // Verde Menta
+        JMenuItem itemDefectuoso = crearMenuItem("Reportar Defectuoso", new Color(243, 156, 18), new IconoDefectuoso()); // Naranja
         JMenuItem itemEliminar = crearMenuItem("Eliminar Producto", new Color(227, 0, 15), new IconoBasurero()); // Rojo Logo
 
         itemEditar.addActionListener(e -> editarProductoSeleccionado(filaVista));
+        itemDefectuoso.addActionListener(e -> reportarDefectuosoSeleccionado(filaVista));
         
         modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
         if (uAct != null && !uAct.tienePermiso("EDITAR_INVENTARIO")) {
@@ -379,6 +381,7 @@ public class PanelBuscarProducto extends JPanel {
         }
 
         menu.add(itemEditar);
+        menu.add(itemDefectuoso);
         menu.addSeparator(); 
         menu.add(itemEliminar);
         
@@ -444,6 +447,21 @@ public class PanelBuscarProducto extends JPanel {
             }
         }
     }
+
+    private void reportarDefectuosoSeleccionado(int filaVista) {
+        int filaModelo = tablaInventario.convertRowIndexToModel(filaVista);
+        int idProducto = (int) modeloTabla.getValueAt(filaModelo, 0);
+        String nombre = modeloTabla.getValueAt(filaModelo, 3).toString();
+        int stock = 0;
+        try { stock = Integer.parseInt(modeloTabla.getValueAt(filaModelo, 7).toString()); } catch(Exception ex){}
+        
+        Window window = SwingUtilities.getWindowAncestor(this);
+        DialogoReportarDefectuoso dialog = new DialogoReportarDefectuoso(window, idProducto, nombre, stock);
+        dialog.setVisible(true);
+        if (dialog.isExito()) {
+            cargarDatosDesdeBD();
+        }
+    }
     // =========================================================
     // DIBUJOS VECTORIALES PARA EL MEN\u00DA CONTEXTUAL
     // =========================================================
@@ -492,6 +510,23 @@ public class PanelBuscarProducto extends JPanel {
             g2.setStroke(new BasicStroke(1.5f));
             g2.drawLine(x + 8, y + 8, x + 8, y + 14);
             g2.drawLine(x + 12, y + 8, x + 12, y + 14);
+            
+            g2.dispose();
+        }
+    }
+
+    private class IconoDefectuoso implements Icon {
+        @Override public int getIconWidth() { return 20; }
+        @Override public int getIconHeight() { return 20; }
+        @Override public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(c.getForeground());
+            g2.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            
+            g2.drawPolygon(new int[]{x+10, x+2, x+18}, new int[]{y+2, y+16, y+16}, 3);
+            g2.drawLine(x+10, y+7, x+10, y+11);
+            g2.fillOval(x+9, y+13, 2, 2);
             
             g2.dispose();
         }
