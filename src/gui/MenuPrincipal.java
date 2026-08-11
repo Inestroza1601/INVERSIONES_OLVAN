@@ -27,19 +27,19 @@ public class MenuPrincipal extends JFrame {
     private JButton botonActivo = null;
 
     // --- PALETA CROM\u00C1TICA OFICIAL: VERDE VINTAGE ELEGANTE Y BLANCO ---
-    private final Color COLOR_FONDO_SIDEBAR = new Color(213, 233, 222);     // Verde Pastel Salvia para Sidebar
-    private final Color COLOR_FONDO_APP = new Color(232, 243, 236);         // Verde Pastel Suave para Fondos
-    private final Color COLOR_TEXTO_MENU = new Color(28, 59, 45);          // Forest vintage suave para opciones
-    private final Color COLOR_VERDE_EMERALD = new Color(45, 106, 79);      // Verde Bosque Vintage Elegante
-    private final Color COLOR_VERDE_OSCURO = Color.BLACK;                  // Negro puro para opci\u00F3n activa
-    private final Color COLOR_VERDE_HOVER = new Color(192, 218, 204);      // Verde vintage suave hover
+    private final Color COLOR_FONDO_SIDEBAR = new Color(213, 233, 222); // Verde Pastel Salvia para Sidebar
+    private final Color COLOR_FONDO_APP = new Color(232, 243, 236); // Verde Pastel Suave para Fondos
+    private final Color COLOR_TEXTO_MENU = new Color(28, 59, 45); // Forest vintage suave para opciones
+    private final Color COLOR_VERDE_EMERALD = new Color(45, 106, 79); // Verde Bosque Vintage Elegante
+    private final Color COLOR_VERDE_OSCURO = Color.BLACK; // Negro puro para opci\u00F3n activa
+    private final Color COLOR_VERDE_HOVER = new Color(192, 218, 204); // Verde vintage suave hover
     private final Color COLOR_ROJO_PELIGRO = new Color(239, 68, 68);
     private final Color COLOR_ROJO_HOVER = new Color(254, 226, 226);
     private final Color COLOR_ROJO_TEXTO = new Color(185, 28, 28);
     private final Color COLOR_BORDE_LATERAL = new Color(180, 208, 192);
 
     public MenuPrincipal() {
-        setTitle("INVERSIONES OLVAN - SISTEMA INTEGRAL");
+        setTitle("SISTEMA DE ORGANIZACION DE RECURSOS,INVENTARIOS, OPERACIONES Y NEGOCIOS (ORION SYS)");
         try {
             java.net.URL imgURL = getClass().getResource("/image/logo.png");
             if (imgURL != null) {
@@ -82,9 +82,15 @@ public class MenuPrincipal extends JFrame {
                 BorderFactory.createEmptyBorder(25, 0, 20, 0)));
 
         modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
-        String nombreUser = (uAct != null && uAct.getNombreUsuario() != null && !uAct.getNombreUsuario().isEmpty()) ? uAct.getNombreUsuario() : "Administrador";
-        String rolUser = (uAct != null && uAct.getNombreRol() != null && !uAct.getNombreRol().isEmpty()) ? uAct.getNombreRol() : "Soporte T\u00E9cnico";
-        String emailUser = (uAct != null && uAct.getEmailUsuario() != null && !uAct.getEmailUsuario().isEmpty()) ? uAct.getEmailUsuario() : "admin@sistema.com";
+        String nombreUser = (uAct != null && uAct.getNombreUsuario() != null && !uAct.getNombreUsuario().isEmpty())
+                ? uAct.getNombreUsuario()
+                : "Administrador";
+        String rolUser = (uAct != null && uAct.getNombreRol() != null && !uAct.getNombreRol().isEmpty())
+                ? uAct.getNombreRol()
+                : "Soporte T\u00E9cnico";
+        String emailUser = (uAct != null && uAct.getEmailUsuario() != null && !uAct.getEmailUsuario().isEmpty())
+                ? uAct.getEmailUsuario()
+                : "admin@sistema.com";
         String inicial = nombreUser.substring(0, 1).toUpperCase();
 
         JPanel panelPerfil = new JPanel(new BorderLayout(15, 0));
@@ -98,7 +104,7 @@ public class MenuPrincipal extends JFrame {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(39, 174, 96)); 
+                g2.setColor(new Color(39, 174, 96));
                 g2.fillOval(0, 0, getWidth(), getHeight());
                 g2.setColor(Color.WHITE);
                 g2.setFont(new Font("Segoe UI", Font.BOLD, 28));
@@ -120,7 +126,7 @@ public class MenuPrincipal extends JFrame {
         JLabel lblNombre = new JLabel(nombreUser);
         lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 17));
         lblNombre.setForeground(new Color(19, 58, 42));
-        
+
         JLabel lblRol = new JLabel(rolUser);
         lblRol.setFont(new Font("Segoe UI", Font.BOLD, 13));
         lblRol.setForeground(new Color(39, 174, 96));
@@ -157,16 +163,16 @@ public class MenuPrincipal extends JFrame {
         btnCerrarSesion = crearBotonWebAnimado("Cerrar Sesi\u00F3n", new IconoMenu(6), true);
 
         // uAct ya fue declarado arriba
-        
-        boolean pAdmin       = (uAct == null) ? true : uAct.tienePermiso("VER_ADMINISTRACION");
-        boolean pClientes    = (uAct == null) ? true : uAct.tienePermiso("VER_CLIENTES");
-        boolean pInventario  = (uAct == null) ? true : uAct.tienePermiso("VER_INVENTARIO");
-        boolean pPOS         = (uAct == null) ? true : uAct.tienePermiso("VER_POS");
-        boolean pCaja        = (uAct == null) ? true : uAct.tienePermiso("VER_CAJA");
-        boolean pApartados   = (uAct == null) ? true : uAct.tienePermiso("VER_APARTADOS");
-        boolean pVentas      = (uAct == null) ? true : uAct.tienePermiso("VER_VENTAS");
-        boolean pGarantias   = (uAct == null) ? true : uAct.tienePermiso("VER_GARANTIAS");
-        boolean pEstadisticas= (uAct == null) ? true : uAct.tienePermiso("VER_ESTADISTICAS");
+
+        boolean pAdmin = (uAct == null) ? true : uAct.tienePermiso("VER_ADMINISTRACION");
+        boolean pClientes = (uAct == null) ? true : uAct.tienePermiso("VER_CLIENTES");
+        boolean pInventario = (uAct == null) ? true : uAct.tienePermiso("VER_INVENTARIO");
+        boolean pPOS = (uAct == null) ? true : uAct.tienePermiso("VER_POS");
+        boolean pCaja = (uAct == null) ? true : uAct.tienePermiso("VER_CAJA");
+        boolean pApartados = (uAct == null) ? true : uAct.tienePermiso("VER_APARTADOS");
+        boolean pVentas = (uAct == null) ? true : uAct.tienePermiso("VER_VENTAS");
+        boolean pGarantias = (uAct == null) ? true : uAct.tienePermiso("VER_GARANTIAS");
+        boolean pEstadisticas = (uAct == null) ? true : uAct.tienePermiso("VER_ESTADISTICAS");
 
         panelLateralIzquierdo.add(panelPerfil);
         panelLateralIzquierdo.add(lblMenu);
@@ -220,7 +226,7 @@ public class MenuPrincipal extends JFrame {
             abrirPanelAsync(() -> new PanelEstadisticas());
             marcarBotonActivo(btnEstadisticas, false);
         } else if (pPOS) {
-            if(validarCajaPrevia()) {
+            if (validarCajaPrevia()) {
                 abrirPanelAsync(() -> new PanelPuntoVenta());
                 marcarBotonActivo(btnPuntoVenta, false);
             }
@@ -275,11 +281,14 @@ public class MenuPrincipal extends JFrame {
     private boolean validarCajaPrevia() {
         try {
             if (new dao.ControlCajaDAO().existeCajaAbiertaAnterior()) {
-                utilidades.Mensajes.showMessageDialog(this, "ATENCI\u00D3N: Se ha detectado un turno de caja de una fecha anterior que a\u00FAn NO se ha cerrado.\n\nPor favor, dir\u00EDjase al m\u00F3dulo 'Control de Caja' y realice el cierre del turno anterior para evitar descuadres en sus finanzas antes de registrar nuevas ventas.", "Cierre de Caja Requerido", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this,
+                        "ATENCI\u00D3N: Se ha detectado un turno de caja de una fecha anterior que a\u00FAn NO se ha cerrado.\n\nPor favor, dir\u00EDjase al m\u00F3dulo 'Control de Caja' y realice el cierre del turno anterior para evitar descuadres en sus finanzas antes de registrar nuevas ventas.",
+                        "Cierre de Caja Requerido", JOptionPane.WARNING_MESSAGE);
                 return false;
             }
-        } catch(java.sql.SQLException ex) {
-            utilidades.Mensajes.showMessageDialog(this, "Error al verificar el estado de la caja:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (java.sql.SQLException ex) {
+            utilidades.Mensajes.showMessageDialog(this, "Error al verificar el estado de la caja:\n" + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
@@ -303,7 +312,7 @@ public class MenuPrincipal extends JFrame {
     // =========================================================================
     public void abrirPanelAsync(java.util.function.Supplier<JPanel> panelSupplier) {
         panelCentral.removeAll();
-        
+
         PanelCargaOverlay loader = new PanelCargaOverlay("Cargando m\u00F3dulo...");
         panelCentral.add(loader, BorderLayout.CENTER);
         panelCentral.revalidate();
@@ -313,7 +322,8 @@ public class MenuPrincipal extends JFrame {
         SwingWorker<JPanel, Void> worker = new SwingWorker<JPanel, Void>() {
             @Override
             protected JPanel doInBackground() throws Exception {
-                // Instancia el panel en segundo plano (las DB queries del constructor corren aqu\u00ED)
+                // Instancia el panel en segundo plano (las DB queries del constructor corren
+                // aqu\u00ED)
                 return panelSupplier.get();
             }
 
@@ -340,7 +350,8 @@ public class MenuPrincipal extends JFrame {
     }
 
     // =========================================================================
-    // CREACI\u00D3N DE BOTONES CON ANIMACI\u00D3N SUAVE DE HOVER (INTERPOLACI\u00D3N 60 FPS)
+    // CREACI\u00D3N DE BOTONES CON ANIMACI\u00D3N SUAVE DE HOVER
+    // (INTERPOLACI\u00D3N 60 FPS)
     // =========================================================================
     private JButton crearBotonWebAnimado(String texto, Icon icono, boolean esPeligro) {
         JButton boton = new JButton(texto);
@@ -371,8 +382,10 @@ public class MenuPrincipal extends JFrame {
             private Timer timer;
 
             void animar(boolean entrar) {
-                if (boton == botonActivo) return;
-                if (timer != null && timer.isRunning()) timer.stop();
+                if (boton == botonActivo)
+                    return;
+                if (timer != null && timer.isRunning())
+                    timer.stop();
 
                 timer = new Timer(15, e -> {
                     if (entrar) {
@@ -505,13 +518,14 @@ public class MenuPrincipal extends JFrame {
             }
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            
+
             // Fondo limpio
             g2.setColor(getBackground());
             g2.fillRect(0, 0, getWidth(), getHeight());
 
             // Efecto de aparici\u00F3n con transparencia gradual y deslizamiento suave
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Math.min(1.0f, Math.max(0.0f, opacidad))));
+            g2.setComposite(
+                    AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Math.min(1.0f, Math.max(0.0f, opacidad))));
             g2.translate(0, desplazamientoY);
             super.paint(g2);
             g2.dispose();
@@ -619,7 +633,8 @@ public class MenuPrincipal extends JFrame {
             UIManager.put("ScrollBar.thumb", new Color(185, 215, 198)); // Verde pastel medio
             UIManager.put("ScrollBar.hoverThumbColor", new Color(42, 157, 114)); // Esmeralda al pasar cursor
 
-            // Fondo general de paneles y ventanas emergentes (di\u00E1logos, popups, alert boxes)
+            // Fondo general de paneles y ventanas emergentes (di\u00E1logos, popups, alert
+            // boxes)
             UIManager.put("Panel.background", new Color(232, 243, 236));
             UIManager.put("ScrollPane.background", new Color(232, 243, 236));
             UIManager.put("Viewport.background", new Color(255, 255, 255));
@@ -629,7 +644,8 @@ public class MenuPrincipal extends JFrame {
             UIManager.put("PopupMenu.background", new Color(255, 255, 255));
             UIManager.put("PopupMenu.borderColor", new Color(180, 208, 192));
 
-            // Estilos de botones interactivos y texto negro al pasar el cursor (hover) y presionar
+            // Estilos de botones interactivos y texto negro al pasar el cursor (hover) y
+            // presionar
             UIManager.put("Button.background", new Color(255, 255, 255));
             UIManager.put("Button.foreground", new Color(30, 41, 59));
             UIManager.put("Button.hoverBackground", new Color(215, 235, 225));
@@ -659,7 +675,7 @@ public class MenuPrincipal extends JFrame {
 
             // --- TABLAS BLANCAS N\u00CDTIDAS SOBRE FONDO VERDE PASTEL ---
             UIManager.put("TableHeader.background", new Color(240, 248, 244)); // Fondo claro n\u00EDtido
-            UIManager.put("TableHeader.foreground", new Color(19, 58, 42));     // Verde forestal elegante
+            UIManager.put("TableHeader.foreground", new Color(19, 58, 42)); // Verde forestal elegante
             UIManager.put("TableHeader.separatorColor", new Color(210, 230, 220));
             UIManager.put("TableHeader.bottomSeparatorColor", new Color(42, 157, 114)); // L\u00EDnea viva esmeralda
             UIManager.put("TableHeader.height", 42);
@@ -667,8 +683,8 @@ public class MenuPrincipal extends JFrame {
             UIManager.put("Table.background", new Color(255, 255, 255)); // Tablas 100% Blancas
             UIManager.put("Table.foreground", new Color(30, 41, 59));
             UIManager.put("Table.selectionBackground", new Color(205, 235, 218)); // Menta seleccionada luminosa
-            UIManager.put("Table.selectionForeground", Color.BLACK);             // Negro texto activo
-            UIManager.put("Table.alternateRowColor", new Color(246, 251, 248));   // Rayado blanco alterno muy suave
+            UIManager.put("Table.selectionForeground", Color.BLACK); // Negro texto activo
+            UIManager.put("Table.alternateRowColor", new Color(246, 251, 248)); // Rayado blanco alterno muy suave
             UIManager.put("Table.gridColor", new Color(235, 242, 238));
             UIManager.put("Table.showHorizontalLines", true);
             UIManager.put("Table.showVerticalLines", false);
