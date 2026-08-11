@@ -120,7 +120,7 @@ public class ReportesDAO {
 
     public List<java.util.Date> obtenerFechasConCaja() {
         List<java.util.Date> fechas = new ArrayList<>();
-        String query = "SELECT DISTINCT CAST(fecha AS DATE) as fecha_caja FROM Control_Caja ORDER BY fecha_caja ASC";
+        String query = "SELECT DISTINCT CAST(fecha_apertura AS DATE) as fecha_caja FROM Control_Caja ORDER BY fecha_caja ASC";
         try (Connection con = factory.getConexion();
              PreparedStatement pst = con.prepareStatement(query);
              ResultSet rs = pst.executeQuery()) {
