@@ -58,4 +58,8 @@ public class ControlCaja {
 
     public String getNombreUsuarioApertura() { return nombreUsuarioApertura; }
     public void setNombreUsuarioApertura(String nombreUsuarioApertura) { this.nombreUsuarioApertura = nombreUsuarioApertura; }
+
+    private String nombreUsuarioCierre;
+    public String getNombreUsuarioCierre() { return nombreUsuarioCierre; }
+    public void setNombreUsuarioCierre(String nombreUsuarioCierre) { this.nombreUsuarioCierre = nombreUsuarioCierre; }
 }

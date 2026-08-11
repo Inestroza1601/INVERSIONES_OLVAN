@@ -83,7 +83,7 @@ public class PanelControlCaja extends JPanel {
         pnlHistorialWrapper.add(pnlHistHeader, BorderLayout.NORTH);
 
         // --- Tabla ---
-        String[] cols = {"ID", "Apertura", "Cierre", "Cajero", "Ef. Inicial", "Ef. Esperado", "Ef. Real", "Diferencia", "Estado"};
+        String[] cols = {"ID", "Apertura", "Cierre", "Cajero", "Cierre Por", "Ef. Inicial", "Ef. Esperado", "Ef. Real", "Diferencia", "Estado"};
         modeloHistorial = new DefaultTableModel(null, cols) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
@@ -575,6 +575,7 @@ public class PanelControlCaja extends JPanel {
                 sdf.format(c.getFechaApertura()),
                 c.getFechaCierre() != null ? sdf.format(c.getFechaCierre()) : "-",
                 c.getCajeroTurno() != null && !c.getCajeroTurno().isEmpty() ? c.getCajeroTurno() : c.getNombreUsuarioApertura(),
+                c.getNombreUsuarioCierre() != null ? c.getNombreUsuarioCierre() : "-",
                 "L " + String.format("%,.2f", c.getMontoApertura()),
                 c.getFechaCierre() != null ? ("L " + String.format("%,.2f", c.getMontoCierreEsperado())) : "-",
                 c.getFechaCierre() != null ? ("L " + String.format("%,.2f", c.getMontoCierreReal())) : "-",
@@ -634,8 +635,12 @@ public class PanelControlCaja extends JPanel {
         sb.append("Cajero: ").append(c.get("cajero_turno")).append("\n");
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         sb.append("Apertura: ").append(sdf.format((Timestamp) c.get("fecha_apertura"))).append("\n");
-        if (c.get("fecha_cierre") != null)
+        if (c.get("fecha_cierre") != null) {
             sb.append("Cierre: ").append(sdf.format((Timestamp) c.get("fecha_cierre"))).append("\n");
+            if (c.get("nombre_usuario_cierre") != null) {
+                sb.append("Cerrado por: ").append(c.get("nombre_usuario_cierre")).append("\n");
+            }
+        }
         sb.append("-----------------------------------------\n");
         sb.append("Efectivo Inicial: L ").append(String.format("%,.2f", c.get("monto_apertura"))).append("\n");
         sb.append("Ventas Totales:   L ").append(String.format("%,.2f", c.get("total_ventas_general"))).append("\n");
