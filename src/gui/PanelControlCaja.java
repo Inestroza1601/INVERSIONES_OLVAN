@@ -585,26 +585,37 @@ public class PanelControlCaja extends JPanel {
     }
 
     private void mostrarAperturaModal() {
-        int rolId = SesionGlobal.getUsuarioActual() != null ? SesionGlobal.getUsuarioActual().getIdRol() : 3;
-        String userActual = SesionGlobal.getUsuarioActual() != null ? SesionGlobal.getUsuarioActual().getNombreUsuario() : "";
-        int idUserActual = SesionGlobal.getUsuarioActual() != null ? SesionGlobal.getUsuarioActual().getIdUsuario() : 1;
-
         JTextField txtMonto = new JTextField("0.00");
-        JTextField txtCajero = new JTextField(userActual);
-        txtCajero.setEditable(false); // No permitir que se modifique el nombre del cajero
+        JTextField txtUsuario = new JTextField();
+        JPasswordField pfPass = new JPasswordField();
 
-        Object[] msgElements = rolId == 1
-            ? new Object[]{"Monto de Apertura (L):", txtMonto, "Cajero de Turno:", txtCajero}
-            : new Object[]{"Monto de Apertura (L):", txtMonto};
+        Object[] msgElements = new Object[]{
+            "Monto de Apertura (L):", txtMonto, 
+            "Usuario:", txtUsuario,
+            "Contraseña:", pfPass
+        };
 
         int opt = utilidades.Mensajes.showConfirmDialog(this, msgElements, "Apertura de Caja", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (opt == JOptionPane.OK_OPTION) {
             try {
                 double monto = Double.parseDouble(txtMonto.getText().trim());
                 if (monto < 0) { utilidades.Mensajes.showMessageDialog(this, "El monto no puede ser negativo.", "Error", JOptionPane.ERROR_MESSAGE); return; }
-                String cajero = txtCajero.getText().trim();
-                if (cajero.isEmpty()) cajero = userActual;
-                if (dao.abrirCaja(idUserActual, monto, cajero)) {
+                
+                String username = txtUsuario.getText().trim();
+                String pass = new String(pfPass.getPassword());
+                
+                if (username.isEmpty() || pass.isEmpty()) {
+                    utilidades.Mensajes.showMessageDialog(this, "Debe ingresar usuario y contraseña.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                modelo.Usuario usuarioApertura = new dao.UsuarioDAO().autenticarUsuario(username, pass);
+                if (usuarioApertura == null) {
+                    utilidades.Mensajes.showMessageDialog(this, "Usuario o contraseña incorrectos.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                if (dao.abrirCaja(usuarioApertura.getIdUsuario(), monto, usuarioApertura.getNombreUsuario())) {
                     utilidades.Mensajes.showMessageDialog(this, "Turno de caja abierto exitosamente.", "Exito", JOptionPane.INFORMATION_MESSAGE);
                     verificarSesion();
                 } else {
