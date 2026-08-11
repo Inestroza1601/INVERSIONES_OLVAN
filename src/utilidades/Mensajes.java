@@ -13,19 +13,23 @@ public class Mensajes {
     }
     
     public static void showMessageDialog(Component parentComponent, Object message, String title, int messageType) {
-        mostrarDialogo(parentComponent, message, title, messageType, false, JOptionPane.DEFAULT_OPTION);
+        mostrarDialogo(parentComponent, message, title, messageType, false, JOptionPane.DEFAULT_OPTION, 0);
+    }
+    
+    public static void showAutoCloseMessageDialog(Component parentComponent, Object message, String title, int messageType, int timeoutMs) {
+        mostrarDialogo(parentComponent, message, title, messageType, false, JOptionPane.DEFAULT_OPTION, timeoutMs);
     }
     
     public static int showConfirmDialog(Component parentComponent, Object message) {
-        return mostrarDialogo(parentComponent, message, "Confirmar", JOptionPane.QUESTION_MESSAGE, true, JOptionPane.YES_NO_OPTION);
+        return mostrarDialogo(parentComponent, message, "Confirmar", JOptionPane.QUESTION_MESSAGE, true, JOptionPane.YES_NO_OPTION, 0);
     }
     
     public static int showConfirmDialog(Component parentComponent, Object message, String title, int optionType) {
-        return mostrarDialogo(parentComponent, message, title, JOptionPane.QUESTION_MESSAGE, true, optionType);
+        return mostrarDialogo(parentComponent, message, title, JOptionPane.QUESTION_MESSAGE, true, optionType, 0);
     }
 
     public static int showConfirmDialog(Component parentComponent, Object message, String title, int optionType, int messageType) {
-        return mostrarDialogo(parentComponent, message, title, messageType, true, optionType);
+        return mostrarDialogo(parentComponent, message, title, messageType, true, optionType, 0);
     }
 
     private static Component crearTexto(String texto) {
@@ -40,7 +44,7 @@ public class Mensajes {
         return txt;
     }
 
-    private static int mostrarDialogo(Component parentComponent, Object message, String title, int messageType, boolean isConfirm, int optionType) {
+    private static int mostrarDialogo(Component parentComponent, Object message, String title, int messageType, boolean isConfirm, int optionType, int timeoutMs) {
         Window window = null;
         if (parentComponent != null) {
             if (parentComponent instanceof Window) {
@@ -176,15 +180,25 @@ public class Mensajes {
         });
         anim.start();
         
+        if (timeoutMs > 0) {
+            Timer autoCloseTimer = new Timer(timeoutMs, e -> {
+                if (dialog.isVisible()) {
+                    animarCierre(dialog);
+                }
+            });
+            autoCloseTimer.setRepeats(false);
+            autoCloseTimer.start();
+        }
+        
         dialog.setVisible(true);
         return resultado[0];
     }
     
     private static void animarCierre(JDialog dialog) {
-        Timer anim = new Timer(10, new ActionListener() {
+        Timer anim = new Timer(15, new ActionListener() {
             float op = 1f;
             public void actionPerformed(ActionEvent e) {
-                op -= 0.15f;
+                op -= 0.05f;
                 if (op <= 0f) {
                     ((Timer)e.getSource()).stop();
                     dialog.dispose();

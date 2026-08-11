@@ -321,7 +321,7 @@ public class PanelLogin extends JPanel {
             if (usr.isEmpty()) txtUsuario.putClientProperty("JComponent.outline", "error");
             if (pass.isEmpty()) txtPassword.putClientProperty("JComponent.outline", "error");
             ejecutarShakeError();
-            utilidades.Mensajes.showMessageDialog(this, "Debe ingresar usuario y contrase\u00F1a.", "Campos Incompletos", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showAutoCloseMessageDialog(this, "Debe ingresar usuario y contrase\u00F1a.", "Campos Incompletos", JOptionPane.WARNING_MESSAGE, 2000);
             return;
         }
 
@@ -392,7 +392,7 @@ public class PanelLogin extends JPanel {
                         txtUsuario.putClientProperty("JComponent.outline", "error");
                         txtPassword.putClientProperty("JComponent.outline", "error");
                         ejecutarShakeError();
-                        utilidades.Mensajes.showMessageDialog(PanelLogin.this, "El nombre de usuario o la contrase\u00F1a son incorrectos.", "Credenciales Inv\u00E1lidas", JOptionPane.ERROR_MESSAGE);
+                        utilidades.Mensajes.showAutoCloseMessageDialog(PanelLogin.this, "El nombre de usuario o la contrase\u00F1a son incorrectos.", "Credenciales Inv\u00E1lidas", JOptionPane.ERROR_MESSAGE, 2000);
                     }
                 } catch (Exception ex) {
                     btnEntrar.setEnabled(true);
