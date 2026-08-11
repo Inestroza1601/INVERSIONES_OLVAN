@@ -586,12 +586,10 @@ public class PanelControlCaja extends JPanel {
 
     private void mostrarAperturaModal() {
         JTextField txtMonto = new JTextField("0.00");
-        JTextField txtUsuario = new JTextField();
         JPasswordField pfPass = new JPasswordField();
 
         Object[] msgElements = new Object[]{
             "Monto de Apertura (L):", txtMonto, 
-            "Usuario:", txtUsuario,
             "Contraseña:", pfPass
         };
 
@@ -601,19 +599,20 @@ public class PanelControlCaja extends JPanel {
                 double monto = Double.parseDouble(txtMonto.getText().trim());
                 if (monto < 0) { utilidades.Mensajes.showMessageDialog(this, "El monto no puede ser negativo.", "Error", JOptionPane.ERROR_MESSAGE); return; }
                 
-                String username = txtUsuario.getText().trim();
                 String pass = new String(pfPass.getPassword());
                 
-                if (username.isEmpty() || pass.isEmpty()) {
-                    utilidades.Mensajes.showMessageDialog(this, "Debe ingresar usuario y contraseña.", "Error", JOptionPane.ERROR_MESSAGE);
+                if (pass.isEmpty()) {
+                    utilidades.Mensajes.showMessageDialog(this, "Debe ingresar contraseña.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 
-                modelo.Usuario usuarioApertura = new dao.UsuarioDAO().autenticarUsuario(username, pass);
-                if (usuarioApertura == null) {
-                    utilidades.Mensajes.showMessageDialog(this, "Usuario o contraseña incorrectos.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+                int idFirma = new dao.KardexDAO().validarFirmaUsuario(pass);
+                if (idFirma <= 0) {
+                    utilidades.Mensajes.showMessageDialog(this, "Contraseña incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+                
+                modelo.Usuario usuarioApertura = new dao.UsuarioDAO().obtenerUsuarioPorId(idFirma);
                 
                 if (dao.abrirCaja(usuarioApertura.getIdUsuario(), monto, usuarioApertura.getNombreUsuario())) {
                     utilidades.Mensajes.showMessageDialog(this, "Turno de caja abierto exitosamente.", "Exito", JOptionPane.INFORMATION_MESSAGE);

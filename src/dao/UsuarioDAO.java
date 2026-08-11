@@ -211,6 +211,28 @@ public class UsuarioDAO {
         return null;
     }
     
+    public Usuario obtenerUsuarioPorId(int idUsuario) {
+        String sql = "SELECT * FROM USUARIOS WHERE id_usuario = ?";
+        try (Connection con = factory.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+             
+            ps.setInt(1, idUsuario);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Usuario u = new Usuario();
+                    u.setIdUsuario(rs.getInt("id_usuario"));
+                    u.setIdRol(rs.getInt("id_rol"));
+                    u.setNombreUsuario(rs.getString("nombre_usuario"));
+                    u.setEmailUsuario(rs.getString("email_usuario"));
+                    return u;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al buscar usuario por ID: " + e.getMessage());
+        }
+        return null;
+    }
+    
     public Usuario obtenerUsuarioPorEmail(String email) {
         String sql = "SELECT * FROM USUARIOS WHERE LOWER(email_usuario) = LOWER(?) AND estado_usuario = 1";
         try (Connection con = factory.getConexion();
