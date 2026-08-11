@@ -110,6 +110,41 @@ public class PanelControlCaja extends JPanel {
         scrollHist.getViewport().setBackground(Color.WHITE);
         pnlHistorialWrapper.add(scrollHist, BorderLayout.CENTER);
 
+        JButton btnReimprimirHistorial = utilidades.EfectosUI.crearBotonVerde("Reimprimir Ticket Seleccionado");
+        btnReimprimirHistorial.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnReimprimirHistorial.setPreferredSize(new Dimension(260, 40));
+        btnReimprimirHistorial.addActionListener(e -> {
+            int row = tablaHistorial.getSelectedRow();
+            if (row < 0) {
+                utilidades.Mensajes.showMessageDialog(this, "Seleccione un turno del historial.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            int modelRow = tablaHistorial.convertRowIndexToModel(row);
+            int idCaja = (int) modeloHistorial.getValueAt(modelRow, 0);
+            Map<String, Object> calcs = dao.obtenerCalculosTurno(idCaja);
+            if (calcs != null) {
+                java.io.File dir = new java.io.File("reportes/cierres");
+                if (!dir.exists()) dir.mkdirs();
+                java.io.File dest = new java.io.File("reportes/cierres/Ticket_Cierre_" + idCaja + ".pdf");
+                try {
+                    utilidades.GeneradorTickets.generarTicketCierreCajaPDF(dest.getAbsolutePath(), calcs);
+                    if (java.awt.Desktop.isDesktopSupported()) utilidades.GestorImpresion.procesarImpresion(dest, utilidades.GestorImpresion.TIPO_TICKET);
+                } catch (Exception ex) {
+                    utilidades.Mensajes.showMessageDialog(this, "Error al generar PDF: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
+        if (uAct == null || !uAct.tienePermiso("ELIMINAR_CAJA")) {
+            btnReimprimirHistorial.setVisible(false); // Ocultar para los que no tengan permiso total
+        }
+
+        JPanel pnlSurHistorial = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        pnlSurHistorial.setOpaque(false);
+        pnlSurHistorial.add(btnReimprimirHistorial);
+        pnlHistorialWrapper.add(pnlSurHistorial, BorderLayout.SOUTH);
+
         // Historial: ocupa todo el espacio horizontal disponible, mismo alto que el derecho
         gbcMain.gridx = 0; gbcMain.gridy = 0;
         gbcMain.weightx = 1.0; gbcMain.weighty = 1.0;
@@ -234,47 +269,22 @@ public class PanelControlCaja extends JPanel {
 
         panel.add(tarjeta, BorderLayout.CENTER);
 
-        // ---- Botones: Reimprimir Cierre + Cerrar Caja (abajo del panel derecho) ----
-        JPanel pnlBotones = new JPanel(new GridLayout(2, 1, 0, 8));
+        // ---- Botones: Cerrar Caja (abajo del panel derecho) ----
+        JPanel pnlBotones = new JPanel(new GridLayout(1, 1, 0, 8));
         pnlBotones.setOpaque(false);
         pnlBotones.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-
-        JButton btnReimprimirDer = utilidades.EfectosUI.crearBotonVerde("Reimprimir Cierre");
-        btnReimprimirDer.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        btnReimprimirDer.setPreferredSize(new Dimension(0, 50));
-        btnReimprimirDer.addActionListener(e -> {
-            int row = tablaHistorial.getSelectedRow();
-            if (row < 0) {
-                utilidades.Mensajes.showMessageDialog(panel, "Seleccione un turno del historial.", "Aviso", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            int idCaja = (int) tablaHistorial.getValueAt(row, 0);
-            Map<String, Object> calcs = dao.obtenerCalculosTurno(idCaja);
-            if (calcs != null) {
-                java.io.File dir = new java.io.File("reportes/cierres");
-                if (!dir.exists()) dir.mkdirs();
-                java.io.File dest = new java.io.File("reportes/cierres/Ticket_Cierre_" + idCaja + ".pdf");
-                try {
-                    utilidades.GeneradorTickets.generarTicketCierreCajaPDF(dest.getAbsolutePath(), calcs);
-                    if (java.awt.Desktop.isDesktopSupported()) utilidades.GestorImpresion.procesarImpresion(dest, utilidades.GestorImpresion.TIPO_TICKET);
-                } catch (Exception ex) {
-                    utilidades.Mensajes.showMessageDialog(panel, "Error al generar PDF: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
 
         JButton btnCerrarCaja = utilidades.EfectosUI.crearBotonVerde("Cerrar Caja");
         btnCerrarCaja.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnCerrarCaja.setPreferredSize(new Dimension(0, 50));
         btnCerrarCaja.addActionListener(e -> mostrarVentanaCierreCaja());
         
-        modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
-        if (uAct != null && !uAct.tienePermiso("ELIMINAR_CAJA")) {
+        modelo.Usuario uActDer = utilidades.SesionGlobal.getUsuarioActual();
+        if (uActDer != null && !uActDer.tienePermiso("ELIMINAR_CAJA")) {
             btnCerrarCaja.setEnabled(false);
             btnCerrarCaja.setToolTipText("No tienes permiso para cerrar caja.");
         }
 
-        pnlBotones.add(btnReimprimirDer);
         pnlBotones.add(btnCerrarCaja);
 
         panel.add(pnlBotones, BorderLayout.SOUTH);
