@@ -69,9 +69,10 @@ public class ControlCajaDAO {
 
     public List<ControlCaja> listarHistoricos() {
         List<ControlCaja> lista = new ArrayList<>();
-        String sql = "SELECT c.*, u.nombre_usuario as nombre_usuario_apertura "
+        String sql = "SELECT c.*, u1.nombre_usuario as nombre_usuario_apertura, u2.nombre_usuario as nombre_usuario_cierre "
                    + "FROM CONTROL_CAJA c "
-                   + "LEFT JOIN USUARIOS u ON c.id_usuario_apertura = u.id_usuario "
+                   + "LEFT JOIN USUARIOS u1 ON c.id_usuario_apertura = u1.id_usuario "
+                   + "LEFT JOIN USUARIOS u2 ON c.id_usuario_cierre = u2.id_usuario "
                    + "ORDER BY c.fecha_apertura DESC";
         try (Connection con = factory.getConexion();
              PreparedStatement ps = con.prepareStatement(sql);
@@ -89,8 +90,10 @@ public class ControlCajaDAO {
                 c.setObservaciones(rs.getString("observaciones"));
                 c.setCajeroTurno(rs.getString("cajero_turno"));
                 c.setIdUsuarioApertura(rs.getInt("id_usuario_apertura"));
+                c.setIdUsuarioCierre(rs.getInt("id_usuario_cierre"));
                 c.setEstadoCaja(rs.getString("estado_caja").equals("ABIERTA") ? 1 : 0);
                 c.setNombreUsuarioApertura(rs.getString("nombre_usuario_apertura"));
+                c.setNombreUsuarioCierre(rs.getString("nombre_usuario_cierre"));
                 lista.add(c);
             }
         } catch (SQLException e) {
@@ -101,9 +104,10 @@ public class ControlCajaDAO {
 
     public Map<String, Object> obtenerCalculosTurno(int idCaja) {
         Map<String, Object> resultado = new HashMap<>();
-        String sqlCaja = "SELECT c.*, u.nombre_usuario as nombre_usuario_apertura "
+        String sqlCaja = "SELECT c.*, u1.nombre_usuario as nombre_usuario_apertura, u2.nombre_usuario as nombre_usuario_cierre "
                        + "FROM CONTROL_CAJA c "
-                       + "LEFT JOIN USUARIOS u ON c.id_usuario_apertura = u.id_usuario "
+                       + "LEFT JOIN USUARIOS u1 ON c.id_usuario_apertura = u1.id_usuario "
+                       + "LEFT JOIN USUARIOS u2 ON c.id_usuario_cierre = u2.id_usuario "
                        + "WHERE c.id_caja = ?";
                        
         try (Connection con = factory.getConexion();
@@ -237,6 +241,7 @@ public class ControlCajaDAO {
                 resultado.put("monto_apertura", montoApertura);
                 resultado.put("cajero_turno", rsCaja.getString("cajero_turno"));
                 resultado.put("nombre_usuario_apertura", rsCaja.getString("nombre_usuario_apertura"));
+                resultado.put("nombre_usuario_cierre", rsCaja.getString("nombre_usuario_cierre"));
                 if (rsCaja.getObject("monto_cierre_real") != null) {
                     resultado.put("monto_cierre_real", rsCaja.getDouble("monto_cierre_real"));
                 }
@@ -267,7 +272,8 @@ public class ControlCajaDAO {
                    + "    monto_cierre_real = ?, "
                    + "    diferencia_caja = ?, "
                    + "    estado_caja = 'CERRADA', "
-                   + "    observaciones = ? "
+                   + "    observaciones = ?, "
+                   + "    id_usuario_cierre = ? "
                    + "WHERE id_caja = ? AND estado_caja = 'ABIERTA'";
                    
         try (Connection con = factory.getConexion();
@@ -277,7 +283,8 @@ public class ControlCajaDAO {
             ps.setDouble(2, montoReal);
             ps.setDouble(3, diferencia);
             ps.setString(4, observaciones.trim());
-            ps.setInt(5, idCaja);
+            ps.setInt(5, idUsuarioCierre);
+            ps.setInt(6, idCaja);
             
             return ps.executeUpdate() > 0;
             
