@@ -868,6 +868,9 @@ public class GeneradorTickets {
         sb.append("Apertura: ").append(sdf.format((java.util.Date) c.get("fecha_apertura"))).append("\n");
         if (c.get("fecha_cierre") != null) {
             sb.append("Cierre:   ").append(sdf.format((java.util.Date) c.get("fecha_cierre"))).append("\n");
+            if (c.get("nombre_usuario_cierre") != null) {
+                sb.append("Cerrado por: ").append(c.get("nombre_usuario_cierre")).append("\n");
+            }
         }
         sb.append("-------------------------------\n");
         sb.append(String.format("%-16s L %,8.2f\n", "Fondo Gaveta:", (double) c.get("monto_apertura")));
