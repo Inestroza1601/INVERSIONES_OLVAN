@@ -79,22 +79,28 @@ public class PanelEstadisticas extends JPanel {
 
         // Tarjeta 2: Comparativa
         JPanel tarjetaComparativa = crearTarjeta("Rendimiento vs Per\u00EDodo Anterior");
-        tarjetaComparativa.setLayout(new BoxLayout(tarjetaComparativa, BoxLayout.Y_AXIS));
+        
+        JPanel pnlComparativaCenter = new JPanel(new GridBagLayout());
+        pnlComparativaCenter.setOpaque(false);
+        GridBagConstraints gbcComp = new GridBagConstraints();
+        gbcComp.gridx = 0;
+        gbcComp.anchor = GridBagConstraints.CENTER;
         
         lblDiferenciaPorcentaje = new JLabel("+0.00%", SwingConstants.CENTER);
         lblDiferenciaPorcentaje.setFont(new Font("Segoe UI", Font.BOLD, 55)); // Fuente ampliada
-        lblDiferenciaPorcentaje.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        lblMensajeComparacion = new JLabel("<html><div style='text-align: center;'>Analizando datos comerciales...</div></html>");
+        lblMensajeComparacion = new JLabel("<html><center>Analizando datos comerciales...</center></html>", SwingConstants.CENTER);
         lblMensajeComparacion.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         lblMensajeComparacion.setForeground(new Color(100, 116, 139));
-        lblMensajeComparacion.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        tarjetaComparativa.add(Box.createVerticalGlue());
-        tarjetaComparativa.add(lblDiferenciaPorcentaje);
-        tarjetaComparativa.add(Box.createVerticalStrut(20));
-        tarjetaComparativa.add(lblMensajeComparacion);
-        tarjetaComparativa.add(Box.createVerticalGlue());
+        gbcComp.gridy = 0;
+        pnlComparativaCenter.add(lblDiferenciaPorcentaje, gbcComp);
+        
+        gbcComp.gridy = 1;
+        gbcComp.insets = new Insets(10, 0, 0, 0); // space between
+        pnlComparativaCenter.add(lblMensajeComparacion, gbcComp);
+
+        tarjetaComparativa.add(pnlComparativaCenter, BorderLayout.CENTER);
 
         // Tarjeta 3: Ticket Promedio
         JPanel tarjetaTicket = crearTarjeta("Ticket Promedio");
@@ -193,7 +199,7 @@ public class PanelEstadisticas extends JPanel {
             
             // Inyectamos nuestro \u00EDcono vectorial y el mensaje
             lblMensajeComparacion.setIcon(new IconoFaltaDatos());
-            lblMensajeComparacion.setText("<html><div style='text-align: center; padding-left: 8px;'>No existen datos suficientes del per\u00EDodo<br>anterior para calcular una diferencia.</div></html>");
+            lblMensajeComparacion.setText("<html><center>No existen datos suficientes del per\u00EDodo<br>anterior para calcular una diferencia.</center></html>");
             
         } else {
             // L\u00F3gica normal de c\u00E1lculo
@@ -203,11 +209,11 @@ public class PanelEstadisticas extends JPanel {
             if (porcentaje >= 0) {
                 lblDiferenciaPorcentaje.setText("\u25B2 " + percStr);
                 lblDiferenciaPorcentaje.setForeground(COLOR_EXITO);
-                lblMensajeComparacion.setText("<html><div style='text-align: center;'>Orion Systems detect\u00F3 un <b>incremento</b> de ventas<br>del " + percStr + " entre " + periodoText + ".</div></html>");
+                lblMensajeComparacion.setText("<html><center>Orion Systems detect\u00F3 un <b>incremento</b> de ventas<br>del " + percStr + " entre " + periodoText + ".</center></html>");
             } else {
                 lblDiferenciaPorcentaje.setText("\u25BC " + percStr);
                 lblDiferenciaPorcentaje.setForeground(COLOR_ALERTA);
-                lblMensajeComparacion.setText("<html><div style='text-align: center;'>Orion Systems detect\u00F3 un <b>decremento</b> de ventas<br>del " + percStr + " entre " + periodoText + ".</div></html>");
+                lblMensajeComparacion.setText("<html><center>Orion Systems detect\u00F3 un <b>decremento</b> de ventas<br>del " + percStr + " entre " + periodoText + ".</center></html>");
             }
         }
 
