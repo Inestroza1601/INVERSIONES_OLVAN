@@ -31,7 +31,8 @@ public class MenuPrincipal extends JFrame {
     private final Color COLOR_FONDO_APP = new Color(232, 243, 236); // Verde Pastel Suave para Fondos
     private final Color COLOR_TEXTO_MENU = new Color(28, 59, 45); // Forest vintage suave para opciones
     private final Color COLOR_VERDE_EMERALD = new Color(45, 106, 79); // Verde Bosque Vintage Elegante
-    private final Color COLOR_VERDE_OSCURO = Color.BLACK; // Negro puro para opci\u00F3n activa
+    // private final Color COLOR_VERDE_OSCURO = Color.BLACK; // Negro puro para
+    // opci\u00F3n activa
     private final Color COLOR_VERDE_HOVER = new Color(192, 218, 204); // Verde vintage suave hover
     private final Color COLOR_ROJO_PELIGRO = new Color(239, 68, 68);
     private final Color COLOR_ROJO_HOVER = new Color(254, 226, 226);
@@ -39,14 +40,20 @@ public class MenuPrincipal extends JFrame {
     private final Color COLOR_BORDE_LATERAL = new Color(180, 208, 192);
 
     public MenuPrincipal() {
-        setTitle("SISTEMA DE ORGANIZACION DE RECURSOS,INVENTARIOS, OPERACIONES Y NEGOCIOS (ORION SYS)");
+        setTitle("SISTEMA DE ORGANIZACION DE RECURSOS, INVENTARIOS, OPERACIONES Y NEGOCIOS (ORION SYS)");
         try {
+            dao.EmpresaDAO empDao = new dao.EmpresaDAO();
+            modelo.Empresa emp = empDao.obtenerDatos(1);
+            if (emp != null) {
+                utilidades.SesionGlobal.setEmpresaActual(emp);
+            }
+            // Logo fijo de la aplicaci\u00f3n para la barra de tareas
             java.net.URL imgURL = getClass().getResource("/image/logo.png");
             if (imgURL != null) {
                 setIconImage(new javax.swing.ImageIcon(imgURL).getImage());
             }
         } catch (Exception e) {
-            System.err.println("No se pudo cargar el logo: " + e.getMessage());
+            System.err.println("No se pudo cargar el logo local: " + e.getMessage());
         }
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setSize(1200, 800);

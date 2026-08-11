@@ -4,7 +4,6 @@ import dao.InventarioDAO;
 import dao.CatalogosDAO;
 import modelo.Producto;
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -35,7 +34,8 @@ public class PanelCrearProducto extends JPanel {
     private JTextField txtStockMinimo;
     
     private JLabel lblVistaPreviaImagen;
-    private String imagenSeleccionada = null; 
+    @SuppressWarnings("unused")
+    private String imagenSeleccionada = null;
     private JButton btnGuardar;
     private java.util.List<String> imagenesSeleccionadas = new java.util.ArrayList<>();
     private int indiceImagenActual = -1;
@@ -766,7 +766,7 @@ public class PanelCrearProducto extends JPanel {
         SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
             @Override
             protected String doInBackground() throws Exception {
-                java.net.URL url = new java.net.URL(urlStr.trim());
+                java.net.URL url = java.net.URI.create(urlStr.trim()).toURL();
                 java.awt.image.BufferedImage img = javax.imageio.ImageIO.read(url);
                 if (img == null) throw new Exception("La URL no contiene una imagen v\u00E1lida.");
                 return utilidades.ImagenHelper.convertirImagenABase64(img);
@@ -898,7 +898,7 @@ public class PanelCrearProducto extends JPanel {
         dialog.add(pnlBotones, BorderLayout.SOUTH);
         dialog.setVisible(true);
     }
-     @SuppressWarnings("unchecked")
+     @SuppressWarnings("unused")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

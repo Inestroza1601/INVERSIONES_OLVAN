@@ -1,8 +1,6 @@
 package utilidades;
 
 import fi.iki.elonen.NanoHTTPD;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;

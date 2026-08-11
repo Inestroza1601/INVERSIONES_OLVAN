@@ -126,7 +126,7 @@ public class DialogoMovimientoKardex extends JDialog {
             }
         }
     }                  
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unused")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

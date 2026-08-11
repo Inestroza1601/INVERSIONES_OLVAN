@@ -2,19 +2,12 @@ package gui;
 
 import dao.ApartadoDAO;
 import dao.KardexDAO;
-import dao.VentasDAO;
 import modelo.Apartado;
-import modelo.DetalleApartado;
-import modelo.AbonoApartado;
-import utilidades.SesionGlobal;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Map;
-
 public class PanelApartados extends JPanel {
     private ApartadoDAO dao;
     private List<Apartado> apartados;

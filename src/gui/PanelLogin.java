@@ -1,14 +1,9 @@
 package gui;
 
-import dao.UsuarioDAO;
-import modelo.Usuario;
-import utilidades.SesionGlobal;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 public class PanelLogin extends JPanel {
     private JTextField txtUsuario;
@@ -69,11 +64,24 @@ public class PanelLogin extends JPanel {
         
         JLabel lblBranding = new JLabel("", SwingConstants.CENTER);
         try {
-            java.net.URL imgURL = getClass().getResource("/image/logo_inversionesOlvan_sinFondo.png");
-            if (imgURL != null) {
-                ImageIcon icon = new ImageIcon(imgURL);
-                Image img = icon.getImage().getScaledInstance(260, -1, Image.SCALE_SMOOTH);
-                lblBranding.setIcon(new ImageIcon(img));
+            modelo.Empresa emp = utilidades.SesionGlobal.getEmpresaActual();
+            if (emp == null) {
+                dao.EmpresaDAO empDao = new dao.EmpresaDAO();
+                emp = empDao.obtenerDatos(1);
+            }
+            if (emp != null && emp.getImagen_logo() != null && !emp.getImagen_logo().isEmpty()) {
+                ImageIcon icon = utilidades.ImagenHelper.obtenerIcono(emp.getImagen_logo(), 260, 260);
+                if (icon != null) {
+                    Image img = icon.getImage().getScaledInstance(260, -1, Image.SCALE_SMOOTH);
+                    lblBranding.setIcon(new ImageIcon(img));
+                }
+            } else {
+                java.net.URL imgURL = getClass().getResource("/image/logo_inversionesOlvan_sinFondo.png");
+                if (imgURL != null) {
+                    ImageIcon icon = new ImageIcon(imgURL);
+                    Image img = icon.getImage().getScaledInstance(260, -1, Image.SCALE_SMOOTH);
+                    lblBranding.setIcon(new ImageIcon(img));
+                }
             }
         } catch (Exception e) {}
         

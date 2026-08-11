@@ -369,6 +369,7 @@ public class PanelControlCaja extends JPanel {
 
         // Resumen calculado
         if (calcs != null) {
+            @SuppressWarnings("unchecked")
             java.util.List<java.util.Map<String, Object>> metodos = (java.util.List<java.util.Map<String, Object>>) calcs.get("metodos");
             int rows = (metodos != null ? metodos.size() : 0) + 2; // +1 for expected cash, +1 for note
             JPanel pnlResumen = new JPanel(new GridLayout(rows, 1, 4, 4));
@@ -652,6 +653,7 @@ public class PanelControlCaja extends JPanel {
         sb.append("Efectivo Real Contado: L ").append(String.format("%,.2f", real)).append("\n");
         sb.append("Diferencia: L ").append(String.format("%,.2f", real - esp)).append("\n");
         sb.append("=========================================\n");
+        @SuppressWarnings("unchecked")
         List<Map<String, Object>> prods = (List<Map<String, Object>>) c.get("productos_vendidos");
         if (prods != null && !prods.isEmpty()) {
             sb.append("\nPRODUCTOS VENDIDOS EN EL TURNO:\n");

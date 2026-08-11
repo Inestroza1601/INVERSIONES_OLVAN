@@ -1,10 +1,6 @@
 package utilidades;
 
-import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
 import javax.swing.ImageIcon;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -14,8 +10,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Base64;
-import java.util.Iterator;
-
 public class ImagenHelper {
 
     /**

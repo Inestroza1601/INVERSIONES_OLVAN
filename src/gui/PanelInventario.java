@@ -138,7 +138,7 @@ public class PanelInventario extends JPanel {
         panelContenedorInventario.repaint();
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unused")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

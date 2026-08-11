@@ -8,7 +8,7 @@ import modelo.Cliente;
 import modelo.Producto;
 import modelo.Apartado;
 import modelo.DetalleApartado;
-import utilidades.SesionGlobal;
+
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -308,8 +308,8 @@ public class PanelPuntoVenta extends JPanel {
             }
         }
 
-        ItemPago pagoSeleccionado = (ItemPago) cmbMetodoPago.getSelectedItem();
-        boolean pagoConTarjeta = pagoSeleccionado != null && pagoSeleccionado.nombre.toLowerCase().contains("tarjeta");
+        // ItemPago pagoSeleccionado = (ItemPago) cmbMetodoPago.getSelectedItem();
+        // boolean pagoConTarjeta = pagoSeleccionado != null && pagoSeleccionado.nombre.toLowerCase().contains("tarjeta");
 
         /*
         if (facturacionHabilitada || pagoConTarjeta) {
@@ -493,7 +493,8 @@ public class PanelPuntoVenta extends JPanel {
         actionMapGlobal.put("cobrarVenta", new javax.swing.AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                if (!utilidades.Seguridad.tienePermiso("CREAR_VENTA")) return;
+                modelo.Usuario uAct = utilidades.SesionGlobal.getUsuarioActual();
+                if (uAct != null && !uAct.tienePermiso("CREAR_POS")) return;
                 procesarVenta();
             }
         });
@@ -1395,7 +1396,7 @@ public class PanelPuntoVenta extends JPanel {
             g2.dispose();
         }
     }
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unused")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

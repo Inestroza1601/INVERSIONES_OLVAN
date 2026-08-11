@@ -1,7 +1,7 @@
 package gui;
 
 import dao.VentasDAO;
-import utilidades.SesionGlobal;
+
 import utilidades.GeneradorTickets;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -240,6 +240,7 @@ public class PanelHistorialVentas extends JPanel {
         if (venta == null || venta.isEmpty())
             return;
 
+        @SuppressWarnings("unchecked")
         List<Object[]> detalles = (List<Object[]>) venta.get("detalles");
 
         Window parent = SwingUtilities.getWindowAncestor(this);
@@ -411,6 +412,7 @@ public class PanelHistorialVentas extends JPanel {
         if (venta == null || venta.isEmpty())
             return;
 
+        @SuppressWarnings("unchecked")
         List<Object[]> detalles = (List<Object[]>) venta.get("detalles");
 
         File dir = new File("reportes/ventas");
@@ -441,43 +443,5 @@ public class PanelHistorialVentas extends JPanel {
         }
     }
 
-    private class IconoOjo implements Icon {
-        @Override public int getIconWidth() { return 18; }
-        @Override public int getIconHeight() { return 18; }
-        @Override
-        public void paintIcon(Component c, Graphics g, int x, int y) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(c.getForeground());
-            g2.setStroke(new BasicStroke(1.5f));
-            g2.drawArc(x, y + 4, 18, 10, 0, 180);
-            g2.drawArc(x, y + 4, 18, 10, 0, -180);
-            g2.fillOval(x + 6, y + 6, 6, 6);
-            g2.dispose();
-        }
-    }
-
-    private class IconoImpresora implements Icon {
-        @Override public int getIconWidth() { return 18; }
-        @Override public int getIconHeight() { return 18; }
-        @Override
-        public void paintIcon(Component c, Graphics g, int x, int y) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(c.getForeground());
-            g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            // Papel superior
-            g2.drawRect(x + 5, y + 1, 8, 4);
-            // Cuerpo de la impresora
-            g2.drawRoundRect(x + 2, y + 5, 14, 7, 3, 3);
-            g2.drawLine(x + 4, y + 8, x + 6, y + 8); // Lucesitas
-            // Bandeja/Papel inferior
-            g2.fillRect(x + 4, y + 9, 10, 7);
-            g2.setColor(c.getBackground());
-            g2.drawLine(x + 6, y + 11, x + 12, y + 11);
-            g2.drawLine(x + 6, y + 13, x + 12, y + 13);
-            g2.dispose();
-        }
-    }
 }
 

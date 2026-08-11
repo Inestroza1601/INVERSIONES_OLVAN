@@ -6,7 +6,6 @@ import java.awt.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import com.itextpdf.text.Phrase;
 
 // Importaciones de iTextPDF para generar y dibujar el documento
 import com.itextpdf.text.Document;
@@ -840,10 +839,11 @@ public class GeneradorTickets {
         documento.close();
     }
 
+    @SuppressWarnings("unchecked")
     public static void generarTicketCierreCajaPDF(String rutaDestino, java.util.Map<String, Object> c) throws Exception {
         Rectangle tamanoTicket = new Rectangle(226, 800);
         Document documento = new Document(tamanoTicket, 10, 10, 10, 10);
-        PdfWriter writer = PdfWriter.getInstance(documento, new FileOutputStream(rutaDestino));
+        PdfWriter.getInstance(documento, new FileOutputStream(rutaDestino));
         documento.open();
 
         com.itextpdf.text.Font fNormal = FontFactory.getFont(FontFactory.COURIER, 9);

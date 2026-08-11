@@ -9,7 +9,6 @@ import javax.swing.text.MaskFormatter;
 import java.awt.*;
 import java.text.ParseException;
 import java.util.Set;
-import java.util.HashSet;
 
 public class PanelFormularioCliente extends JPanel {
 
@@ -255,7 +254,7 @@ public class PanelFormularioCliente extends JPanel {
         ));
         panel.add(campo, gbc);
     }                  
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unused")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

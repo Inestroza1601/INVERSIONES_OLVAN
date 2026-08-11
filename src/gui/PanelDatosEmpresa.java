@@ -5,7 +5,7 @@ import dao.EmpresaDAO;
 import utilidades.SesionGlobal;
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
+
 
 public class PanelDatosEmpresa extends JPanel {
 
@@ -337,7 +337,7 @@ public class PanelDatosEmpresa extends JPanel {
         panel.add(campo, gbc);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unused")
     // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
     private void initComponents() {

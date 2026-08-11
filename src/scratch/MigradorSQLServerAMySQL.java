@@ -7,7 +7,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.sql.Types;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +51,7 @@ public class MigradorSQLServerAMySQL {
                 try (ResultSet rsCols = metaData.getColumns(null, "dbo", tableName, "%")) {
                     while (rsCols.next()) {
                         String colName = rsCols.getString("COLUMN_NAME");
-                        int type = rsCols.getInt("DATA_TYPE");
+                        // int type = rsCols.getInt("DATA_TYPE");
                         String typeName = rsCols.getString("TYPE_NAME");
                         int size = rsCols.getInt("COLUMN_SIZE");
                         int decimalDigits = rsCols.getInt("DECIMAL_DIGITS");

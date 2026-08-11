@@ -317,7 +317,7 @@ public class PanelEstadisticas extends JPanel {
             g2.dispose();
         }
     }                 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unused")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
