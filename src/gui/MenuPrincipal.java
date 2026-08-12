@@ -23,6 +23,7 @@ public class MenuPrincipal extends JFrame {
     private JButton btnHistorialVentas;
     private JButton btnGarantias;
     private JButton btnEstadisticas;
+    private JButton btnAyuda;
     private JButton btnCerrarSesion;
     private JButton botonActivo = null;
 
@@ -167,6 +168,7 @@ public class MenuPrincipal extends JFrame {
         btnHistorialVentas = crearBotonWebAnimado("Historial de Ventas", new IconoMenu(9), false);
         btnGarantias = crearBotonWebAnimado("Garant\u00EDas", new IconoMenu(5), false);
         btnEstadisticas = crearBotonWebAnimado("Estad\u00EDsticas", new IconoMenu(7), false);
+        btnAyuda = crearBotonWebAnimado("Ayuda", new IconoMenu(11), false);
         btnCerrarSesion = crearBotonWebAnimado("Cerrar Sesi\u00F3n", new IconoMenu(6), true);
 
         // uAct ya fue declarado arriba
@@ -222,6 +224,8 @@ public class MenuPrincipal extends JFrame {
         }
 
         panelLateralIzquierdo.add(Box.createVerticalGlue());
+        panelLateralIzquierdo.add(btnAyuda);
+        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
         panelLateralIzquierdo.add(btnCerrarSesion);
 
         // Panel Central
@@ -263,6 +267,7 @@ public class MenuPrincipal extends JFrame {
         btnHistorialVentas.addActionListener(e -> abrirPanelAsync(() -> new PanelHistorialVentas()));
         btnGarantias.addActionListener(e -> abrirPanelAsync(() -> new PanelGestionGarantias()));
         btnEstadisticas.addActionListener(e -> abrirPanelAsync(() -> new PanelEstadisticas()));
+        btnAyuda.addActionListener(e -> abrirPanelAsync(() -> new PanelAyuda()));
 
         btnCerrarSesion.addActionListener(e -> {
             Object[] opciones = { "S\u00ED, cerrar sesi\u00F3n", "Cancelar" };
@@ -621,6 +626,12 @@ public class MenuPrincipal extends JFrame {
                     g2.drawOval(x + 3, y + 3, 14, 14);
                     g2.drawLine(x + 10, y + 5, x + 10, y + 10);
                     g2.drawLine(x + 10, y + 10, x + 14, y + 10);
+                    break;
+                case 11: // Ayuda (Signo de interrogaci\u00F3n)
+                    g2.drawOval(x + 2, y + 2, 16, 16);
+                    g2.drawArc(x + 7, y + 5, 6, 6, 0, 180);
+                    g2.drawLine(x + 10, y + 8, x + 10, y + 12);
+                    g2.drawOval(x + 9, y + 14, 2, 2);
                     break;
             }
             g2.dispose();
