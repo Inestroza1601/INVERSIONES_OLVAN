@@ -314,13 +314,19 @@ public class MenuPrincipal extends JFrame {
         panelCentral.repaint();
     }
 
+    // Variable para controlar la carga asíncrona y evitar desincronización
+    private Object currentTaskToken = null;
+
     // =========================================================================
-    // CARGA AS\u00CDNCRONA DE PANELES (NUEVO SISTEMA ANTI-FREEZE)
+    // CARGA ASÍNCRONA DE PANELES (NUEVO SISTEMA ANTI-FREEZE)
     // =========================================================================
     public void abrirPanelAsync(java.util.function.Supplier<JPanel> panelSupplier) {
+        final Object myToken = new Object();
+        currentTaskToken = myToken;
+
         panelCentral.removeAll();
 
-        PanelCargaOverlay loader = new PanelCargaOverlay("Cargando m\u00F3dulo...");
+        PanelCargaOverlay loader = new PanelCargaOverlay("Cargando módulo...");
         panelCentral.add(loader, BorderLayout.CENTER);
         panelCentral.revalidate();
         panelCentral.repaint();
@@ -330,21 +336,26 @@ public class MenuPrincipal extends JFrame {
             @Override
             protected JPanel doInBackground() throws Exception {
                 // Instancia el panel en segundo plano (las DB queries del constructor corren
-                // aqu\u00ED)
+                // aquí)
                 return panelSupplier.get();
             }
 
             @Override
             protected void done() {
+                // Si se solicitó otro panel mientras este cargaba, ignoramos el resultado
+                if (currentTaskToken != myToken) {
+                    return;
+                }
+                
                 try {
                     JPanel nuevoPanel = get();
                     loader.detenerAnimacion();
-                    mostrarPanelHijo(nuevoPanel); // Reutilizamos mostrarPanelHijo para la transici\u00F3n de entrada
+                    mostrarPanelHijo(nuevoPanel); // Reutilizamos mostrarPanelHijo para la transición de entrada
                 } catch (Exception e) {
                     e.printStackTrace();
                     loader.detenerAnimacion();
                     panelCentral.removeAll();
-                    JLabel lblError = new JLabel("Error al cargar el m\u00F3dulo: " + e.getMessage());
+                    JLabel lblError = new JLabel("Error al cargar el módulo: " + e.getMessage());
                     lblError.setForeground(COLOR_ROJO_TEXTO);
                     lblError.setHorizontalAlignment(SwingConstants.CENTER);
                     panelCentral.add(lblError, BorderLayout.CENTER);
