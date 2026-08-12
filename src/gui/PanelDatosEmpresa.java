@@ -98,8 +98,45 @@ public class PanelDatosEmpresa extends JPanel {
         panelInferior.add(btnGuardar);
         this.add(panelInferior, BorderLayout.SOUTH);
 
-        // Cargar datos de la \u00FAnica empresa
+        // Cargar datos de la única empresa
         cargarDatosEmpresa();
+        
+        agregarListenersRealTime();
+    }
+
+    private void agregarListenersRealTime() {
+        javax.swing.event.DocumentListener dl = new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { actualizarPreview(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { actualizarPreview(); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { actualizarPreview(); }
+        };
+        txtNombreEmpresa.getDocument().addDocumentListener(dl);
+        txtRtnEmpresa.getDocument().addDocumentListener(dl);
+        txtDuenoEmpresa.getDocument().addDocumentListener(dl);
+        txtDireccionEmpresa.getDocument().addDocumentListener(dl);
+        txtNumeroTelefono.getDocument().addDocumentListener(dl);
+        txtTelefonoSecundario.getDocument().addDocumentListener(dl);
+        txtWhatsapp.getDocument().addDocumentListener(dl);
+        txtEmail.getDocument().addDocumentListener(dl);
+        txtWeb.getDocument().addDocumentListener(dl);
+        txtFacebook.getDocument().addDocumentListener(dl);
+    }
+
+    private void actualizarPreview() {
+        Empresa emp = new Empresa();
+        emp.setIdEmpresa(this.idEmpresaActual);
+        emp.setNombreEmpresa(txtNombreEmpresa.getText().trim());
+        emp.setRtnEmpresa(txtRtnEmpresa.getText().trim());
+        emp.setDuenoEmpresa(txtDuenoEmpresa.getText().trim());
+        emp.setDireccionEmpresa(txtDireccionEmpresa.getText().trim());
+        emp.setNumeroTelefono(txtNumeroTelefono.getText().trim());
+        emp.setTelefonoSecundario(txtTelefonoSecundario.getText().trim());
+        emp.setWhatsapp(txtWhatsapp.getText().trim());
+        emp.setEmail(txtEmail.getText().trim());
+        emp.setWeb(txtWeb.getText().trim());
+        emp.setFacebook(txtFacebook.getText().trim());
+
+        panelImpresion.actualizarSoloDatosEmpresa(emp);
     }
 
     // =========================================================

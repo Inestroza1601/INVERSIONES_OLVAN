@@ -17,11 +17,157 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.Image;
-import com.itextpdf.text.Chunk;
 import com.itextpdf.text.BaseColor;
 import java.io.FileOutputStream;
+import java.io.File;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfPCell;
 
 public class GeneradorTickets {
+
+    public static void generarReporteErrorPDF(String id, String fecha, String modulo, String resumen, String stackTrace, String respuestaIA, Empresa empresa) {
+        Document documento = new Document();
+        try {
+            File dir = new File("reportes/errores");
+            if (!dir.exists()) dir.mkdirs();
+            
+            String ruta = "reportes/errores/Reporte_Error_" + id + ".pdf";
+            PdfWriter.getInstance(documento, new FileOutputStream(ruta));
+            documento.open();
+
+            // Configuración de fuentes premium
+            com.itextpdf.text.Font fuenteOrion = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, new BaseColor(34, 153, 84)); // Verde Orion
+            com.itextpdf.text.Font fuenteTitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, new BaseColor(44, 62, 80)); // Azul oscuro
+            com.itextpdf.text.Font fuenteSubTitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, new BaseColor(44, 62, 80));
+            com.itextpdf.text.Font fuenteSub = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11, BaseColor.DARK_GRAY);
+            com.itextpdf.text.Font fuenteNormal = FontFactory.getFont(FontFactory.HELVETICA, 10, BaseColor.BLACK);
+            com.itextpdf.text.Font fuenteConsole = FontFactory.getFont(FontFactory.COURIER, 9, new BaseColor(171, 178, 185)); // Gris claro para consola
+
+            // 1. Encabezado Orion Systems y Logo de Empresa
+            PdfPTable headerTable = new PdfPTable(2);
+            headerTable.setWidthPercentage(100);
+            headerTable.setWidths(new float[]{3f, 1f});
+
+            // Logo de Orion Systems (izquierda)
+            PdfPCell cellOrion = new PdfPCell();
+            cellOrion.setBorder(Rectangle.NO_BORDER);
+            cellOrion.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            try {
+                Image logoOrion = Image.getInstance("src/image/logo.png");
+                logoOrion.scaleToFit(140, 50);
+                cellOrion.addElement(logoOrion);
+            } catch (Exception e) {
+                cellOrion.addElement(new Paragraph("ORION SYSTEMS\nSistema de Organización de Recursos", fuenteOrion));
+            }
+            headerTable.addCell(cellOrion);
+
+            if (empresa != null && empresa.getImagen_logo() != null && !empresa.getImagen_logo().isEmpty()) {
+                try {
+                    Image logo = Image.getInstance(empresa.getImagen_logo());
+                    logo.scaleToFit(80, 80);
+                    PdfPCell cellLogo = new PdfPCell(logo);
+                    cellLogo.setBorder(Rectangle.NO_BORDER);
+                    cellLogo.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    headerTable.addCell(cellLogo);
+                } catch (Exception e) {
+                    try {
+                        Image logoAlt = Image.getInstance("src/image/logo_inversionesOlvan_sinFondo.png");
+                        logoAlt.scaleToFit(80, 80);
+                        PdfPCell cellLogoAlt = new PdfPCell(logoAlt);
+                        cellLogoAlt.setBorder(Rectangle.NO_BORDER);
+                        cellLogoAlt.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        headerTable.addCell(cellLogoAlt);
+                    } catch (Exception ex) {
+                        PdfPCell cellEmpty = new PdfPCell(new Paragraph(""));
+                        cellEmpty.setBorder(Rectangle.NO_BORDER);
+                        headerTable.addCell(cellEmpty);
+                    }
+                }
+            } else {
+                try {
+                    Image logoAlt = Image.getInstance("src/image/logo_inversionesOlvan_sinFondo.png");
+                    logoAlt.scaleToFit(80, 80);
+                    PdfPCell cellLogoAlt = new PdfPCell(logoAlt);
+                    cellLogoAlt.setBorder(Rectangle.NO_BORDER);
+                    cellLogoAlt.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    headerTable.addCell(cellLogoAlt);
+                } catch (Exception ex) {
+                    PdfPCell cellEmpty = new PdfPCell(new Paragraph(""));
+                    cellEmpty.setBorder(Rectangle.NO_BORDER);
+                    headerTable.addCell(cellEmpty);
+                }
+            }
+            documento.add(headerTable);
+            documento.add(new Paragraph("\n"));
+
+            // 2. Título Principal y Datos del Cliente
+            String nombreEmpresa = empresa != null ? empresa.getNombreEmpresa() : "Empresa No Especificada";
+            Paragraph titulo = new Paragraph("REPORTE TÉCNICO DE INCIDENCIA", fuenteTitulo);
+            titulo.setAlignment(Element.ALIGN_CENTER);
+            documento.add(titulo);
+            
+            Paragraph subTitulo = new Paragraph("Cliente: " + nombreEmpresa, fuenteSubTitulo);
+            subTitulo.setAlignment(Element.ALIGN_CENTER);
+            documento.add(subTitulo);
+            documento.add(new Paragraph("\n"));
+
+            // 3. Detalles del Error en Caja Gris
+            PdfPTable tablaDetalles = new PdfPTable(1);
+            tablaDetalles.setWidthPercentage(100);
+            PdfPCell celdaDetalles = new PdfPCell();
+            celdaDetalles.setBackgroundColor(new BaseColor(242, 243, 244)); // Gris muy claro
+            celdaDetalles.setBorderColor(new BaseColor(189, 195, 199));
+            celdaDetalles.setPadding(10);
+            celdaDetalles.addElement(new Paragraph("ID de Incidencia: " + id, fuenteNormal));
+            celdaDetalles.addElement(new Paragraph("Fecha y Hora: " + fecha, fuenteNormal));
+            celdaDetalles.addElement(new Paragraph("Módulo / Origen: " + modulo, fuenteNormal));
+            celdaDetalles.addElement(new Paragraph("Resumen del Error: " + resumen, fuenteNormal));
+            tablaDetalles.addCell(celdaDetalles);
+            documento.add(tablaDetalles);
+            documento.add(new Paragraph("\n"));
+
+            // 4. Solución IA en Caja Verde Claro
+            // La IA envía el texto puro ahora extraído directamente del Document de JEditorPane,
+            // pero limpiamos cualquier salto doble exagerado.
+            String textoIA = respuestaIA.replace("\r", "").replaceAll("\n{3,}", "\n\n").trim();
+
+            PdfPTable tablaContenedorIA = new PdfPTable(1);
+            tablaContenedorIA.setWidthPercentage(100);
+            tablaContenedorIA.setKeepTogether(true); // Mantener título y tabla en la misma página
+
+            PdfPCell celdaTituloIA = new PdfPCell(new Paragraph("SOLUCIÓN PROPUESTA POR INTELIGENCIA ARTIFICIAL (GEMINI):\n\n", fuenteSub));
+            celdaTituloIA.setBorder(Rectangle.NO_BORDER);
+            tablaContenedorIA.addCell(celdaTituloIA);
+            
+            PdfPCell celdaIA = new PdfPCell(new Paragraph(textoIA, fuenteNormal));
+            celdaIA.setBackgroundColor(new BaseColor(234, 250, 234)); // Verde ultra claro
+            celdaIA.setBorderColor(new BaseColor(169, 223, 191));
+            celdaIA.setPadding(15);
+            tablaContenedorIA.addCell(celdaIA);
+            
+            documento.add(tablaContenedorIA);
+            documento.add(new Paragraph("\n"));
+
+            // 5. StackTrace estilo Consola
+            documento.add(new Paragraph("STACKTRACE (DETALLE TÉCNICO):", fuenteSub));
+            documento.add(new Paragraph("\n"));
+            
+            PdfPTable tablaConsola = new PdfPTable(1);
+            tablaConsola.setWidthPercentage(100);
+            PdfPCell celdaConsola = new PdfPCell(new Paragraph(stackTrace, fuenteConsole));
+            celdaConsola.setBackgroundColor(new BaseColor(40, 44, 52)); // Gris oscuro estilo VSCode
+            celdaConsola.setBorderColor(BaseColor.BLACK);
+            celdaConsola.setPadding(15);
+            tablaConsola.addCell(celdaConsola);
+            documento.add(tablaConsola);
+
+            documento.close();
+            
+            java.awt.Desktop.getDesktop().open(new File(ruta));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al generar reporte PDF: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     /**
      * Construye la vista previa del ticket para la interfaz gr\u00E1fica.
@@ -40,6 +186,10 @@ public class GeneradorTickets {
      * para mostrar datos ficticios y permitir editar el pie de p\u00E1gina.
      */
     public static JPanel crearTicketVistaPrevia(String tituloDocumento, JTextArea txtAreaEditable) {
+        return crearTicketVistaPrevia(tituloDocumento, txtAreaEditable, null);
+    }
+
+    public static JPanel crearTicketVistaPrevia(String tituloDocumento, JTextArea txtAreaEditable, Empresa empresaPersonalizada) {
         JPanel panelCentrador = new JPanel(new GridBagLayout());
         panelCentrador.setBackground(new Color(30, 30, 30));
 
@@ -58,11 +208,11 @@ public class GeneradorTickets {
         Font fNormal = new Font("Courier New", Font.PLAIN, 12);
         Font fTitulo = new Font("Courier New", Font.BOLD, 16);
 
-        modelo.Empresa emp = utilidades.SesionGlobal.getEmpresaActual();
+        modelo.Empresa emp = empresaPersonalizada != null ? empresaPersonalizada : utilidades.SesionGlobal.getEmpresaActual();
 
         String empNombre = emp != null && emp.getNombreEmpresa() != null ? emp.getNombreEmpresa().toUpperCase()
                 : "INVERSIONES OLVAN";
-        String empDue\u00F1o = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
+        String empDueño = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
         String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
 
         pnlTicket.add(crearLabelCentrado(empNombre, fTitulo, Color.BLACK));

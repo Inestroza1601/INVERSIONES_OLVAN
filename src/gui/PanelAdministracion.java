@@ -40,27 +40,31 @@ public class PanelAdministracion extends JPanel {
         panelSubMenu.setBackground(new Color(213, 233, 222));
         panelSubMenu.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(190, 215, 200)));
 
-        // 3. Botones del sub-men\u00FA (mismo tama\u00F1o)
+        // 3. Botones del sub-menú (mismo tamaño)
         btnDatosEmpresa = utilidades.EfectosUI.crearBotonVerde("Datos de Empresa");
         btnUsuarios = utilidades.EfectosUI.crearBotonVerde("Gestion de Usuarios");
         JButton btnRoles = utilidades.EfectosUI.crearBotonVerde("Gesti\u00F3n de Permisos");
         btnReportes = utilidades.EfectosUI.crearBotonVerde("Generaci\u00F3n de Reportes");
+        JButton btnErrores = utilidades.EfectosUI.crearBotonVerde("Gesti\u00F3n de Errores");
 
         Dimension tamBoton = new Dimension(220, 50); // Reducido un poco para caber los 4
         btnDatosEmpresa.setPreferredSize(tamBoton);
         btnUsuarios.setPreferredSize(tamBoton);
         btnRoles.setPreferredSize(tamBoton);
         btnReportes.setPreferredSize(tamBoton);
+        btnErrores.setPreferredSize(tamBoton);
         
         btnDatosEmpresa.setFont(new Font("Segoe UI", Font.BOLD, 15));
         btnUsuarios.setFont(new Font("Segoe UI", Font.BOLD, 15));
         btnRoles.setFont(new Font("Segoe UI", Font.BOLD, 15));
         btnReportes.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        btnErrores.setFont(new Font("Segoe UI", Font.BOLD, 15));
 
         panelSubMenu.add(btnDatosEmpresa);
         panelSubMenu.add(btnUsuarios);
         panelSubMenu.add(btnRoles);
         panelSubMenu.add(btnReportes);
+        panelSubMenu.add(btnErrores);
 
         this.add(panelContenedorAdmon, BorderLayout.CENTER);
         this.add(panelSubMenu, BorderLayout.SOUTH);
@@ -84,6 +88,11 @@ public class PanelAdministracion extends JPanel {
         btnReportes.addActionListener(e -> {
             cambiarBotonActivo(btnReportes);
             abrirSubPanelAsync(() -> new PanelReportes());
+        });
+
+        btnErrores.addActionListener(e -> {
+            cambiarBotonActivo(btnErrores);
+            abrirSubPanelAsync(() -> new PanelGestionErrores());
         });
 
         // Configurar estado inicial

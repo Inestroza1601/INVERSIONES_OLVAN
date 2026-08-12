@@ -27,6 +27,15 @@ public class PanelPuntoVenta extends JPanel {
 
     private JLabel lblClienteSeleccionado;
     private int idClienteActual = 1; 
+
+    // --- MEMORIA ESTÁTICA ---
+    public static List<Object[]> memoriaFilasVenta = new ArrayList<>();
+    public static int memoriaIdCliente = 1;
+    public static String memoriaNombreCliente = "CONSUMIDOR FINAL";
+    public static int memoriaTipoTransaccion = 0; 
+    public static boolean memoriaMayoristaActivo = false;
+    public static boolean memoriaMayoristaGlobal = true;
+    // ------------------------
     
     // Cach\u00E9 y estado para Lazy Loading con Shimmer
     private java.util.Map<Integer, ImageIcon> cacheImagenes = new java.util.concurrent.ConcurrentHashMap<>();
@@ -61,6 +70,62 @@ public class PanelPuntoVenta extends JPanel {
         iniciarDiseno();
         cargarMetodosPago();
         configurarAtajosTeclado();
+        cargarMemoria();
+    }
+
+    private void cargarMemoria() {
+        for (Object[] row : memoriaFilasVenta) {
+            modeloTablaVentas.addRow(row);
+        }
+        cmbTipoTransaccion.setSelectedIndex(memoriaTipoTransaccion);
+        recalcularTotales();
+    }
+
+    private void sincronizarMemoria() {
+        memoriaFilasVenta.clear();
+        for (int i = 0; i < modeloTablaVentas.getRowCount(); i++) {
+            Object[] row = new Object[modeloTablaVentas.getColumnCount()];
+            for (int c = 0; c < row.length; c++) row[c] = modeloTablaVentas.getValueAt(i, c);
+            memoriaFilasVenta.add(row);
+        }
+        memoriaIdCliente = idClienteActual;
+        memoriaNombreCliente = lblClienteSeleccionado.getText();
+        if (cmbTipoTransaccion != null) {
+            memoriaTipoTransaccion = cmbTipoTransaccion.getSelectedIndex();
+        }
+    }
+
+    private void aplicarLogicaMayorista() {
+        if (!memoriaMayoristaActivo) {
+            // Revert all to normal price
+            for (int i = 0; i < modeloTablaVentas.getRowCount(); i++) {
+                double precioNormal = (double) modeloTablaVentas.getValueAt(i, 11);
+                int cant = (int) modeloTablaVentas.getValueAt(i, 3);
+                modeloTablaVentas.setValueAt(precioNormal, i, 4);
+                modeloTablaVentas.setValueAt(precioNormal * cant, i, 5);
+            }
+        } else {
+            if (memoriaMayoristaGlobal) {
+                // Apply wholesale to all
+                for (int i = 0; i < modeloTablaVentas.getRowCount(); i++) {
+                    double precioMayorista = (double) modeloTablaVentas.getValueAt(i, 12);
+                    if (precioMayorista > 0) {
+                        int cant = (int) modeloTablaVentas.getValueAt(i, 3);
+                        modeloTablaVentas.setValueAt(precioMayorista, i, 4);
+                        modeloTablaVentas.setValueAt(precioMayorista * cant, i, 5);
+                    }
+                }
+            } else {
+                // Unitario: revert to normal, user will select manually
+                for (int i = 0; i < modeloTablaVentas.getRowCount(); i++) {
+                    double precioNormal = (double) modeloTablaVentas.getValueAt(i, 11);
+                    int cant = (int) modeloTablaVentas.getValueAt(i, 3);
+                    modeloTablaVentas.setValueAt(precioNormal, i, 4);
+                    modeloTablaVentas.setValueAt(precioNormal * cant, i, 5);
+                }
+            }
+        }
+        recalcularTotales();
     }
 
     private void iniciarDiseno() {
@@ -69,9 +134,11 @@ public class PanelPuntoVenta extends JPanel {
         this.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
         JPanel pnlTop = new JPanel(new BorderLayout(15, 0)); pnlTop.setOpaque(false);
+        JPanel pnlTopIzquierdo = new JPanel(new GridLayout(2, 1, 0, 5)); pnlTopIzquierdo.setOpaque(false);
         JPanel pnlClientes = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0)); pnlClientes.setOpaque(false);
         JLabel lblClie = new JLabel("Cliente:"); lblClie.setForeground(utilidades.EfectosUI.COLOR_TEXTO_SUBTITULO); lblClie.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        lblClienteSeleccionado = new JLabel("CONSUMIDOR FINAL"); lblClienteSeleccionado.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO); lblClienteSeleccionado.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblClienteSeleccionado = new JLabel(memoriaNombreCliente); lblClienteSeleccionado.setForeground(utilidades.EfectosUI.COLOR_TEXTO_TITULO); lblClienteSeleccionado.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        idClienteActual = memoriaIdCliente;
         
         JButton btnBuscarCliente = new JButton("Buscar"); btnBuscarCliente.setBackground(new Color(255, 255, 255)); btnBuscarCliente.setForeground(new Color(30, 41, 59)); btnBuscarCliente.setFocusPainted(false); btnBuscarCliente.setCursor(new Cursor(Cursor.HAND_CURSOR)); btnBuscarCliente.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(6, 14, 6, 14)));
         utilidades.EfectosUI.aplicarEfectoHover(btnBuscarCliente, Color.WHITE, utilidades.EfectosUI.COLOR_VERDE_CLARO, new Color(30, 41, 59), Color.BLACK);
@@ -93,7 +160,7 @@ public class PanelPuntoVenta extends JPanel {
         txtCodigoBarrasBusqueda.putClientProperty("JTextField.placeholderText", "Escanear c\u00F3digo de barras o escribir c\u00F3digo..."); 
         txtCodigoBarrasBusqueda.putClientProperty("JTextField.showClearButton", true);
         txtCodigoBarrasBusqueda.setFont(new Font("Segoe UI", Font.PLAIN, 14)); 
-        txtCodigoBarrasBusqueda.setPreferredSize(new Dimension(460, 38)); 
+        txtCodigoBarrasBusqueda.setPreferredSize(new Dimension(350, 38)); 
         txtCodigoBarrasBusqueda.setBackground(new Color(255, 255, 255)); 
         txtCodigoBarrasBusqueda.setForeground(new Color(45, 45, 45)); 
         txtCodigoBarrasBusqueda.setCaretColor(new Color(45, 45, 45)); 
@@ -103,11 +170,84 @@ public class PanelPuntoVenta extends JPanel {
         ));
         txtCodigoBarrasBusqueda.addActionListener(e -> buscarProductoPorCodigo(txtCodigoBarrasBusqueda.getText().trim()));
         
+        JButton btnBuscarProducto = new JButton("Catálogo");
+        btnBuscarProducto.setBackground(new Color(39, 174, 96));
+        btnBuscarProducto.setForeground(Color.WHITE);
+        btnBuscarProducto.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnBuscarProducto.setPreferredSize(new Dimension(110, 38));
+        btnBuscarProducto.setFocusPainted(false);
+        btnBuscarProducto.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnBuscarProducto.setBorder(BorderFactory.createEmptyBorder());
+        btnBuscarProducto.putClientProperty("JButton.buttonType", "roundRect");
+        utilidades.EfectosUI.aplicarEfectoHover(btnBuscarProducto, new Color(39, 174, 96), new Color(34, 153, 84), Color.WHITE, Color.WHITE);
+        
+        btnBuscarProducto.addActionListener(e -> {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            btnBuscarProducto.setEnabled(false);
+            SwingWorker<DialogoBuscarProductoPOS, Void> worker = new SwingWorker<DialogoBuscarProductoPOS, Void>() {
+                @Override
+                protected DialogoBuscarProductoPOS doInBackground() throws Exception {
+                    return new DialogoBuscarProductoPOS((Frame) SwingUtilities.getWindowAncestor(PanelPuntoVenta.this));
+                }
+                @Override
+                protected void done() {
+                    setCursor(Cursor.getDefaultCursor());
+                    btnBuscarProducto.setEnabled(true);
+                    try {
+                        get().setVisible(true);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        utilidades.Mensajes.showMessageDialog(PanelPuntoVenta.this, "Error al cargar el catálogo.");
+                    }
+                }
+            };
+            worker.execute();
+        });
+
         pnlLector.add(txtCodigoBarrasBusqueda);
-        pnlTop.add(pnlClientes, BorderLayout.WEST); pnlTop.add(pnlLector, BorderLayout.EAST);
+        pnlLector.add(Box.createHorizontalStrut(10));
+        pnlLector.add(btnBuscarProducto);
+        
+        JPanel pnlMayorista = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0)); pnlMayorista.setOpaque(false);
+        JToggleButton btnToggleMayorista = new JToggleButton("Aplicar Precio Mayorista");
+        btnToggleMayorista.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnToggleMayorista.setBackground(Color.WHITE);
+        btnToggleMayorista.setFocusPainted(false);
+        
+        JRadioButton rbTodos = new JRadioButton("Todos"); rbTodos.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        JRadioButton rbUnitario = new JRadioButton("Unitario"); rbUnitario.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        rbTodos.setOpaque(false); rbUnitario.setOpaque(false);
+        ButtonGroup bgMayorista = new ButtonGroup();
+        bgMayorista.add(rbTodos); bgMayorista.add(rbUnitario);
+        
+        rbTodos.setSelected(memoriaMayoristaGlobal);
+        rbUnitario.setSelected(!memoriaMayoristaGlobal);
+        btnToggleMayorista.setSelected(memoriaMayoristaActivo);
+        rbTodos.setVisible(memoriaMayoristaActivo);
+        rbUnitario.setVisible(memoriaMayoristaActivo);
+        
+        btnToggleMayorista.addActionListener(e -> {
+            boolean activo = btnToggleMayorista.isSelected();
+            rbTodos.setVisible(activo);
+            rbUnitario.setVisible(activo);
+            memoriaMayoristaActivo = activo;
+            aplicarLogicaMayorista();
+        });
+        
+        rbTodos.addActionListener(e -> { memoriaMayoristaGlobal = true; aplicarLogicaMayorista(); });
+        rbUnitario.addActionListener(e -> { memoriaMayoristaGlobal = false; aplicarLogicaMayorista(); });
+
+        pnlMayorista.add(btnToggleMayorista);
+        pnlMayorista.add(rbTodos);
+        pnlMayorista.add(rbUnitario);
+        
+        pnlTopIzquierdo.add(pnlClientes);
+        pnlTopIzquierdo.add(pnlMayorista);
+        
+        pnlTop.add(pnlTopIzquierdo, BorderLayout.WEST); pnlTop.add(pnlLector, BorderLayout.EAST);
         this.add(pnlTop, BorderLayout.NORTH);
 
-        String[] columnas = {"ID", "Foto", "Nombre del Producto", "Cant.", "Precio Unit.", "Subtotal Fila", "StockMax", "RutaFoto", "IMEI", "DiasGarantia", "IncluyeImpuesto"};
+        String[] columnas = {"ID", "Foto", "Nombre del Producto", "Cant.", "Precio Unit.", "Subtotal Fila", "StockMax", "RutaFoto", "IMEI", "DiasGarantia", "IncluyeImpuesto", "PrecioNormal", "PrecioMayorista"};
         modeloTablaVentas = new DefaultTableModel(null, columnas) { @Override public boolean isCellEditable(int row, int column) { return false; } };
         tablaVentas = new JTable(modeloTablaVentas); 
         tablaVentas.setShowGrid(false); tablaVentas.setIntercellSpacing(new Dimension(0, 0)); tablaVentas.setRowHeight(60); tablaVentas.setBackground(new Color(255, 255, 255)); tablaVentas.setForeground(new Color(30, 41, 59)); tablaVentas.setFont(new Font("Segoe UI", Font.PLAIN, 14)); tablaVentas.setSelectionBackground(new Color(213, 233, 222)); tablaVentas.setSelectionForeground(new Color(19, 58, 42));
@@ -120,6 +260,8 @@ public class PanelPuntoVenta extends JPanel {
         tablaVentas.getColumnModel().getColumn(8).setMinWidth(0); tablaVentas.getColumnModel().getColumn(8).setMaxWidth(0);
         tablaVentas.getColumnModel().getColumn(9).setMinWidth(0); tablaVentas.getColumnModel().getColumn(9).setMaxWidth(0);
         tablaVentas.getColumnModel().getColumn(10).setMinWidth(0); tablaVentas.getColumnModel().getColumn(10).setMaxWidth(0);
+        tablaVentas.getColumnModel().getColumn(11).setMinWidth(0); tablaVentas.getColumnModel().getColumn(11).setMaxWidth(0);
+        tablaVentas.getColumnModel().getColumn(12).setMinWidth(0); tablaVentas.getColumnModel().getColumn(12).setMaxWidth(0);
         
         tablaVentas.getColumnModel().getColumn(1).setPreferredWidth(70); tablaVentas.getColumnModel().getColumn(1).setMaxWidth(70);
         tablaVentas.getColumnModel().getColumn(1).setCellRenderer(new ImagenMiniaturaRenderer());
@@ -233,39 +375,7 @@ public class PanelPuntoVenta extends JPanel {
         gbc.gridy = 8; gbc.insets = new Insets(0, 0, 20, 0); pnlLiquidacion.add(lblTotal, gbc);
         gbc.gridy = 9; gbc.insets = new Insets(0, 0, 0, 0); pnlLiquidacion.add(btnCobrar, gbc);
         
-        JButton btnBuscarProducto = utilidades.EfectosUI.crearBotonVerde("Cat\u00E1logo de Productos");
-        btnBuscarProducto.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        btnBuscarProducto.setPreferredSize(new Dimension(0, 50));
-        btnBuscarProducto.addActionListener(e -> {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            btnBuscarProducto.setEnabled(false);
-            SwingWorker<DialogoBuscarProductoPOS, Void> worker = new SwingWorker<DialogoBuscarProductoPOS, Void>() {
-                @Override
-                protected DialogoBuscarProductoPOS doInBackground() throws Exception {
-                    return new DialogoBuscarProductoPOS((Frame) SwingUtilities.getWindowAncestor(PanelPuntoVenta.this));
-                }
-                @Override
-                protected void done() {
-                    setCursor(Cursor.getDefaultCursor());
-                    btnBuscarProducto.setEnabled(true);
-                    try {
-                        get().setVisible(true);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        utilidades.Mensajes.showMessageDialog(PanelPuntoVenta.this, "Error al cargar el cat\u00E1logo.");
-                    }
-                }
-            };
-            worker.execute();
-        });
-
-        JPanel pnlBotonCatalogo = new JPanel(new BorderLayout());
-        pnlBotonCatalogo.setOpaque(false);
-        pnlBotonCatalogo.setBorder(BorderFactory.createEmptyBorder(0, 0, 25, 0));
-        pnlBotonCatalogo.add(btnBuscarProducto, BorderLayout.CENTER);
-
         pnlControlVenta.add(pnlLiquidacion, BorderLayout.NORTH);
-        pnlControlVenta.add(pnlBotonCatalogo, BorderLayout.SOUTH);
         this.add(pnlControlVenta, BorderLayout.EAST);
     }
 
@@ -330,6 +440,8 @@ public class PanelPuntoVenta extends JPanel {
         lblSubtotal.setText(String.format("Subtotal: L %,.2f", sumSubtotal));
         lblImpuesto.setText(String.format("ISV (15%%): L %,.2f", sumImpuesto));
         lblTotal.setText(String.format("L %,.2f", granTotal));
+        
+        sincronizarMemoria();
     }
 
    // --- RESTRICCI\u00D3N DE STOCK Y VALIDACI\u00D3N DE SERIE ---
@@ -384,10 +496,15 @@ public class PanelPuntoVenta extends JPanel {
         }
 
         // Si requiere serie, o es un repuesto nuevo, lo agregamos como fila independiente
+        double precioUsar = p.getPrecioVenta();
+        if (memoriaMayoristaActivo && memoriaMayoristaGlobal && p.getPrecioMayorista() > 0) {
+            precioUsar = p.getPrecioMayorista();
+        }
+
         modeloTablaVentas.addRow(new Object[]{ 
             p.getIdProducto(), p.getImagen_producto(), p.getNombreProducto(), 1, 
-            p.getPrecioVenta(), p.getPrecioVenta(), p.getStockProducto(), p.getImagen_producto(), 
-            imei, p.getDiasGarantia(), p.isIncluyeImpuesto()
+            precioUsar, precioUsar, p.getStockProducto(), p.getImagen_producto(), 
+            imei, p.getDiasGarantia(), p.isIncluyeImpuesto(), p.getPrecioVenta(), p.getPrecioMayorista()
         });
         recalcularTotales();
     }
@@ -600,26 +717,7 @@ public class PanelPuntoVenta extends JPanel {
                 dlgBuscar.setVisible(true);
                 
                 if (idClienteActual == 1) {
-                    utilidades.Mensajes.showMessageDialog(this, "Operaci\u00F3n cancelada. Se requiere asociar un cliente para registrar el apartado.", "Aviso", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-            } else {
-                String msg = "No ha seleccionado un cliente para esta venta.<br>\u00BFDesea buscar uno o proseguir como Consumidor Final?";
-                DialogoConfirmacionCliente dlgConfirm = new DialogoConfirmacionCliente((Frame) SwingUtilities.getWindowAncestor(this), msg);
-                dlgConfirm.setVisible(true);
-                
-                int res = dlgConfirm.getResultado();
-                if (res == 0) { // Buscar Cliente
-                    DialogoBuscarClientePOS dlgBuscar = new DialogoBuscarClientePOS((Frame) SwingUtilities.getWindowAncestor(this));
-                    dlgBuscar.setVisible(true);
-                    
-                    if (idClienteActual == 1) {
-                        utilidades.Mensajes.showMessageDialog(this, "Operaci\u00F3n cancelada. Se requiere un cliente o seleccionar 'Consumidor Final'.", "Aviso", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-                } else if (res == 1) { // Consumidor Final
-                    // Proseguir como Consumidor Final
-                } else { // Cancelar o cerrar
+                    utilidades.Mensajes.showMessageDialog(this, "Operación cancelada. Se requiere asociar un cliente para registrar el apartado.", "Aviso", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
             }
@@ -1295,12 +1393,39 @@ public class PanelPuntoVenta extends JPanel {
         itemModCant.addActionListener(e -> modificarCantidad());
         itemQuitar.addActionListener(e -> quitarProducto());
 
+        if (memoriaMayoristaActivo && !memoriaMayoristaGlobal) {
+            JMenuItem itemAlternarPrecio = crearMenuItem("Alternar Mayorista", new Color(255, 140, 0), new IconoPrecio());
+            itemAlternarPrecio.addActionListener(e -> alternarPrecioMayoristaPorItem());
+            menu.add(itemAlternarPrecio);
+            menu.addSeparator();
+        }
+
         menu.add(itemModPrecio);
         menu.add(itemModCant);
         menu.addSeparator(); 
         menu.add(itemQuitar);
         
         menu.show(componente, x, y);
+    }
+
+    private void alternarPrecioMayoristaPorItem() {
+        int f = tablaVentas.getSelectedRow();
+        if (f < 0) return;
+        
+        double precioNormal = (double) modeloTablaVentas.getValueAt(f, 11);
+        double precioMayorista = (double) modeloTablaVentas.getValueAt(f, 12);
+        double precioActual = (double) modeloTablaVentas.getValueAt(f, 4);
+        
+        if (precioMayorista <= 0) {
+            utilidades.Mensajes.showMessageDialog(this, "Este producto no tiene precio mayorista configurado.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        double nuevoPrecio = (precioActual == precioNormal) ? precioMayorista : precioNormal;
+        int cant = (int) modeloTablaVentas.getValueAt(f, 3);
+        modeloTablaVentas.setValueAt(nuevoPrecio, f, 4);
+        modeloTablaVentas.setValueAt(nuevoPrecio * cant, f, 5);
+        recalcularTotales();
     }
     
     private JMenuItem crearMenuItem(String texto, Color colorHover, Icon icono) {

@@ -63,19 +63,22 @@ public class PanelConfiguracionImpresion extends JPanel {
         txtMensajeCotizacion = crearTextAreaEditable("Cotizaci\u00F3n v\u00E1lida por 15 d\u00EDas.");
         txtMensajeGarantia = crearTextAreaEditable("Conserve este documento. La garant\u00EDa no aplica por da\u00F1os f\u00EDsicos, humedad, exposici\u00F3n a l\u00EDquidos o manipulaci\u00F3n por terceros.");
         txtMensajeCambio = crearTextAreaEditable("Este comprobante avala el cambio de su producto por garant\u00EDa.");
-        txtMensajeReclamo = crearTextAreaEditable("Su reclamo de garant\u00EDa ha sido recibido y ser\u00E1 procesado. Gracias.");
+        txtMensajeCotizacion = crearTextAreaEditable("Cotización válida por 15 días.");
+        txtMensajeGarantia = crearTextAreaEditable("Conserve este documento. La garantía no aplica por daños físicos, humedad, exposición a líquidos o manipulación por terceros.");
+        txtMensajeCambio = crearTextAreaEditable("Este comprobante avala el cambio de su producto por garantía.");
+        txtMensajeReclamo = crearTextAreaEditable("Su reclamo de garantía ha sido recibido y será procesado. Gracias.");
         CardLayout cardLayout = new CardLayout();
         panelTarjetas = new JPanel(cardLayout);
         panelTarjetas.setBackground(new Color(255, 255, 255)); // Blanco Puro
         panelTarjetas.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225), 1, true)); // Gris muy claro
 
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: FACTURA", txtMensajeFactura), "Factura");
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: RECIBO", txtMensajeRecibo), "Recibo");
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: ENTREGA", txtMensajeEntrega), "Entrega");
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: COTIZACI\u00D3N", txtMensajeCotizacion), "Cotizacion");
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("POL\u00CDTICAS DE GARANT\u00CDA", txtMensajeGarantia), "Garantia");
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("COMPROBANTE DE CAMBIO", txtMensajeCambio), "Cambio");
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("RECIBO DE RECLAMO", txtMensajeReclamo), "Reclamo");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: FACTURA", txtMensajeFactura, null), "Factura");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: RECIBO", txtMensajeRecibo, null), "Recibo");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: ENTREGA", txtMensajeEntrega, null), "Entrega");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: COTIZACIÓN", txtMensajeCotizacion, null), "Cotizacion");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("POLÍTICAS DE GARANTÍA", txtMensajeGarantia, null), "Garantia");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("COMPROBANTE DE CAMBIO", txtMensajeCambio, null), "Cambio");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("RECIBO DE RECLAMO", txtMensajeReclamo, null), "Reclamo");
 
         // --- PANEL INFERIOR (Botones de Control) ---
         JPanel panelBotonesControl = new JPanel(new java.awt.GridLayout(2, 1));
@@ -89,8 +92,8 @@ public class PanelConfiguracionImpresion extends JPanel {
         JButton btnFactura = crearBotonEstiloPestana("Factura");
         JButton btnRecibo = crearBotonEstiloPestana("Recibo");
         JButton btnEntrega = crearBotonEstiloPestana("Entrega");
-        JButton btnCotizacion = crearBotonEstiloPestana("Cotizaci\u00F3n");
-        JButton btnGarantia = crearBotonEstiloPestana("Garant\u00EDas");
+        JButton btnCotizacion = crearBotonEstiloPestana("Cotización");
+        JButton btnGarantia = crearBotonEstiloPestana("Garantías");
         JButton btnCambio = crearBotonEstiloPestana("Cambio");
         JButton btnReclamo = crearBotonEstiloPestana("Reclamo");
 
@@ -137,7 +140,7 @@ public class PanelConfiguracionImpresion extends JPanel {
     }
 
     // =====================================================================
-    // M\u00C9TODOS DE BASE DE DATOS Y L\u00D3GICA
+    // MÉTODOS DE BASE DE DATOS Y LÓGICA
     // =====================================================================
 
     private void cargarDatosActuales() {
@@ -156,15 +159,15 @@ public class PanelConfiguracionImpresion extends JPanel {
     }
 
     private void guardarDiseno() {
-        // Usamos la empresa que nos pas\u00F3 el otro panel. Si es nula, intentamos con SesionGlobal.
+        // Usamos la empresa que nos pasó el otro panel. Si es nula, intentamos con SesionGlobal.
         Empresa emp = (this.empresaActiva != null) ? this.empresaActiva : SesionGlobal.getEmpresaActual();
         
         if (emp == null) {
-            utilidades.Mensajes.showMessageDialog(this, "No se encontr\u00F3 una empresa activa.\nPor favor, guarde primero los Datos Generales.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "No se encontró una empresa activa.\nPor favor, guarde primero los Datos Generales.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // ... EL RESTO DEL C\u00D3DIGO QUEDA IGUAL (emp.setMensajeTicketPieFactura... etc)
+        // ... EL RESTO DEL CÓDIGO QUEDA IGUAL (emp.setMensajeTicketPieFactura... etc)
 
        // Actualizamos los campos en el objeto
         emp.setMensajeTicketPieFactura(txtMensajeFactura.getText().trim());
@@ -179,7 +182,7 @@ public class PanelConfiguracionImpresion extends JPanel {
 
         EmpresaDAO dao = new EmpresaDAO();
         if (dao.guardarOActualizar(emp)) {
-            utilidades.Mensajes.showMessageDialog(this, "Dise\u00F1o y textos guardados correctamente.");
+            utilidades.Mensajes.showMessageDialog(this, "Diseño y textos guardados correctamente.");
         } else {
             utilidades.Mensajes.showMessageDialog(this, "Error al guardar en la base de datos.");
         }
@@ -188,14 +191,14 @@ public class PanelConfiguracionImpresion extends JPanel {
     private void cargarLogoDesdePC() {
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Seleccionar Logo de la Empresa");
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Im\u00E1genes (PNG, JPG, JPEG)", "png", "jpg", "jpeg");
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Imágenes (PNG, JPG, JPEG)", "png", "jpg", "jpeg");
         chooser.setFileFilter(filtro);
         
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File archivo = chooser.getSelectedFile();
             imagenLogoBase64 = utilidades.ImagenHelper.comprimirYConvertirABase64(archivo);
             
-            // USAR LA NUEVA VARIABLE AQU\u00CD TAMBI\u00C9N
+            // USAR LA NUEVA VARIABLE AQUÍ TAMBIÉN
             Empresa emp = (this.empresaActiva != null) ? this.empresaActiva : SesionGlobal.getEmpresaActual();
             
             if (emp != null) {
@@ -203,19 +206,19 @@ public class PanelConfiguracionImpresion extends JPanel {
                 EmpresaDAO dao = new EmpresaDAO();
                 
                 if (dao.guardarOActualizar(emp)) {
-                    utilidades.Mensajes.showMessageDialog(this, "Logo cargado y guardado en la base de datos exitosamente.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
+                    utilidades.Mensajes.showMessageDialog(this, "Logo cargado y guardado en la base de datos exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                     recargarVistaPrevia(); 
                 } else {
                     utilidades.Mensajes.showMessageDialog(this, "Error al guardar el logo en la base de datos.", "Error de Base de Datos", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                utilidades.Mensajes.showMessageDialog(this, "No se encontr\u00F3 una empresa activa.\nPor favor, guarde primero los Datos Generales.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                utilidades.Mensajes.showMessageDialog(this, "No se encontró una empresa activa.\nPor favor, guarde primero los Datos Generales.", "Aviso", JOptionPane.WARNING_MESSAGE);
             }
         }
     }
 
     // =====================================================================
-    // M\u00C9TODOS DE DISE\u00D1O Y COMPONENTES VISUALES
+    // MÉTODOS DE DISEÑO Y COMPONENTES VISUALES
     // =====================================================================
 
     private JTextArea crearTextAreaEditable(String textoDefecto) {
@@ -227,7 +230,7 @@ public class PanelConfiguracionImpresion extends JPanel {
         txt.setBorder(BorderFactory.createCompoundBorder(bordeEditable, BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         txt.setLineWrap(true);
         txt.setWrapStyleWord(true);
-        txt.setToolTipText("Haz clic aqu\u00ED para editar el mensaje final");
+        txt.setToolTipText("Haz clic aquí para editar el mensaje final");
         return txt;
     }
 
@@ -252,7 +255,7 @@ public class PanelConfiguracionImpresion extends JPanel {
 
     private void abrirDialogoImpresoras() {
         Window ventanaPadre = SwingUtilities.getWindowAncestor(this);
-        JDialog dialog = new JDialog((Frame) ventanaPadre, "Configuraci\u00F3n de Impresoras", true);
+        JDialog dialog = new JDialog((Frame) ventanaPadre, "Configuración de Impresoras", true);
         dialog.setSize(400, 300);
         dialog.setLocationRelativeTo(this);
         dialog.setLayout(new BorderLayout());
@@ -275,7 +278,7 @@ public class PanelConfiguracionImpresion extends JPanel {
         }
 
         gbc.gridy = 0;
-        JLabel lblT = new JLabel("Impresora T\u00E9rmica (Tickets):");
+        JLabel lblT = new JLabel("Impresora Térmica (Tickets):");
         lblT.setForeground(new Color(45, 45, 45)); 
         pnlContenido.add(lblT, gbc);
         
@@ -325,11 +328,15 @@ public class PanelConfiguracionImpresion extends JPanel {
     public void recargarVistaPrevia() {
         panelTarjetas.removeAll(); 
         
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: FACTURA", txtMensajeFactura), "Factura");
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: RECIBO", txtMensajeRecibo), "Recibo");
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: ENTREGA", txtMensajeEntrega), "Entrega");
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: COTIZACI\u00D3N", txtMensajeCotizacion), "Cotizacion");
-        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("POL\u00CDTICAS DE GARANT\u00CDA", txtMensajeGarantia), "Garantia");
+        Empresa emp = (this.empresaActiva != null) ? this.empresaActiva : utilidades.SesionGlobal.getEmpresaActual();
+        
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: FACTURA", txtMensajeFactura, emp), "Factura");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: RECIBO", txtMensajeRecibo, emp), "Recibo");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: ENTREGA", txtMensajeEntrega, emp), "Entrega");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("DOCUMENTO: COTIZACIÓN", txtMensajeCotizacion, emp), "Cotizacion");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("POLÍTICAS DE GARANTÍA", txtMensajeGarantia, emp), "Garantia");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("COMPROBANTE DE CAMBIO", txtMensajeCambio, emp), "Cambio");
+        panelTarjetas.add(utilidades.GeneradorTickets.crearTicketVistaPrevia("RECIBO DE RECLAMO", txtMensajeReclamo, emp), "Reclamo");
         
         panelTarjetas.revalidate(); 
         panelTarjetas.repaint();    
@@ -348,11 +355,31 @@ public class PanelConfiguracionImpresion extends JPanel {
             txtMensajeEntrega.setText(emp.getMensajeTicketEntrega() != null ? emp.getMensajeTicketEntrega() : "");
             txtMensajeCotizacion.setText(emp.getMensajeTicketPieCotizacion() != null ? emp.getMensajeTicketPieCotizacion() : "");
             txtMensajeGarantia.setText(emp.getPoliticasGarantia() != null ? emp.getPoliticasGarantia() : "");
+            txtMensajeCambio.setText(emp.getMensajeTicketCambio() != null ? emp.getMensajeTicketCambio() : "");
+            txtMensajeReclamo.setText(emp.getMensajeTicketReclamo() != null ? emp.getMensajeTicketReclamo() : "");
             
             if (emp.getImagen_logo() != null) imagenLogoBase64 = emp.getImagen_logo();
             
             recargarVistaPrevia();
         }
+    }
+
+    public void actualizarSoloDatosEmpresa(Empresa emp) {
+        if (this.empresaActiva == null) {
+             this.empresaActiva = new Empresa();
+        }
+        this.empresaActiva.setNombreEmpresa(emp.getNombreEmpresa());
+        this.empresaActiva.setRtnEmpresa(emp.getRtnEmpresa());
+        this.empresaActiva.setDuenoEmpresa(emp.getDuenoEmpresa());
+        this.empresaActiva.setDireccionEmpresa(emp.getDireccionEmpresa());
+        this.empresaActiva.setNumeroTelefono(emp.getNumeroTelefono());
+        this.empresaActiva.setTelefonoSecundario(emp.getTelefonoSecundario());
+        this.empresaActiva.setWhatsapp(emp.getWhatsapp());
+        this.empresaActiva.setEmail(emp.getEmail());
+        this.empresaActiva.setWeb(emp.getWeb());
+        this.empresaActiva.setFacebook(emp.getFacebook());
+        
+        recargarVistaPrevia();
     }
     @SuppressWarnings("unused")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
