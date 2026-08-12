@@ -19,7 +19,7 @@ public class InventarioDefectuosoDAO {
     public List<Map<String, Object>> obtenerInventarioDefectuosoAgrupado() {
         List<Map<String, Object>> lista = new ArrayList<>();
         String sql = "SELECT MIN(d.id_inventarioDefectuoso) as id_inventarioDefectuoso, d.id_producto, i.nombre_producto, i.codigo_barras_producto, d.estado_defecto, SUM(d.cantidad) as cantidad_total, "
-                   + "c.nombre_cliente, c.identidad_cliente, MAX(dv.foto_garantia) as foto "
+                   + "c.nombre_cliente, c.identidad_cliente, MAX(ISNULL(dv.foto_garantia, d.foto)) as foto "
                    + "FROM INVENTARIO_DEFECTUOSO d "
                    + "INNER JOIN INVENTARIO i ON d.id_producto = i.id_producto "
                    + "LEFT JOIN DETALLES_VENTA dv ON d.id_detalle_venta = dv.id_detalle_venta "
@@ -66,7 +66,7 @@ public class InventarioDefectuosoDAO {
         List<Map<String, Object>> lista = new ArrayList<>();
         String sql;
         if ("INVERSIONES OLVAN (Empresa)".equals(nombreCliente) || nombreCliente == null || "Desconocido".equals(nombreCliente)) {
-            sql = "SELECT d.id_inventarioDefectuoso, d.fecha_ingreso, d.motivo_danio, v.observacion_garantia, v.resolucion_garantia, v.foto_garantia, "
+            sql = "SELECT d.id_inventarioDefectuoso, d.fecha_ingreso, d.motivo_danio, v.observacion_garantia, v.resolucion_garantia, ISNULL(v.foto_garantia, d.foto) as foto_garantia, "
                 + "d.fecha_envio_proveedor, d.fecha_recibido_proveedor, d.fecha_entregado_cliente, c.nombre_cliente "
                 + "FROM INVENTARIO_DEFECTUOSO d "
                 + "LEFT JOIN DETALLES_VENTA v ON d.id_detalle_venta = v.id_detalle_venta "
@@ -75,7 +75,7 @@ public class InventarioDefectuosoDAO {
                 + "WHERE d.id_producto = ? AND d.estado_defecto = ? AND d.id_detalle_venta IS NULL "
                 + "ORDER BY d.fecha_ingreso DESC";
         } else {
-            sql = "SELECT d.id_inventarioDefectuoso, d.fecha_ingreso, d.motivo_danio, v.observacion_garantia, v.resolucion_garantia, v.foto_garantia, "
+            sql = "SELECT d.id_inventarioDefectuoso, d.fecha_ingreso, d.motivo_danio, v.observacion_garantia, v.resolucion_garantia, ISNULL(v.foto_garantia, d.foto) as foto_garantia, "
                 + "d.fecha_envio_proveedor, d.fecha_recibido_proveedor, d.fecha_entregado_cliente, c.nombre_cliente "
                 + "FROM INVENTARIO_DEFECTUOSO d "
                 + "LEFT JOIN DETALLES_VENTA v ON d.id_detalle_venta = v.id_detalle_venta "
@@ -309,11 +309,11 @@ public class InventarioDefectuosoDAO {
         }
     }
 
-    public int reportarDefectuosoAlmacen(int idProducto, int cantidad, String motivo, int idUsuario) throws java.sql.SQLException {
+    public int reportarDefectuosoAlmacen(int idProducto, int cantidad, String motivo, int idUsuario, String fotoBase64) throws java.sql.SQLException {
         String sqlCheckStock = "SELECT stock_producto FROM INVENTARIO WHERE id_producto = ?";
         String sqlUpdateInv = "UPDATE INVENTARIO SET stock_producto = stock_producto - ? WHERE id_producto = ?";
         String sqlInsertKardex = "INSERT INTO KARDEX (id_producto, id_usuario, fecha_movimiento_producto, tipo_movimiento_producto, cantidad_producto, stock_restante_producto, referencia_producto) VALUES (?, ?, GETDATE(), 'Salida', ?, ?, ?)";
-        String sqlInsertDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, fecha_ingreso, cantidad, motivo_danio, estado_defecto) VALUES (?, GETDATE(), ?, ?, 'En Bodega (Falla de F\u00E1brica)')";
+        String sqlInsertDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, fecha_ingreso, cantidad, motivo_danio, estado_defecto, foto) VALUES (?, GETDATE(), ?, ?, 'En Bodega (Falla de F\u00E1brica)', ?)";
         
         Connection con = null;
         try {
@@ -358,6 +358,7 @@ public class InventarioDefectuosoDAO {
                 psD.setInt(1, idProducto);
                 psD.setInt(2, cantidad);
                 psD.setString(3, motivo);
+                psD.setString(4, fotoBase64);
                 psD.executeUpdate();
                 try (ResultSet rsKeys = psD.getGeneratedKeys()) {
                     if (rsKeys.next()) {

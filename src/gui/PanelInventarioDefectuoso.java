@@ -184,24 +184,43 @@ public class PanelInventarioDefectuoso extends JPanel {
         configurarMenuContextual();
     }
 
-    private ImageIcon obtenerImagenDesdeBase64(String base64, int ancho, int alto) {
-        if (base64 == null || base64.isEmpty())
-            return null;
-        try {
-            if (base64.contains("|")) {
-                base64 = base64.split("\\|")[0];
+    private ImageIcon obtenerImagenDesdeBase64(String base64, int ancho, int alto, int idDefectuoso) {
+        if (base64 != null && !base64.isEmpty()) {
+            try {
+                if (new java.io.File(base64).exists()) {
+                    Image img = javax.imageio.ImageIO.read(new java.io.File(base64));
+                    if (img != null) return new ImageIcon(img.getScaledInstance(ancho, alto, Image.SCALE_SMOOTH));
+                }
+                String tempB64 = base64;
+                if (tempB64.contains("|")) {
+                    tempB64 = tempB64.split("\\|")[0];
+                }
+                if (tempB64.contains(",")) {
+                    tempB64 = tempB64.split(",")[1];
+                }
+                byte[] bytes = java.util.Base64.getDecoder().decode(tempB64);
+                java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(bytes);
+                Image img = javax.imageio.ImageIO.read(bais);
+                if (img != null) {
+                    return new ImageIcon(img.getScaledInstance(ancho, alto, Image.SCALE_SMOOTH));
+                }
+            } catch (Exception e) {
+                // Ignorar error de parsing base64, intentar path local
             }
-            if (base64.contains(",")) {
-                base64 = base64.split(",")[1];
+        }
+        
+        if (idDefectuoso > 0) {
+            try {
+                java.io.File dir = new java.io.File(System.getProperty("user.home") + "/InversionesOlvan/Garantias");
+                java.io.File imgFile = new java.io.File(dir, "defectuoso_" + idDefectuoso + "_foto1.jpg");
+                if (imgFile.exists()) {
+                    Image img = javax.imageio.ImageIO.read(imgFile);
+                    if (img != null) {
+                        return new ImageIcon(img.getScaledInstance(ancho, alto, Image.SCALE_SMOOTH));
+                    }
+                }
+            } catch (Exception e) {
             }
-            byte[] bytes = java.util.Base64.getDecoder().decode(base64);
-            java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(bytes);
-            Image img = javax.imageio.ImageIO.read(bais);
-            if (img != null) {
-                return new ImageIcon(img.getScaledInstance(ancho, alto, Image.SCALE_SMOOTH));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -279,7 +298,7 @@ public class PanelInventarioDefectuoso extends JPanel {
                     menu.add(itemDetalles);
                     menu.addSeparator();
 
-                    if (estado.equals("En Bodega") || estado.equals("En Bodega (Rep. Cliente)")) {
+                    if (estado.contains("En Bodega")) {
                         menu.add(itemEnviar);
                     }
 
@@ -342,7 +361,7 @@ public class PanelInventarioDefectuoso extends JPanel {
                 SwingWorker<ImageIcon, Void> worker = new SwingWorker<ImageIcon, Void>() {
                     @Override
                     protected ImageIcon doInBackground() throws Exception {
-                        return obtenerImagenDesdeBase64(b64, 50, 50);
+                        return obtenerImagenDesdeBase64(b64, 50, 50, idDefectuoso);
                     }
                     @Override
                     protected void done() {
@@ -449,7 +468,20 @@ public class PanelInventarioDefectuoso extends JPanel {
         if (detalles.size() == 1) {
             Map<String, Object> d = detalles.get(0);
             String b64 = (String) d.get("foto");
-            ImageIcon icon = obtenerImagenDesdeBase64(b64, 180, 180);
+            if (b64 == null || b64.trim().isEmpty()) {
+                java.io.File dir = new java.io.File(System.getProperty("user.home") + "/InversionesOlvan/Garantias");
+                StringBuilder sb = new StringBuilder();
+                for(int i = 1; i <= 3; i++) {
+                     java.io.File f = new java.io.File(dir, "defectuoso_" + idDefectuoso + "_foto" + i + ".jpg");
+                     if(f.exists()) {
+                         if(sb.length() > 0) sb.append("|");
+                         sb.append(f.getAbsolutePath());
+                     }
+                }
+                b64 = sb.toString();
+            }
+            final String finalB64 = b64;
+            ImageIcon icon = obtenerImagenDesdeBase64(finalB64, 180, 180, idDefectuoso);
             
             JPanel pnlCard = new JPanel(new BorderLayout(25, 25));
             pnlCard.setBackground(Color.WHITE);
@@ -462,12 +494,12 @@ public class PanelInventarioDefectuoso extends JPanel {
             lblImg.addMouseListener(new java.awt.event.MouseAdapter() {
                 @Override
                 public void mouseClicked(java.awt.event.MouseEvent e) {
-                    if (b64 != null && !b64.isEmpty()) {
+                    if (finalB64 != null && !finalB64.isEmpty()) {
                         java.util.List<String> list = new java.util.ArrayList<>();
-                        if (b64.contains("|")) {
-                            list.addAll(java.util.Arrays.asList(b64.split("\\|")));
+                        if (finalB64.contains("|")) {
+                            list.addAll(java.util.Arrays.asList(finalB64.split("\\|")));
                         } else {
-                            list.add(b64);
+                            list.add(finalB64);
                         }
                         new DialogoVisorImagen(dialog, "Visor de Fotograf\u00EDa", list, 0).setVisible(true);
                     }
@@ -489,7 +521,7 @@ public class PanelInventarioDefectuoso extends JPanel {
             
             pnlInfo.add(crearEtiquetaDetalle("Motivo del Da\u00F1o", d.get("motivo").toString()));
             pnlInfo.add(Box.createVerticalStrut(15));
-            pnlInfo.add(crearEtiquetaDetalle("Resoluci\u00F3n de Garant\u00EDa", d.get("resolucion").toString()));
+            pnlInfo.add(crearEtiquetaDetalle("Resoluci\u00F3n de Garant\u00EDa", d.get("resolucion") != null ? d.get("resolucion").toString() : "No Aplica"));
             pnlInfo.add(Box.createVerticalStrut(15));
             
             StringBuilder timeline = new StringBuilder();
@@ -528,12 +560,24 @@ public class PanelInventarioDefectuoso extends JPanel {
             };
             for (Map<String, Object> d : detalles) {
                 String b64 = (String) d.get("foto");
-                ImageIcon icon = obtenerImagenDesdeBase64(b64, 60, 60);
+                if (b64 == null || b64.trim().isEmpty()) {
+                    java.io.File dir = new java.io.File(System.getProperty("user.home") + "/InversionesOlvan/Garantias");
+                    StringBuilder sb = new StringBuilder();
+                    for(int i = 1; i <= 3; i++) {
+                         java.io.File f = new java.io.File(dir, "defectuoso_" + idDefectuoso + "_foto" + i + ".jpg");
+                         if(f.exists()) {
+                             if(sb.length() > 0) sb.append("|");
+                             sb.append(f.getAbsolutePath());
+                         }
+                    }
+                    b64 = sb.toString();
+                }
+                ImageIcon icon = obtenerImagenDesdeBase64(b64, 60, 60, idDefectuoso);
                 modD.addRow(new Object[] {
                         icon,
                         d.get("fecha"),
                         d.get("motivo"),
-                        d.get("resolucion"),
+                        d.get("resolucion") != null ? d.get("resolucion").toString() : "No Aplica",
                         b64 // hidden column for the base64 string
                 });
             }

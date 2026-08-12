@@ -401,6 +401,9 @@ public class DialogoVisorImagen extends JDialog {
     private ImageIcon obtenerImagenDesdeBase64(String base64) {
         if (base64 == null || base64.isEmpty()) return null;
         try {
+            if (new java.io.File(base64).exists()) {
+                return new ImageIcon(base64);
+            }
             if (base64.contains(",")) {
                 base64 = base64.split(",")[1];
             }

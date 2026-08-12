@@ -277,7 +277,7 @@ public class DialogoReportarDefectuoso extends JDialog {
                 int idUsuario = utilidades.SesionGlobal.getUsuarioActual() != null ? utilidades.SesionGlobal.getUsuarioActual().getIdUsuario() : 1;
                 InventarioDefectuosoDAO dao = new InventarioDefectuosoDAO();
                 
-                int idGenerado = dao.reportarDefectuosoAlmacen(idProducto, cantidad, txtObservacion.getText().trim(), idUsuario);
+                int idGenerado = dao.reportarDefectuosoAlmacen(idProducto, cantidad, txtObservacion.getText().trim(), idUsuario, fotoBase64);
                 
                 if (idGenerado != -1) {
                     if (fotoBase64 != null && !fotoBase64.isEmpty()) {

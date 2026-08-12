@@ -39,9 +39,25 @@ public class GeneradorReportesPDF {
 
         // Intentar cargar el logo
         try {
-            java.net.URL urlLogo = GeneradorReportesPDF.class.getResource("/image/logo_inversionesOlvan_sinFondo.png");
-            if (urlLogo != null) {
-                Image logo = Image.getInstance(urlLogo);
+            Image logo = null;
+            modelo.Empresa emp = utilidades.SesionGlobal.getEmpresaActual();
+            
+            if (emp != null && emp.getImagen_logo() != null && !emp.getImagen_logo().trim().isEmpty()) {
+                javax.swing.ImageIcon icon = utilidades.ImagenHelper.obtenerIcono(emp.getImagen_logo(), 130, 130);
+                if (icon != null) {
+                    java.awt.Image awtImage = icon.getImage();
+                    logo = Image.getInstance(awtImage, null);
+                }
+            }
+            
+            if (logo == null) {
+                java.net.URL urlLogo = GeneradorReportesPDF.class.getResource("/image/logo_inversionesOlvan_sinFondo.png");
+                if (urlLogo != null) {
+                    logo = Image.getInstance(urlLogo);
+                }
+            }
+            
+            if (logo != null) {
                 logo.scaleToFit(130, 130);
                 PdfPCell celdaLogo = new PdfPCell(logo);
                 celdaLogo.setBorder(Rectangle.NO_BORDER);

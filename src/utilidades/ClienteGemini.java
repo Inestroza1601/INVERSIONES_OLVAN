@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
@@ -37,7 +38,7 @@ public class ClienteGemini {
                 + "ERROR:\n" + stackTrace;
 
         try {
-            URL url = new URL("https://generativelanguage.googleapis.com/v1beta/models/" + modelo + ":generateContent?key=" + API_KEY);
+            URL url = new URI("https://generativelanguage.googleapis.com/v1beta/models/" + modelo + ":generateContent?key=" + API_KEY).toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");

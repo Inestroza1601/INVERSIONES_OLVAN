@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.File;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.Chunk;
 
 public class GeneradorTickets {
 
@@ -424,7 +425,6 @@ public class GeneradorTickets {
                 : "INVERSIONES OLVAN";
         String empDue\u00F1o = emp != null && emp.getDuenoEmpresa() != null ? "Prop: " + emp.getDuenoEmpresa() : "";
         String empRtn = emp != null && emp.getRtnEmpresa() != null ? "RTN: " + emp.getRtnEmpresa() : "RTN: PENDIENTE";
-        Paragraph espacioBlanco = new Paragraph("----------------------------------------", fBold);
         // T\u00EDtulo Principal
         Paragraph parrafoNombre = new Paragraph(empNombre + "\n", fTitulo);
         parrafoNombre.setAlignment(Element.ALIGN_CENTER);

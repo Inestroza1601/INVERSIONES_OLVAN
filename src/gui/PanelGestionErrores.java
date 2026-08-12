@@ -1,9 +1,6 @@
 package gui;
 
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.net.URI;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -149,6 +146,7 @@ public class PanelGestionErrores extends JPanel {
         btnPrueba.addActionListener(e -> {
             try {
                 int errorIntencional = 10 / 0; // Genera ArithmeticException
+                System.out.println(errorIntencional);
             } catch (Exception ex) {
                 utilidades.GestorErrores.registrarError(ex, "Botón de Prueba");
                 cargarDatos();

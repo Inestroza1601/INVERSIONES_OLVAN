@@ -48,13 +48,24 @@ public class MenuPrincipal extends JFrame {
             if (emp != null) {
                 utilidades.SesionGlobal.setEmpresaActual(emp);
             }
-            // Logo fijo de la aplicaci\u00f3n para la barra de tareas
-            java.net.URL imgURL = getClass().getResource("/image/logo.png");
-            if (imgURL != null) {
-                setIconImage(new javax.swing.ImageIcon(imgURL).getImage());
+            // Logo de la aplicaci\u00f3n para la barra de tareas
+            boolean logoCargado = false;
+            if (emp != null && emp.getImagen_logo() != null && !emp.getImagen_logo().trim().isEmpty()) {
+                javax.swing.ImageIcon iconBD = utilidades.ImagenHelper.obtenerIcono(emp.getImagen_logo(), 64, 64);
+                if (iconBD != null) {
+                    setIconImage(iconBD.getImage());
+                    logoCargado = true;
+                }
+            }
+            
+            if (!logoCargado) {
+                java.net.URL imgURL = getClass().getResource("/image/logo.png");
+                if (imgURL != null) {
+                    setIconImage(new javax.swing.ImageIcon(imgURL).getImage());
+                }
             }
         } catch (Exception e) {
-            System.err.println("No se pudo cargar el logo local: " + e.getMessage());
+            System.err.println("No se pudo cargar el logo: " + e.getMessage());
         }
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setSize(1200, 800);
