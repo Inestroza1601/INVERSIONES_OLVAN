@@ -428,6 +428,12 @@ public class GeneradorTickets {
     public static void generarTicketVentaPDF(String rutaDestino, String nombreCliente, String fecha,
             java.util.List<Object[]> detalles, double subtotal, double isv, double total, boolean esFactura,
             String metodoPago, String referenciaPago, String bancoPago, java.util.List<modelo.AbonoApartado> abonosHistoricos) throws Exception {
+        generarTicketVentaPDF(rutaDestino, nombreCliente, fecha, detalles, subtotal, isv, total, esFactura, metodoPago, referenciaPago, bancoPago, abonosHistoricos, null);
+    }
+
+    public static void generarTicketVentaPDF(String rutaDestino, String nombreCliente, String fecha,
+            java.util.List<Object[]> detalles, double subtotal, double isv, double total, boolean esFactura,
+            String metodoPago, String referenciaPago, String bancoPago, java.util.List<modelo.AbonoApartado> abonosHistoricos, String nombreUsuario) throws Exception {
         Rectangle tamanoTicket = new Rectangle(226, 800); // Formato de ticket t\u00E9rmico 80mm
         Document documento = new Document(tamanoTicket, 10, 10, 10, 10);
         PdfWriter writer = PdfWriter.getInstance(documento, new FileOutputStream(rutaDestino));
@@ -483,6 +489,11 @@ public class GeneradorTickets {
         // Informaci\u00F3n de Venta y Control de Pago
         StringBuilder sbInfo = new StringBuilder();
         sbInfo.append("Cliente: ").append(nombreCliente).append("\n");
+
+        if (nombreUsuario == null) {
+            nombreUsuario = utilidades.SesionGlobal.getUsuarioActual() != null ? utilidades.SesionGlobal.getUsuarioActual().getNombreUsuario() : "N/A";
+        }
+        sbInfo.append("Atendido por: ").append(nombreUsuario).append("\n");
 
         // CORRECCI\u00D3N: Fijamos la fecha hist\u00F3rica provista por el
         // par\u00E1metro
@@ -792,15 +803,16 @@ public class GeneradorTickets {
         String cliente = "CONSUMIDOR FINAL";
         String fecha = "";
         double subtotal = 0, isv = 0, total = 0;
-        String metodo = "Efectivo", ref = "", banco = "";
+        String metodo = "Efectivo", ref = "", banco = "", nombreUsuarioBD = "N/A";
         java.util.List<Object[]> detalles = new java.util.ArrayList<>();
 
         factory.ConexionFactory cf = new factory.ConexionFactory();
         try (Connection con = cf.getConexion()) {
             // 1. Cabecera de la venta
             String sqlVenta = "SELECT v.fecha_venta, v.subtotal_venta, v.impuesto_venta, v.total_venta, " +
-                    "v.referencia_pago, v.banco_pago, c.nombre_cliente, c.apellido_cliente " +
+                    "v.referencia_pago, v.banco_pago, c.nombre_cliente, c.apellido_cliente, u.nombre_usuario " +
                     "FROM VENTAS v LEFT JOIN CLIENTES c ON v.id_cliente_venta = c.id_cliente " +
+                    "LEFT JOIN USUARIOS u ON v.id_usuario_venta = u.id_usuario " +
                     "WHERE v.id_ventas = ?";
             try (PreparedStatement ps = con.prepareStatement(sqlVenta)) {
                 ps.setInt(1, idVenta);
@@ -816,6 +828,7 @@ public class GeneradorTickets {
                     total = rs.getDouble("total_venta");
                     ref = rs.getString("referencia_pago");
                     banco = rs.getString("banco_pago");
+                    nombreUsuarioBD = rs.getString("nombre_usuario");
                 }
             }
 
@@ -847,12 +860,12 @@ public class GeneradorTickets {
                 int idApartado = Integer.parseInt(idApStr);
                 dao.ApartadoDAO daoApartado = new dao.ApartadoDAO();
                 java.util.List<modelo.AbonoApartado> abonos = daoApartado.listarAbonos(idApartado);
-                generarTicketVentaPDF(ruta, cliente.trim(), fecha, detalles, subtotal, isv, total, true, metodo, ref, banco, abonos);
+                generarTicketVentaPDF(ruta, cliente.trim(), fecha, detalles, subtotal, isv, total, true, metodo, ref, banco, abonos, nombreUsuarioBD);
                 return new java.io.File(ruta);
             }
         }
         
-        generarTicketVentaPDF(ruta, cliente.trim(), fecha, detalles, subtotal, isv, total, true, metodo, ref, banco);
+        generarTicketVentaPDF(ruta, cliente.trim(), fecha, detalles, subtotal, isv, total, true, metodo, ref, banco, null, nombreUsuarioBD);
         return new java.io.File(ruta);
     }
 
