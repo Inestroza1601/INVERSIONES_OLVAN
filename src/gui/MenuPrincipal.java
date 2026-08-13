@@ -39,7 +39,7 @@ public class MenuPrincipal extends JFrame {
     private final Color COLOR_BORDE_LATERAL = new Color(180, 208, 192);
 
     public MenuPrincipal() {
-        setTitle("INVERSIONES OLVAN - SISTEMA INTEGRAL");
+        setTitle("SISTEMA DE ORGANIZACION DE RECURSOS, INVENTARIOS, OPERACIONES Y NEGOCIOS (ORION SYS)");
         try {
             java.net.URL imgURL = getClass().getResource("/image/logo.png");
             if (imgURL != null) {
