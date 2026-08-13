@@ -26,6 +26,8 @@ public class ConexionFactory {
     // --- VARIABLES DE ESTADO ---
     private static boolean huboFalloConexion = false;
     private static boolean hiloVigilanteActivo = false;
+    private static boolean monitorRedIniciado = false;
+    private static boolean conexionPerdidaNotificada = false;
     
     static {
         // 1. Forzar a Java a cargar el driver de SQL Server
@@ -58,6 +60,53 @@ public class ConexionFactory {
             System.out.println("ATENCI\u00D3N: No se encontr\u00F3 el archivo f\u00EDsico en: " + archivoConfig.getAbsolutePath());
             System.out.println("Usando credenciales por defecto incrustadas en el c\u00F3digo.");
         }
+        
+        // Iniciar el monitor de red permanentemente desde que arranca la App
+        iniciarMonitorRed();
+    }
+    
+    /**
+     * Inicia un hilo en segundo plano que vigila constantemente la conectividad
+     * con el servidor para alertar de inmediato cuando se pierde la conexión.
+     */
+    public static void iniciarMonitorRed() {
+        if (monitorRedIniciado) return;
+        monitorRedIniciado = true;
+
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(5000); // Check every 5 seconds
+                    boolean disponible = false;
+                    try (java.net.Socket s = new java.net.Socket()) {
+                        s.connect(new java.net.InetSocketAddress(host, Integer.parseInt(port)), 2000);
+                        disponible = true;
+                    } catch (Exception e) {}
+                    
+                    if (!disponible && !conexionPerdidaNotificada) {
+                        conexionPerdidaNotificada = true;
+                        huboFalloConexion = true;
+                        javax.swing.SwingUtilities.invokeLater(() -> {
+                            utilidades.Mensajes.showMessageDialog(null, 
+                                "¡ATENCIÓN! Se ha perdido la conexión a internet o al servidor de base de datos.\n" +
+                                "El sistema requiere conexión para guardar y consultar información.\n\n" +
+                                "Esperando conexión a red...", 
+                                "Sin Conexión", JOptionPane.WARNING_MESSAGE);
+                        });
+                    } else if (disponible && conexionPerdidaNotificada) {
+                        conexionPerdidaNotificada = false;
+                        huboFalloConexion = false;
+                        javax.swing.SwingUtilities.invokeLater(() -> {
+                            utilidades.Mensajes.showMessageDialog(null, 
+                                "¡Conexión Restablecida! El sistema ha vuelto a conectarse exitosamente.", 
+                                "Conexión Recuperada", JOptionPane.INFORMATION_MESSAGE);
+                        });
+                    }
+                } catch (InterruptedException ex) {
+                    break;
+                }
+            }
+        }).start();
     }
 
     /**

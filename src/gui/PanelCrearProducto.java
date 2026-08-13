@@ -48,8 +48,8 @@ public class PanelCrearProducto extends JPanel {
     private JComboBox<String> cmbDiasGarantia;
     private final int[] valoresGarantia = {0, 3, 7, 15, 30, 60, 90,365}; // Array interno para guardar en BD
     private JCheckBox chkRequiereSerie;
-    private JRadioButton rbImpuesto15;
-    private JRadioButton rbExento;
+    private JCheckBox chkImpuesto15;
+    private JCheckBox chkExento;
     
     private Producto productoAEditar = null;
     private JButton btnKardex;
@@ -156,28 +156,31 @@ public class PanelCrearProducto extends JPanel {
         chkRequiereSerie.setFont(new Font("Segoe UI", Font.BOLD, 13));
         chkRequiereSerie.setFocusPainted(false);
         
-        rbImpuesto15 = new JRadioButton("15% (ISV)");
-        rbImpuesto15.setBackground(new Color(255, 255, 255));
-        rbImpuesto15.setForeground(new Color(39, 174, 96));
-        rbImpuesto15.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        rbImpuesto15.setFocusPainted(false);
+        chkImpuesto15 = new JCheckBox("15% (ISV)");
+        chkImpuesto15.setBackground(new Color(255, 255, 255));
+        chkImpuesto15.setForeground(new Color(39, 174, 96));
+        chkImpuesto15.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        chkImpuesto15.setFocusPainted(false);
         
-        rbExento = new JRadioButton("Exento");
-        rbExento.setBackground(new Color(255, 255, 255));
-        rbExento.setForeground(new Color(39, 174, 96));
-        rbExento.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        rbExento.setFocusPainted(false);
+        chkExento = new JCheckBox("Exento");
+        chkExento.setBackground(new Color(255, 255, 255));
+        chkExento.setForeground(new Color(39, 174, 96));
+        chkExento.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        chkExento.setFocusPainted(false);
         
-        ButtonGroup bgImpuesto = new ButtonGroup();
-        bgImpuesto.add(rbImpuesto15);
-        bgImpuesto.add(rbExento);
-        rbImpuesto15.setSelected(true);
+        chkImpuesto15.addActionListener(e -> {
+            if (chkImpuesto15.isSelected()) chkExento.setSelected(false);
+        });
+        
+        chkExento.addActionListener(e -> {
+            if (chkExento.isSelected()) chkImpuesto15.setSelected(false);
+        });
         
         JPanel pnlChecks = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 15, 0));
         pnlChecks.setOpaque(false);
         pnlChecks.add(chkRequiereSerie);
-        pnlChecks.add(rbImpuesto15);
-        pnlChecks.add(rbExento);
+        pnlChecks.add(chkImpuesto15);
+        pnlChecks.add(chkExento);
 
         gbc.gridy = 7; gbc.gridx = 1; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
         pnlForm.add(pnlChecks, gbc);
@@ -488,7 +491,7 @@ public class PanelCrearProducto extends JPanel {
             }
             p.setDiasGarantia(valoresGarantia[cmbDiasGarantia.getSelectedIndex()]);
             p.setRequiereSerie(chkRequiereSerie.isSelected());
-            p.setIncluyeImpuesto(rbImpuesto15.isSelected());
+            p.setIncluyeImpuesto(chkExento.isSelected() ? 2 : (chkImpuesto15.isSelected() ? 1 : 0));
             // -----------------------------------------
 
             InventarioDAO dao = new InventarioDAO();
@@ -520,7 +523,7 @@ public class PanelCrearProducto extends JPanel {
         actualizarVistaPreviaImagen();
         cmbCategoria.setSelectedIndex(0); cmbProveedor.setSelectedIndex(0); cmbUbicacion.setSelectedIndex(0);
         codigosEnRam = new InventarioDAO().obtenerCodigosEnRam();
-        cmbDiasGarantia.setSelectedIndex(0); chkRequiereSerie.setSelected(false); rbImpuesto15.setSelected(true);
+        cmbDiasGarantia.setSelectedIndex(0); chkRequiereSerie.setSelected(false); chkImpuesto15.setSelected(false); chkExento.setSelected(false);
     }
     
     private void cargarDatosEdicion() {
@@ -546,7 +549,9 @@ public class PanelCrearProducto extends JPanel {
         seleccionarComboPorId(cmbUbicacion, productoAEditar.getIdUbicacion());
         
         chkRequiereSerie.setSelected(productoAEditar.isRequiereSerie());
-        if (productoAEditar.isIncluyeImpuesto()) rbImpuesto15.setSelected(true); else rbExento.setSelected(true);
+        int tipoImpuesto = productoAEditar.getIncluyeImpuesto();
+        chkImpuesto15.setSelected(tipoImpuesto == 1);
+        chkExento.setSelected(tipoImpuesto == 2);
         int dias = productoAEditar.getDiasGarantia();
         int index = 0;
         for (int i = 0; i < valoresGarantia.length; i++) { if (valoresGarantia[i] == dias) index = i; }
