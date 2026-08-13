@@ -58,7 +58,7 @@ public class MenuPrincipal extends JFrame {
         }
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setSize(1200, 800);
-        setMinimumSize(new Dimension(1024, 700));
+        setMinimumSize(new Dimension(800, 600));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
