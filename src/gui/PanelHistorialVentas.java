@@ -122,9 +122,13 @@ public class PanelHistorialVentas extends JPanel {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         for (Object[] v : ventas) {
             String ref = v[8] != null ? v[8].toString() : "";
-            String tipoVenta = ref.startsWith("Pago de Apartado #") ? "Apartado" : "Normal";
-            if (tipoVenta.equals("Apartado")) {
+            String tipoVenta = "Normal";
+            if (ref.startsWith("Pago de Apartado #")) {
                 tipoVenta = "Apartado (" + ref.replace("Pago de Apartado #", "").trim() + ")";
+            } else if (ref.equals("DEV. GARANTIA")) {
+                tipoVenta = "Devolución";
+            } else if (ref.equals("CAMBIO GARANTIA")) {
+                tipoVenta = "Sustitución";
             }
 
             modeloTabla.addRow(new Object[] {
@@ -407,9 +411,9 @@ public class PanelHistorialVentas extends JPanel {
             return;
         }
 
-        String ref = tablaVentas.getValueAt(selectedRow, 8) != null ? tablaVentas.getValueAt(selectedRow, 8).toString() : "";
-        if (ref.equals("DEV. GARANTIA")) {
-            utilidades.Mensajes.showMessageDialog(this, "No se puede imprimir un ticket para una devolución de garantía (registro negativo).\nSi desea imprimir el comprobante del nuevo producto, seleccione el registro de 'CAMBIO GARANTIA'.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        String tipoVenta = tablaVentas.getValueAt(selectedRow, 1) != null ? tablaVentas.getValueAt(selectedRow, 1).toString() : "";
+        if (tipoVenta.equals("Devolución")) {
+            utilidades.Mensajes.showMessageDialog(this, "No se puede imprimir un ticket para una devolución de garantía (registro negativo).\nSi desea imprimir el comprobante del nuevo producto, seleccione el registro de 'Sustitución'.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
