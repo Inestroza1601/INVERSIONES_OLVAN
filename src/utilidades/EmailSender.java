@@ -16,8 +16,8 @@ import javax.mail.internet.MimeMultipart;
 public class EmailSender {
 
     // Configuraci\u00F3n del correo emisor
-    private static final String EMAIL_FROM = "miguel.ineztroda@gmail.com";
-    private static final String PASSWORD = "jdxt dlgl avdt hapq"; 
+    private static final String EMAIL_FROM = "caesolutions504@gmail.com";
+    private static final String PASSWORD = "hhrk jsit ftrh lfkq";
 
     private static Session getSession() {
         Properties props = new Properties();
@@ -28,11 +28,11 @@ public class EmailSender {
         props.put("mail.smtp.ssl.protocols", "TLSv1.2");
 
         return Session.getInstance(props,
-            new javax.mail.Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(EMAIL_FROM, PASSWORD);
-                }
-            });
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(EMAIL_FROM, PASSWORD);
+                    }
+                });
     }
 
     public static boolean enviarCorreoRecuperacion(String emailDestino, String token) {
@@ -41,7 +41,7 @@ public class EmailSender {
             message.setFrom(new InternetAddress(EMAIL_FROM));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(emailDestino));
             message.setSubject("Recuperaci\u00F3n de Contrase\u00F1a - Inversiones Olvan");
-            
+
             String htmlContent = "<h2>Solicitud de Recuperaci\u00F3n de Contrase\u00F1a</h2>"
                     + "<p>Has solicitado recuperar tu contrase\u00F1a en el Sistema de Inversiones Olvan.</p>"
                     + "<p>Tu c\u00F3digo de recuperaci\u00F3n es: <strong>" + token + "</strong></p>"

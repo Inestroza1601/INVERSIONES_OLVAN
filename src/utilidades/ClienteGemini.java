@@ -13,7 +13,7 @@ public class ClienteGemini {
     // API Key proporcionada por el usuario
     // IMPORTANTE: Por seguridad, la API Key no debe subirse a GitHub.
     // Reemplaza este valor localmente o configúralo mediante variables de entorno.
-    private static final String API_KEY = "TU_API_KEY_AQUI";
+    private static final String API_KEY = "TU CLAVE API AQUI";
 
     public static String analizarError(String stackTrace) {
         String result = realizarPeticion("gemini-flash-latest", stackTrace);
@@ -38,7 +38,8 @@ public class ClienteGemini {
                 + "ERROR:\n" + stackTrace;
 
         try {
-            URL url = new URI("https://generativelanguage.googleapis.com/v1beta/models/" + modelo + ":generateContent?key=" + API_KEY).toURL();
+            URL url = new URI("https://generativelanguage.googleapis.com/v1beta/models/" + modelo
+                    + ":generateContent?key=" + API_KEY).toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
