@@ -121,6 +121,22 @@ public class PanelControlCaja extends JPanel {
                 utilidades.Mensajes.showMessageDialog(this, "Seleccione un turno del historial.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
+            
+            JPasswordField pf = new JPasswordField();
+            int opt = utilidades.Mensajes.showConfirmDialog(this, pf, "Contraseña de Administrador", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (opt != JOptionPane.OK_OPTION) return;
+            String pass = new String(pf.getPassword());
+            int idUser = new dao.KardexDAO().validarFirmaUsuario(pass);
+            if (idUser <= 0) {
+                utilidades.Mensajes.showMessageDialog(this, "Contraseña incorrecta.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            modelo.Usuario uAdmin = new dao.UsuarioDAO().obtenerUsuarioPorId(idUser);
+            if (uAdmin == null || uAdmin.getNombreRol() == null || !uAdmin.getNombreRol().equalsIgnoreCase("administrador")) {
+                utilidades.Mensajes.showMessageDialog(this, "Se requiere permisos de administrador para reimprimir tickets.", "Acceso Denegado", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             int modelRow = tablaHistorial.convertRowIndexToModel(row);
             int idCaja = (int) modeloHistorial.getValueAt(modelRow, 0);
             Map<String, Object> calcs = dao.obtenerCalculosTurno(idCaja);
@@ -450,7 +466,7 @@ public class PanelControlCaja extends JPanel {
         if (calcs != null) {
             @SuppressWarnings("unchecked")
             java.util.List<java.util.Map<String, Object>> metodos = (java.util.List<java.util.Map<String, Object>>) calcs.get("metodos");
-            int rows = (metodos != null ? metodos.size() : 0) + 2; // +1 for expected cash, +1 for note
+            int rows = (metodos != null ? metodos.size() : 0) + 3; // +1 initial, +1 expected, +1 note
             
             JPanel pnlContenedorResumen = new JPanel(new BorderLayout());
             pnlContenedorResumen.setOpaque(false);
@@ -511,6 +527,10 @@ public class PanelControlCaja extends JPanel {
             java.util.List<JLabel> etiquetas = new java.util.ArrayList<>();
             java.util.List<String> prefijos = new java.util.ArrayList<>();
             java.util.List<Double> valores = new java.util.ArrayList<>();
+
+            JLabel lblApertura = new JLabel("Efectivo Inicial (Apertura): L " + String.format("%,.2f", activa.getMontoApertura()));
+            lblApertura.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            pnlResumen.add(lblApertura);
 
             if (metodos != null) {
                 for (java.util.Map<String, Object> m : metodos) {

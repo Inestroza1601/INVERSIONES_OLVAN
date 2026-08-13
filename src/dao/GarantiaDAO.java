@@ -91,7 +91,7 @@ public class GarantiaDAO {
         }
         return lista;
     }
-     public boolean aplicarReclamo(int idDetalleVenta, String observacion, String fotoBase64, String resolucion, boolean reintegro, int idUsuario) {
+     public boolean aplicarReclamo(int idDetalleVenta, String observacion, String fotoBase64, String resolucion, int idUsuario) {
         String sql = "UPDATE DETALLES_VENTA SET estado_garantia = 'RECLAMADA', observacion_garantia = ?, foto_garantia = ?, resolucion_garantia = ? WHERE id_detalle_venta = ?";
         
         Connection con = null;
@@ -133,14 +133,12 @@ public class GarantiaDAO {
                     }
                 } else if (resolucion.equals("Cambio por Producto Nuevo")) {
                     // Propiedad de la empresa: entra a inventario defectuoso, resta stock del producto nuevo entregado
-                    if (reintegro) {
-                        String sqlDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, id_detalle_venta, fecha_ingreso, cantidad, motivo_danio, estado_defecto) VALUES (?, ?, GETDATE(), 1, ?, 'En Bodega')";
-                        try (PreparedStatement psDef = con.prepareStatement(sqlDefectuoso)) {
-                            psDef.setInt(1, idProdOriginal);
-                            psDef.setInt(2, idDetalleVenta);
-                            psDef.setString(3, observacion);
-                            psDef.executeUpdate();
-                        }
+                    String sqlDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, id_detalle_venta, fecha_ingreso, cantidad, motivo_danio, estado_defecto) VALUES (?, ?, GETDATE(), 1, ?, 'En Bodega')";
+                    try (PreparedStatement psDef = con.prepareStatement(sqlDefectuoso)) {
+                        psDef.setInt(1, idProdOriginal);
+                        psDef.setInt(2, idDetalleVenta);
+                        psDef.setString(3, observacion);
+                        psDef.executeUpdate();
                     }
                     
                     try(PreparedStatement psUpStock = con.prepareStatement("UPDATE INVENTARIO SET stock_producto = stock_producto - 1 WHERE id_producto = ? AND stock_producto >= 1")){
@@ -167,15 +165,13 @@ public class GarantiaDAO {
                         psK.executeUpdate();
                     }
                 } else {
-                    // Otros casos (ej. Sin Soluci\u00F3n)
-                    if (reintegro) {
-                        String sqlDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, id_detalle_venta, fecha_ingreso, cantidad, motivo_danio, estado_defecto) VALUES (?, ?, GETDATE(), 1, ?, 'En Bodega')";
-                        try (PreparedStatement psDef = con.prepareStatement(sqlDefectuoso)) {
-                            psDef.setInt(1, idProdOriginal);
-                            psDef.setInt(2, idDetalleVenta);
-                            psDef.setString(3, observacion);
-                            psDef.executeUpdate();
-                        }
+                    // Otros casos (ej. Sin Solución)
+                    String sqlDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, id_detalle_venta, fecha_ingreso, cantidad, motivo_danio, estado_defecto) VALUES (?, ?, GETDATE(), 1, ?, 'En Bodega')";
+                    try (PreparedStatement psDef = con.prepareStatement(sqlDefectuoso)) {
+                        psDef.setInt(1, idProdOriginal);
+                        psDef.setInt(2, idDetalleVenta);
+                        psDef.setString(3, observacion);
+                        psDef.executeUpdate();
                     }
                 }
             }
@@ -208,7 +204,7 @@ public class GarantiaDAO {
         return 0.0;
     }
 
-    public boolean procesarCambioGarantia(int idDetalleDefectuoso, int idProductoSustituto, double precioSustituto, int idUsuario, String obs, String fotoBase64, String resolucion, boolean reintegro) {
+    public boolean procesarCambioGarantia(int idDetalleDefectuoso, int idProductoSustituto, double precioSustituto, int idUsuario, String obs, String fotoBase64, String resolucion, String serieSustituto) {
         Connection con = null;
         try {
             con = factory.getConexion();
@@ -275,10 +271,10 @@ public class GarantiaDAO {
             }
             
             // Detalle Positivo
-            String sqlDetPos = "INSERT INTO DETALLES_VENTA (id_ventas, id_producto, descripcion_venta, cantidad_venta, precio_unitario_venta, subtotal_venta, dias_garantia, estado_garantia) VALUES (?, ?, ?, 1, ?, ?, ?, 'VIGENTE')";
+            String sqlDetPos = "INSERT INTO DETALLES_VENTA (id_ventas, id_producto, descripcion_venta, cantidad_venta, precio_unitario_venta, subtotal_venta, identificador_serie, dias_garantia, estado_garantia) VALUES (?, ?, ?, 1, ?, ?, ?, ?, 'VIGENTE')";
             try(PreparedStatement psDP = con.prepareStatement(sqlDetPos)){
                 psDP.setInt(1, idVentaPos); psDP.setInt(2, idProductoSustituto); psDP.setString(3, descSust);
-                psDP.setDouble(4, precioSustituto); psDP.setDouble(5, precioSustituto); psDP.setInt(6, diasSust);
+                psDP.setDouble(4, precioSustituto); psDP.setDouble(5, precioSustituto); psDP.setString(6, serieSustituto); psDP.setInt(7, diasSust);
                 psDP.executeUpdate();
             }
             
@@ -330,14 +326,12 @@ public class GarantiaDAO {
                 psR.executeUpdate();
             }
             
-            if (reintegro) {
-                String sqlDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, id_detalle_venta, fecha_ingreso, cantidad, motivo_danio) VALUES (?, ?, GETDATE(), 1, ?)";
-                try (PreparedStatement psDef = con.prepareStatement(sqlDefectuoso)) {
-                    psDef.setInt(1, idProdOriginal);
-                    psDef.setInt(2, idDetalleDefectuoso);
-                    psDef.setString(3, obs);
-                    psDef.executeUpdate();
-                }
+            String sqlDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, id_detalle_venta, fecha_ingreso, cantidad, motivo_danio) VALUES (?, ?, GETDATE(), 1, ?)";
+            try (PreparedStatement psDef = con.prepareStatement(sqlDefectuoso)) {
+                psDef.setInt(1, idProdOriginal);
+                psDef.setInt(2, idDetalleDefectuoso);
+                psDef.setString(3, obs);
+                psDef.executeUpdate();
             }
             
             con.commit();

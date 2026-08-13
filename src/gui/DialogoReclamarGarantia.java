@@ -9,10 +9,10 @@ public class DialogoReclamarGarantia extends JDialog {
 
     private boolean exito = false;
     private int idDetalle;
+    private String serieOriginal;
     
     private JTextArea txtObservacion;
     private JComboBox<String> cmbResolucion;
-    private JCheckBox chkReintegro;
     private JPanel pnlDiferencia;
     private JLabel lblProductoNuevo;
     private JLabel lblDiferencia;
@@ -25,8 +25,9 @@ public class DialogoReclamarGarantia extends JDialog {
     private String fotoBase64 = null;
 
     public DialogoReclamarGarantia(Window parent, String cliente, String producto, String serie, String fechaCompra, int idDetalle) {
-        super(parent, "Procesar Reclamo de Garant\u00EDa", Dialog.ModalityType.APPLICATION_MODAL);
+        super(parent, "Procesar Reclamo de Garantía", Dialog.ModalityType.APPLICATION_MODAL);
         this.idDetalle = idDetalle;
+        this.serieOriginal = serie;
         
         setSize(700, 550);
         setLocationRelativeTo(parent);
@@ -85,18 +86,12 @@ public class DialogoReclamarGarantia extends JDialog {
         lblRes.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblRes.setAlignmentX(Component.LEFT_ALIGNMENT);
         
-        cmbResolucion = new JComboBox<>(new String[]{"Reparaci\u00F3n T\u00E9cnica con Proveedor", "Cambio por Producto Nuevo", "Cambio por Otro Producto Diferente", "Sin Soluci\u00F3n"});
+        cmbResolucion = new JComboBox<>(new String[]{"Reparación Técnica con Proveedor", "Cambio por Producto Nuevo", "Cambio por Otro Producto Diferente", "Sin Solución"});
         cmbResolucion.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         cmbResolucion.setAlignmentX(Component.LEFT_ALIGNMENT);
         cmbResolucion.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
         
-        chkReintegro = new JCheckBox("<html>Descontar reemplazo del inv.<br>y enviar producto a bodega</html>");
-        chkReintegro.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        chkReintegro.setForeground(new Color(100, 100, 100));
-        chkReintegro.setOpaque(false);
-        chkReintegro.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
-        // --- Panel Din\u00E1mico de Diferencia ---
+        // --- Panel Dinámico de Diferencia ---
         pnlDiferencia = new JPanel();
         pnlDiferencia.setLayout(new BoxLayout(pnlDiferencia, BoxLayout.Y_AXIS));
         pnlDiferencia.setOpaque(false);
@@ -123,7 +118,6 @@ public class DialogoReclamarGarantia extends JDialog {
         cmbResolucion.addActionListener(e -> {
             boolean esSustituto = cmbResolucion.getSelectedIndex() == 2;
             pnlDiferencia.setVisible(esSustituto);
-            chkReintegro.setVisible(!esSustituto); // Si es sustituto, la l\u00F3gica de inv. es diferente
             revalidate();
             repaint();
         });
@@ -140,10 +134,10 @@ public class DialogoReclamarGarantia extends JDialog {
                 
                 if (diferencia > 0) {
                     lblDiferencia.setText(String.format("Diferencia a Cobrar: L %,.2f", diferencia));
-                    lblDiferencia.setForeground(new Color(227, 0, 15)); // Rojo (Debe dinero)
+                    lblDiferencia.setForeground(new Color(39, 174, 96)); // Verde (Cliente nos paga)
                 } else if (diferencia < 0) {
                     lblDiferencia.setText(String.format("Diferencia a Devolver: L %,.2f", Math.abs(diferencia)));
-                    lblDiferencia.setForeground(new Color(39, 174, 96)); // Verde (Dar vuelto al cliente)
+                    lblDiferencia.setForeground(new Color(227, 0, 15)); // Rojo (Tenemos que devolver)
                 } else {
                     lblDiferencia.setText("Diferencia: L 0.00 (Cambio Directo)");
                     lblDiferencia.setForeground(new Color(45, 45, 45));
@@ -155,7 +149,6 @@ public class DialogoReclamarGarantia extends JDialog {
         pnlResolucion.add(Box.createVerticalStrut(5));
         pnlResolucion.add(cmbResolucion);
         pnlResolucion.add(Box.createVerticalStrut(5));
-        pnlResolucion.add(chkReintegro);
         pnlResolucion.add(pnlDiferencia);
 
         JPanel pnlIzquierda = new JPanel(new BorderLayout(0, 10));
@@ -289,9 +282,18 @@ public class DialogoReclamarGarantia extends JDialog {
     private void procesarReclamo(ActionEvent evt) {
         if (txtObservacion.getText().trim().isEmpty()) {
             utilidades.Mensajes.showMessageDialog(this, 
-                "Por favor, ingrese un motivo u observaci\u00F3n sobre el da\u00F1o del producto.", 
+                "Por favor, ingrese un motivo u observación sobre el daño del producto.", 
                 "Faltan Datos", JOptionPane.WARNING_MESSAGE);
             return;
+        }
+        
+        if (serieOriginal != null && !serieOriginal.trim().isEmpty() && !serieOriginal.trim().equals("-") && !serieOriginal.trim().equalsIgnoreCase("N/A")) {
+            String serieIngresada = JOptionPane.showInputDialog(this, "Por seguridad, ingrese o escanee el número de serie / IMEI del producto defectuoso que trae el cliente:", "Verificación de Serie", JOptionPane.QUESTION_MESSAGE);
+            if (serieIngresada == null) return; // Canceló
+            if (!serieIngresada.trim().equalsIgnoreCase(serieOriginal.trim())) {
+                utilidades.Mensajes.showMessageDialog(this, "La serie ingresada no coincide con la registrada en la venta original.\nSerie registrada en sistema: " + serieOriginal, "Alerta de Seguridad", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
         }
 
         int confirmacion = utilidades.Mensajes.showConfirmDialog(this, 
@@ -308,9 +310,19 @@ public class DialogoReclamarGarantia extends JDialog {
                     utilidades.Mensajes.showMessageDialog(this, "Debe seleccionar un producto sustituto.", "Faltan Datos", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
+                
+                String serieSustituto = null;
+                if (productoSustituto.isRequiereSerie()) {
+                    serieSustituto = JOptionPane.showInputDialog(this, "Ingrese el número de serie / identificador para el nuevo producto:", "Identificador Requerido", JOptionPane.QUESTION_MESSAGE);
+                    if (serieSustituto == null || serieSustituto.trim().isEmpty()) {
+                        utilidades.Mensajes.showMessageDialog(this, "Debe ingresar el identificador del producto.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                }
+                
                 int idUsuario = utilidades.SesionGlobal.getUsuarioActual() != null ? utilidades.SesionGlobal.getUsuarioActual().getIdUsuario() : 1;
                 
-                if (dao.procesarCambioGarantia(idDetalle, productoSustituto.getIdProducto(), productoSustituto.getPrecioVenta(), idUsuario, txtObservacion.getText(), fotoBase64, cmbResolucion.getSelectedItem().toString(), chkReintegro.isSelected())) {
+                if (dao.procesarCambioGarantia(idDetalle, productoSustituto.getIdProducto(), productoSustituto.getPrecioVenta(), idUsuario, txtObservacion.getText(), fotoBase64, cmbResolucion.getSelectedItem().toString(), serieSustituto)) {
                     this.exito = true;
                     // Generar Ticket
                     utilidades.GeneradorTickets.generarTicketCambioPDF(idDetalle, productoSustituto, dao.obtenerPrecioOriginal(idDetalle));
@@ -319,9 +331,9 @@ public class DialogoReclamarGarantia extends JDialog {
                     utilidades.Mensajes.showMessageDialog(this, "Hubo un error al aplicar el reclamo.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                // Resoluci\u00F3n Normal
+                // Resolución Normal
                 int idUsuario = utilidades.SesionGlobal.getUsuarioActual() != null ? utilidades.SesionGlobal.getUsuarioActual().getIdUsuario() : 1;
-                if (dao.aplicarReclamo(idDetalle, txtObservacion.getText(), fotoBase64, cmbResolucion.getSelectedItem().toString(), chkReintegro.isSelected(), idUsuario)) {
+                if (dao.aplicarReclamo(idDetalle, txtObservacion.getText(), fotoBase64, cmbResolucion.getSelectedItem().toString(), idUsuario)) {
                     this.exito = true;
                     // Generar Ticket de Garantia
                     utilidades.GeneradorTickets.generarTicketGarantiaPDF(idDetalle, cmbResolucion.getSelectedItem().toString(), txtObservacion.getText());
