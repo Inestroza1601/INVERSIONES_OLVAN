@@ -43,7 +43,7 @@ public class EfectosUI {
             private boolean isPressed = false;
 
             private void animar(boolean entrar) {
-                if (!boton.isEnabled()) return;
+                if (!boton.isEnabled() && entrar) return;
                 if (timer != null && timer.isRunning()) timer.stop();
 
                 timer = new Timer(15, e -> {
@@ -90,8 +90,13 @@ public class EfectosUI {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                if (!boton.isEnabled()) return;
                 isPressed = false;
+                if (!boton.isEnabled()) {
+                    boton.setForeground(fgBase);
+                    boton.repaint();
+                    return;
+                }
+                
                 if (boton.contains(e.getPoint())) {
                     boton.setForeground(fgHover);
                 } else {

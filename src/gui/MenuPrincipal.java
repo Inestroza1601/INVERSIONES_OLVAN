@@ -23,7 +23,6 @@ public class MenuPrincipal extends JFrame {
     private JButton btnHistorialVentas;
     private JButton btnGarantias;
     private JButton btnEstadisticas;
-    private JButton btnAyuda;
     private JButton btnCerrarSesion;
     private JButton botonActivo = null;
 
@@ -32,8 +31,7 @@ public class MenuPrincipal extends JFrame {
     private final Color COLOR_FONDO_APP = new Color(232, 243, 236); // Verde Pastel Suave para Fondos
     private final Color COLOR_TEXTO_MENU = new Color(28, 59, 45); // Forest vintage suave para opciones
     private final Color COLOR_VERDE_EMERALD = new Color(45, 106, 79); // Verde Bosque Vintage Elegante
-    // private final Color COLOR_VERDE_OSCURO = Color.BLACK; // Negro puro para
-    // opci\u00F3n activa
+    private final Color COLOR_VERDE_OSCURO = Color.BLACK; // Negro puro para opci\u00F3n activa
     private final Color COLOR_VERDE_HOVER = new Color(192, 218, 204); // Verde vintage suave hover
     private final Color COLOR_ROJO_PELIGRO = new Color(239, 68, 68);
     private final Color COLOR_ROJO_HOVER = new Color(254, 226, 226);
@@ -41,14 +39,8 @@ public class MenuPrincipal extends JFrame {
     private final Color COLOR_BORDE_LATERAL = new Color(180, 208, 192);
 
     public MenuPrincipal() {
-        setTitle("SISTEMA DE ORGANIZACION DE RECURSOS, INVENTARIOS, OPERACIONES Y NEGOCIOS (ORION SYS)");
+        setTitle("INVERSIONES OLVAN - SISTEMA INTEGRAL");
         try {
-            dao.EmpresaDAO empDao = new dao.EmpresaDAO();
-            modelo.Empresa emp = empDao.obtenerDatos(1);
-            if (emp != null) {
-                utilidades.SesionGlobal.setEmpresaActual(emp);
-            }
-            // Logo de la aplicación para la barra de tareas (Orion Sys)
             java.net.URL imgURL = getClass().getResource("/image/logo.png");
             if (imgURL != null) {
                 setIconImage(new javax.swing.ImageIcon(imgURL).getImage());
@@ -58,7 +50,7 @@ public class MenuPrincipal extends JFrame {
         }
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setSize(1200, 800);
-        setMinimumSize(new Dimension(800, 600));
+        setMinimumSize(new Dimension(1024, 700));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -168,7 +160,6 @@ public class MenuPrincipal extends JFrame {
         btnHistorialVentas = crearBotonWebAnimado("Historial de Ventas", new IconoMenu(9), false);
         btnGarantias = crearBotonWebAnimado("Garant\u00EDas", new IconoMenu(5), false);
         btnEstadisticas = crearBotonWebAnimado("Estad\u00EDsticas", new IconoMenu(7), false);
-        btnAyuda = crearBotonWebAnimado("Orion AI", new IconoMenu(11), false);
         btnCerrarSesion = crearBotonWebAnimado("Cerrar Sesi\u00F3n", new IconoMenu(6), true);
 
         // uAct ya fue declarado arriba
@@ -224,8 +215,6 @@ public class MenuPrincipal extends JFrame {
         }
 
         panelLateralIzquierdo.add(Box.createVerticalGlue());
-        panelLateralIzquierdo.add(btnAyuda);
-        panelLateralIzquierdo.add(Box.createVerticalStrut(4));
         panelLateralIzquierdo.add(btnCerrarSesion);
 
         // Panel Central
@@ -267,7 +256,6 @@ public class MenuPrincipal extends JFrame {
         btnHistorialVentas.addActionListener(e -> abrirPanelAsync(() -> new PanelHistorialVentas()));
         btnGarantias.addActionListener(e -> abrirPanelAsync(() -> new PanelGestionGarantias()));
         btnEstadisticas.addActionListener(e -> abrirPanelAsync(() -> new PanelEstadisticas()));
-        btnAyuda.addActionListener(e -> abrirPanelAsync(() -> new PanelOrionAI()));
 
         btnCerrarSesion.addActionListener(e -> {
             Object[] opciones = { "S\u00ED, cerrar sesi\u00F3n", "Cancelar" };
@@ -319,19 +307,13 @@ public class MenuPrincipal extends JFrame {
         panelCentral.repaint();
     }
 
-    // Variable para controlar la carga asíncrona y evitar desincronización
-    private Object currentTaskToken = null;
-
     // =========================================================================
-    // CARGA ASÍNCRONA DE PANELES (NUEVO SISTEMA ANTI-FREEZE)
+    // CARGA AS\u00CDNCRONA DE PANELES (NUEVO SISTEMA ANTI-FREEZE)
     // =========================================================================
     public void abrirPanelAsync(java.util.function.Supplier<JPanel> panelSupplier) {
-        final Object myToken = new Object();
-        currentTaskToken = myToken;
-
         panelCentral.removeAll();
 
-        PanelCargaOverlay loader = new PanelCargaOverlay("Cargando módulo...");
+        PanelCargaOverlay loader = new PanelCargaOverlay("Cargando m\u00F3dulo...");
         panelCentral.add(loader, BorderLayout.CENTER);
         panelCentral.revalidate();
         panelCentral.repaint();
@@ -341,33 +323,28 @@ public class MenuPrincipal extends JFrame {
             @Override
             protected JPanel doInBackground() throws Exception {
                 // Instancia el panel en segundo plano (las DB queries del constructor corren
-                // aquí)
+                // aqu\u00ED)
                 return panelSupplier.get();
             }
 
             @Override
             protected void done() {
-                // Si se solicitó otro panel mientras este cargaba, ignoramos el resultado
-                if (currentTaskToken != myToken) {
-                    return;
-                }
-                
                 try {
                     JPanel nuevoPanel = get();
                     loader.detenerAnimacion();
-                    mostrarPanelHijo(nuevoPanel); // Reutilizamos mostrarPanelHijo para la transición de entrada
+                    mostrarPanelHijo(nuevoPanel); // Reutilizamos mostrarPanelHijo para la transici\u00F3n de entrada
                 } catch (Exception e) {
                     e.printStackTrace();
                     loader.detenerAnimacion();
                     panelCentral.removeAll();
-                    JLabel lblError = new JLabel("Error al cargar el módulo: " + e.getMessage());
+                    JLabel lblError = new JLabel("Error al cargar el m\u00F3dulo: " + e.getMessage());
                     lblError.setForeground(COLOR_ROJO_TEXTO);
                     lblError.setHorizontalAlignment(SwingConstants.CENTER);
                     panelCentral.add(lblError, BorderLayout.CENTER);
                     panelCentral.revalidate();
                     panelCentral.repaint();
                 }
-            }
+            }//
         };
         worker.execute();
     }
@@ -405,10 +382,8 @@ public class MenuPrincipal extends JFrame {
             private Timer timer;
 
             void animar(boolean entrar) {
-                if (boton == botonActivo) {
-                    if (!entrar) progreso = 0.0f; // Reset progress when exiting an active button
+                if (boton == botonActivo)
                     return;
-                }
                 if (timer != null && timer.isRunning())
                     timer.stop();
 
@@ -640,37 +615,12 @@ public class MenuPrincipal extends JFrame {
                     g2.drawLine(x + 10, y + 5, x + 10, y + 10);
                     g2.drawLine(x + 10, y + 10, x + 14, y + 10);
                     break;
-                case 11: // Orion AI (Cabeza de robot)
-                    g2.drawRoundRect(x + 3, y + 4, 14, 12, 4, 4); // Cabeza
-                    g2.drawRect(x + 1, y + 8, 2, 4); // Oreja izq
-                    g2.drawRect(x + 17, y + 8, 2, 4); // Oreja der
-                    g2.drawLine(x + 10, y + 1, x + 10, y + 4); // Antena
-                    g2.drawOval(x + 9, y, 2, 2); // Punta antena
-                    g2.fillRect(x + 6, y + 7, 2, 2); // Ojo izq
-                    g2.fillRect(x + 12, y + 7, 2, 2); // Ojo der
-                    g2.drawLine(x + 7, y + 12, x + 13, y + 12); // Boca
-                    break;
             }
             g2.dispose();
         }
     }
 
     public static void main(String[] args) {
-        utilidades.GestorErrores.inicializarManejadorGlobal();
-        
-        // --- ATAJO GLOBAL PARA SIMULAR ERROR (Ctrl + Alt + E) ---
-        java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new java.awt.KeyEventDispatcher() {
-            @Override
-            public boolean dispatchKeyEvent(java.awt.event.KeyEvent e) {
-                if (e.getID() == java.awt.event.KeyEvent.KEY_PRESSED &&
-                    e.getKeyCode() == java.awt.event.KeyEvent.VK_E &&
-                    e.isControlDown() && e.isAltDown()) {
-                    throw new RuntimeException("ERROR DE PRUEBA: ¡Fallo global provocado manualmente (Ctrl+Alt+E) para la presentación!");
-                }
-                return false;
-            }
-        });
-
         try {
             // --- CONFIGURACI\u00D3N GLOBAL: TEMA VERDE PASTEL ELEGANTE Y BLANCO ---
             UIManager.put("Button.arc", 12);

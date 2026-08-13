@@ -374,7 +374,7 @@ public class PanelCrearProducto extends JPanel {
         this.add(panelCentral, BorderLayout.CENTER);
 
         // --- PANEL INFERIOR: BOTONES ---
-        JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
+        JPanel pnlBotones = new JPanel(new BorderLayout());
         pnlBotones.setOpaque(false);
         
         btnKardex = new JButton("Ver Kardex");
@@ -401,8 +401,31 @@ public class PanelCrearProducto extends JPanel {
         btnGuardar.setFocusPainted(false);
         btnGuardar.addActionListener(e -> guardarProducto());
         
-        pnlBotones.add(btnKardex);
-        pnlBotones.add(btnGuardar);
+        JButton btnVolver = new JButton("Volver al Inventario");
+        btnVolver.setBackground(new Color(140, 145, 150)); // Gris Suave
+        btnVolver.setForeground(Color.WHITE);
+        btnVolver.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnVolver.setPreferredSize(new Dimension(180, 40));
+        btnVolver.setFocusPainted(false);
+        btnVolver.setVisible(productoAEditar != null);
+        btnVolver.addActionListener(e -> {
+            PanelInventario parent = (PanelInventario) SwingUtilities.getAncestorOfClass(PanelInventario.class, this);
+            if(parent != null) {
+                parent.abrirSubPanelAsync(() -> new PanelBuscarProducto());
+            }
+        });
+        
+        JPanel pnlDerecha = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
+        pnlDerecha.setOpaque(false);
+        pnlDerecha.add(btnKardex);
+        pnlDerecha.add(btnGuardar);
+        
+        JPanel pnlIzquierda = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        pnlIzquierda.setOpaque(false);
+        pnlIzquierda.add(btnVolver);
+        
+        pnlBotones.add(pnlIzquierda, BorderLayout.WEST);
+        pnlBotones.add(pnlDerecha, BorderLayout.EAST);
         this.add(pnlBotones, BorderLayout.SOUTH);
     }
 
