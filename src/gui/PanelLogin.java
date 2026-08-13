@@ -64,24 +64,10 @@ public class PanelLogin extends JPanel {
         
         JLabel lblBranding = new JLabel("", SwingConstants.CENTER);
         try {
-            modelo.Empresa emp = utilidades.SesionGlobal.getEmpresaActual();
-            if (emp == null) {
-                dao.EmpresaDAO empDao = new dao.EmpresaDAO();
-                emp = empDao.obtenerDatos(1);
-            }
-            if (emp != null && emp.getImagen_logo() != null && !emp.getImagen_logo().isEmpty()) {
-                ImageIcon icon = utilidades.ImagenHelper.obtenerIcono(emp.getImagen_logo(), 260, 260);
-                if (icon != null) {
-                    Image img = icon.getImage().getScaledInstance(260, -1, Image.SCALE_SMOOTH);
-                    lblBranding.setIcon(new ImageIcon(img));
-                }
-            } else {
-                java.net.URL imgURL = getClass().getResource("/image/logo_inversionesOlvan_sinFondo.png");
-                if (imgURL != null) {
-                    ImageIcon icon = new ImageIcon(imgURL);
-                    Image img = icon.getImage().getScaledInstance(260, -1, Image.SCALE_SMOOTH);
-                    lblBranding.setIcon(new ImageIcon(img));
-                }
+            java.net.URL imgURL = getClass().getResource("/image/logo_inversionesOlvan.png");
+            if (imgURL != null) {
+                ImageIcon icon = new ImageIcon(imgURL);
+                lblBranding.setIcon(utilidades.ImagenHelper.escalarConAltaCalidad(icon.getImage(), 260, 260));
             }
         } catch (Exception e) {}
         

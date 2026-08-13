@@ -59,8 +59,7 @@ public class ImagenHelper {
                 if (targetWidth <= 0) targetWidth = 1;
                 if (targetHeight <= 0) targetHeight = 1;
 
-                Image scaled = img.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
-                return new ImageIcon(scaled);
+                return escalarConAltaCalidad(img, targetWidth, targetHeight);
             }
         } catch (Exception e) {
             System.err.println("Error al cargar imagen en ImagenHelper: " + e.getMessage());
