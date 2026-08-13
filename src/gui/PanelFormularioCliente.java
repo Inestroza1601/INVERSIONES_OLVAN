@@ -92,7 +92,7 @@ public class PanelFormularioCliente extends JPanel {
         txtApellido = new JTextField(20);
         txtCorreo = new JTextField(20);
 
-        agregarFila(pnlForm, gbc, 0, "Identidad:", txtIdentidad);
+        agregarFila(pnlForm, gbc, 0, "<html>Identidad: <font color='red'>*</font></html>", txtIdentidad);
         
         gbc.gridy = 1;
         gbc.gridx = 1;
@@ -104,7 +104,7 @@ public class PanelFormularioCliente extends JPanel {
 
         gbc.insets = new Insets(10, 5, 10, 5);
         
-        agregarFila(pnlForm, gbc, 2, "Nombre:", txtNombre);
+        agregarFila(pnlForm, gbc, 2, "<html>Nombre: <font color='red'>*</font></html>", txtNombre);
         agregarFila(pnlForm, gbc, 3, "Apellido:", txtApellido);
         agregarFila(pnlForm, gbc, 4, "Tel\u00E9fono:", txtTelefono);
         agregarFila(pnlForm, gbc, 5, "Correo Electr\u00F3nico:", txtCorreo);

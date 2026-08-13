@@ -181,7 +181,7 @@ public class PanelCrearProducto extends JPanel implements utilidades.IPanelCierr
         pnlForm.add(lblErrorCodigo, gbc);
         gbc.insets = new Insets(10, 10, 10, 10); 
         
-        agregarFila(pnlForm, gbc, 2, "Nombre del Producto:", txtNombre);
+        agregarFila(pnlForm, gbc, 2, "<html>Nombre del Producto: <font color='red'>*</font></html>", txtNombre);
         agregarFila(pnlForm, gbc, 3, "Categor\u00EDa:", crearPanelCatalogo(cmbCategoria, "Categor\u00EDa"));
         agregarFila(pnlForm, gbc, 4, "Proveedor:", crearPanelCatalogo(cmbProveedor, "Proveedor"));
         agregarFila(pnlForm, gbc, 5, "Ubicaci\u00F3n:", crearPanelCatalogo(cmbUbicacion, "Ubicaci\u00F3n"));
@@ -224,8 +224,8 @@ public class PanelCrearProducto extends JPanel implements utilidades.IPanelCierr
 
         gbc.gridy = 7; gbc.gridx = 1; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
         pnlForm.add(pnlChecks, gbc);
-        agregarFilaCorta(pnlForm, gbc, 8, "Precio Compra (L):", txtPrecioCompra);
-        agregarFilaCorta(pnlForm, gbc, 9, "Precio Venta (L):", txtPrecioVenta);
+        agregarFilaCorta(pnlForm, gbc, 8, "<html>Precio Compra (L): <font color='red'>*</font></html>", txtPrecioCompra);
+        agregarFilaCorta(pnlForm, gbc, 9, "<html>Precio Venta (L): <font color='red'>*</font></html>", txtPrecioVenta);
         
         gbc.gridy = 10; gbc.gridx = 1; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 10, 10);
@@ -240,7 +240,7 @@ public class PanelCrearProducto extends JPanel implements utilidades.IPanelCierr
         txtPrecioMayorista.setForeground(new Color(45, 45, 45)); // Texto Oscuro
         txtPrecioMayorista.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(5, 8, 5, 8)));
         pnlForm.add(txtPrecioMayorista, gbc);
-        agregarFilaCorta(pnlForm, gbc, 12, "Stock Inicial:", txtStockInicial);
+        agregarFilaCorta(pnlForm, gbc, 12, "<html>Stock Inicial: <font color='red'>*</font></html>", txtStockInicial);
         agregarFilaCorta(pnlForm, gbc, 13, "Stock M\u00EDnimo:", txtStockMinimo);
 
         gbc.gridy = 14; gbc.weighty = 1.0;

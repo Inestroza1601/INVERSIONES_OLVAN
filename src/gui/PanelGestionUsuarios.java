@@ -158,9 +158,9 @@ public class PanelGestionUsuarios extends JPanel {
 
         // Agregar al layout (MIRA C\u00D3MO AHORA SOLO AGREGAMOS panelContenedorRol)
         int fila = 0;
-        agregarFilaFormulario(panelForm, gbc, fila++, "ID Usuario:", txtIdentidad);
-        agregarFilaFormulario(panelForm, gbc, fila++, "Nombre Completo:", txtNombre);
-        agregarFilaFormulario(panelForm, gbc, fila++, "Correo Electr\u00F3nico:", txtEmail);
+        agregarFilaFormulario(panelForm, gbc, fila++, "<html>ID Usuario: <font color='red'>*</font></html>", txtIdentidad);
+        agregarFilaFormulario(panelForm, gbc, fila++, "<html>Nombre Completo: <font color='red'>*</font></html>", txtNombre);
+        agregarFilaFormulario(panelForm, gbc, fila++, "<html>Correo Electr\u00F3nico: <font color='red'>*</font></html>", txtEmail);
         agregarFilaFormulario(panelForm, gbc, fila++, "Rol del Usuario:", panelContenedorRol);
         
         gbc.gridy = fila++; gbc.gridx = 0; gbc.gridwidth = 2;

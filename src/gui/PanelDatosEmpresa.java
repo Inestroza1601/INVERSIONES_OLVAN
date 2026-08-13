@@ -326,8 +326,8 @@ public class PanelDatosEmpresa extends JPanel {
                 BorderFactory.createEmptyBorder(5, 8, 5, 8)));
         txtApiKeyGemini.putClientProperty("JPasswordField.cutCopyAllowed", false);
 
-        agregarFila(panel, gbc, 0, "Nombre Empresa:", txtNombreEmpresa);
-        agregarFila(panel, gbc, 1, "RTN:", txtRtnEmpresa);
+        agregarFila(panel, gbc, 0, "<html>Nombre Empresa: <font color='red'>*</font></html>", txtNombreEmpresa);
+        agregarFila(panel, gbc, 1, "<html>RTN: <font color='red'>*</font></html>", txtRtnEmpresa);
         agregarFila(panel, gbc, 2, "Propietario:", txtDuenoEmpresa);
 
         gbc.gridy = 3;
