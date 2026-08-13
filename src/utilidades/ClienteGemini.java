@@ -9,12 +9,12 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class ClienteGemini {
-    
+
     // API Key proporcionada por el usuario
-    // IMPORTANTE: Por seguridad, la API Key no debe subirse a GitHub. 
+    // IMPORTANTE: Por seguridad, la API Key no debe subirse a GitHub.
     // Reemplaza este valor localmente o configúralo mediante variables de entorno.
     private static final String API_KEY = "TU_API_KEY_AQUI";
-    
+
     public static String analizarError(String stackTrace) {
         String result = realizarPeticion("gemini-flash-latest", stackTrace);
         if (result.contains("Código 404") || result.contains("NOT_FOUND")) {
@@ -54,7 +54,8 @@ public class ClienteGemini {
 
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
                 StringBuilder response = new StringBuilder();
                 String line;
                 while ((line = in.readLine()) != null) {
@@ -63,14 +64,16 @@ public class ClienteGemini {
                 in.close();
                 return extraerTextoDelJson(response.toString());
             } else {
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getErrorStream(), StandardCharsets.UTF_8));
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(conn.getErrorStream(), StandardCharsets.UTF_8));
                 StringBuilder response = new StringBuilder();
                 String line;
                 while ((line = in.readLine()) != null) {
                     response.append(line);
                 }
                 in.close();
-                return "Error al contactar con Gemini (Código " + responseCode + ").\n\nRespuesta del servidor:\n" + response.toString();
+                return "Error al contactar con Gemini (Código " + responseCode + ").\n\nRespuesta del servidor:\n"
+                        + response.toString();
             }
         } catch (Exception e) {
             return "Ocurrió un error al intentar conectarse con la Inteligencia Artificial:\n" + e.getMessage();
@@ -79,12 +82,14 @@ public class ClienteGemini {
 
     private static String extraerTextoDelJson(String jsonResponse) {
         try {
-            // Un parser ultra-básico de JSON para no añadir dependencias extra (Gson/Jackson)
+            // Un parser ultra-básico de JSON para no añadir dependencias extra
+            // (Gson/Jackson)
             String marker = "\"text\": \"";
             int startIndex = jsonResponse.indexOf(marker);
-            if (startIndex == -1) return "No se pudo extraer la respuesta del texto generado.";
+            if (startIndex == -1)
+                return "No se pudo extraer la respuesta del texto generado.";
             startIndex += marker.length();
-            
+
             // Buscar el final de la cadena cuidando de no detenerse en comillas escapadas
             int endIndex = startIndex;
             while (endIndex < jsonResponse.length()) {
@@ -93,19 +98,20 @@ public class ClienteGemini {
                 }
                 endIndex++;
             }
-            
+
             String text = jsonResponse.substring(startIndex, endIndex);
-            // Restaurar los saltos de línea y caracteres especiales (incluyendo escapes unicode HTML)
+            // Restaurar los saltos de línea y caracteres especiales (incluyendo escapes
+            // unicode HTML)
             text = text.replace("\\n", "\n")
-                       .replace("\\\"", "\"")
-                       .replace("\\\\", "\\")
-                       .replace("\\t", "\t")
-                       .replace("\\u003c", "<")
-                       .replace("\\u003e", ">")
-                       .replace("\\u0026", "&")
-                       .replace("\\u003C", "<")
-                       .replace("\\u003E", ">")
-                       .replace("\\u0026", "&");
+                    .replace("\\\"", "\"")
+                    .replace("\\\\", "\\")
+                    .replace("\\t", "\t")
+                    .replace("\\u003c", "<")
+                    .replace("\\u003e", ">")
+                    .replace("\\u0026", "&")
+                    .replace("\\u003C", "<")
+                    .replace("\\u003E", ">")
+                    .replace("\\u0026", "&");
             return text;
         } catch (Exception e) {
             return "Error parseando la respuesta de la IA.";
