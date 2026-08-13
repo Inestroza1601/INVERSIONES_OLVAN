@@ -563,7 +563,7 @@ public class GeneradorTickets {
                 java.sql.Timestamp t = a.getFechaAbono();
                 String d = (t != null) ? sdfDate.format(t) : "";
                 String h = (t != null) ? sdfTime.format(t) : "";
-                sbAb.append(String.format("%-11s %-11s %,6.2f\n", d, h, a.getMontoAbonado()));
+                sbAb.append(String.format("%-11s %-11s %,6.2f\n", d, h, a.getMontoAbono()));
             }
             sbAb.append("-------------------------------\n\n");
             Paragraph pAbonos = new Paragraph(sbAb.toString(), fNormal);
