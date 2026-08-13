@@ -422,6 +422,12 @@ public class GeneradorTickets {
     public static void generarTicketVentaPDF(String rutaDestino, String nombreCliente, String fecha,
             java.util.List<Object[]> detalles, double subtotal, double isv, double total, boolean esFactura,
             String metodoPago, String referenciaPago, String bancoPago) throws Exception {
+        generarTicketVentaPDF(rutaDestino, nombreCliente, fecha, detalles, subtotal, isv, total, esFactura, metodoPago, referenciaPago, bancoPago, null);
+    }
+
+    public static void generarTicketVentaPDF(String rutaDestino, String nombreCliente, String fecha,
+            java.util.List<Object[]> detalles, double subtotal, double isv, double total, boolean esFactura,
+            String metodoPago, String referenciaPago, String bancoPago, java.util.List<modelo.AbonoApartado> abonosHistoricos) throws Exception {
         Rectangle tamanoTicket = new Rectangle(226, 800); // Formato de ticket t\u00E9rmico 80mm
         Document documento = new Document(tamanoTicket, 10, 10, 10, 10);
         PdfWriter writer = PdfWriter.getInstance(documento, new FileOutputStream(rutaDestino));
@@ -542,6 +548,27 @@ public class GeneradorTickets {
         sbDetalles.append("-------------------------------\n");
         Paragraph parrafoDetalles = new Paragraph(sbDetalles.toString(), fNormal);
         documento.add(parrafoDetalles);
+
+        // --- ABONOS HISTORICOS (Si es entrega de apartado) ---
+        if (abonosHistoricos != null && !abonosHistoricos.isEmpty()) {
+            StringBuilder sbAb = new StringBuilder();
+            sbAb.append("\n===============================\n");
+            sbAb.append("HISTORIAL DE ABONOS\n");
+            sbAb.append("===============================\n");
+            sbAb.append(String.format("%-11s %-11s %6s\n", "FECHA", "HORA", "MONTO"));
+            sbAb.append("-------------------------------\n");
+            java.text.SimpleDateFormat sdfDate = new java.text.SimpleDateFormat("dd/MM/yyyy");
+            java.text.SimpleDateFormat sdfTime = new java.text.SimpleDateFormat("HH:mm");
+            for (modelo.AbonoApartado a : abonosHistoricos) {
+                java.sql.Timestamp t = a.getFechaAbono();
+                String d = (t != null) ? sdfDate.format(t) : "";
+                String h = (t != null) ? sdfTime.format(t) : "";
+                sbAb.append(String.format("%-11s %-11s %,6.2f\n", d, h, a.getMontoAbonado()));
+            }
+            sbAb.append("-------------------------------\n\n");
+            Paragraph pAbonos = new Paragraph(sbAb.toString(), fNormal);
+            documento.add(pAbonos);
+        }
         if (ticketTieneGarantias) {
             String textoPoliticas = emp != null && emp.getPoliticasGarantia() != null ? emp.getPoliticasGarantia()
                     : "Conserve este ticket. La garant\u00EDa no aplica por da\u00F1os f\u00EDsicos, humedad, exposici\u00F3n a l\u00EDquidos o manipulaci\u00F3n por terceros.";
@@ -810,6 +837,17 @@ public class GeneradorTickets {
         }
 
         // Llamamos a tu m\u00E9todo maestro que ya dibuja el PDF maravillosamente
+        if (ref != null && ref.startsWith("Pago de Apartado #")) {
+            String idApStr = ref.replaceAll("[^0-9]", "");
+            if (!idApStr.isEmpty()) {
+                int idApartado = Integer.parseInt(idApStr);
+                dao.ApartadoDAO daoApartado = new dao.ApartadoDAO();
+                java.util.List<modelo.AbonoApartado> abonos = daoApartado.listarAbonos(idApartado);
+                generarTicketVentaPDF(ruta, cliente.trim(), fecha, detalles, subtotal, isv, total, true, metodo, ref, banco, abonos);
+                return new java.io.File(ruta);
+            }
+        }
+        
         generarTicketVentaPDF(ruta, cliente.trim(), fecha, detalles, subtotal, isv, total, true, metodo, ref, banco);
         return new java.io.File(ruta);
     }
@@ -1283,8 +1321,8 @@ public class GeneradorTickets {
             sbAbonos.append("HISTORIAL DE ABONOS\n");
             sbAbonos.append("-------------------------------\n");
             for (modelo.AbonoApartado ab : abonosHistoricos) {
-                String fechaAbono = new java.text.SimpleDateFormat("dd/MM/yy").format(ab.getFechaAbono());
-                sbAbonos.append(String.format("%-12s L %,15.2f\n", fechaAbono, ab.getMontoAbono()));
+                String fechaAbono = new java.text.SimpleDateFormat("dd/MM/yy HH:mm").format(ab.getFechaAbono());
+                sbAbonos.append(String.format("%-14s L %,13.2f\n", fechaAbono, ab.getMontoAbono()));
             }
             sbAbonos.append("-------------------------------\n");
             Paragraph pAbonos = new Paragraph(sbAbonos.toString(), fNormal);

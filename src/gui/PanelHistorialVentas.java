@@ -408,34 +408,10 @@ public class PanelHistorialVentas extends JPanel {
         }
 
         int idVenta = (int) tablaVentas.getValueAt(selectedRow, 0);
-        Map<String, Object> venta = dao.obtenerReciboPorId(idVenta);
-        if (venta == null || venta.isEmpty())
-            return;
-
-        @SuppressWarnings("unchecked")
-        List<Object[]> detalles = (List<Object[]>) venta.get("detalles");
-
-        File dir = new File("reportes/ventas");
-        if (!dir.exists()) dir.mkdirs();
-        File archivoDestino = new File("reportes/ventas/Ticket_Venta_" + idVenta + ".pdf");
 
         try {
-            boolean facturacionHabilitada = dao.empresaTieneFacturacionHabilitada(1);
-
-            GeneradorTickets.generarTicketVentaPDF(
-                    archivoDestino.getAbsolutePath(),
-                    (String) venta.get("cliente"),
-                    (String) venta.get("fecha"),
-                    detalles,
-                    (double) venta.get("subtotal"),
-                    (double) venta.get("isv"),
-                    (double) venta.get("total"),
-                    facturacionHabilitada,
-                    (String) venta.get("metodo"),
-                    (String) venta.get("ref"),
-                    (String) venta.get("banco"));
-
-            if (Desktop.isDesktopSupported()) {
+            java.io.File archivoDestino = utilidades.GeneradorTickets.generarFactura(idVenta);
+            if (java.awt.Desktop.isDesktopSupported() && archivoDestino != null && archivoDestino.exists()) {
                 utilidades.GestorImpresion.procesarImpresion(archivoDestino, utilidades.GestorImpresion.TIPO_TICKET);
             }
         } catch (Exception ex) {
