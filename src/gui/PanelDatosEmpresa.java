@@ -223,8 +223,12 @@ public class PanelDatosEmpresa extends JPanel {
             return;
         }
 
-        Empresa emp = new Empresa();
-        emp.setIdEmpresa(this.idEmpresaActual);
+        EmpresaDAO dao = new EmpresaDAO();
+        Empresa emp = dao.obtenerDatos();
+        if (emp == null) {
+            emp = new Empresa();
+            emp.setIdEmpresa(this.idEmpresaActual);
+        }
         emp.setNombreEmpresa(txtNombreEmpresa.getText().trim());
         emp.setRtnEmpresa(txtRtnEmpresa.getText().trim());
         emp.setDuenoEmpresa(txtDuenoEmpresa.getText().trim());
@@ -240,7 +244,6 @@ public class PanelDatosEmpresa extends JPanel {
         emp.setFacebook(txtFacebook.getText().trim());
         emp.setApiKeyGemini(new String(txtApiKeyGemini.getPassword()).trim());
 
-        EmpresaDAO dao = new EmpresaDAO();
         if (dao.guardarOActualizar(emp)) {
             utilidades.Mensajes.showMessageDialog(this, "Empresa guardada correctamente.", "Éxito",
                     JOptionPane.INFORMATION_MESSAGE);
