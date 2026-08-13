@@ -48,7 +48,8 @@ public class PanelCrearProducto extends JPanel {
     private JComboBox<String> cmbDiasGarantia;
     private final int[] valoresGarantia = {0, 3, 7, 15, 30, 60, 90,365}; // Array interno para guardar en BD
     private JCheckBox chkRequiereSerie;
-    private JCheckBox chkIncluyeImpuesto;
+    private JRadioButton rbImpuesto15;
+    private JRadioButton rbExento;
     
     private Producto productoAEditar = null;
     private JButton btnKardex;
@@ -155,16 +156,28 @@ public class PanelCrearProducto extends JPanel {
         chkRequiereSerie.setFont(new Font("Segoe UI", Font.BOLD, 13));
         chkRequiereSerie.setFocusPainted(false);
         
-        chkIncluyeImpuesto = new JCheckBox("Aplica Impuesto (ISV 15%)");
-        chkIncluyeImpuesto.setBackground(new Color(255, 255, 255));
-        chkIncluyeImpuesto.setForeground(new Color(39, 174, 96));
-        chkIncluyeImpuesto.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        chkIncluyeImpuesto.setFocusPainted(false);
+        rbImpuesto15 = new JRadioButton("15% (ISV)");
+        rbImpuesto15.setBackground(new Color(255, 255, 255));
+        rbImpuesto15.setForeground(new Color(39, 174, 96));
+        rbImpuesto15.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        rbImpuesto15.setFocusPainted(false);
+        
+        rbExento = new JRadioButton("Exento");
+        rbExento.setBackground(new Color(255, 255, 255));
+        rbExento.setForeground(new Color(39, 174, 96));
+        rbExento.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        rbExento.setFocusPainted(false);
+        
+        ButtonGroup bgImpuesto = new ButtonGroup();
+        bgImpuesto.add(rbImpuesto15);
+        bgImpuesto.add(rbExento);
+        rbImpuesto15.setSelected(true);
         
         JPanel pnlChecks = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 15, 0));
         pnlChecks.setOpaque(false);
         pnlChecks.add(chkRequiereSerie);
-        pnlChecks.add(chkIncluyeImpuesto);
+        pnlChecks.add(rbImpuesto15);
+        pnlChecks.add(rbExento);
 
         gbc.gridy = 7; gbc.gridx = 1; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
         pnlForm.add(pnlChecks, gbc);
@@ -475,7 +488,7 @@ public class PanelCrearProducto extends JPanel {
             }
             p.setDiasGarantia(valoresGarantia[cmbDiasGarantia.getSelectedIndex()]);
             p.setRequiereSerie(chkRequiereSerie.isSelected());
-            p.setIncluyeImpuesto(chkIncluyeImpuesto.isSelected());
+            p.setIncluyeImpuesto(rbImpuesto15.isSelected());
             // -----------------------------------------
 
             InventarioDAO dao = new InventarioDAO();
@@ -507,7 +520,7 @@ public class PanelCrearProducto extends JPanel {
         actualizarVistaPreviaImagen();
         cmbCategoria.setSelectedIndex(0); cmbProveedor.setSelectedIndex(0); cmbUbicacion.setSelectedIndex(0);
         codigosEnRam = new InventarioDAO().obtenerCodigosEnRam();
-        cmbDiasGarantia.setSelectedIndex(0); chkRequiereSerie.setSelected(false); chkIncluyeImpuesto.setSelected(false);
+        cmbDiasGarantia.setSelectedIndex(0); chkRequiereSerie.setSelected(false); rbImpuesto15.setSelected(true);
     }
     
     private void cargarDatosEdicion() {
@@ -533,7 +546,7 @@ public class PanelCrearProducto extends JPanel {
         seleccionarComboPorId(cmbUbicacion, productoAEditar.getIdUbicacion());
         
         chkRequiereSerie.setSelected(productoAEditar.isRequiereSerie());
-        chkIncluyeImpuesto.setSelected(productoAEditar.isIncluyeImpuesto());
+        if (productoAEditar.isIncluyeImpuesto()) rbImpuesto15.setSelected(true); else rbExento.setSelected(true);
         int dias = productoAEditar.getDiasGarantia();
         int index = 0;
         for (int i = 0; i < valoresGarantia.length; i++) { if (valoresGarantia[i] == dias) index = i; }
@@ -573,7 +586,12 @@ public class PanelCrearProducto extends JPanel {
     private void abrirDialogoMantenimiento(String tipoCatalogo) {
         Window ventanaPadre = SwingUtilities.getWindowAncestor(this);
         JDialog dialog = new JDialog((Frame) ventanaPadre, "Nuevo/a " + tipoCatalogo, true);
-        dialog.setSize(400, 450); dialog.setLocationRelativeTo(this);
+        if (tipoCatalogo.equals("Proveedor")) {
+            dialog.setSize(550, 300);
+        } else {
+            dialog.setSize(400, 250); // Categoría / Ubicación
+        }
+        dialog.setLocationRelativeTo(this);
         dialog.setLayout(new BorderLayout()); dialog.getContentPane().setBackground(new Color(240, 242, 245)); // Gris Nube
 
         JPanel pnlTop = new JPanel(new FlowLayout(FlowLayout.CENTER)); pnlTop.setBackground(new Color(240, 242, 245)); // Gris Nube
@@ -587,20 +605,19 @@ public class PanelCrearProducto extends JPanel {
         JTextField txtNombreCat = crearInputOscuro();
         agregarFilaDialog(pnlForm, gbc, 0, "Nombre:", txtNombreCat);
         
-        JTextField txtDesc = null, txtGarantia = null, txtEncargado = null, txtTel = null, txtDir = null, txtRepuestos = null;
+        JTextField txtDesc = null, txtEncargado = null, txtTel = null, txtDir = null, txtRepuestos = null;
 
-        if (tipoCatalogo.equals("Categor\u00EDa")) {
-            txtGarantia = crearInputOscuro();
-            permitirSoloNumeros(txtGarantia, false); // Solo n\u00FAmeros para los d\u00EDas
-            agregarFilaDialog(pnlForm, gbc, 2, "D\u00EDas de Garant\u00EDa:", txtGarantia);
+        if (tipoCatalogo.equals("Categoría")) {
+            // Ya no se piden días de garantía aquí
         } else if (tipoCatalogo.equals("Proveedor")) {
             txtEncargado = crearInputOscuro(); txtTel = crearInputOscuro();
             txtDir = crearInputOscuro(); txtRepuestos = crearInputOscuro();
-            permitirSoloNumeros(txtTel, false); // Solo n\u00FAmeros para tel\u00E9fono
-            agregarFilaDialog(pnlForm, gbc, 1, "Encargado:", txtEncargado);
-            agregarFilaDialog(pnlForm, gbc, 2, "Tel\u00E9fono:", txtTel);
-            agregarFilaDialog(pnlForm, gbc, 3, "Direcci\u00F3n:", txtDir);
-            agregarFilaDialog(pnlForm, gbc, 4, "Tipos de Productos:", txtRepuestos);
+            permitirSoloNumeros(txtTel, false); // Solo números para teléfono
+            gbc.gridx = 0; agregarFilaDialog(pnlForm, gbc, 1, "Encargado:", txtEncargado);
+            gbc.gridx = 1; agregarFilaDialog(pnlForm, gbc, 1, "Teléfono:", txtTel);
+            gbc.gridx = 0; agregarFilaDialog(pnlForm, gbc, 2, "Dirección:", txtDir);
+            gbc.gridx = 1; agregarFilaDialog(pnlForm, gbc, 2, "Tipos de Productos:", txtRepuestos);
+            gbc.gridx = 0; // reset
         }
 
         gbc.gridy = 10; gbc.weighty = 1.0; pnlForm.add(new JLabel(""), gbc);
@@ -611,16 +628,15 @@ public class PanelCrearProducto extends JPanel {
         JButton btnGuardarCat = new JButton("Guardar"); btnGuardarCat.setBackground(new Color(39, 174, 96)); btnGuardarCat.setForeground(Color.WHITE); // Verde Menta
         
         // Variables finales para usar dentro del listener
-        final JTextField fTxtDesc = txtDesc, fTxtGarantia = txtGarantia, fTxtEncargado = txtEncargado, fTxtTel = txtTel, fTxtDir = txtDir, fTxtRepuestos = txtRepuestos;
+        final JTextField fTxtDesc = txtDesc, fTxtEncargado = txtEncargado, fTxtTel = txtTel, fTxtDir = txtDir, fTxtRepuestos = txtRepuestos;
         
         btnGuardarCat.addActionListener(e -> {
             if (txtNombreCat.getText().trim().isEmpty()) { utilidades.Mensajes.showMessageDialog(dialog, "El nombre es obligatorio."); return; }
             CatalogosDAO dao = new CatalogosDAO();
             boolean exito = false;
             
-            if (tipoCatalogo.equals("Categor\u00EDa")) {
-                int garantias = fTxtGarantia.getText().trim().isEmpty() ? 0 : Integer.parseInt(fTxtGarantia.getText().trim());
-                exito = dao.registrarCategoria(txtNombreCat.getText().trim(), fTxtDesc != null ? fTxtDesc.getText().trim() : "", garantias);
+            if (tipoCatalogo.equals("Categoría")) {
+                exito = dao.registrarCategoria(txtNombreCat.getText().trim(), fTxtDesc != null ? fTxtDesc.getText().trim() : "", 0);
             } else if (tipoCatalogo.equals("Proveedor")) {
                 exito = dao.registrarProveedor(txtNombreCat.getText().trim(), fTxtEncargado.getText().trim(), fTxtTel.getText().trim(), fTxtDir.getText().trim(), fTxtRepuestos.getText().trim());
             } else {
@@ -965,7 +981,12 @@ public class PanelCrearProducto extends JPanel {
     private void abrirDialogoEdicion(String tipoCatalogo, ItemCatalogo item) {
         Window ventanaPadre = SwingUtilities.getWindowAncestor(this);
         JDialog dialog = new JDialog((Frame) ventanaPadre, "Editar " + tipoCatalogo, true);
-        dialog.setSize(400, 450); dialog.setLocationRelativeTo(this);
+        if (tipoCatalogo.equals("Proveedor")) {
+            dialog.setSize(550, 300);
+        } else {
+            dialog.setSize(400, 250);
+        }
+        dialog.setLocationRelativeTo(this);
         dialog.setLayout(new BorderLayout()); dialog.getContentPane().setBackground(new Color(240, 242, 245)); // Gris Nube
 
         JPanel pnlTop = new JPanel(new FlowLayout(FlowLayout.CENTER)); pnlTop.setBackground(new Color(240, 242, 245)); // Gris Nube
@@ -978,18 +999,17 @@ public class PanelCrearProducto extends JPanel {
 
         JTextField txtNombreCat = crearInputOscuro();
         txtNombreCat.setText(item.nombre); // Precargar nombre
+        gbc.gridwidth = 2; // Ocupar ambas columnas
         agregarFilaDialog(pnlForm, gbc, 0, "Nombre:", txtNombreCat);
+        gbc.gridwidth = 1; // Restaurar
         
-        JTextField txtDesc = null, txtGarantia = null, txtEncargado = null, txtTel = null, txtDir = null, txtRepuestos = null;
+        JTextField txtDesc = null, txtEncargado = null, txtTel = null, txtDir = null, txtRepuestos = null;
         CatalogosDAO dao = new CatalogosDAO();
 
-        if (tipoCatalogo.equals("Categor\u00EDa")) {
+        if (tipoCatalogo.equals("Categoría")) {
             String[] datos = dao.obtenerDatosCategoria(item.id);
             txtDesc = crearInputOscuro(); txtDesc.setText(datos[0]);
-            txtGarantia = crearInputOscuro(); txtGarantia.setText(datos[1]);
-            permitirSoloNumeros(txtGarantia, false);
-            agregarFilaDialog(pnlForm, gbc, 1, "Descripci\u00F3n:", txtDesc);
-            agregarFilaDialog(pnlForm, gbc, 2, "D\u00EDas de Garant\u00EDa:", txtGarantia);
+            agregarFilaDialog(pnlForm, gbc, 1, "Descripción:", txtDesc);
         } else if (tipoCatalogo.equals("Proveedor")) {
             String[] datos = dao.obtenerDatosProveedor(item.id);
             txtEncargado = crearInputOscuro(); txtEncargado.setText(datos[0]);
@@ -997,10 +1017,11 @@ public class PanelCrearProducto extends JPanel {
             txtDir = crearInputOscuro(); txtDir.setText(datos[2]);
             txtRepuestos = crearInputOscuro(); txtRepuestos.setText(datos[3]);
             permitirSoloNumeros(txtTel, false);
-            agregarFilaDialog(pnlForm, gbc, 1, "Encargado:", txtEncargado);
-            agregarFilaDialog(pnlForm, gbc, 2, "Tel\u00E9fono:", txtTel);
-            agregarFilaDialog(pnlForm, gbc, 3, "Direcci\u00F3n:", txtDir);
-            agregarFilaDialog(pnlForm, gbc, 4, "Tipos de Productos:", txtRepuestos);
+            gbc.gridx = 0; agregarFilaDialog(pnlForm, gbc, 1, "Encargado:", txtEncargado);
+            gbc.gridx = 1; agregarFilaDialog(pnlForm, gbc, 1, "Teléfono:", txtTel);
+            gbc.gridx = 0; agregarFilaDialog(pnlForm, gbc, 2, "Dirección:", txtDir);
+            gbc.gridx = 1; agregarFilaDialog(pnlForm, gbc, 2, "Tipos de Productos:", txtRepuestos);
+            gbc.gridx = 0;
         }
 
         gbc.gridy = 10; gbc.weighty = 1.0; pnlForm.add(new JLabel(""), gbc);
@@ -1010,15 +1031,14 @@ public class PanelCrearProducto extends JPanel {
         JButton btnCancelar = new JButton("Cancelar"); btnCancelar.setBackground(new Color(140, 145, 150)); btnCancelar.setForeground(Color.WHITE); btnCancelar.addActionListener(e -> dialog.dispose()); // Gris Suave
         JButton btnGuardarCat = new JButton("Actualizar"); btnGuardarCat.setBackground(new Color(39, 174, 96)); btnGuardarCat.setForeground(Color.WHITE); // Verde Menta
         
-        final JTextField fTxtDesc = txtDesc, fTxtGarantia = txtGarantia, fTxtEncargado = txtEncargado, fTxtTel = txtTel, fTxtDir = txtDir, fTxtRepuestos = txtRepuestos;
+        final JTextField fTxtDesc = txtDesc, fTxtEncargado = txtEncargado, fTxtTel = txtTel, fTxtDir = txtDir, fTxtRepuestos = txtRepuestos;
         
         btnGuardarCat.addActionListener(e -> {
             if (txtNombreCat.getText().trim().isEmpty()) { utilidades.Mensajes.showMessageDialog(dialog, "El nombre es obligatorio."); return; }
             boolean exito = false;
             
-            if (tipoCatalogo.equals("Categor\u00EDa")) {
-                int garantias = fTxtGarantia.getText().trim().isEmpty() ? 0 : Integer.parseInt(fTxtGarantia.getText().trim());
-                exito = dao.actualizarCategoria(item.id, txtNombreCat.getText().trim(), fTxtDesc != null ? fTxtDesc.getText().trim() : "", garantias);
+            if (tipoCatalogo.equals("Categoría")) {
+                exito = dao.actualizarCategoria(item.id, txtNombreCat.getText().trim(), fTxtDesc != null ? fTxtDesc.getText().trim() : "", 0);
             } else if (tipoCatalogo.equals("Proveedor")) {
                 exito = dao.actualizarProveedor(item.id, txtNombreCat.getText().trim(), fTxtEncargado.getText().trim(), fTxtTel.getText().trim(), fTxtDir.getText().trim(), fTxtRepuestos.getText().trim());
             } else {

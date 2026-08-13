@@ -150,12 +150,12 @@ public class PanelGestionErrores extends JPanel {
         txtChat = new JTextField();
         txtChat.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         txtChat.putClientProperty("JTextField.placeholderText", "Escribe aquí...");
-        txtChat.setEnabled(false);
+        txtChat.setEnabled(true);
         
         btnEnviarChat = utilidades.EfectosUI.crearBotonVerde("Enviar");
         btnEnviarChat.setPreferredSize(new Dimension(80, 30));
         btnEnviarChat.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btnEnviarChat.setEnabled(false);
+        btnEnviarChat.setEnabled(true);
         
         btnEnviarChat.addActionListener(e -> enviarMensajeUsuario());
         txtChat.addActionListener(e -> {
@@ -231,9 +231,9 @@ public class PanelGestionErrores extends JPanel {
         txtAnalisis.setText("<html><body>Seleccione un error de la tabla superior para ver su detalle.<br><br>Para obtener una solución paso a paso guiada por Inteligencia Artificial, elija un prompt o escriba abajo.</body></html>");
         txtStackTrace.setText("");
         historialChat.clear();
-        txtChat.setEnabled(false);
-        btnEnviarChat.setEnabled(false);
-        if (pnlPromptsContainer != null) pnlPromptsContainer.setVisible(false);
+        txtChat.setEnabled(true);
+        btnEnviarChat.setEnabled(true);
+        if (pnlPromptsContainer != null) pnlPromptsContainer.setVisible(true);
     }
 
     private void actualizarDetalle() {
@@ -332,13 +332,19 @@ public class PanelGestionErrores extends JPanel {
         // Si el historialChat está vacío, inyectamos el contexto y el stack trace ocultamente antes del primer mensaje
         if (historialChat.isEmpty()) {
             int f = tabla.getSelectedRow();
-            String stackTrace = "No disponible";
+            String stackTrace = "";
+            String prefix = "";
             if (f >= 0) {
                 Object[] log = logs.get(tabla.convertRowIndexToModel(f));
                 stackTrace = log[4] != null ? log[4].toString() : "Error desconocido sin traza";
+                prefix = "Encontré este error en consola y necesito que me ayudes.\n\n";
+            } else {
+                stackTrace = "Ningún error seleccionado en la tabla.";
+                prefix = "El administrador está realizando una consulta técnica libre o reportando un problema visual del sistema que no generó un registro automático.\n\n";
             }
+            
             String systemContext = "Soy un sistema de facturacion y tengo un sistema de gestion de errores. "
-                + "Encontré este error en consola y necesito que me ayudes.\n\n"
+                + prefix
                 + "REGLA MUY IMPORTANTE: Si ves que el tema es complejo, requiere tocar código fuente de Java, modificar clases principales, o hacer configuraciones avanzadas de entorno, DEBES INDÍCARLE EXPLÍCITAMENTE AL USUARIO QUE DEBE CONTACTARSE CON EL DEPARTAMENTO DE TI (Soporte Técnico) para que lo resuelvan.\n\n"
                 + "REGLAS DE FORMATO:\n"
                 + "1. Genera tu respuesta EXCLUSIVAMENTE en formato HTML básico, compatible con JEditorPane de Java.\n"

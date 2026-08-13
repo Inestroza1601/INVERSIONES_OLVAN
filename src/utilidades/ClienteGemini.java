@@ -89,6 +89,9 @@ public class ClienteGemini {
                     response.append(line);
                 }
                 in.close();
+                if (responseCode == 429) {
+                    return "<b>¡Espera un momento!</b><br>La Inteligencia Artificial está procesando demasiadas solicitudes (Límite de cuota gratuita). Por favor, espera unos 20 segundos e intenta de nuevo.";
+                }
                 return "Error al contactar con Gemini (Código " + responseCode + ").\n\nRespuesta del servidor:\n"
                         + response.toString();
             }
@@ -158,6 +161,9 @@ public class ClienteGemini {
                     response.append(line);
                 }
                 in.close();
+                if (responseCode == 429) {
+                    return "<b>¡Espera un momento!</b><br>La Inteligencia Artificial está procesando demasiadas solicitudes (Límite de cuota gratuita). Por favor, espera unos 20 segundos e intenta de nuevo.";
+                }
                 return "Error al contactar con Gemini (Código " + responseCode + ").\n\nRespuesta del servidor:\n"
                         + response.toString();
             }
