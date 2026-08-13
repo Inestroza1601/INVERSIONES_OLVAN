@@ -407,6 +407,12 @@ public class PanelHistorialVentas extends JPanel {
             return;
         }
 
+        String ref = tablaVentas.getValueAt(selectedRow, 8) != null ? tablaVentas.getValueAt(selectedRow, 8).toString() : "";
+        if (ref.equals("DEV. GARANTIA")) {
+            utilidades.Mensajes.showMessageDialog(this, "No se puede imprimir un ticket para una devolución de garantía (registro negativo).\nSi desea imprimir el comprobante del nuevo producto, seleccione el registro de 'CAMBIO GARANTIA'.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
         int idVenta = (int) tablaVentas.getValueAt(selectedRow, 0);
 
         try {
