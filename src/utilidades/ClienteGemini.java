@@ -18,19 +18,21 @@ public class ClienteGemini {
         return null;
     }
 
-    public static String analizarError(String stackTrace) {
-        String result = realizarPeticion("gemini-flash-latest", stackTrace);
+    public static String analizarError(String stackTrace, String modelo) {
+        if (modelo == null || modelo.isEmpty()) modelo = "gemini-3.6-flash";
+        String result = realizarPeticion(modelo, stackTrace);
         if (result.contains("Código 404") || result.contains("NOT_FOUND")) {
-            // Si el modelo latest no está disponible, intentamos con el 2.5 explícito
-            result = realizarPeticion("gemini-2.5-flash", stackTrace);
+            // Si el modelo exacto no está disponible, intentamos con el 3.6-flash como fallback
+            result = realizarPeticion("gemini-3.6-flash", stackTrace);
         }
         return result;
     }
 
-    public static String enviarMensajeChat(java.util.List<String[]> historial) {
-        String result = realizarPeticionChat("gemini-flash-latest", historial);
+    public static String enviarMensajeChat(java.util.List<String[]> historial, String modelo) {
+        if (modelo == null || modelo.isEmpty()) modelo = "gemini-3.6-flash";
+        String result = realizarPeticionChat(modelo, historial);
         if (result.contains("Código 404") || result.contains("NOT_FOUND")) {
-            result = realizarPeticionChat("gemini-2.5-flash", historial);
+            result = realizarPeticionChat("gemini-3.6-flash", historial);
         }
         return result;
     }
@@ -90,7 +92,11 @@ public class ClienteGemini {
                 }
                 in.close();
                 if (responseCode == 429) {
+                    System.err.println("Gemini 429 Quota Error: " + response.toString());
                     return "<b>¡Espera un momento!</b><br>La Inteligencia Artificial está procesando demasiadas solicitudes (Límite de cuota gratuita). Por favor, espera unos 20 segundos e intenta de nuevo.";
+                }
+                if (responseCode == 503) {
+                    return "<b>Servidores Ocupados:</b><br>Los servidores de Google Gemini están experimentando una alta demanda en este instante. Es temporal, por favor intenta de nuevo en unos segundos.";
                 }
                 return "Error al contactar con Gemini (Código " + responseCode + ").\n\nRespuesta del servidor:\n"
                         + response.toString();
@@ -162,7 +168,11 @@ public class ClienteGemini {
                 }
                 in.close();
                 if (responseCode == 429) {
+                    System.err.println("Gemini 429 Quota Error: " + response.toString());
                     return "<b>¡Espera un momento!</b><br>La Inteligencia Artificial está procesando demasiadas solicitudes (Límite de cuota gratuita). Por favor, espera unos 20 segundos e intenta de nuevo.";
+                }
+                if (responseCode == 503) {
+                    return "<b>Servidores Ocupados:</b><br>Los servidores de Google Gemini están experimentando una alta demanda en este instante. Es temporal, por favor intenta de nuevo en unos segundos.";
                 }
                 return "Error al contactar con Gemini (Código " + responseCode + ").\n\nRespuesta del servidor:\n"
                         + response.toString();

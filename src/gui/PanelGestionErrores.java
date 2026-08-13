@@ -22,6 +22,7 @@ public class PanelGestionErrores extends JPanel {
     private List<String[]> historialChat = new java.util.ArrayList<>();
     private JPanel pnlPromptsContainer;
     private JButton btnPrompt1, btnPrompt2, btnPrompt3;
+    private JComboBox<String> cmbModelos;
 
     public PanelGestionErrores() {
         setLayout(new BorderLayout(20, 20));
@@ -97,8 +98,16 @@ public class PanelGestionErrores extends JPanel {
         pnlDerecho.setOpaque(false);
         pnlDerecho.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
 
+        JPanel pnlChatTop = new JPanel(new BorderLayout());
+        pnlChatTop.setOpaque(false);
         JLabel lblAn = new JLabel(" ORION AI - Asistente Técnico", new IconoBombillo(), SwingConstants.LEFT);
         lblAn.setFont(new Font("Segoe UI", Font.BOLD, 14)); lblAn.setForeground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO);
+        pnlChatTop.add(lblAn, BorderLayout.WEST);
+        
+        cmbModelos = new JComboBox<>(new String[]{"Orion Flash", "Orion Pro"});
+        cmbModelos.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        cmbModelos.setBackground(Color.WHITE);
+        pnlChatTop.add(cmbModelos, BorderLayout.EAST);
         
         txtAnalisis = new JEditorPane();
         txtAnalisis.setContentType("text/html");
@@ -116,7 +125,7 @@ public class PanelGestionErrores extends JPanel {
         JScrollPane scrollAn = new JScrollPane(txtAnalisis);
         scrollAn.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)));
         
-        pnlDerecho.add(lblAn, BorderLayout.NORTH); 
+        pnlDerecho.add(pnlChatTop, BorderLayout.NORTH); 
         pnlDerecho.add(scrollAn, BorderLayout.CENTER);
 
         // --- ZONA INFERIOR DEL CHAT (Prompts + Entrada) ---
@@ -395,10 +404,18 @@ public class PanelGestionErrores extends JPanel {
             }
         });
 
+        String seleccion = (String) cmbModelos.getSelectedItem();
+        String modeloReal = "gemini-3.6-flash"; // Por defecto
+        if (seleccion != null) {
+            if (seleccion.equals("Orion Pro")) modeloReal = "gemini-3.6-pro";
+        }
+        
+        final String modeloFinal = modeloReal;
+
         SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
             @Override
             protected String doInBackground() throws Exception {
-                return utilidades.ClienteGemini.enviarMensajeChat(historialChat);
+                return utilidades.ClienteGemini.enviarMensajeChat(historialChat, modeloFinal);
             }
             @Override
             protected void done() {
