@@ -585,10 +585,14 @@ public class GeneradorTickets {
         }
 
         // --- TOTALES FINALES ---
+        String etiquetaTotal = (abonosHistoricos != null && !abonosHistoricos.isEmpty()) ? "TOTAL VENTA:" : "TOTAL A PAGAR:";
+        String saldoLinea = (abonosHistoricos != null && !abonosHistoricos.isEmpty()) ? String.format("%-15s L %,8.2f\n", "SALDO PENDIENTE:", 0.0) : "";
+
         Paragraph totales = new Paragraph(
                 String.format("%-15s L %,8.2f\n", "SUBTOTAL:", subtotal) +
                         String.format("%-15s L %,8.2f\n", "I.S.V (15%):", isv) +
-                        String.format("%-15s L %,8.2f\n", "TOTAL A PAGAR:", total) +
+                        String.format("%-15s L %,8.2f\n", etiquetaTotal, total) +
+                        saldoLinea +
                         "\n===============================\n",
                 fBold);
         totales.setAlignment(Element.ALIGN_RIGHT);
