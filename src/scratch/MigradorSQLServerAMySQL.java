@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.Statement;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ public class MigradorSQLServerAMySQL {
 
     public static void main(String[] args) {
         String url = "jdbc:sqlserver://170.80.140.2:6161;databaseName=NexarBD;encrypt=true;trustServerCertificate=true;";
-        String outputFilePath = "C:\\#INVERSIONES OLVAN\\INVERSIONES_OLVAN\\para_so\\NexarBD_MySQL.sql";
+        String outputFilePath = "NexarBD_MySQL.sql";
 
         try (Connection conn = DriverManager.getConnection(url, "orionsys", "123");
              BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilePath))) {
@@ -26,6 +26,8 @@ public class MigradorSQLServerAMySQL {
             DatabaseMetaData metaData = conn.getMetaData();
             
             // 1. Obtener todas las tablas
+            writer.write("SET FOREIGN_KEY_CHECKS=0;\n\n");
+            
             List<String> tables = new ArrayList<>();
             try (ResultSet rsTables = metaData.getTables(null, "dbo", "%", new String[]{"TABLE"})) {
                 while (rsTables.next()) {
@@ -93,36 +95,27 @@ public class MigradorSQLServerAMySQL {
                 writer.write(String.join(",\n", columnsInfo));
                 writer.write("\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;\n\n");
                 
-                // Generar INSERTS
-                try (Statement stmt = conn.createStatement();
-                     ResultSet rsData = stmt.executeQuery("SELECT * FROM [" + tableName + "]")) {
-                     
-                    int colCount = columnNames.size();
-                    while (rsData.next()) {
-                        StringBuilder insert = new StringBuilder();
-                        insert.append("INSERT INTO `").append(tableName).append("` (");
-                        for (int i = 0; i < colCount; i++) {
-                            insert.append("`").append(columnNames.get(i)).append("`");
-                            if (i < colCount - 1) insert.append(", ");
-                        }
-                        insert.append(") VALUES (");
-                        
-                        for (int i = 1; i <= colCount; i++) {
-                            Object val = rsData.getObject(i);
-                            if (val == null) {
-                                insert.append("NULL");
-                            } else {
-                                String valStr = val.toString().replace("'", "''").replace("\\", "\\\\");
-                                insert.append("'").append(valStr).append("'");
-                            }
-                            if (i < colCount) insert.append(", ");
-                        }
-                        insert.append(");\n");
-                        writer.write(insert.toString());
-                    }
-                }
+                // No generar INSERTS a peticion del usuario
                 writer.write("\n");
             }
+            
+            // Generar FOREIGN KEYS
+            writer.write("\n-- Relaciones (Llaves Foraneas)\n");
+            for (String tableName : tables) {
+                try (ResultSet rsFk = metaData.getImportedKeys(null, "dbo", tableName)) {
+                    while (rsFk.next()) {
+                        String fkName = rsFk.getString("FK_NAME");
+                        String fkColumn = rsFk.getString("FKCOLUMN_NAME");
+                        String pkTable = rsFk.getString("PKTABLE_NAME");
+                        String pkColumn = rsFk.getString("PKCOLUMN_NAME");
+                        
+                        String alterSql = String.format("ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES `%s` (`%s`);\n", 
+                                                        tableName, fkName, fkColumn, pkTable, pkColumn);
+                        writer.write(alterSql);
+                    }
+                }
+            }
+            writer.write("\n");
             
             writer.write("SET FOREIGN_KEY_CHECKS=1;\n");
             System.out.println("Migracion completada en: " + outputFilePath);
