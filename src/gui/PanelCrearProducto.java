@@ -15,7 +15,9 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 
-public class PanelCrearProducto extends JPanel {
+public class PanelCrearProducto extends JPanel implements utilidades.IPanelCierre {
+
+    private boolean cambiosRealizados = false;
 
     private JTextField txtCodigoBarras;
     private JLabel lblErrorCodigo; 
@@ -78,6 +80,44 @@ public class PanelCrearProducto extends JPanel {
         if(productoAEditar != null) {
             cargarDatosEdicion();
         }
+        
+        iniciarRastreoCambios();
+    }
+    
+    private void iniciarRastreoCambios() {
+        DocumentListener dl = new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) { cambiosRealizados = true; }
+            public void removeUpdate(DocumentEvent e) { cambiosRealizados = true; }
+            public void changedUpdate(DocumentEvent e) { cambiosRealizados = true; }
+        };
+        txtNombre.getDocument().addDocumentListener(dl);
+        txtCodigoBarras.getDocument().addDocumentListener(dl);
+        txtPrecioCompra.getDocument().addDocumentListener(dl);
+        txtPrecioVenta.getDocument().addDocumentListener(dl);
+        txtStockInicial.getDocument().addDocumentListener(dl);
+        txtStockMinimo.getDocument().addDocumentListener(dl);
+        
+        java.awt.event.ActionListener al = e -> cambiosRealizados = true;
+        cmbCategoria.addActionListener(al);
+        cmbProveedor.addActionListener(al);
+        cmbUbicacion.addActionListener(al);
+        chkPrecioMayorista.addActionListener(al);
+        chkRequiereSerie.addActionListener(al);
+        chkImpuesto15.addActionListener(al);
+        chkExento.addActionListener(al);
+    }
+    
+    @Override
+    public boolean puedeCerrarse() {
+        if (cambiosRealizados) {
+            int r = JOptionPane.showConfirmDialog(this,
+                    "No has guardado el producto.\n¿Deseas salir y perder los cambios?",
+                    "Aviso de cambios no guardados",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+            return r == JOptionPane.YES_OPTION;
+        }
+        return true;
     }
 
     private void iniciarDiseno() {
@@ -526,6 +566,7 @@ public class PanelCrearProducto extends JPanel {
             }
 
             if (exito) {
+                cambiosRealizados = false; // Reset flag after saving
                 utilidades.Mensajes.showMessageDialog(this, "\u00A1Producto " + ((productoAEditar == null)? "guardado" : "actualizado") + " exitosamente!", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
                 if (productoAEditar == null) limpiarFormulario();
             } else {

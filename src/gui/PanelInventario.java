@@ -76,22 +76,40 @@ public class PanelInventario extends JPanel {
 
         // 4. Configurar los Eventos con Carga Asíncrona
         btnBuscarProducto.addActionListener(e -> {
+            if (!comprobarCierreSeguro(panelContenedorInventario)) return;
             cambiarBotonActivo(btnBuscarProducto);
             abrirSubPanelAsync(() -> new PanelBuscarProducto());
         });
 
         btnCrearProducto.addActionListener(e -> {
+            if (!comprobarCierreSeguro(panelContenedorInventario)) return;
             cambiarBotonActivo(btnCrearProducto);
             abrirSubPanelAsync(() -> new PanelCrearProducto());
         });
 
         btnInventarioDefectuoso.addActionListener(e -> {
+            if (!comprobarCierreSeguro(panelContenedorInventario)) return;
             cambiarBotonActivo(btnInventarioDefectuoso);
             abrirSubPanelAsync(() -> new PanelInventarioDefectuoso());
         });
 
         cambiarBotonActivo(btnBuscarProducto);
         abrirSubPanelAsync(() -> new PanelBuscarProducto());
+    }
+    
+    private boolean comprobarCierreSeguro(Container container) {
+        for (Component c : container.getComponents()) {
+            if (c instanceof utilidades.IPanelCierre) {
+                if (!((utilidades.IPanelCierre) c).puedeCerrarse()) {
+                    return false;
+                }
+            } else if (c instanceof Container) {
+                if (!comprobarCierreSeguro((Container) c)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public void abrirSubPanelAsync(java.util.function.Supplier<JPanel> panelSupplier) {

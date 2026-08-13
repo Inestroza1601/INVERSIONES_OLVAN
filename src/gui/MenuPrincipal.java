@@ -242,20 +242,7 @@ public class MenuPrincipal extends JFrame {
         panelContenedor.add(appAnimada, "APP");
         cardLayout.show(panelContenedor, "APP");
 
-        // Eventos de apertura de m\u00F3dulos con animaci\u00F3n y carga as\u00EDncrona
-        btnAdministracion.addActionListener(e -> abrirPanelAsync(() -> new PanelAdministracion()));
-        btnClientes.addActionListener(e -> abrirPanelAsync(() -> new PanelGestionClientes()));
-        btnInventario.addActionListener(e -> abrirPanelAsync(() -> new PanelInventario()));
-        btnPuntoVenta.addActionListener(e -> {
-            if (validarCajaPrevia()) {
-                abrirPanelAsync(() -> new PanelPuntoVenta());
-            }
-        });
-        btnControlCaja.addActionListener(e -> abrirPanelAsync(() -> new PanelControlCaja()));
-        btnApartados.addActionListener(e -> abrirPanelAsync(() -> new PanelApartados()));
-        btnHistorialVentas.addActionListener(e -> abrirPanelAsync(() -> new PanelHistorialVentas()));
-        btnGarantias.addActionListener(e -> abrirPanelAsync(() -> new PanelGestionGarantias()));
-        btnEstadisticas.addActionListener(e -> abrirPanelAsync(() -> new PanelEstadisticas()));
+        configurarEventosBotonera();
 
         btnCerrarSesion.addActionListener(e -> {
             Object[] opciones = { "S\u00ED, cerrar sesi\u00F3n", "Cancelar" };
@@ -277,6 +264,50 @@ public class MenuPrincipal extends JFrame {
             }
         });
     }
+    
+    private boolean comprobarCierreSeguro(Container container) {
+        for (Component c : container.getComponents()) {
+            if (c instanceof utilidades.IPanelCierre) {
+                if (!((utilidades.IPanelCierre) c).puedeCerrarse()) {
+                    return false;
+                }
+            } else if (c instanceof Container) {
+                if (!comprobarCierreSeguro((Container) c)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void configurarEventoMenu(JButton btn, java.util.function.Supplier<JPanel> panelSupplier) {
+        btn.addActionListener(e -> {
+            if (!comprobarCierreSeguro(panelCentral)) return;
+            marcarBotonActivo(btn, false);
+            abrirPanelAsync(panelSupplier);
+        });
+    }
+
+    private void configurarEventosBotonera() {
+        configurarEventoMenu(btnAdministracion, () -> new PanelAdministracion());
+        configurarEventoMenu(btnClientes, () -> new PanelGestionClientes());
+        configurarEventoMenu(btnInventario, () -> new PanelInventario());
+        
+        btnPuntoVenta.addActionListener(e -> {
+            if (validarCajaPrevia()) {
+                if (!comprobarCierreSeguro(panelCentral)) return;
+                marcarBotonActivo(btnPuntoVenta, false);
+                abrirPanelAsync(() -> new PanelPuntoVenta());
+            }
+        });
+        
+        configurarEventoMenu(btnControlCaja, () -> new PanelControlCaja());
+        configurarEventoMenu(btnApartados, () -> new PanelApartados());
+        configurarEventoMenu(btnHistorialVentas, () -> new PanelHistorialVentas());
+        configurarEventoMenu(btnGarantias, () -> new PanelGestionGarantias());
+        configurarEventoMenu(btnEstadisticas, () -> new PanelEstadisticas());
+    }
+
 
     private boolean validarCajaPrevia() {
         try {
@@ -424,8 +455,6 @@ public class MenuPrincipal extends JFrame {
         }
 
         AnimadorHover animador = new AnimadorHover();
-
-        boton.addActionListener(e -> marcarBotonActivo(boton, esPeligro));
 
         boton.addMouseListener(new MouseAdapter() {
             @Override

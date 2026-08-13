@@ -124,20 +124,22 @@ public class GarantiaDAO {
             if (idProdOriginal != -1) {
                 if (resolucion.startsWith("Reparaci\u00F3n T\u00E9cnica")) {
                     // Propiedad del cliente: entra a inventario defectuoso con estado especial, no afecta KARDEX ni stock normal
-                    String sqlDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, id_detalle_venta, fecha_ingreso, cantidad, motivo_danio, estado_defecto) VALUES (?, ?, GETDATE(), 1, ?, 'En Bodega (Rep. Cliente)')";
+                    String sqlDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, id_detalle_venta, fecha_ingreso, cantidad, motivo_danio, estado_defecto, foto) VALUES (?, ?, GETDATE(), 1, ?, 'En Bodega (Rep. Cliente)', ?)";
                     try (PreparedStatement psDef = con.prepareStatement(sqlDefectuoso)) {
                         psDef.setInt(1, idProdOriginal);
                         psDef.setInt(2, idDetalleVenta);
                         psDef.setString(3, observacion);
+                        psDef.setString(4, fotoBase64);
                         psDef.executeUpdate();
                     }
                 } else if (resolucion.equals("Cambio por Producto Nuevo")) {
                     // Propiedad de la empresa: entra a inventario defectuoso, resta stock del producto nuevo entregado
-                    String sqlDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, id_detalle_venta, fecha_ingreso, cantidad, motivo_danio, estado_defecto) VALUES (?, ?, GETDATE(), 1, ?, 'En Bodega')";
+                    String sqlDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, id_detalle_venta, fecha_ingreso, cantidad, motivo_danio, estado_defecto, foto) VALUES (?, ?, GETDATE(), 1, ?, 'En Bodega', ?)";
                     try (PreparedStatement psDef = con.prepareStatement(sqlDefectuoso)) {
                         psDef.setInt(1, idProdOriginal);
                         psDef.setInt(2, idDetalleVenta);
                         psDef.setString(3, observacion);
+                        psDef.setString(4, fotoBase64);
                         psDef.executeUpdate();
                     }
                     
@@ -164,13 +166,14 @@ public class GarantiaDAO {
                         psK.setInt(3, stockReal);
                         psK.executeUpdate();
                     }
-                } else {
-                    // Otros casos (ej. Sin Solución)
-                    String sqlDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, id_detalle_venta, fecha_ingreso, cantidad, motivo_danio, estado_defecto) VALUES (?, ?, GETDATE(), 1, ?, 'En Bodega')";
+                } else if (!resolucion.equals("Sin Solución")) {
+                    // Otros casos que no sean Sin Solución
+                    String sqlDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, id_detalle_venta, fecha_ingreso, cantidad, motivo_danio, estado_defecto, foto) VALUES (?, ?, GETDATE(), 1, ?, 'En Bodega', ?)";
                     try (PreparedStatement psDef = con.prepareStatement(sqlDefectuoso)) {
                         psDef.setInt(1, idProdOriginal);
                         psDef.setInt(2, idDetalleVenta);
                         psDef.setString(3, observacion);
+                        psDef.setString(4, fotoBase64);
                         psDef.executeUpdate();
                     }
                 }
@@ -326,11 +329,12 @@ public class GarantiaDAO {
                 psR.executeUpdate();
             }
             
-            String sqlDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, id_detalle_venta, fecha_ingreso, cantidad, motivo_danio) VALUES (?, ?, GETDATE(), 1, ?)";
+            String sqlDefectuoso = "INSERT INTO INVENTARIO_DEFECTUOSO (id_producto, id_detalle_venta, fecha_ingreso, cantidad, motivo_danio, foto) VALUES (?, ?, GETDATE(), 1, ?, ?)";
             try (PreparedStatement psDef = con.prepareStatement(sqlDefectuoso)) {
                 psDef.setInt(1, idProdOriginal);
                 psDef.setInt(2, idDetalleDefectuoso);
                 psDef.setString(3, obs);
+                psDef.setString(4, fotoBase64);
                 psDef.executeUpdate();
             }
             
