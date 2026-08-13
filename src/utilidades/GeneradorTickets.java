@@ -812,7 +812,7 @@ public class GeneradorTickets {
             String sqlVenta = "SELECT v.fecha_venta, v.subtotal_venta, v.impuesto_venta, v.total_venta, " +
                     "v.referencia_pago, v.banco_pago, c.nombre_cliente, c.apellido_cliente, u.nombre_usuario " +
                     "FROM VENTAS v LEFT JOIN CLIENTES c ON v.id_cliente_venta = c.id_cliente " +
-                    "LEFT JOIN USUARIOS u ON v.id_usuario_venta = u.id_usuario " +
+                    "LEFT JOIN USUARIOS u ON v.id_usuario = u.id_usuario " +
                     "WHERE v.id_ventas = ?";
             try (PreparedStatement ps = con.prepareStatement(sqlVenta)) {
                 ps.setInt(1, idVenta);
