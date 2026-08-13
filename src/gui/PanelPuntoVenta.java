@@ -409,12 +409,17 @@ public class PanelPuntoVenta extends JPanel {
         
         for (int i = 0; i < modeloTablaVentas.getRowCount(); i++) {
             double subFila = (double) modeloTablaVentas.getValueAt(i, 5); // Cant * Precio
-            boolean incluyeImp = (boolean) modeloTablaVentas.getValueAt(i, 10);
+            int tipoImp = (int) modeloTablaVentas.getValueAt(i, 10);
             
-            if (incluyeImp) {
+            if (tipoImp == 1) { // Incluido
                 sumSubtotal += subFila / 1.15;
-            } else {
+                sumImpuesto += subFila - (subFila / 1.15);
+            } else if (tipoImp == 2) { // Exento
                 sumSubtotal += subFila;
+                // Impuesto = 0
+            } else { // No incluido (0)
+                sumSubtotal += subFila;
+                sumImpuesto += subFila * 0.15;
             }
         }
 
@@ -433,8 +438,7 @@ public class PanelPuntoVenta extends JPanel {
         }
         */
 
-        // Siempre cobrar impuesto, incluso si es en efectivo
-        sumImpuesto = sumSubtotal * 0.15;
+        // Impuestos calculados dinámicamente por cada ítem en el bucle anterior
         granTotal = sumSubtotal + sumImpuesto;
 
         lblSubtotal.setText(String.format("Subtotal: L %,.2f", sumSubtotal));
@@ -504,7 +508,7 @@ public class PanelPuntoVenta extends JPanel {
         modeloTablaVentas.addRow(new Object[]{ 
             p.getIdProducto(), p.getImagen_producto(), p.getNombreProducto(), 1, 
             precioUsar, precioUsar, p.getStockProducto(), p.getImagen_producto(), 
-            imei, p.getDiasGarantia(), p.isIncluyeImpuesto(), p.getPrecioVenta(), p.getPrecioMayorista()
+            imei, p.getDiasGarantia(), p.getIncluyeImpuesto(), p.getPrecioVenta(), p.getPrecioMayorista()
         });
         recalcularTotales();
     }

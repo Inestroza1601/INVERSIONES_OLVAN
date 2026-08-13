@@ -394,7 +394,13 @@ public class PanelLogin extends JPanel {
                     txtPassword.setEnabled(true);
                     btnEntrar.setText("Ingresar al Sistema");
                     ex.printStackTrace();
-                    utilidades.Mensajes.showMessageDialog(PanelLogin.this, "Error de conexi\u00F3n con la base de datos.", "Error de Red", JOptionPane.ERROR_MESSAGE);
+                    
+                    // Mostrar alerta de falta de internet o conexión al servidor
+                    utilidades.Mensajes.showMessageDialog(PanelLogin.this, 
+                        "No se pudo establecer conexión con el servidor de base de datos.\n\n" +
+                        "Por favor, verifique que su computadora esté conectada a internet (o a la red local).\n" +
+                        "El sistema necesita acceso a la red para funcionar correctamente.", 
+                        "Error de Red - Esperando Conexión", JOptionPane.ERROR_MESSAGE);
                 }
             }
         };

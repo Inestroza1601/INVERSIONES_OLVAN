@@ -85,7 +85,7 @@ public class InventarioDAO {
             
             ps.setInt(12, p.getDiasGarantia());
             ps.setBoolean(13, p.isRequiereSerie());
-            ps.setBoolean(14, p.isIncluyeImpuesto());
+            ps.setInt(14, p.getIncluyeImpuesto());
 
             int filasAfectadas = ps.executeUpdate();
 
@@ -144,7 +144,7 @@ public class InventarioDAO {
                 // --- LAS DOS L\u00CDNEAS QUE FALTABAN AQU\u00CD ---
                 p.setDiasGarantia(rs.getInt("dias_garantia"));
                 p.setRequiereSerie(rs.getBoolean("requiere_serie"));
-                p.setIncluyeImpuesto(rs.getBoolean("incluye_impuesto"));
+                p.setIncluyeImpuesto(rs.getInt("incluye_impuesto"));
                 // ---------------------------------------
                 
                 lista.add(p);
@@ -214,7 +214,7 @@ public class InventarioDAO {
                     p.setImagen_producto(rs.getString("imagen_producto"));
                     p.setDiasGarantia(rs.getInt("dias_garantia"));
                     p.setRequiereSerie(rs.getBoolean("requiere_serie"));
-                    p.setIncluyeImpuesto(rs.getBoolean("incluye_impuesto"));
+                    p.setIncluyeImpuesto(rs.getInt("incluye_impuesto"));
                     return p;
                 }
             }
@@ -242,7 +242,7 @@ public class InventarioDAO {
             
             ps.setInt(11, p.getDiasGarantia());
             ps.setBoolean(12, p.isRequiereSerie());
-            ps.setBoolean(13, p.isIncluyeImpuesto());
+            ps.setInt(13, p.getIncluyeImpuesto());
             ps.setInt(14, p.getIdProducto());
             
             return ps.executeUpdate() > 0;

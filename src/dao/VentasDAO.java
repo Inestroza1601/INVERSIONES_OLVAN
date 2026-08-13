@@ -82,7 +82,7 @@ public class VentasDAO {
                     p.setImagen_producto(rs.getString("imagen_producto"));
                     p.setDiasGarantia(rs.getInt("dias_garantia"));
                     p.setRequiereSerie(rs.getBoolean("requiere_serie"));
-                    p.setIncluyeImpuesto(rs.getBoolean("incluye_impuesto"));
+                    p.setIncluyeImpuesto(rs.getInt("incluye_impuesto"));
                     return p;
                 }
             }

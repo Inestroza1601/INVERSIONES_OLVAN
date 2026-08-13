@@ -131,7 +131,7 @@ public class UsuarioDAO {
     }
 
     // 5. AUTENTICAR USUARIO PARA SESI\u00D3N
-    public Usuario autenticarUsuario(String nombreUsuario, String passwordPlana) {
+    public Usuario autenticarUsuario(String nombreUsuario, String passwordPlana) throws SQLException {
         String hash = utilidades.Seguridad.encriptarSHA256(passwordPlana);
         String sql = "SELECT u.*, r.nombre_rol FROM USUARIOS u INNER JOIN ROLES_USUARIO r ON u.id_rol = r.id_rol WHERE LOWER(u.nombre_usuario) = LOWER(?) AND u.password_hash = ? AND u.estado_usuario = 1";
         
@@ -158,8 +158,6 @@ public class UsuarioDAO {
                     return u;
                 }
             }
-        } catch (SQLException e) {
-            System.err.println("Error al autenticar usuario: " + e.getMessage());
         }
         return null;
     }

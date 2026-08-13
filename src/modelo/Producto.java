@@ -16,7 +16,7 @@ public class Producto {
     private boolean eliminado; // 0 = Activo, 1 = Eliminado (Soft Delete)
     private int diasGarantia;
     private boolean requiereSerie;
-    private boolean incluyeImpuesto;
+    private int incluyeImpuesto;
 
     public Producto() {}
 
@@ -66,6 +66,6 @@ public class Producto {
     public boolean isRequiereSerie() { return requiereSerie; }
     public void setRequiereSerie(boolean requiereSerie) { this.requiereSerie = requiereSerie; }
 
-    public boolean isIncluyeImpuesto() { return incluyeImpuesto; }
-    public void setIncluyeImpuesto(boolean incluyeImpuesto) { this.incluyeImpuesto = incluyeImpuesto; }
+    public int getIncluyeImpuesto() { return incluyeImpuesto; }
+    public void setIncluyeImpuesto(int incluyeImpuesto) { this.incluyeImpuesto = incluyeImpuesto; }
 }
