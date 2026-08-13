@@ -102,11 +102,11 @@ public class DialogoRegistrarAbono extends JDialog {
         JPanel pnlTotales = new JPanel(new GridLayout(1, 3, 10, 0));
         pnlTotales.setOpaque(false);
         
-        lblTotal = crearLabelTarjeta("Total Apartado", new Color(41, 128, 185));
+        lblTotal = crearLabelTarjeta("Total Apartado", new Color(39, 174, 96));
         lblAbonado = crearLabelTarjeta("Total Abonado", new Color(39, 174, 96));
         lblSaldo = crearLabelTarjeta("Saldo Pendiente", new Color(227, 0, 15));
         
-        JPanel cTotal = crearTarjetaResumen(lblTotal, new Color(41, 128, 185));
+        JPanel cTotal = crearTarjetaResumen(lblTotal, new Color(39, 174, 96));
         JPanel cAbon = crearTarjetaResumen(lblAbonado, new Color(39, 174, 96));
         JPanel cSald = crearTarjetaResumen(lblSaldo, new Color(227, 0, 15));
         
@@ -213,7 +213,8 @@ public class DialogoRegistrarAbono extends JDialog {
         pnlRefBanco = new JPanel(new GridLayout(4, 1, 0, 5));
         pnlRefBanco.setOpaque(false);
         pnlRefBanco.add(new JLabel("Banco:"));
-        cmbBanco = new JComboBox<>(new String[]{"Seleccione Banco...", "BAC", "FICOHSA", "ATLANTIDA", "BANPAIS", "OCCIDENTE"});
+        String[] bancosHonduras = {"Seleccione Banco...", "Banco Atl\u00E1ntida", "BAC Credomatic", "Banco Ficohsa", "Banpa\u00EDs", "Banco de Occidente", "Banco Banrural", "Banco Promerica", "Banco LAFISE", "Banco FICENSA", "Banco BANHCAFE", "ACH - Transferencia Interbancaria"};
+        cmbBanco = new JComboBox<>(bancosHonduras);
         cmbBanco.setPreferredSize(new Dimension(200, 35));
         pnlRefBanco.add(cmbBanco);
         pnlRefBanco.add(new JLabel("Referencia / Voucher:"));
@@ -300,7 +301,7 @@ public class DialogoRegistrarAbono extends JDialog {
         ));
         
         String titulo = "";
-        if (colorBorde.equals(new Color(41, 128, 185))) titulo = "Total Apartado";
+        if (colorBorde.equals(new Color(39, 174, 96))) titulo = "Total Apartado";
         else if (colorBorde.equals(new Color(39, 174, 96))) titulo = "Total Abonado";
         else titulo = "Saldo Pendiente";
         

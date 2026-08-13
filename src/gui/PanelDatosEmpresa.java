@@ -24,6 +24,7 @@ public class PanelDatosEmpresa extends JPanel {
     private JTextField txtEmail;
     private JTextField txtWeb;
     private JTextField txtFacebook;
+    private JPasswordField txtApiKeyGemini;
 
     // --- Componentes para Impresion
     private PanelConfiguracionImpresion panelImpresion;
@@ -174,9 +175,10 @@ public class PanelDatosEmpresa extends JPanel {
         txtEmail.setText(emp.getEmail());
         txtWeb.setText(emp.getWeb());
         txtFacebook.setText(emp.getFacebook());
+        txtApiKeyGemini.setText(emp.getApiKeyGemini() != null ? emp.getApiKeyGemini() : "");
 
-        // --- \u00A1LA MAGIA OCURRE AQU\u00CD! ---
-        // Le pasamos la empresa al panel de impresi\u00F3n en tiempo real
+        // --- ¡LA MAGIA OCURRE AQUÍ! ---
+        // Le pasamos la empresa al panel de impresión en tiempo real
         panelImpresion.setEmpresaEnEdicion(emp);
 
         btnGuardar.setText("Actualizar Datos");
@@ -199,6 +201,7 @@ public class PanelDatosEmpresa extends JPanel {
         txtEmail.setText("");
         txtWeb.setText("");
         txtFacebook.setText("");
+        txtApiKeyGemini.setText("");
 
         btnGuardar.setText("Guardar Nueva Empresa");
         btnGuardar.setBackground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO);
@@ -213,8 +216,8 @@ public class PanelDatosEmpresa extends JPanel {
         }
 
         int opcion = utilidades.Mensajes.showConfirmDialog(this,
-                "\u00BFEst\u00E1 seguro de que desea guardar/actualizar los datos de la empresa?",
-                "Confirmar Actualizaci\u00F3n", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                "¿Está seguro de que desea guardar/actualizar los datos de la empresa?",
+                "Confirmar Actualización", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 
         if (opcion != JOptionPane.YES_OPTION) {
             return;
@@ -235,16 +238,17 @@ public class PanelDatosEmpresa extends JPanel {
         emp.setEmail(txtEmail.getText().trim());
         emp.setWeb(txtWeb.getText().trim());
         emp.setFacebook(txtFacebook.getText().trim());
+        emp.setApiKeyGemini(new String(txtApiKeyGemini.getPassword()).trim());
 
         EmpresaDAO dao = new EmpresaDAO();
         if (dao.guardarOActualizar(emp)) {
-            utilidades.Mensajes.showMessageDialog(this, "Empresa guardada correctamente.", "\u00C9xito",
+            utilidades.Mensajes.showMessageDialog(this, "Empresa guardada correctamente.", "Éxito",
                     JOptionPane.INFORMATION_MESSAGE);
 
             // Refrescar los datos cargados en memoria tras guardar
             cargarDatosEmpresa();
 
-            // Actualizamos la sesi\u00F3n global
+            // Actualizamos la sesión global
             SesionGlobal.setEmpresaActual(emp);
         } else {
             utilidades.Mensajes.showMessageDialog(this, "Error al guardar la empresa en la base de datos.", "Error",
@@ -253,7 +257,7 @@ public class PanelDatosEmpresa extends JPanel {
     }
 
     // =========================================================
-    // CREACI\u00D3N DE PANELES Y ESTILOS
+    // CREACIÓN DE PANELES Y ESTILOS
     // =========================================================
 
     private JTextField crearTextField(int columnas) {
@@ -276,6 +280,14 @@ public class PanelDatosEmpresa extends JPanel {
 
         txtNombreEmpresa = crearTextField(35);
         txtRtnEmpresa = crearTextField(15);
+        txtRtnEmpresa.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyTyped(java.awt.event.KeyEvent e) {
+                if (!Character.isDigit(e.getKeyChar())) {
+                    e.consume();
+                }
+            }
+        });
         txtDuenoEmpresa = crearTextField(35);
 
         txtDireccionEmpresa = new JTextArea(4, 35);
@@ -295,7 +307,7 @@ public class PanelDatosEmpresa extends JPanel {
         chkEstadoEmpresa.setForeground(new Color(45, 45, 45));
         chkEstadoEmpresa.setVisible(false);
 
-        chkHabilitarFacturacion = new JCheckBox("Habilitar Facturaci\u00F3n (SAR)");
+        chkHabilitarFacturacion = new JCheckBox("Habilitar Facturación (SAR)");
         chkHabilitarFacturacion.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         chkHabilitarFacturacion.setBackground(new Color(255, 255, 255));
         chkHabilitarFacturacion.setForeground(new Color(45, 45, 45));
@@ -308,7 +320,7 @@ public class PanelDatosEmpresa extends JPanel {
         gbc.gridy = 3;
         gbc.gridx = 0;
         gbc.anchor = GridBagConstraints.NORTHEAST;
-        JLabel lblDir = new JLabel("Direcci\u00F3n:");
+        JLabel lblDir = new JLabel("Dirección:");
         lblDir.setForeground(new Color(100, 100, 100));
         lblDir.setFont(new Font("Segoe UI", Font.BOLD, 13));
         panel.add(lblDir, gbc);
@@ -341,15 +353,26 @@ public class PanelDatosEmpresa extends JPanel {
         txtEmail = crearTextField(30);
         txtWeb = crearTextField(30);
         txtFacebook = crearTextField(30);
+        
+        txtApiKeyGemini = new JPasswordField(30);
+        txtApiKeyGemini.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtApiKeyGemini.setBackground(new Color(255, 255, 255));
+        txtApiKeyGemini.setForeground(new Color(45, 45, 45));
+        txtApiKeyGemini.setCaretColor(new Color(45, 45, 45));
+        txtApiKeyGemini.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 222, 225)),
+                BorderFactory.createEmptyBorder(5, 8, 5, 8)));
+        txtApiKeyGemini.putClientProperty("JPasswordField.cutCopyAllowed", false);
 
-        agregarFila(panel, gbc, 0, "Tel\u00E9fono Principal:", txtNumeroTelefono);
-        agregarFila(panel, gbc, 1, "Tel\u00E9fono Secundario:", txtTelefonoSecundario);
+        agregarFila(panel, gbc, 0, "Teléfono Principal:", txtNumeroTelefono);
+        agregarFila(panel, gbc, 1, "Teléfono Secundario:", txtTelefonoSecundario);
         agregarFila(panel, gbc, 2, "WhatsApp:", txtWhatsapp);
         agregarFila(panel, gbc, 3, "Correo:", txtEmail);
         agregarFila(panel, gbc, 4, "Web:", txtWeb);
         agregarFila(panel, gbc, 5, "Facebook:", txtFacebook);
+        agregarFila(panel, gbc, 6, "API Key (Gemini):", txtApiKeyGemini);
 
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         gbc.weighty = 1.0;
         gbc.gridx = 0;
         panel.add(new JLabel(""), gbc);

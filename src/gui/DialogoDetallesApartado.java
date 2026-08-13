@@ -123,7 +123,7 @@ public class DialogoDetallesApartado extends JDialog {
         
         JButton btnPrintGeneral = new JButton("Imprimir Ticket General");
         btnPrintGeneral.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        btnPrintGeneral.setBackground(new Color(41, 128, 185));
+        btnPrintGeneral.setBackground(new Color(39, 174, 96));
         btnPrintGeneral.setForeground(Color.WHITE);
         btnPrintGeneral.setFocusPainted(false);
         btnPrintGeneral.addActionListener(e -> imprimirTicketGeneral());

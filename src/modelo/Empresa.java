@@ -24,6 +24,7 @@ public class Empresa {
     private String mensajeTicketReclamo;
     private String imagen_logo;
     private String politicasGarantia;
+    private String apiKeyGemini;
 
     // Constructores vac\u00EDos
     public Empresa() {}
@@ -91,4 +92,7 @@ public class Empresa {
 
     public String getMensajeTicketReclamo() { return mensajeTicketReclamo; }
     public void setMensajeTicketReclamo(String mensajeTicketReclamo) { this.mensajeTicketReclamo = mensajeTicketReclamo; }
+
+    public String getApiKeyGemini() { return apiKeyGemini; }
+    public void setApiKeyGemini(String apiKeyGemini) { this.apiKeyGemini = apiKeyGemini; }
 }

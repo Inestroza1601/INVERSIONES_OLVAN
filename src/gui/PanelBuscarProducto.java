@@ -361,7 +361,7 @@ public class PanelBuscarProducto extends JPanel {
 
         // Ahora inyectamos nuestros propios \u00EDconos dibujados en Java 2D
         JMenuItem itemEditar = crearMenuItem("Ver / Editar Producto", new Color(39, 174, 96), new IconoOjo()); // Verde Menta
-        JMenuItem itemDefectuoso = crearMenuItem("Reportar Defectuoso", new Color(243, 156, 18), new IconoDefectuoso()); // Naranja
+        JMenuItem itemDefectuoso = crearMenuItem("Reportar Defectuoso", new Color(39, 174, 96), new IconoDefectuoso()); // Naranja
         JMenuItem itemEliminar = crearMenuItem("Eliminar Producto", new Color(227, 0, 15), new IconoBasurero()); // Rojo Logo
 
         itemEditar.addActionListener(e -> editarProductoSeleccionado(filaVista));

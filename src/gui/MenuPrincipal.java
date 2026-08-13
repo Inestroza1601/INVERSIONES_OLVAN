@@ -405,8 +405,10 @@ public class MenuPrincipal extends JFrame {
             private Timer timer;
 
             void animar(boolean entrar) {
-                if (boton == botonActivo)
+                if (boton == botonActivo) {
+                    if (!entrar) progreso = 0.0f; // Reset progress when exiting an active button
                     return;
+                }
                 if (timer != null && timer.isRunning())
                     timer.stop();
 

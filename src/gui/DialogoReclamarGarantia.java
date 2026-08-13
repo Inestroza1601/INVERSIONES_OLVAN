@@ -358,7 +358,7 @@ public class DialogoReclamarGarantia extends JDialog {
                     lblFotoPlaceholder.setText(count + " fotos (Clic para ver)");
                     lblFotoPlaceholder.setVerticalTextPosition(SwingConstants.BOTTOM);
                     lblFotoPlaceholder.setHorizontalTextPosition(SwingConstants.CENTER);
-                    lblFotoPlaceholder.setForeground(new Color(41, 128, 185));
+                    lblFotoPlaceholder.setForeground(new Color(39, 174, 96));
                     lblFotoPlaceholder.setFont(new Font("Segoe UI", Font.BOLD, 12));
                 } else {
                     lblFotoPlaceholder.setText("");

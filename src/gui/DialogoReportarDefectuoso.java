@@ -180,7 +180,7 @@ public class DialogoReportarDefectuoso extends JDialog {
 
         btnProcesar = new JButton("Mandar a Defectuosos");
         btnProcesar.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        btnProcesar.setBackground(new Color(243, 156, 18)); 
+        btnProcesar.setBackground(new Color(39, 174, 96)); 
         btnProcesar.setForeground(Color.WHITE);
         btnProcesar.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnProcesar.addActionListener(this::procesarReclamo);
@@ -228,7 +228,7 @@ public class DialogoReportarDefectuoso extends JDialog {
                     lblFotoPlaceholder.setText(count + " fotos (Clic para ver)");
                     lblFotoPlaceholder.setVerticalTextPosition(SwingConstants.BOTTOM);
                     lblFotoPlaceholder.setHorizontalTextPosition(SwingConstants.CENTER);
-                    lblFotoPlaceholder.setForeground(new Color(41, 128, 185));
+                    lblFotoPlaceholder.setForeground(new Color(39, 174, 96));
                     lblFotoPlaceholder.setFont(new Font("Segoe UI", Font.BOLD, 12));
                 } else {
                     lblFotoPlaceholder.setText("");

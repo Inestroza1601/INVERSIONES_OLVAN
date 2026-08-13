@@ -20,7 +20,7 @@ public class CatalogosDAO {
     // ==========================================
     public Map<Integer, String> listarCategorias() {
         Map<Integer, String> mapa = new HashMap<>();
-        String sql = "SELECT id_categoria, nombre_categoria FROM CATEGORIAS";
+        String sql = "SELECT id_categoria, nombre_categoria FROM CATEGORIAS WHERE estado_categoria = 1";
         try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) mapa.put(rs.getInt("id_categoria"), rs.getString("nombre_categoria"));
         } catch (SQLException e) { System.err.println("Error Categorias: " + e.getMessage()); }
@@ -47,6 +47,14 @@ public class CatalogosDAO {
         String sql = "UPDATE CATEGORIAS SET nombre_categoria = ?, descripcion_categoria = ?, dias_garantias = ? WHERE id_categoria = ?";
         try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, nombre); ps.setString(2, desc); ps.setInt(3, garantias); ps.setInt(4, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) { return false; }
+    }
+
+    public boolean eliminarCategoria(int id) {
+        String sql = "UPDATE CATEGORIAS SET estado_categoria = 0 WHERE id_categoria = ?";
+        try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) { return false; }
     }
@@ -87,12 +95,20 @@ public class CatalogosDAO {
         } catch (SQLException e) { return false; }
     }
 
+    public boolean eliminarProveedor(int id) {
+        String sql = "UPDATE PROVEEDORES SET estado_proveedor = 0 WHERE id_proveedor = ?";
+        try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) { return false; }
+    }
+
     // ==========================================
     // M\u00C9TODOS PARA UBICACIONES
     // ==========================================
     public Map<Integer, String> listarUbicaciones() {
         Map<Integer, String> mapa = new HashMap<>();
-        String sql = "SELECT id_ubicacion, nombre_ubicacion FROM UBICACIONES";
+        String sql = "SELECT id_ubicacion, nombre_ubicacion FROM UBICACIONES WHERE estado_ubicacion = 1";
         try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) mapa.put(rs.getInt("id_ubicacion"), rs.getString("nombre_ubicacion"));
         } catch (SQLException e) { System.err.println("Error Ubicaciones: " + e.getMessage()); }
@@ -111,6 +127,14 @@ public class CatalogosDAO {
         String sql = "UPDATE UBICACIONES SET nombre_ubicacion = ? WHERE id_ubicacion = ?";
         try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, nombre); ps.setInt(2, id); return ps.executeUpdate() > 0;
+        } catch (SQLException e) { return false; }
+    }
+
+    public boolean eliminarUbicacion(int id) {
+        String sql = "UPDATE UBICACIONES SET estado_ubicacion = 0 WHERE id_ubicacion = ?";
+        try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) { return false; }
     }
 }

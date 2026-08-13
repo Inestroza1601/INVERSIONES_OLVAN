@@ -259,7 +259,7 @@ public class PanelInventarioDefectuoso extends JPanel {
         menu.setBorder(BorderFactory.createLineBorder(new Color(220, 222, 225), 1));
 
         JMenuItem itemDetalles = crearMenuItem("Ver Detalles de Da\u00F1os", new Color(13, 110, 253), new IconoOjo());
-        JMenuItem itemEnviar = crearMenuItem("Marcar como 'Enviado a Proveedor'", new Color(243, 156, 18),
+        JMenuItem itemEnviar = crearMenuItem("Marcar como 'Enviado a Proveedor'", new Color(39, 174, 96),
                 new IconoEnvio());
         JMenuItem itemReingresar = crearMenuItem("Recibir de Proveedor (Reingresar a Inv. Normal)",
                 new Color(39, 174, 96), new IconoRecibir());
@@ -306,7 +306,7 @@ public class PanelInventarioDefectuoso extends JPanel {
                         menu.add(itemReingresar);
                     }
                     if (estado.equals("Enviado a Proveedor (Rep. Cliente)")) {
-                        JMenuItem itemRecibirRep = crearMenuItem("Recibir de Proveedor", new Color(243, 156, 18),
+                        JMenuItem itemRecibirRep = crearMenuItem("Recibir de Proveedor", new Color(39, 174, 96),
                                 new IconoEnvio());
                         itemRecibirRep.addActionListener(
                                 ev -> accionCambiarEstado("Recibido de Proveedor (Rep. Cliente)", ""));

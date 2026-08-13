@@ -19,6 +19,7 @@ public class PanelCrearProducto extends JPanel {
 
     private JTextField txtCodigoBarras;
     private JLabel lblErrorCodigo; 
+    private JLabel lblErrorPrecio;
     private JTextField txtNombre;
     
     private JComboBox<ItemCatalogo> cmbCategoria;
@@ -115,6 +116,10 @@ public class PanelCrearProducto extends JPanel {
         txtPrecioCompra = new JTextField(10);
         txtPrecioVenta = new JTextField(10);
         
+        lblErrorPrecio = new JLabel(" ");
+        lblErrorPrecio.setForeground(new Color(227, 0, 15)); // Rojo Logo
+        lblErrorPrecio.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        
         chkPrecioMayorista = new JCheckBox("Habilitar Precio Mayorista");
         chkPrecioMayorista.setBackground(new Color(255, 255, 255)); // Blanco Puro
         chkPrecioMayorista.setForeground(new Color(45, 45, 45)); // Gris Oscuro
@@ -166,7 +171,12 @@ public class PanelCrearProducto extends JPanel {
         agregarFilaCorta(pnlForm, gbc, 8, "Precio Compra (L):", txtPrecioCompra);
         agregarFilaCorta(pnlForm, gbc, 9, "Precio Venta (L):", txtPrecioVenta);
         
-        gbc.gridy = 10; gbc.gridx = 0; gbc.weightx = 0.0; gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.EAST;
+        gbc.gridy = 10; gbc.gridx = 1; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 10, 10, 10);
+        pnlForm.add(lblErrorPrecio, gbc);
+        gbc.insets = new Insets(10, 10, 10, 10);
+        
+        gbc.gridy = 11; gbc.gridx = 0; gbc.weightx = 0.0; gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.EAST;
         pnlForm.add(chkPrecioMayorista, gbc);
         gbc.gridx = 1; gbc.weightx = 1.0; gbc.anchor = GridBagConstraints.WEST;
         txtPrecioMayorista.setPreferredSize(new Dimension(150, 32)); 
@@ -174,10 +184,10 @@ public class PanelCrearProducto extends JPanel {
         txtPrecioMayorista.setForeground(new Color(45, 45, 45)); // Texto Oscuro
         txtPrecioMayorista.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(5, 8, 5, 8)));
         pnlForm.add(txtPrecioMayorista, gbc);
-        agregarFilaCorta(pnlForm, gbc, 11, "Stock Inicial:", txtStockInicial);
-        agregarFilaCorta(pnlForm, gbc, 12, "Stock M\u00EDnimo:", txtStockMinimo);
+        agregarFilaCorta(pnlForm, gbc, 12, "Stock Inicial:", txtStockInicial);
+        agregarFilaCorta(pnlForm, gbc, 13, "Stock M\u00EDnimo:", txtStockMinimo);
 
-        gbc.gridy = 13; gbc.weighty = 1.0;
+        gbc.gridy = 14; gbc.weighty = 1.0;
         pnlForm.add(new JLabel(""), gbc);
         JScrollPane scrollForm = new JScrollPane(pnlForm);
         scrollForm.setBorder(BorderFactory.createCompoundBorder(
@@ -652,6 +662,43 @@ public class PanelCrearProducto extends JPanel {
             @Override public void removeUpdate(DocumentEvent e) { validarCodigo(); }
             @Override public void changedUpdate(DocumentEvent e) { validarCodigo(); }
         });
+        DocumentListener priceListener = new DocumentListener() {
+            @Override public void insertUpdate(DocumentEvent e) { validarPrecios(); }
+            @Override public void removeUpdate(DocumentEvent e) { validarPrecios(); }
+            @Override public void changedUpdate(DocumentEvent e) { validarPrecios(); }
+        };
+        txtPrecioCompra.getDocument().addDocumentListener(priceListener);
+        txtPrecioVenta.getDocument().addDocumentListener(priceListener);
+    }
+
+    private void validarPrecios() {
+        try {
+            String strCompra = txtPrecioCompra.getText().trim();
+            String strVenta = txtPrecioVenta.getText().trim();
+            if (strCompra.isEmpty() || strVenta.isEmpty()) {
+                restaurarEstiloPrecio();
+                btnGuardar.setEnabled(true);
+                return;
+            }
+            double compra = Double.parseDouble(strCompra);
+            double venta = Double.parseDouble(strVenta);
+            if (venta < compra) {
+                txtPrecioVenta.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(227, 0, 15), 2), BorderFactory.createEmptyBorder(4, 7, 4, 7))); // Rojo Logo
+                lblErrorPrecio.setText("El precio de venta no puede ser menor al precio de compra.");
+                btnGuardar.setEnabled(false);
+            } else {
+                restaurarEstiloPrecio();
+                btnGuardar.setEnabled(true);
+            }
+        } catch (NumberFormatException e) {
+            restaurarEstiloPrecio();
+            btnGuardar.setEnabled(true);
+        }
+    }
+
+    private void restaurarEstiloPrecio() {
+        txtPrecioVenta.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(5, 8, 5, 8))); 
+        lblErrorPrecio.setText(" ");
     }
 
     private void validarCodigo() {
@@ -718,9 +765,43 @@ public class PanelCrearProducto extends JPanel {
             }
         });
         
+        JButton btnEliminar = new JButton("X"); 
+        btnEliminar.setBackground(new Color(227, 0, 15)); // Rojo para eliminar
+        btnEliminar.setForeground(Color.WHITE);
+        btnEliminar.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnEliminar.setFocusPainted(false);
+        btnEliminar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnEliminar.setPreferredSize(new Dimension(35, btnEditar.getPreferredSize().height));
+        btnEliminar.addActionListener(e -> {
+            ItemCatalogo item = (ItemCatalogo) combo.getSelectedItem();
+            if (item == null || item.id == 0) {
+                utilidades.Mensajes.showMessageDialog(this, "Seleccione un(a) " + tipoCatalogo + " v\u00E1lido de la lista para eliminar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            } else {
+                int resp = JOptionPane.showConfirmDialog(this, "\u00BFEst\u00E1 seguro que desea eliminar este/a " + tipoCatalogo + "?", "Confirmar Eliminaci\u00F3n", JOptionPane.YES_NO_OPTION);
+                if (resp == JOptionPane.YES_OPTION) {
+                    CatalogosDAO dao = new CatalogosDAO();
+                    boolean exito = false;
+                    if (tipoCatalogo.equals("Categor\u00EDa")) {
+                        exito = dao.eliminarCategoria(item.id);
+                    } else if (tipoCatalogo.equals("Proveedor")) {
+                        exito = dao.eliminarProveedor(item.id);
+                    } else if (tipoCatalogo.equals("Ubicaci\u00F3n")) {
+                        exito = dao.eliminarUbicacion(item.id);
+                    }
+                    if (exito) {
+                        utilidades.Mensajes.showMessageDialog(this, tipoCatalogo + " eliminado/a correctamente.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
+                        cargarDatosCombos();
+                    } else {
+                        utilidades.Mensajes.showMessageDialog(this, "Error al eliminar " + tipoCatalogo + ".", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+        
         // --- ESTO ERA LO QUE FALTABA ---
         pnlBotones.add(btnNuevo); 
         pnlBotones.add(btnEditar); 
+        pnlBotones.add(btnEliminar);
         pnl.add(pnlBotones, BorderLayout.EAST); 
         return pnl; // Devolvemos el panel construido en lugar de null
     }

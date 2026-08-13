@@ -117,6 +117,7 @@ public class PanelInventario extends JPanel {
                     mostrarSubPanel(nuevoPanel);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    utilidades.GestorErrores.registrarError(e, "PanelInventario - Carga Async");
                     loader.detenerAnimacion();
                     panelContenedorInventario.removeAll();
                     JLabel lblError = new JLabel("Error al cargar el m\u00F3dulo: " + e.getMessage());
