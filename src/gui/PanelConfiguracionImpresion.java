@@ -159,11 +159,11 @@ public class PanelConfiguracionImpresion extends JPanel {
     }
 
     private void guardarDiseno() {
-        // Usamos la empresa que nos pasó el otro panel. Si es nula, intentamos con SesionGlobal.
-        Empresa emp = (this.empresaActiva != null) ? this.empresaActiva : SesionGlobal.getEmpresaActual();
+        EmpresaDAO dao = new EmpresaDAO();
+        Empresa emp = dao.obtenerDatos();
         
         if (emp == null) {
-            utilidades.Mensajes.showMessageDialog(this, "No se encontró una empresa activa.\nPor favor, guarde primero los Datos Generales.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "No se encontró una empresa activa en la Base de Datos.\nPor favor, guarde primero los Datos Generales.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -180,7 +180,6 @@ public class PanelConfiguracionImpresion extends JPanel {
         
         emp.setImagen_logo(imagenLogoBase64);
 
-        EmpresaDAO dao = new EmpresaDAO();
         if (dao.guardarOActualizar(emp)) {
             utilidades.Mensajes.showMessageDialog(this, "Diseño y textos guardados correctamente.");
         } else {
@@ -198,12 +197,11 @@ public class PanelConfiguracionImpresion extends JPanel {
             File archivo = chooser.getSelectedFile();
             imagenLogoBase64 = utilidades.ImagenHelper.comprimirYConvertirABase64(archivo);
             
-            // USAR LA NUEVA VARIABLE AQUÍ TAMBIÉN
-            Empresa emp = (this.empresaActiva != null) ? this.empresaActiva : SesionGlobal.getEmpresaActual();
+            EmpresaDAO dao = new EmpresaDAO();
+            Empresa emp = dao.obtenerDatos();
             
             if (emp != null) {
                 emp.setImagen_logo(imagenLogoBase64);
-                EmpresaDAO dao = new EmpresaDAO();
                 
                 if (dao.guardarOActualizar(emp)) {
                     utilidades.Mensajes.showMessageDialog(this, "Logo cargado y guardado en la base de datos exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
@@ -368,6 +366,7 @@ public class PanelConfiguracionImpresion extends JPanel {
         if (this.empresaActiva == null) {
              this.empresaActiva = new Empresa();
         }
+        this.empresaActiva.setIdEmpresa(emp.getIdEmpresa());
         this.empresaActiva.setNombreEmpresa(emp.getNombreEmpresa());
         this.empresaActiva.setRtnEmpresa(emp.getRtnEmpresa());
         this.empresaActiva.setDuenoEmpresa(emp.getDuenoEmpresa());

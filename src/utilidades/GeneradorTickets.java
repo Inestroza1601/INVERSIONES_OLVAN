@@ -64,7 +64,19 @@ public class GeneradorTickets {
 
             if (empresa != null && empresa.getImagen_logo() != null && !empresa.getImagen_logo().isEmpty()) {
                 try {
-                    Image logo = Image.getInstance(empresa.getImagen_logo());
+                    Image logo;
+                    String logoStr = empresa.getImagen_logo();
+                    if (logoStr.startsWith("data:image/") || logoStr.length() > 500) {
+                        String base64Data = logoStr;
+                        if (logoStr.contains(",")) {
+                            base64Data = logoStr.split(",")[1];
+                        }
+                        byte[] imageBytes = java.util.Base64.getDecoder().decode(base64Data);
+                        logo = Image.getInstance(imageBytes);
+                    } else {
+                        logo = Image.getInstance(logoStr);
+                    }
+                    
                     logo.scaleToFit(80, 80);
                     PdfPCell cellLogo = new PdfPCell(logo);
                     cellLogo.setBorder(Rectangle.NO_BORDER);
