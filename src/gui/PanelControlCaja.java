@@ -27,6 +27,8 @@ public class PanelControlCaja extends JPanel {
     private JLabel lblEsperadoLabel;
     private JTextField txtMontoReal;
     private JTextArea txtObservaciones;
+    private boolean datosDashboardBloqueados = true;
+    private JButton btnDesbloquearDashboard;
 
     // Panel switching (right side)
     private JPanel pnlDerechaCards;
@@ -227,21 +229,88 @@ public class PanelControlCaja extends JPanel {
         pnlCalculosAdmin.setOpaque(false);
         pnlCalculosAdmin.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        lblVentasValor = new JLabel("Ventas del Turno: L 0.00");
+        btnDesbloquearDashboard = new JButton("Desbloquear Valores");
+        btnDesbloquearDashboard.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnDesbloquearDashboard.setBackground(new Color(230, 230, 230));
+        btnDesbloquearDashboard.setFocusPainted(false);
+        btnDesbloquearDashboard.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        javax.swing.Icon candadoCerrado = new javax.swing.Icon() {
+            public int getIconWidth() { return 16; }
+            public int getIconHeight() { return 16; }
+            public void paintIcon(java.awt.Component c, java.awt.Graphics g, int x, int y) {
+                java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+                g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(80, 80, 80));
+                g2.setStroke(new java.awt.BasicStroke(2f));
+                g2.drawRoundRect(x + 3, y + 7, 10, 7, 3, 3);
+                g2.drawArc(x + 5, y + 2, 6, 10, 0, 180);
+                g2.dispose();
+            }
+        };
+        javax.swing.Icon candadoAbierto = new javax.swing.Icon() {
+            public int getIconWidth() { return 16; }
+            public int getIconHeight() { return 16; }
+            public void paintIcon(java.awt.Component c, java.awt.Graphics g, int x, int y) {
+                java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+                g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(80, 80, 80));
+                g2.setStroke(new java.awt.BasicStroke(2f));
+                g2.drawRoundRect(x + 3, y + 7, 10, 7, 3, 3);
+                g2.drawArc(x + 8, y + 2, 6, 10, 0, 180);
+                g2.dispose();
+            }
+        };
+        btnDesbloquearDashboard.setIcon(candadoCerrado);
+
+        btnDesbloquearDashboard.addActionListener(e -> {
+            if (datosDashboardBloqueados) {
+                JPasswordField pf = new JPasswordField();
+                int opt = utilidades.Mensajes.showConfirmDialog(this, pf, "Contraseña de Administrador", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                if (opt == JOptionPane.OK_OPTION) {
+                    String pass = new String(pf.getPassword());
+                    int idUser = new dao.KardexDAO().validarFirmaUsuario(pass);
+                    if (idUser > 0) {
+                        modelo.Usuario uAdmin = new dao.UsuarioDAO().obtenerUsuarioPorId(idUser);
+                        if (uAdmin != null && uAdmin.getNombreRol() != null && uAdmin.getNombreRol().equalsIgnoreCase("administrador")) {
+                            datosDashboardBloqueados = false;
+                            btnDesbloquearDashboard.setText("Ocultar Valores");
+                            btnDesbloquearDashboard.setIcon(candadoAbierto);
+                            cargarCalculosEnVivo();
+                            cargarHistorial();
+                        } else {
+                            utilidades.Mensajes.showMessageDialog(this, "Debe ser administrador para desbloquear.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        utilidades.Mensajes.showMessageDialog(this, "Contraseña incorrecta.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } else {
+                datosDashboardBloqueados = true;
+                btnDesbloquearDashboard.setText("Desbloquear Valores");
+                btnDesbloquearDashboard.setIcon(candadoCerrado);
+                cargarCalculosEnVivo();
+                cargarHistorial();
+            }
+        });
+
+        lblVentasValor = new JLabel("Ventas del Turno: L ******");
         lblVentasValor.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         lblVentasValor.setForeground(new Color(45, 45, 45));
         lblVentasValor.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        lblAbonosValor = new JLabel("Abonos del Turno: L 0.00");
+        lblAbonosValor = new JLabel("Abonos del Turno: L ******");
         lblAbonosValor.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         lblAbonosValor.setForeground(new Color(45, 45, 45));
         lblAbonosValor.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        lblEsperadoValor = new JLabel("Efectivo Esperado: L 0.00");
+        lblEsperadoValor = new JLabel("Efectivo Esperado: L ******");
         lblEsperadoValor.setFont(new Font("Segoe UI", Font.BOLD, 15));
         lblEsperadoValor.setForeground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO);
         lblEsperadoValor.setAlignmentX(Component.LEFT_ALIGNMENT);
 
+        pnlCalculosAdmin.add(btnDesbloquearDashboard);
+        pnlCalculosAdmin.add(Box.createVerticalStrut(10));
         pnlCalculosAdmin.add(lblVentasValor);
         pnlCalculosAdmin.add(Box.createVerticalStrut(8));
         pnlCalculosAdmin.add(lblAbonosValor);
@@ -382,36 +451,131 @@ public class PanelControlCaja extends JPanel {
             @SuppressWarnings("unchecked")
             java.util.List<java.util.Map<String, Object>> metodos = (java.util.List<java.util.Map<String, Object>>) calcs.get("metodos");
             int rows = (metodos != null ? metodos.size() : 0) + 2; // +1 for expected cash, +1 for note
-            JPanel pnlResumen = new JPanel(new GridLayout(rows, 1, 4, 4));
-            pnlResumen.setOpaque(false);
-            pnlResumen.setBorder(BorderFactory.createCompoundBorder(
+            
+            JPanel pnlContenedorResumen = new JPanel(new BorderLayout());
+            pnlContenedorResumen.setOpaque(false);
+            pnlContenedorResumen.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(180, 208, 192)),
                 BorderFactory.createEmptyBorder(10, 12, 10, 12)
             ));
+
+            JPanel headerResumen = new JPanel(new BorderLayout());
+            headerResumen.setOpaque(false);
+            JLabel lblTituloResumen = new JLabel("Resumen Calculado");
+            lblTituloResumen.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            headerResumen.add(lblTituloResumen, BorderLayout.WEST);
+
+            JButton btnUnlock = new JButton("Desbloquear");
+            btnUnlock.setFont(new Font("Segoe UI", Font.BOLD, 12));
+            btnUnlock.setBackground(new Color(230, 230, 230));
+            btnUnlock.setFocusPainted(false);
             
+            javax.swing.Icon candadoCerrado = new javax.swing.Icon() {
+                public int getIconWidth() { return 16; }
+                public int getIconHeight() { return 16; }
+                public void paintIcon(java.awt.Component c, java.awt.Graphics g, int x, int y) {
+                    java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+                    g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.setColor(new Color(80, 80, 80));
+                    g2.setStroke(new java.awt.BasicStroke(2f));
+                    g2.drawRoundRect(x + 3, y + 7, 10, 7, 3, 3);
+                    g2.drawArc(x + 5, y + 2, 6, 10, 0, 180);
+                    g2.dispose();
+                }
+            };
+            javax.swing.Icon candadoAbierto = new javax.swing.Icon() {
+                public int getIconWidth() { return 16; }
+                public int getIconHeight() { return 16; }
+                public void paintIcon(java.awt.Component c, java.awt.Graphics g, int x, int y) {
+                    java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+                    g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.setColor(new Color(80, 80, 80));
+                    g2.setStroke(new java.awt.BasicStroke(2f));
+                    g2.drawRoundRect(x + 3, y + 7, 10, 7, 3, 3);
+                    g2.drawArc(x + 8, y + 2, 6, 10, 0, 180);
+                    g2.dispose();
+                }
+            };
+            
+            btnUnlock.setIcon(candadoCerrado);
+            headerResumen.add(btnUnlock, BorderLayout.EAST);
+            
+            pnlContenedorResumen.add(headerResumen, BorderLayout.NORTH);
+
+            JPanel pnlResumen = new JPanel(new GridLayout(rows, 1, 4, 4));
+            pnlResumen.setOpaque(false);
+            pnlResumen.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+            pnlContenedorResumen.add(pnlResumen, BorderLayout.CENTER);
+
+            final boolean[] bloqueado = {true};
+            java.util.List<JLabel> etiquetas = new java.util.ArrayList<>();
+            java.util.List<String> prefijos = new java.util.ArrayList<>();
+            java.util.List<Double> valores = new java.util.ArrayList<>();
+
             if (metodos != null) {
                 for (java.util.Map<String, Object> m : metodos) {
                     String nombre = (String) m.get("nombre_metodo");
                     double total = (double) m.get("total_general");
-                    JLabel lblMetodo = new JLabel("Ingresos " + nombre + ": L " + String.format("%,.2f", total));
+                    JLabel lblMetodo = new JLabel("Ingresos " + nombre + ": L ******");
                     lblMetodo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
                     pnlResumen.add(lblMetodo);
+
+                    etiquetas.add(lblMetodo);
+                    prefijos.add("Ingresos " + nombre + ": L ");
+                    valores.add(total);
                 }
             }
 
             double esp = (double) calcs.get("efectivo_esperado");
-            JLabel rEsperado = new JLabel("Efectivo Esperado (Solo Efectivo): L " + String.format("%,.2f", esp));
+            JLabel rEsperado = new JLabel("Efectivo Esperado (Solo Efectivo): L ******");
             rEsperado.setFont(new Font("Segoe UI", Font.BOLD, 14));
             rEsperado.setForeground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO);
             pnlResumen.add(rEsperado);
+            
+            etiquetas.add(rEsperado);
+            prefijos.add("Efectivo Esperado (Solo Efectivo): L ");
+            valores.add(esp);
 
             JLabel rNota = new JLabel("* Efectivo Esperado excluye transferencias y tarjetas.");
             rNota.setFont(new Font("Segoe UI", Font.ITALIC, 11));
             rNota.setForeground(Color.GRAY);
             pnlResumen.add(rNota);
 
+            btnUnlock.addActionListener(e -> {
+                if (bloqueado[0]) {
+                    JPasswordField pf = new JPasswordField();
+                    int opt = utilidades.Mensajes.showConfirmDialog(dlgCierre, pf, "Contraseña de Administrador", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                    if (opt == JOptionPane.OK_OPTION) {
+                        String pass = new String(pf.getPassword());
+                        int idUser = new dao.KardexDAO().validarFirmaUsuario(pass);
+                        if (idUser > 0) {
+                            modelo.Usuario uAdmin = new dao.UsuarioDAO().obtenerUsuarioPorId(idUser);
+                            if (uAdmin != null && uAdmin.getNombreRol() != null && uAdmin.getNombreRol().equalsIgnoreCase("administrador")) {
+                                bloqueado[0] = false;
+                                btnUnlock.setText("Ocultar");
+                                btnUnlock.setIcon(candadoAbierto);
+                                for (int i = 0; i < etiquetas.size(); i++) {
+                                    etiquetas.get(i).setText(prefijos.get(i) + String.format("%,.2f", valores.get(i)));
+                                }
+                            } else {
+                                utilidades.Mensajes.showMessageDialog(dlgCierre, "Debe ser administrador para desbloquear.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+                            }
+                        } else {
+                            utilidades.Mensajes.showMessageDialog(dlgCierre, "Contraseña incorrecta.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                } else {
+                    bloqueado[0] = true;
+                    btnUnlock.setText("Desbloquear");
+                    btnUnlock.setIcon(candadoCerrado);
+                    for (int i = 0; i < etiquetas.size(); i++) {
+                        etiquetas.get(i).setText(prefijos.get(i) + "******");
+                    }
+                }
+            });
+
             gc.gridy = 0;
-            pnlCuerpo.add(pnlResumen, gc);
+            pnlCuerpo.add(pnlContenedorResumen, gc);
         }
 
         // Campo monto real
@@ -571,9 +735,15 @@ public class PanelControlCaja extends JPanel {
         if (activa == null) return;
         Map<String, Object> c = dao.obtenerCalculosTurno(activa.getIdCaja());
         if (c != null) {
-            lblVentasValor.setText("Ventas del Turno: L " + String.format("%,.2f", (double) c.get("total_ventas_general")));
-            lblAbonosValor.setText("Abonos del Turno: L " + String.format("%,.2f", (double) c.get("total_abonos_general")));
-            lblEsperadoValor.setText("Efectivo Esperado: L " + String.format("%,.2f", (double) c.get("efectivo_esperado")));
+            if (datosDashboardBloqueados) {
+                lblVentasValor.setText("Ventas del Turno: L ******");
+                lblAbonosValor.setText("Abonos del Turno: L ******");
+                lblEsperadoValor.setText("Efectivo Esperado: L ******");
+            } else {
+                lblVentasValor.setText("Ventas del Turno: L " + String.format("%,.2f", (double) c.get("total_ventas_general")));
+                lblAbonosValor.setText("Abonos del Turno: L " + String.format("%,.2f", (double) c.get("total_abonos_general")));
+                lblEsperadoValor.setText("Efectivo Esperado: L " + String.format("%,.2f", (double) c.get("efectivo_esperado")));
+            }
         }
     }
 
@@ -582,16 +752,21 @@ public class PanelControlCaja extends JPanel {
         List<ControlCaja> lista = dao.listarHistoricos();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         for (ControlCaja c : lista) {
+            String montoAper = datosDashboardBloqueados ? "L ******" : "L " + String.format("%,.2f", c.getMontoApertura());
+            String montoEsp = datosDashboardBloqueados ? (c.getFechaCierre() != null ? "L ******" : "L ******") : (c.getFechaCierre() != null ? ("L " + String.format("%,.2f", c.getMontoCierreEsperado())) : "L " + String.format("%,.2f", c.getMontoCierreEsperado()));
+            String montoReal = datosDashboardBloqueados ? (c.getFechaCierre() != null ? "L ******" : "-") : (c.getFechaCierre() != null ? ("L " + String.format("%,.2f", c.getMontoCierreReal())) : "-");
+            String difCierre = datosDashboardBloqueados ? (c.getFechaCierre() != null ? "L ******" : "-") : (c.getFechaCierre() != null ? ("L " + String.format("%,.2f", c.getDiferenciaCierre())) : "-");
+
             modeloHistorial.addRow(new Object[]{
                 c.getIdCaja(),
                 sdf.format(c.getFechaApertura()),
                 c.getFechaCierre() != null ? sdf.format(c.getFechaCierre()) : "-",
                 c.getCajeroTurno() != null && !c.getCajeroTurno().isEmpty() ? c.getCajeroTurno() : c.getNombreUsuarioApertura(),
                 c.getNombreUsuarioCierre() != null ? c.getNombreUsuarioCierre() : "-",
-                "L " + String.format("%,.2f", c.getMontoApertura()),
-                c.getFechaCierre() != null ? ("L " + String.format("%,.2f", c.getMontoCierreEsperado())) : "-",
-                c.getFechaCierre() != null ? ("L " + String.format("%,.2f", c.getMontoCierreReal())) : "-",
-                c.getFechaCierre() != null ? ("L " + String.format("%,.2f", c.getDiferenciaCierre())) : "-",
+                montoAper,
+                montoEsp,
+                montoReal,
+                difCierre,
                 c.getEstadoCaja() == 1 ? "ABIERTA" : "CERRADA"
             });
         }

@@ -210,7 +210,7 @@ public class UsuarioDAO {
     }
     
     public Usuario obtenerUsuarioPorId(int idUsuario) {
-        String sql = "SELECT * FROM USUARIOS WHERE id_usuario = ?";
+        String sql = "SELECT u.*, r.nombre_rol FROM USUARIOS u LEFT JOIN ROLES_USUARIO r ON u.id_rol = r.id_rol WHERE u.id_usuario = ?";
         try (Connection con = factory.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
              
@@ -220,6 +220,7 @@ public class UsuarioDAO {
                     Usuario u = new Usuario();
                     u.setIdUsuario(rs.getInt("id_usuario"));
                     u.setIdRol(rs.getInt("id_rol"));
+                    u.setNombreRol(rs.getString("nombre_rol"));
                     u.setNombreUsuario(rs.getString("nombre_usuario"));
                     u.setEmailUsuario(rs.getString("email_usuario"));
                     return u;
