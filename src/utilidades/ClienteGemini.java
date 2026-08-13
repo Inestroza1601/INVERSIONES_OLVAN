@@ -120,11 +120,18 @@ public class ClienteGemini {
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
 
+            java.util.List<String[]> filteredHistorial = new java.util.ArrayList<>();
+            for (String[] h : historial) {
+                if (h[0].equals("user") || h[0].equals("model")) {
+                    filteredHistorial.add(h);
+                }
+            }
+
             StringBuilder jsonBuilder = new StringBuilder();
             jsonBuilder.append("{\"contents\":[");
-            for (int i = 0; i < historial.size(); i++) {
-                String role = historial.get(i)[0]; // "user" o "model"
-                String text = historial.get(i)[1];
+            for (int i = 0; i < filteredHistorial.size(); i++) {
+                String role = filteredHistorial.get(i)[0]; // "user" o "model"
+                String text = filteredHistorial.get(i)[1];
                 // Sanitizar texto básico para JSON
                 String safeText = text.replace("\\", "\\\\")
                                       .replace("\"", "\\\"")
@@ -134,7 +141,7 @@ public class ClienteGemini {
 
                 jsonBuilder.append("{\"role\":\"").append(role)
                            .append("\",\"parts\":[{\"text\":\"").append(safeText).append("\"}]}");
-                if (i < historial.size() - 1) {
+                if (i < filteredHistorial.size() - 1) {
                     jsonBuilder.append(",");
                 }
             }

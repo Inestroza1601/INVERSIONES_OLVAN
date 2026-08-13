@@ -369,6 +369,8 @@ public class PanelGestionErrores extends JPanel {
             historialChat.add(new String[]{"user", texto});
         }
         
+        historialChat.add(new String[]{"model_thinking", "⏳ <i>Orion AI está analizando el error...</i>"});
+        
         // Renderizar chat temporal con indicador de escritura
         StringBuilder html = new StringBuilder();
         html.append("<html><body>");
@@ -424,6 +426,9 @@ public class PanelGestionErrores extends JPanel {
                 txtChat.requestFocus();
                 try {
                     String respuesta = get();
+                    if (!historialChat.isEmpty() && historialChat.get(historialChat.size() - 1)[0].equals("model_thinking")) {
+                        historialChat.remove(historialChat.size() - 1);
+                    }
                     historialChat.add(new String[]{"model", respuesta});
                     renderizarChatHTML();
                 } catch (Exception ex) {
