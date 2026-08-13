@@ -87,19 +87,17 @@ public class ConexionFactory {
                         conexionPerdidaNotificada = true;
                         huboFalloConexion = true;
                         javax.swing.SwingUtilities.invokeLater(() -> {
-                            utilidades.Mensajes.showMessageDialog(null, 
-                                "¡ATENCIÓN! Se ha perdido la conexión a internet o al servidor de base de datos.\n" +
-                                "El sistema requiere conexión para guardar y consultar información.\n\n" +
-                                "Esperando conexión a red...", 
-                                "Sin Conexión", JOptionPane.WARNING_MESSAGE);
+                            mostrarNotificacionWindows("Sin Conexión", 
+                                "Se ha perdido la conexión a internet o al servidor.\nEl sistema requiere conexión para guardar y consultar información.", 
+                                java.awt.TrayIcon.MessageType.WARNING);
                         });
                     } else if (disponible && conexionPerdidaNotificada) {
                         conexionPerdidaNotificada = false;
                         huboFalloConexion = false;
                         javax.swing.SwingUtilities.invokeLater(() -> {
-                            utilidades.Mensajes.showMessageDialog(null, 
-                                "¡Conexión Restablecida! El sistema ha vuelto a conectarse exitosamente.", 
-                                "Conexión Recuperada", JOptionPane.INFORMATION_MESSAGE);
+                            mostrarNotificacionWindows("Conexión Recuperada", 
+                                "El sistema ha vuelto a conectarse exitosamente.", 
+                                java.awt.TrayIcon.MessageType.INFO);
                         });
                     }
                 } catch (InterruptedException ex) {
@@ -121,7 +119,7 @@ public class ConexionFactory {
             Connection con = DriverManager.getConnection(url, usuario, password);
             
             if (huboFalloConexion) {
-                utilidades.Mensajes.showMessageDialog(null, "Conexi\u00F3n Restablecida exitosamente con el servidor.", "Conexi\u00F3n Recuperada", JOptionPane.INFORMATION_MESSAGE);
+                mostrarNotificacionWindows("Conexión Recuperada", "Conexión Restablecida exitosamente con el servidor.", java.awt.TrayIcon.MessageType.INFO);
                 huboFalloConexion = false; 
             }
             return con;
@@ -203,6 +201,42 @@ public class ConexionFactory {
                 }
             }
         }).start();
+    }
+
+    private static void mostrarNotificacionWindows(String title, String message, java.awt.TrayIcon.MessageType type) {
+        if (java.awt.SystemTray.isSupported()) {
+            try {
+                java.awt.SystemTray tray = java.awt.SystemTray.getSystemTray();
+                java.net.URL imgURL = ConexionFactory.class.getResource("/image/logo.png");
+                java.awt.Image image = null;
+                if (imgURL != null) {
+                    image = java.awt.Toolkit.getDefaultToolkit().getImage(imgURL);
+                } else {
+                    image = new java.awt.image.BufferedImage(16, 16, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+                }
+                java.awt.TrayIcon trayIcon = new java.awt.TrayIcon(image, "Orion Sys");
+                trayIcon.setImageAutoSize(true);
+                tray.add(trayIcon);
+                trayIcon.displayMessage(title, message, type);
+                
+                // Eliminar el ícono de la bandeja del sistema después de unos segundos
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(10000);
+                        tray.remove(trayIcon);
+                    } catch (Exception e) {}
+                }).start();
+                return;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        
+        // Fallback a modal
+        int msgType = JOptionPane.INFORMATION_MESSAGE;
+        if (type == java.awt.TrayIcon.MessageType.WARNING) msgType = JOptionPane.WARNING_MESSAGE;
+        else if (type == java.awt.TrayIcon.MessageType.ERROR) msgType = JOptionPane.ERROR_MESSAGE;
+        utilidades.Mensajes.showMessageDialog(null, message, title, msgType);
     }
 }
 
