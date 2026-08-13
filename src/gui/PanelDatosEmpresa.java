@@ -313,6 +313,16 @@ public class PanelDatosEmpresa extends JPanel {
         chkHabilitarFacturacion.setForeground(new Color(45, 45, 45));
         chkHabilitarFacturacion.setVisible(false);
 
+        txtApiKeyGemini = new JPasswordField(30);
+        txtApiKeyGemini.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtApiKeyGemini.setBackground(new Color(255, 255, 255));
+        txtApiKeyGemini.setForeground(new Color(45, 45, 45));
+        txtApiKeyGemini.setCaretColor(new Color(45, 45, 45));
+        txtApiKeyGemini.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 222, 225)),
+                BorderFactory.createEmptyBorder(5, 8, 5, 8)));
+        txtApiKeyGemini.putClientProperty("JPasswordField.cutCopyAllowed", false);
+
         agregarFila(panel, gbc, 0, "Nombre Empresa:", txtNombreEmpresa);
         agregarFila(panel, gbc, 1, "RTN:", txtRtnEmpresa);
         agregarFila(panel, gbc, 2, "Propietario:", txtDuenoEmpresa);
@@ -334,8 +344,12 @@ public class PanelDatosEmpresa extends JPanel {
         panel.add(chkEstadoEmpresa, gbc);
         gbc.gridy = 5;
         panel.add(chkHabilitarFacturacion, gbc);
-        gbc.gridy = 6;
+        
+        agregarFila(panel, gbc, 6, "API Key (Gemini):", txtApiKeyGemini);
+
+        gbc.gridy = 7;
         gbc.weighty = 1.0;
+        gbc.gridx = 1;
         panel.add(new JLabel(""), gbc);
 
         return panel;
@@ -353,16 +367,6 @@ public class PanelDatosEmpresa extends JPanel {
         txtEmail = crearTextField(30);
         txtWeb = crearTextField(30);
         txtFacebook = crearTextField(30);
-        
-        txtApiKeyGemini = new JPasswordField(30);
-        txtApiKeyGemini.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        txtApiKeyGemini.setBackground(new Color(255, 255, 255));
-        txtApiKeyGemini.setForeground(new Color(45, 45, 45));
-        txtApiKeyGemini.setCaretColor(new Color(45, 45, 45));
-        txtApiKeyGemini.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(220, 222, 225)),
-                BorderFactory.createEmptyBorder(5, 8, 5, 8)));
-        txtApiKeyGemini.putClientProperty("JPasswordField.cutCopyAllowed", false);
 
         agregarFila(panel, gbc, 0, "Teléfono Principal:", txtNumeroTelefono);
         agregarFila(panel, gbc, 1, "Teléfono Secundario:", txtTelefonoSecundario);
@@ -370,9 +374,8 @@ public class PanelDatosEmpresa extends JPanel {
         agregarFila(panel, gbc, 3, "Correo:", txtEmail);
         agregarFila(panel, gbc, 4, "Web:", txtWeb);
         agregarFila(panel, gbc, 5, "Facebook:", txtFacebook);
-        agregarFila(panel, gbc, 6, "API Key (Gemini):", txtApiKeyGemini);
 
-        gbc.gridy = 7;
+        gbc.gridy = 6;
         gbc.weighty = 1.0;
         gbc.gridx = 0;
         panel.add(new JLabel(""), gbc);

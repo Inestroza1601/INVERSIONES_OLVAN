@@ -776,25 +776,84 @@ public class PanelCrearProducto extends JPanel {
             ItemCatalogo item = (ItemCatalogo) combo.getSelectedItem();
             if (item == null || item.id == 0) {
                 utilidades.Mensajes.showMessageDialog(this, "Seleccione un(a) " + tipoCatalogo + " v\u00E1lido de la lista para eliminar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            CatalogosDAO dao = new CatalogosDAO();
+            dao.InventarioDAO invDao = new dao.InventarioDAO();
+            
+            String columna = "";
+            if (tipoCatalogo.equals("Categor\u00EDa")) columna = "id_categoria";
+            else if (tipoCatalogo.equals("Proveedor")) columna = "id_proveedor";
+            else if (tipoCatalogo.equals("Ubicaci\u00F3n")) columna = "id_ubicacion";
+
+            int asociados = dao.contarProductosAsociados(columna, item.id);
+            if (asociados > 0) {
+                String[] opciones = {"Reasignar a otro/a", "Eliminar productos", "Cancelar"};
+                int seleccion = JOptionPane.showOptionDialog(this,
+                    "Se encuentran " + asociados + " producto(s) asociado(s) a este/a " + tipoCatalogo + ".\n" +
+                    "\u00BFDesea a\u00F1adirlos a uno nuevo o desea eliminarlos?",
+                    "Productos Asociados",
+                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE,
+                    null, opciones, opciones[0]);
+
+                if (seleccion == 0) { // Reasignar
+                    java.util.List<ItemCatalogo> disponibles = new java.util.ArrayList<>();
+                    for (int i = 0; i < combo.getItemCount(); i++) {
+                        ItemCatalogo cItem = combo.getItemAt(i);
+                        if (cItem.id != 0 && cItem.id != item.id) disponibles.add(cItem);
+                    }
+                    if (disponibles.isEmpty()) {
+                        utilidades.Mensajes.showMessageDialog(this, "No hay otro/a " + tipoCatalogo + " disponible para reasignar. Crea uno nuevo primero.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    ItemCatalogo seleccionado = (ItemCatalogo) JOptionPane.showInputDialog(this,
+                        "Seleccione el nuevo destino:", "Reasignar " + tipoCatalogo,
+                        JOptionPane.QUESTION_MESSAGE, null, disponibles.toArray(), disponibles.get(0));
+                    
+                    if (seleccionado != null) {
+                        boolean reasignado = invDao.reasignarProductos(columna, item.id, seleccionado.id);
+                        if (!reasignado) {
+                            utilidades.Mensajes.showMessageDialog(this, "Error al reasignar productos.", "Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    } else {
+                        return; // Cancel\u00F3 la reasignaci\u00F3n
+                    }
+                } else if (seleccion == 1) { // Eliminar productos
+                    int confirm2 = JOptionPane.showConfirmDialog(this, "\u00BFEst\u00E1 COMPLETAMENTE SEGURO de eliminar los " + asociados + " productos asociados?", "Confirmaci\u00F3n cr\u00EDtica", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+                    if (confirm2 == JOptionPane.YES_OPTION) {
+                        boolean eliminados = invDao.eliminarProductosPorCatalogo(columna, item.id);
+                        if (!eliminados) {
+                            utilidades.Mensajes.showMessageDialog(this, "Error al eliminar productos asociados.", "Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    } else {
+                        return; // Cancel\u00F3
+                    }
+                } else {
+                    return; // Cancel\u00F3
+                }
             } else {
                 int resp = JOptionPane.showConfirmDialog(this, "\u00BFEst\u00E1 seguro que desea eliminar este/a " + tipoCatalogo + "?", "Confirmar Eliminaci\u00F3n", JOptionPane.YES_NO_OPTION);
-                if (resp == JOptionPane.YES_OPTION) {
-                    CatalogosDAO dao = new CatalogosDAO();
-                    boolean exito = false;
-                    if (tipoCatalogo.equals("Categor\u00EDa")) {
-                        exito = dao.eliminarCategoria(item.id);
-                    } else if (tipoCatalogo.equals("Proveedor")) {
-                        exito = dao.eliminarProveedor(item.id);
-                    } else if (tipoCatalogo.equals("Ubicaci\u00F3n")) {
-                        exito = dao.eliminarUbicacion(item.id);
-                    }
-                    if (exito) {
-                        utilidades.Mensajes.showMessageDialog(this, tipoCatalogo + " eliminado/a correctamente.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
-                        cargarDatosCombos();
-                    } else {
-                        utilidades.Mensajes.showMessageDialog(this, "Error al eliminar " + tipoCatalogo + ".", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
+                if (resp != JOptionPane.YES_OPTION) return;
+            }
+
+            // Proceder a eliminar la categor\u00EDa
+            boolean exito = false;
+            if (tipoCatalogo.equals("Categor\u00EDa")) {
+                exito = dao.eliminarCategoria(item.id);
+            } else if (tipoCatalogo.equals("Proveedor")) {
+                exito = dao.eliminarProveedor(item.id);
+            } else if (tipoCatalogo.equals("Ubicaci\u00F3n")) {
+                exito = dao.eliminarUbicacion(item.id);
+            }
+            
+            if (exito) {
+                utilidades.Mensajes.showMessageDialog(this, tipoCatalogo + " eliminado/a correctamente.", "\u00C9xito", JOptionPane.INFORMATION_MESSAGE);
+                cargarDatosCombos();
+            } else {
+                utilidades.Mensajes.showMessageDialog(this, "Error al eliminar " + tipoCatalogo + ".", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         

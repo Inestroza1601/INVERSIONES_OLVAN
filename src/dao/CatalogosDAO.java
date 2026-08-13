@@ -137,4 +137,17 @@ public class CatalogosDAO {
             return ps.executeUpdate() > 0;
         } catch (SQLException e) { return false; }
     }
+
+    // ==========================================
+    // MÉTODO PARA VALIDAR ASIGNACIONES
+    // ==========================================
+    public int contarProductosAsociados(String columna, int id) {
+        String sql = "SELECT COUNT(*) AS total FROM INVENTARIO WHERE eliminado_producto = 0 AND " + columna + " = ?";
+        try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt("total");
+        } catch (SQLException e) { System.err.println("Error contarProductos: " + e.getMessage()); }
+        return 0;
+    }
 }

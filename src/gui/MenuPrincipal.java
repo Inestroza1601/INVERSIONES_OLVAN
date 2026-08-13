@@ -652,6 +652,21 @@ public class MenuPrincipal extends JFrame {
     }
 
     public static void main(String[] args) {
+        utilidades.GestorErrores.inicializarManejadorGlobal();
+        
+        // --- ATAJO GLOBAL PARA SIMULAR ERROR (Ctrl + Alt + E) ---
+        java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new java.awt.KeyEventDispatcher() {
+            @Override
+            public boolean dispatchKeyEvent(java.awt.event.KeyEvent e) {
+                if (e.getID() == java.awt.event.KeyEvent.KEY_PRESSED &&
+                    e.getKeyCode() == java.awt.event.KeyEvent.VK_E &&
+                    e.isControlDown() && e.isAltDown()) {
+                    throw new RuntimeException("ERROR DE PRUEBA: ¡Fallo global provocado manualmente (Ctrl+Alt+E) para la presentación!");
+                }
+                return false;
+            }
+        });
+
         try {
             // --- CONFIGURACI\u00D3N GLOBAL: TEMA VERDE PASTEL ELEGANTE Y BLANCO ---
             UIManager.put("Button.arc", 12);
