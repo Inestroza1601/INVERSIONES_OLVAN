@@ -410,9 +410,9 @@ public class PanelCrearProducto extends JPanel {
     // L\u00C3\u201CGICA: RESTRICCIONES DE TECLADO
     // =========================================================
     private void aplicarRestriccionesNumericas() {
-        permitirSoloNumeros(txtPrecioCompra, true);
-        permitirSoloNumeros(txtPrecioVenta, true);
-        permitirSoloNumeros(txtPrecioMayorista, true);
+        utilidades.EfectosUI.aplicarFormatoMoneda(txtPrecioCompra);
+        utilidades.EfectosUI.aplicarFormatoMoneda(txtPrecioVenta);
+        utilidades.EfectosUI.aplicarFormatoMoneda(txtPrecioMayorista);
         permitirSoloNumeros(txtStockInicial, false);
         permitirSoloNumeros(txtStockMinimo, false);
     }
@@ -479,9 +479,9 @@ public class PanelCrearProducto extends JPanel {
             p.setIdCategoria(cat.id);
             p.setIdProveedor(prov.id);
             p.setIdUbicacion(ubi.id);
-            p.setPrecioCompra(Double.parseDouble(txtPrecioCompra.getText().trim()));
-            p.setPrecioVenta(Double.parseDouble(txtPrecioVenta.getText().trim()));
-            p.setPrecioMayorista(chkPrecioMayorista.isSelected() && !txtPrecioMayorista.getText().trim().isEmpty() ? Double.parseDouble(txtPrecioMayorista.getText().trim()) : 0.0);
+            p.setPrecioCompra(Double.parseDouble(txtPrecioCompra.getText().replace(",", "").trim()));
+            p.setPrecioVenta(Double.parseDouble(txtPrecioVenta.getText().replace(",", "").trim()));
+            p.setPrecioMayorista(chkPrecioMayorista.isSelected() && !txtPrecioMayorista.getText().trim().isEmpty() ? Double.parseDouble(txtPrecioMayorista.getText().replace(",", "").trim()) : 0.0);
             p.setStockProducto(Integer.parseInt(txtStockInicial.getText().trim()));
             p.setStockMinimo(Integer.parseInt(txtStockMinimo.getText().trim()));
             if (imagenesSeleccionadas.isEmpty()) {
@@ -701,8 +701,8 @@ public class PanelCrearProducto extends JPanel {
                 btnGuardar.setEnabled(true);
                 return;
             }
-            double compra = Double.parseDouble(strCompra);
-            double venta = Double.parseDouble(strVenta);
+            double compra = Double.parseDouble(strCompra.replace(",", ""));
+            double venta = Double.parseDouble(strVenta.replace(",", ""));
             if (venta < compra) {
                 txtPrecioVenta.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(227, 0, 15), 2), BorderFactory.createEmptyBorder(4, 7, 4, 7))); // Rojo Logo
                 lblErrorPrecio.setText("El precio de venta no puede ser menor al precio de compra.");

@@ -322,6 +322,13 @@ public class PanelPuntoVenta extends JPanel {
         
         lblReferenciaPago = new JLabel("N\u00BA Referencia:"){{ setForeground(new Color(100, 100, 100)); setFont(new Font("Segoe UI", Font.BOLD, 12)); }};
         txtReferenciaPago = new JTextField(); txtReferenciaPago.setFont(new Font("Segoe UI", Font.PLAIN, 14)); txtReferenciaPago.setBackground(new Color(255, 255, 255)); txtReferenciaPago.setForeground(new Color(45, 45, 45)); txtReferenciaPago.setCaretColor(new Color(45, 45, 45)); txtReferenciaPago.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 222, 225)), BorderFactory.createEmptyBorder(0, 5, 0, 5))); txtReferenciaPago.setPreferredSize(new Dimension(0, 32));
+        txtReferenciaPago.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if (!Character.isDigit(evt.getKeyChar())) {
+                    evt.consume();
+                }
+            }
+        });
         
         pnlCamposExtraPago.add(lblBanco); pnlCamposExtraPago.add(cmbBanco); pnlCamposExtraPago.add(lblReferenciaPago); pnlCamposExtraPago.add(txtReferenciaPago);
 
@@ -529,27 +536,14 @@ public class PanelPuntoVenta extends JPanel {
         JTextField txtNuevoPrecio = new JTextField(String.valueOf(modeloTablaVentas.getValueAt(f, 4)));
         txtNuevoPrecio.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         
-        // Le agregamos un filtro que se dispara cada vez que el usuario presiona una tecla
-        txtNuevoPrecio.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent e) {
-                char c = e.getKeyChar();
-                // Si la tecla NO es un n\u00FAmero, NO es un punto y NO es la tecla de borrar -> la bloqueamos
-                if (!Character.isDigit(c) && c != '.' && c != java.awt.event.KeyEvent.VK_BACK_SPACE) {
-                    e.consume(); // Anula la pulsaci\u00F3n
-                }
-                // Si ya hay un punto decimal y el usuario intenta poner otro -> lo bloqueamos
-                if (c == '.' && txtNuevoPrecio.getText().contains(".")) {
-                    e.consume(); 
-                }
-            }
-        });
+        utilidades.EfectosUI.aplicarFormatoMoneda(txtNuevoPrecio);
 
         // Mostramos el cuadro de di\u00E1logo con nuestro JTextField protegido
         int opcion = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Nuevo Precio Unitario:", txtNuevoPrecio}, "Modificar Precio", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         
         if (opcion == JOptionPane.OK_OPTION && !txtNuevoPrecio.getText().isEmpty()) {
             try {
-                double nuevoPrecio = Double.parseDouble(txtNuevoPrecio.getText());
+                double nuevoPrecio = Double.parseDouble(txtNuevoPrecio.getText().replace(",", ""));
                 int cant = (int) modeloTablaVentas.getValueAt(f, 3);
                 modeloTablaVentas.setValueAt(nuevoPrecio, f, 4); 
                 modeloTablaVentas.setValueAt(cant * nuevoPrecio, f, 5);
@@ -704,8 +698,8 @@ public class PanelPuntoVenta extends JPanel {
                 return;
             }
             String refStr = txtReferenciaPago.getText().trim();
-            if (!refStr.matches("^[a-zA-Z0-9]{4,}$")) {
-                utilidades.Mensajes.showMessageDialog(this, "El n\u00FAmero de Referencia, Voucher o ACH debe contener al menos 4 caracteres alfanum\u00E9ricos.", "Datos Inv\u00E1lidos", JOptionPane.WARNING_MESSAGE);
+            if (!refStr.matches("^[0-9]{4,}$")) {
+                utilidades.Mensajes.showMessageDialog(this, "El n\u00FAmero de Referencia, Voucher o ACH debe contener al menos 4 caracteres num\u00E9ricos.", "Datos Inv\u00E1lidos", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             refPago = refStr;
@@ -729,13 +723,7 @@ public class PanelPuntoVenta extends JPanel {
 
         if (esApartado) {
             JTextField txtAbonoInicial = new JTextField("0.00");
-            txtAbonoInicial.addKeyListener(new java.awt.event.KeyAdapter() {
-                public void keyTyped(java.awt.event.KeyEvent evt) {
-                    char c = evt.getKeyChar();
-                    if (!Character.isDigit(c) && c != '.') evt.consume();
-                    if (c == '.' && txtAbonoInicial.getText().contains(".")) evt.consume();
-                }
-            });
+            utilidades.EfectosUI.aplicarFormatoMoneda(txtAbonoInicial);
             JTextField txtDiasPlazo = new JTextField("30");
             txtDiasPlazo.addKeyListener(new java.awt.event.KeyAdapter() {
                 public void keyTyped(java.awt.event.KeyEvent evt) {
@@ -754,7 +742,7 @@ public class PanelPuntoVenta extends JPanel {
             double abono = 0;
             int dias = 0;
             try {
-                abono = Double.parseDouble(txtAbonoInicial.getText().trim());
+                abono = Double.parseDouble(txtAbonoInicial.getText().replace(",", "").trim());
                 dias = Integer.parseInt(txtDiasPlazo.getText().trim());
             } catch (NumberFormatException ex) {
                 utilidades.Mensajes.showMessageDialog(this, "Verifique los valores num\u00E9ricos ingresados.", "Error", JOptionPane.ERROR_MESSAGE);

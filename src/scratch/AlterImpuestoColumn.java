@@ -1,6 +1,6 @@
 package scratch;
 
-import dao.ConexionBD;
+import factory.ConexionFactory;
 import java.sql.Connection;
 import java.sql.Statement;
 
@@ -11,7 +11,7 @@ public class AlterImpuestoColumn {
 
         String query = "ALTER TABLE inventario MODIFY COLUMN incluye_impuesto TINYINT(1) DEFAULT 0;";
 
-        try (Connection con = ConexionBD.obtenerConexion();
+        try (Connection con = new ConexionFactory().getConexion();
              Statement stmt = con.createStatement()) {
 
             stmt.executeUpdate(query);

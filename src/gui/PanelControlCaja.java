@@ -427,15 +427,7 @@ public class PanelControlCaja extends JPanel {
         txtMontoReal = new JTextField();
         txtMontoReal.setFont(new Font("Segoe UI", Font.BOLD, 18));
         txtMontoReal.setHorizontalAlignment(JTextField.RIGHT);
-        txtMontoReal.addKeyListener(new java.awt.event.KeyAdapter() {
-            @Override
-            public void keyTyped(java.awt.event.KeyEvent e) {
-                char c = e.getKeyChar();
-                if (!Character.isDigit(c) && c != '.') {
-                    e.consume();
-                }
-            }
-        });
+        utilidades.EfectosUI.aplicarFormatoMoneda(txtMontoReal);
         txtMontoReal.setPreferredSize(new Dimension(0, 44));
         txtMontoReal.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(180, 208, 192)),
@@ -607,15 +599,7 @@ public class PanelControlCaja extends JPanel {
 
     private void mostrarAperturaModal() {
         JTextField txtMonto = new JTextField("0.00");
-        txtMonto.addKeyListener(new java.awt.event.KeyAdapter() {
-            @Override
-            public void keyTyped(java.awt.event.KeyEvent e) {
-                char c = e.getKeyChar();
-                if (!Character.isDigit(c) && c != '.') {
-                    e.consume();
-                }
-            }
-        });
+        utilidades.EfectosUI.aplicarFormatoMoneda(txtMonto);
         JPasswordField pfPass = new JPasswordField();
 
         Object[] msgElements = new Object[]{
@@ -626,7 +610,7 @@ public class PanelControlCaja extends JPanel {
         int opt = utilidades.Mensajes.showConfirmDialog(this, msgElements, "Apertura de Caja", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (opt == JOptionPane.OK_OPTION) {
             try {
-                double monto = Double.parseDouble(txtMonto.getText().trim());
+                double monto = Double.parseDouble(txtMonto.getText().replace(",", "").trim());
                 if (monto < 0) { utilidades.Mensajes.showMessageDialog(this, "El monto no puede ser negativo.", "Error", JOptionPane.ERROR_MESSAGE); return; }
                 
                 String pass = new String(pfPass.getPassword());

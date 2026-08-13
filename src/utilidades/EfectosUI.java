@@ -148,4 +148,64 @@ public class EfectosUI {
         int b = (int) (c1.getBlue() + (c2.getBlue() - c1.getBlue()) * t);
         return new Color(r, g, b);
     }
+
+    public static void aplicarFormatoMoneda(JTextField campo) {
+        campo.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyTyped(java.awt.event.KeyEvent e) {
+                char c = e.getKeyChar();
+                if (!Character.isDigit(c) && c != '.') {
+                    e.consume();
+                    return;
+                }
+                if (c == '.' && campo.getText().contains(".")) {
+                    e.consume();
+                }
+            }
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent e) {
+                int code = e.getKeyCode();
+                if ((code >= java.awt.event.KeyEvent.VK_0 && code <= java.awt.event.KeyEvent.VK_9) || 
+                    (code >= java.awt.event.KeyEvent.VK_NUMPAD0 && code <= java.awt.event.KeyEvent.VK_NUMPAD9) || 
+                    code == java.awt.event.KeyEvent.VK_BACK_SPACE || 
+                    code == java.awt.event.KeyEvent.VK_DELETE) {
+                    
+                    int caretPos = campo.getCaretPosition();
+                    String text = campo.getText();
+                    int commasBefore = text.length() - text.replace(",", "").length();
+                    
+                    String raw = text.replace(",", "");
+                    try {
+                        int dotIndex = raw.indexOf(".");
+                        String formatted = "";
+                        if (dotIndex == -1) {
+                            if (!raw.isEmpty()) {
+                                long val = Long.parseLong(raw);
+                                formatted = String.format(java.util.Locale.US, "%,d", val);
+                            }
+                        } else {
+                            String entero = raw.substring(0, dotIndex);
+                            String decimal = raw.substring(dotIndex);
+                            if (!entero.isEmpty() && !entero.equals("-")) {
+                                long val = Long.parseLong(entero);
+                                formatted = String.format(java.util.Locale.US, "%,d", val) + decimal;
+                            } else {
+                                formatted = raw;
+                            }
+                        }
+                        
+                        campo.setText(formatted);
+                        
+                        // Adjust caret
+                        int commasAfter = formatted.length() - formatted.replace(",", "").length();
+                        int newCaretPos = caretPos + (commasAfter - commasBefore);
+                        if (newCaretPos < 0) newCaretPos = 0;
+                        if (newCaretPos > formatted.length()) newCaretPos = formatted.length();
+                        campo.setCaretPosition(newCaretPos);
+                        
+                    } catch (Exception ex) {}
+                }
+            }
+        });
+    }
 }

@@ -1023,6 +1023,7 @@ public class GeneradorTickets {
         // Informaci\u00F3n de Apartado
         StringBuilder sbInfo = new StringBuilder();
         sbInfo.append("Cliente:      ").append(nombreCliente).append("\n");
+        sbInfo.append("Atendido por: ").append(utilidades.SesionGlobal.getUsuarioActual() != null ? utilidades.SesionGlobal.getUsuarioActual().getNombreUsuario() : "N/A").append("\n");
         sbInfo.append("Fecha:        ").append(fecha).append("\n");
         sbInfo.append("L\u00EDmite Pago:  ").append(fechaLimite).append("\n");
         sbInfo.append("Pago V\u00EDa:     ").append(metodoPago).append("\n");
@@ -1069,7 +1070,8 @@ public class GeneradorTickets {
 
         String msjPie = emp != null && emp.getMensajeTicketPieRecibo() != null ? emp.getMensajeTicketPieRecibo()
                 : "Conserve este ticket para reclamar su producto.";
-        Paragraph pie = new Paragraph(msjPie + "\n\n\n\n", fNormal);
+        String pol = "\n* Nota: Dep\u00F3sito sujeto a cl\u00E1usula de no devoluci\u00F3n por concepto de cancelaci\u00F3n de apartado. El saldo pendiente debe ser cancelado antes de la fecha l\u00EDmite. Pasada dicha fecha, el apartado podr\u00E1 ser anulado sin responsabilidad para la empresa.\n";
+        Paragraph pie = new Paragraph(msjPie + "\n" + pol + "\n\n", fNormal);
         pie.setAlignment(Element.ALIGN_CENTER);
         documento.add(pie);
 
@@ -1185,7 +1187,7 @@ public class GeneradorTickets {
         documento.close();
     }
 
-    public static void generarTicketApartadoPDF(String rutaDestino, String cliente, String fecha, double total,
+    public static void generarTicketApartadoPDF(String rutaDestino, String cliente, String fecha, String fechaLimite, double total,
             double saldoPendiente, int idApartado, java.util.List<modelo.DetalleApartado> detalles,
             java.util.List<modelo.AbonoApartado> abonosHistoricos) throws Exception {
         Rectangle tamanoTicket = new Rectangle(226, 800); // Formato de ticket t\u00E9rmico 80mm
@@ -1242,7 +1244,9 @@ public class GeneradorTickets {
         StringBuilder sbInfo = new StringBuilder();
         sbInfo.append("APARTADO #").append(idApartado).append("\n");
         sbInfo.append("Fecha: ").append(fecha).append("\n");
+        sbInfo.append("L\u00EDmite Pago: ").append(fechaLimite).append("\n");
         sbInfo.append("Cliente: ").append(cliente).append("\n");
+        sbInfo.append("Atendido por: ").append(utilidades.SesionGlobal.getUsuarioActual() != null ? utilidades.SesionGlobal.getUsuarioActual().getNombreUsuario() : "N/A").append("\n");
         sbInfo.append("-------------------------------\n");
         sbInfo.append("C. DESCRIPCION        TOTAL\n");
         sbInfo.append("-------------------------------\n");
@@ -1298,16 +1302,15 @@ public class GeneradorTickets {
 
         String msjPie = emp != null && emp.getMensajeTicketPieRecibo() != null ? emp.getMensajeTicketPieRecibo()
                 : "Conserve este ticket para reclamar su producto.";
-        Paragraph pie = new Paragraph(
-                msjPie + "\n\n* POL\u00CDTICA: No se aceptan reembolsos\nuna vez realizado el apartado.\n\n\n",
-                fNormal);
+        String pol = "\n* Nota: Dep\u00F3sito sujeto a cl\u00E1usula de no devoluci\u00F3n por concepto de cancelaci\u00F3n de apartado. El saldo pendiente debe ser cancelado antes de la fecha l\u00EDmite. Pasada dicha fecha, el apartado podr\u00E1 ser anulado sin responsabilidad para la empresa.\n";
+        Paragraph pie = new Paragraph(msjPie + "\n" + pol + "\n\n", fNormal);
         pie.setAlignment(Element.ALIGN_CENTER);
         documento.add(pie);
 
         documento.close();
     }
 
-    public static void generarTicketAbonoPDF(String rutaDestino, String cliente, String fecha, double abonado,
+    public static void generarTicketAbonoPDF(String rutaDestino, String cliente, String fecha, String fechaLimite, double abonado,
             double saldoPendiente, String metodo, String ref, String banco, int idApartado) throws Exception {
         Rectangle tamanoTicket = new Rectangle(226, 600);
         Document documento = new Document(tamanoTicket, 10, 10, 10, 10);
@@ -1363,7 +1366,9 @@ public class GeneradorTickets {
         StringBuilder body = new StringBuilder();
         body.append("APARTADO #").append(idApartado).append("\n");
         body.append("Fecha: ").append(fecha).append("\n");
+        body.append("L\u00EDmite Pago: ").append(fechaLimite).append("\n");
         body.append("Cliente: ").append(cliente).append("\n");
+        body.append("Atendido por: ").append(utilidades.SesionGlobal.getUsuarioActual() != null ? utilidades.SesionGlobal.getUsuarioActual().getNombreUsuario() : "N/A").append("\n");
         body.append("Pago via: ").append(metodo).append("\n");
         if (banco != null && !banco.isEmpty())
             body.append("Banco: ").append(banco).append("\n");
@@ -1383,9 +1388,8 @@ public class GeneradorTickets {
         totales.setAlignment(Element.ALIGN_RIGHT);
         documento.add(totales);
 
-        Paragraph footer = new Paragraph(
-                "Comprobante oficial de pago.\n\n* POL\u00CDTICA: No se aceptan reembolsos\nuna vez realizado el apartado.\n\n\n",
-                fNormal);
+        String pol = "\n* Nota: Dep\u00F3sito sujeto a cl\u00E1usula de no devoluci\u00F3n por concepto de cancelaci\u00F3n de apartado. El saldo pendiente debe ser cancelado antes de la fecha l\u00EDmite. Pasada dicha fecha, el apartado podr\u00E1 ser anulado sin responsabilidad para la empresa.\n";
+        Paragraph footer = new Paragraph("Comprobante oficial de pago.\n" + pol + "\n\n", fNormal);
         footer.setAlignment(Element.ALIGN_CENTER);
         documento.add(footer);
 
@@ -1613,7 +1617,7 @@ public class GeneradorTickets {
         }
     }
 
-    public static void generarTicketEntregaReparacionPDF(String nombreProducto, String observacion) {
+    public static void generarTicketEntregaReparacionPDF(String nombreProducto, String observacion, String nombreCliente) {
         try {
             java.io.File dir = new java.io.File("reportes/garantias_y_cambios");
             if (!dir.exists())
@@ -1669,6 +1673,8 @@ public class GeneradorTickets {
 
             // Informaci\u00F3n
             StringBuilder sbInfo = new StringBuilder();
+            sbInfo.append("Cliente: ").append(nombreCliente).append("\n");
+            sbInfo.append("Atendido por: ").append(utilidades.SesionGlobal.getUsuarioActual() != null ? utilidades.SesionGlobal.getUsuarioActual().getNombreUsuario() : "N/A").append("\n");
             sbInfo.append("Fecha: ")
                     .append(new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date()))
                     .append("\n");
@@ -1692,7 +1698,7 @@ public class GeneradorTickets {
                     && !emp.getMensajeTicketEntrega().isEmpty() ? emp.getMensajeTicketEntrega()
                             : "Gracias por su paciencia.";
             Paragraph footer = new Paragraph(
-                    "Firma Cliente: _________________\n\nRecib\u00ED conforme: _________________\n\n" + msjPie,
+                    "\n\n\nFirma Cliente: _________________\n\n\n\nRecib\u00ED conforme: _________________\n\n\n" + msjPie,
                     fNormal);
             footer.setAlignment(Element.ALIGN_CENTER);
             documento.add(footer);

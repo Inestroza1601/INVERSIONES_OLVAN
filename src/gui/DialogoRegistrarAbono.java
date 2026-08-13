@@ -174,29 +174,7 @@ public class DialogoRegistrarAbono extends JDialog {
         txtAbono.setFont(new Font("Segoe UI", Font.BOLD, 18));
         txtAbono.setHorizontalAlignment(JTextField.RIGHT);
         txtAbono.setPreferredSize(new Dimension(200, 40));
-        txtAbono.addKeyListener(new java.awt.event.KeyAdapter() {
-            @Override
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                char c = evt.getKeyChar();
-                // Permitir solo n\u00FAmeros y punto decimal
-                if (!Character.isDigit(c) && c != '.') {
-                    evt.consume();
-                }
-                // Prevenir m\u00FAltiples puntos
-                if (c == '.' && txtAbono.getText().contains(".")) {
-                    evt.consume();
-                }
-            }
-            @Override
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                String s = txtAbono.getText().replace(",", "").trim();
-                if (s.isEmpty() || s.contains(".")) return;
-                try {
-                    long num = Long.parseLong(s);
-                    txtAbono.setText(String.format("%,d", num));
-                } catch (Exception ex) {}
-            }
-        });
+        utilidades.EfectosUI.aplicarFormatoMoneda(txtAbono);
         pnlForm.add(txtAbono, gbc);
         
         // M\u00E9todo
@@ -220,6 +198,13 @@ public class DialogoRegistrarAbono extends JDialog {
         pnlRefBanco.add(new JLabel("Referencia / Voucher:"));
         txtRef = new JTextField();
         txtRef.setPreferredSize(new Dimension(200, 35));
+        txtRef.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                if (!Character.isDigit(evt.getKeyChar())) {
+                    evt.consume();
+                }
+            }
+        });
         pnlRefBanco.add(txtRef);
         pnlRefBanco.setVisible(false);
         
@@ -378,6 +363,7 @@ public class DialogoRegistrarAbono extends JDialog {
                             ruta,
                             ap.getNombreCliente(),
                             new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date()),
+                            new SimpleDateFormat("dd/MM/yyyy").format(ap.getFechaLimite()),
                             abono,
                             ap.getSaldoPendiente() - abono, // nuevo saldo pendiente
                             selectedMetodo,
