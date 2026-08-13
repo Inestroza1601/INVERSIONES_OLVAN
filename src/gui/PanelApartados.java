@@ -78,10 +78,10 @@ public class PanelApartados extends JPanel {
                         c.setForeground(isSelected ? Color.WHITE : new Color(231, 76, 60));
                         c.setFont(c.getFont().deriveFont(Font.BOLD));
                     } else if (estado.equals("VIGENTE")) {
-                        c.setForeground(isSelected ? Color.WHITE : new Color(41, 128, 185));
+                        c.setForeground(isSelected ? Color.WHITE : new Color(39, 174, 96));
                         c.setFont(c.getFont().deriveFont(Font.BOLD));
                     } else if (estado.equals("PAGADO")) {
-                        c.setForeground(isSelected ? Color.WHITE : new Color(243, 156, 18));
+                        c.setForeground(isSelected ? Color.WHITE : new Color(39, 174, 96));
                         c.setFont(c.getFont().deriveFont(Font.BOLD));
                     } else {
                         c.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
@@ -121,7 +121,7 @@ public class PanelApartados extends JPanel {
         btnAbonar.addActionListener(e -> registrarAbonoRapido());
 
         JButton btnEntregar = new JButton("Entregar Art\u00EDculos", new IconoBoton(3));
-        btnEntregar.setBackground(new Color(41, 128, 185)); // Azul
+        btnEntregar.setBackground(new Color(39, 174, 96)); // Azul
         btnEntregar.setForeground(Color.WHITE);
         btnEntregar.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnEntregar.setFocusPainted(false);

@@ -10,16 +10,29 @@ import java.nio.charset.StandardCharsets;
 
 public class ClienteGemini {
 
-    // API Key proporcionada por el usuario
-    // IMPORTANTE: Por seguridad, la API Key no debe subirse a GitHub.
-    // Reemplaza este valor localmente o configúralo mediante variables de entorno.
-    private static final String API_KEY = "TU CLAVE API AQUI";
+    private static String getApiKey() {
+        modelo.Empresa emp = new dao.EmpresaDAO().obtenerDatos();
+        if (emp != null && emp.getApiKeyGemini() != null && !emp.getApiKeyGemini().trim().isEmpty()) {
+            return emp.getApiKeyGemini().trim();
+        }
+        return null;
+    }
 
-    public static String analizarError(String stackTrace) {
-        String result = realizarPeticion("gemini-flash-latest", stackTrace);
+    public static String analizarError(String stackTrace, String modelo) {
+        if (modelo == null || modelo.isEmpty()) modelo = "gemini-3.6-flash";
+        String result = realizarPeticion(modelo, stackTrace);
         if (result.contains("Código 404") || result.contains("NOT_FOUND")) {
-            // Si el modelo latest no está disponible, intentamos con el 2.5 explícito
-            result = realizarPeticion("gemini-2.5-flash", stackTrace);
+            // Si el modelo exacto no está disponible, intentamos con el 3.6-flash como fallback
+            result = realizarPeticion("gemini-3.6-flash", stackTrace);
+        }
+        return result;
+    }
+
+    public static String enviarMensajeChat(java.util.List<String[]> historial, String modelo) {
+        if (modelo == null || modelo.isEmpty()) modelo = "gemini-3.6-flash";
+        String result = realizarPeticionChat(modelo, historial);
+        if (result.contains("Código 404") || result.contains("NOT_FOUND")) {
+            result = realizarPeticionChat("gemini-3.6-flash", historial);
         }
         return result;
     }
@@ -37,9 +50,14 @@ public class ClienteGemini {
                 + "6. IMPORTANTE: NO uses entidades HTML para los caracteres (no uses &#225; ni &aacute;, usa directamente á, é, í, ó, ú, ñ). Usa UTF-8 nativo.\n\n"
                 + "ERROR:\n" + stackTrace;
 
+        String apiKey = getApiKey();
+        if (apiKey == null || apiKey.equals("TU_API_KEY_AQUI") || apiKey.isEmpty()) {
+            return "<b>Error:</b> No se ha configurado la API Key de Gemini en la Base de Datos.<br><br>"
+                 + "Por favor, configure su llave en el Panel de Administración de la Empresa para poder utilizar la IA.";
+        }
+
         try {
-            URL url = new URI("https://generativelanguage.googleapis.com/v1beta/models/" + modelo
-                    + ":generateContent?key=" + API_KEY).toURL();
+            URL url = new URI("https://generativelanguage.googleapis.com/v1beta/models/" + modelo + ":generateContent?key=" + apiKey).toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
@@ -73,6 +91,96 @@ public class ClienteGemini {
                     response.append(line);
                 }
                 in.close();
+                if (responseCode == 429) {
+                    System.err.println("Gemini 429 Quota Error: " + response.toString());
+                    return "<b>¡Espera un momento!</b><br>La Inteligencia Artificial está procesando demasiadas solicitudes (Límite de cuota gratuita). Por favor, espera unos 20 segundos e intenta de nuevo.";
+                }
+                if (responseCode == 503) {
+                    return "<b>Servidores Ocupados:</b><br>Los servidores de Google Gemini están experimentando una alta demanda en este instante. Es temporal, por favor intenta de nuevo en unos segundos.";
+                }
+                return "Error al contactar con Gemini (Código " + responseCode + ").\n\nRespuesta del servidor:\n"
+                        + response.toString();
+            }
+        } catch (Exception e) {
+            return "Ocurrió un error al intentar conectarse con la Inteligencia Artificial:\n" + e.getMessage();
+        }
+    }
+
+    private static String realizarPeticionChat(String modelo, java.util.List<String[]> historial) {
+        String apiKey = getApiKey();
+        if (apiKey == null || apiKey.equals("TU_API_KEY_AQUI") || apiKey.isEmpty()) {
+            return "<b>Error:</b> No se ha configurado la API Key de Gemini en la Base de Datos.<br><br>"
+                 + "Por favor, configure su llave en el Panel de Administración de la Empresa para poder utilizar la IA.";
+        }
+
+        try {
+            URL url = new URI("https://generativelanguage.googleapis.com/v1beta/models/" + modelo + ":generateContent?key=" + apiKey).toURL();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+
+            java.util.List<String[]> filteredHistorial = new java.util.ArrayList<>();
+            for (String[] h : historial) {
+                if (h[0].equals("user") || h[0].equals("model")) {
+                    filteredHistorial.add(h);
+                }
+            }
+
+            StringBuilder jsonBuilder = new StringBuilder();
+            jsonBuilder.append("{\"contents\":[");
+            for (int i = 0; i < filteredHistorial.size(); i++) {
+                String role = filteredHistorial.get(i)[0]; // "user" o "model"
+                String text = filteredHistorial.get(i)[1];
+                // Sanitizar texto básico para JSON
+                String safeText = text.replace("\\", "\\\\")
+                                      .replace("\"", "\\\"")
+                                      .replace("\n", "\\n")
+                                      .replace("\r", "")
+                                      .replace("\t", "\\t");
+
+                jsonBuilder.append("{\"role\":\"").append(role)
+                           .append("\",\"parts\":[{\"text\":\"").append(safeText).append("\"}]}");
+                if (i < filteredHistorial.size() - 1) {
+                    jsonBuilder.append(",");
+                }
+            }
+            jsonBuilder.append("]}");
+
+            String jsonPayload = jsonBuilder.toString();
+
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = jsonPayload.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = in.readLine()) != null) {
+                    response.append(line);
+                }
+                in.close();
+                return extraerTextoDelJson(response.toString());
+            } else {
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(conn.getErrorStream(), StandardCharsets.UTF_8));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = in.readLine()) != null) {
+                    response.append(line);
+                }
+                in.close();
+                if (responseCode == 429) {
+                    System.err.println("Gemini 429 Quota Error: " + response.toString());
+                    return "<b>¡Espera un momento!</b><br>La Inteligencia Artificial está procesando demasiadas solicitudes (Límite de cuota gratuita). Por favor, espera unos 20 segundos e intenta de nuevo.";
+                }
+                if (responseCode == 503) {
+                    return "<b>Servidores Ocupados:</b><br>Los servidores de Google Gemini están experimentando una alta demanda en este instante. Es temporal, por favor intenta de nuevo en unos segundos.";
+                }
                 return "Error al contactar con Gemini (Código " + responseCode + ").\n\nRespuesta del servidor:\n"
                         + response.toString();
             }

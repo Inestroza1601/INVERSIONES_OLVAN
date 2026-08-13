@@ -427,6 +427,15 @@ public class PanelControlCaja extends JPanel {
         txtMontoReal = new JTextField();
         txtMontoReal.setFont(new Font("Segoe UI", Font.BOLD, 18));
         txtMontoReal.setHorizontalAlignment(JTextField.RIGHT);
+        txtMontoReal.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyTyped(java.awt.event.KeyEvent e) {
+                char c = e.getKeyChar();
+                if (!Character.isDigit(c) && c != '.') {
+                    e.consume();
+                }
+            }
+        });
         txtMontoReal.setPreferredSize(new Dimension(0, 44));
         txtMontoReal.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(180, 208, 192)),
@@ -598,6 +607,15 @@ public class PanelControlCaja extends JPanel {
 
     private void mostrarAperturaModal() {
         JTextField txtMonto = new JTextField("0.00");
+        txtMonto.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyTyped(java.awt.event.KeyEvent e) {
+                char c = e.getKeyChar();
+                if (!Character.isDigit(c) && c != '.') {
+                    e.consume();
+                }
+            }
+        });
         JPasswordField pfPass = new JPasswordField();
 
         Object[] msgElements = new Object[]{

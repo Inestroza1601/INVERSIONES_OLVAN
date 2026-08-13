@@ -72,9 +72,33 @@ public class PanelInventario extends JPanel {
         }
 
         this.add(panelContenedorInventario, BorderLayout.CENTER);
-        this.add(panelSubMenu, BorderLayout.SOUTH);  // Botones abajo (con elevaci\u00F3n)
+        this.add(panelSubMenu, BorderLayout.SOUTH);  // Botones abajo (con elevación)
 
-        // 4. Configurar los Eventos con Carga As\u00EDncrona
+        // 3.5 Cabecera con Logo
+        JPanel panelCabecera = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
+        panelCabecera.setBackground(Color.WHITE);
+        panelCabecera.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 225, 230)));
+        
+        JLabel lblLogo = new JLabel();
+        modelo.Empresa emp = utilidades.SesionGlobal.getEmpresaActual();
+        if (emp != null && emp.getImagen_logo() != null && !emp.getImagen_logo().isEmpty()) {
+            ImageIcon icon = utilidades.ImagenHelper.obtenerIcono(emp.getImagen_logo(), 200, 80);
+            if (icon != null) {
+                lblLogo.setIcon(icon);
+            } else {
+                lblLogo.setText("Inventario - " + emp.getNombreEmpresa());
+                lblLogo.setFont(new Font("Segoe UI", Font.BOLD, 24));
+                lblLogo.setForeground(new Color(44, 62, 80));
+            }
+        } else {
+            lblLogo.setText("Gestión de Inventario");
+            lblLogo.setFont(new Font("Segoe UI", Font.BOLD, 24));
+            lblLogo.setForeground(new Color(44, 62, 80));
+        }
+        panelCabecera.add(lblLogo);
+        this.add(panelCabecera, BorderLayout.NORTH);
+
+        // 4. Configurar los Eventos con Carga Asíncrona
         btnBuscarProducto.addActionListener(e -> {
             cambiarBotonActivo(btnBuscarProducto);
             abrirSubPanelAsync(() -> new PanelBuscarProducto());
@@ -117,6 +141,7 @@ public class PanelInventario extends JPanel {
                     mostrarSubPanel(nuevoPanel);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    utilidades.GestorErrores.registrarError(e, "PanelInventario - Carga Async");
                     loader.detenerAnimacion();
                     panelContenedorInventario.removeAll();
                     JLabel lblError = new JLabel("Error al cargar el m\u00F3dulo: " + e.getMessage());

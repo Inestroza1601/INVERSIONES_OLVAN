@@ -248,4 +248,24 @@ public class InventarioDAO {
             return ps.executeUpdate() > 0;
         } catch (SQLException e) { System.err.println("Error al actualizar producto: " + e.getMessage()); return false; }
     }
+
+    // ==========================================
+    // MÉTODOS MASIVOS PARA REASIGNACIÓN
+    // ==========================================
+    public boolean reasignarProductos(String columna, int idViejo, int idNuevo) {
+        String sql = "UPDATE INVENTARIO SET " + columna + " = ? WHERE " + columna + " = ? AND eliminado_producto = 0";
+        try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idNuevo);
+            ps.setInt(2, idViejo);
+            return ps.executeUpdate() >= 0;
+        } catch (SQLException e) { System.err.println("Error reasignarProductos: " + e.getMessage()); return false; }
+    }
+
+    public boolean eliminarProductosPorCatalogo(String columna, int idCatalogo) {
+        String sql = "UPDATE INVENTARIO SET eliminado_producto = 1 WHERE " + columna + " = ? AND eliminado_producto = 0";
+        try (Connection con = factory.getConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idCatalogo);
+            return ps.executeUpdate() >= 0;
+        } catch (SQLException e) { System.err.println("Error eliminarProductosPorCatalogo: " + e.getMessage()); return false; }
+    }
 }

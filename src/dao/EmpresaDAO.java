@@ -95,6 +95,12 @@ public class EmpresaDAO {
         emp.setMensajeTicketCambio(rs.getString("mensaje_ticket_cambio"));
         emp.setMensajeTicketReclamo(rs.getString("mensaje_ticket_reclamo"));
         
+        try {
+            emp.setApiKeyGemini(rs.getString("api_key_gemini"));
+        } catch (SQLException ignore) {
+            // En caso de que la migración no haya corrido todavía
+        }
+        
         return emp;
     }
 
@@ -112,15 +118,15 @@ public class EmpresaDAO {
                 + "habilitar_facturacion_empresa, numero_telefono, telefono_secundario, whatsapp_empresa, "
                 + "email_empresa, web_empresa, facebook_empresa, mensaje_ticket_pie_factura, "
                 + "mensaje_ticket_pie_recibo, mensaje_ticket_entrega, mensaje_ticket_pie_cotizacion, imagen_logo, "
-                + "politicas_garantia, mensaje_ticket_cambio, mensaje_ticket_reclamo) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "politicas_garantia, mensaje_ticket_cambio, mensaje_ticket_reclamo, api_key_gemini) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         } else {
             // UPDATE (Para la empresa actual - 20 par\u00E1metros + 1 para el WHERE)
             sql = "UPDATE EMPRESA SET nombre_empresa=?, rtn_empresa=?, due\u00F1o_empresa=?, direccion_empresa=?, "
                 + "estado_empresa=?, habilitar_facturacion_empresa=?, numero_telefono=?, telefono_secundario=?, "
                 + "whatsapp_empresa=?, email_empresa=?, web_empresa=?, facebook_empresa=?, "
                 + "mensaje_ticket_pie_factura=?, mensaje_ticket_pie_recibo=?, mensaje_ticket_entrega=?, "
-                + "mensaje_ticket_pie_cotizacion=?, imagen_logo=?, politicas_garantia=?, mensaje_ticket_cambio=?, mensaje_ticket_reclamo=? WHERE id_empresa=?";
+                + "mensaje_ticket_pie_cotizacion=?, imagen_logo=?, politicas_garantia=?, mensaje_ticket_cambio=?, mensaje_ticket_reclamo=?, api_key_gemini=? WHERE id_empresa=?";
         }
 
         try (Connection con = factory.getConexion();
@@ -146,9 +152,10 @@ public class EmpresaDAO {
             ps.setString(18, emp.getPoliticasGarantia());
             ps.setString(19, emp.getMensajeTicketCambio());
             ps.setString(20, emp.getMensajeTicketReclamo());
+            ps.setString(21, emp.getApiKeyGemini());
 
             if (esUpdate) {
-                ps.setInt(21, emp.getIdEmpresa());
+                ps.setInt(22, emp.getIdEmpresa());
             }
 
             return ps.executeUpdate() > 0;
