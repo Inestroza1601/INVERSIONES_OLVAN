@@ -62,7 +62,7 @@ public class DialogoReportarDefectuoso extends JDialog {
         
         JPanel pnlCantidad = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         pnlCantidad.setOpaque(false);
-        JLabel lblCantidad = new JLabel("Cantidad Defectuosa:");
+        JLabel lblCantidad = new JLabel("<html>Cantidad Defectuosa: <font color='red'>*</font></html>");
         lblCantidad.setFont(new Font("Segoe UI", Font.BOLD, 14));
         
         SpinnerNumberModel model = new SpinnerNumberModel(1, 1, Math.max(1, stockDisponible), 1);
@@ -76,7 +76,7 @@ public class DialogoReportarDefectuoso extends JDialog {
 
         JPanel pnlObs = new JPanel(new BorderLayout(0, 5));
         pnlObs.setOpaque(false);
-        JLabel lblObs = new JLabel("Motivo del Da\u00F1o (Ej. Pantalla rota de f\u00E1brica):");
+        JLabel lblObs = new JLabel("<html>Motivo del Da\u00F1o (Ej. Pantalla rota de f\u00E1brica): <font color='red'>*</font></html>");
         lblObs.setFont(new Font("Segoe UI", Font.BOLD, 14));
         
         txtObservacion = new JTextArea();

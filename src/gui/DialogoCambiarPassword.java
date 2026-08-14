@@ -63,17 +63,17 @@ public class DialogoCambiarPassword extends JDialog {
         prepararCampo(txtConfirmarClave, "Confirmar contrase\u00F1a");
         txtConfirmarClave.putClientProperty("JTextField.showRevealButton", true);
         
-        gbc.gridy = 2; pnlFondo.add(new JLabel("C\u00F3digo de Seguridad:"), gbc);
+        gbc.gridy = 2; pnlFondo.add(new JLabel("<html>C\u00F3digo de Seguridad: <font color='red'>*</font></html>"), gbc);
         gbc.insets = new Insets(0, 5, 10, 5);
         gbc.gridy = 3; pnlFondo.add(txtToken, gbc);
         
         gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.gridy = 4; pnlFondo.add(new JLabel("Nueva Contrase\u00F1a:"), gbc);
+        gbc.gridy = 4; pnlFondo.add(new JLabel("<html>Nueva Contrase\u00F1a: <font color='red'>*</font></html>"), gbc);
         gbc.insets = new Insets(0, 5, 10, 5);
         gbc.gridy = 5; pnlFondo.add(txtNuevaClave, gbc);
         
         gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.gridy = 6; pnlFondo.add(new JLabel("Confirmar Contrase\u00F1a:"), gbc);
+        gbc.gridy = 6; pnlFondo.add(new JLabel("<html>Confirmar Contrase\u00F1a: <font color='red'>*</font></html>"), gbc);
         gbc.insets = new Insets(0, 5, 15, 5);
         gbc.gridy = 7; pnlFondo.add(txtConfirmarClave, gbc);
         
