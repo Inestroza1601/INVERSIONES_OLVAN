@@ -249,7 +249,80 @@ public class PanelLogin extends JPanel {
         
         gbcDer.gridy = 7; gbcDer.insets = new Insets(0, 45, 15, 45); pnlDerecha.add(btnEntrar, gbcDer);
 
-        // Ensamblar tarjeta
+        // --- BOTÓN CÁMARA ---
+        JButton btnCamara = new JButton("Ingresar con Cámara") {
+            private float hoverProg = 0.0f;
+            private Timer tmr;
+            {
+                addMouseListener(new java.awt.event.MouseAdapter() {
+                    @Override public void mouseEntered(java.awt.event.MouseEvent e) {
+                        if (tmr != null && tmr.isRunning()) tmr.stop();
+                        tmr = new Timer(15, ae -> { hoverProg += 0.1f; if (hoverProg >= 1.0f) { hoverProg = 1.0f; tmr.stop(); } repaint(); });
+                        tmr.start();
+                    }
+                    @Override public void mouseExited(java.awt.event.MouseEvent e) {
+                        if (tmr != null && tmr.isRunning()) tmr.stop();
+                        tmr = new Timer(15, ae -> { hoverProg -= 0.1f; if (hoverProg <= 0.0f) { hoverProg = 0.0f; tmr.stop(); } repaint(); });
+                        tmr.start();
+                    }
+                });
+            }
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                Color cBg = new Color(255, 255, 255);
+                Color cBorder = new Color(45, 106, 79);
+                if (hoverProg > 0.01f) {
+                    cBg = new Color(240, 248, 244);
+                }
+                g2.setColor(cBg);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 16, 16);
+                g2.setColor(cBorder);
+                g2.setStroke(new BasicStroke(1.5f));
+                g2.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, 16, 16);
+                
+                g2.setColor(cBorder);
+                g2.setFont(getFont());
+                FontMetrics fm = g2.getFontMetrics();
+                int tx = (getWidth() - fm.stringWidth(getText())) / 2;
+                int ty = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
+                g2.drawString(getText(), tx, ty);
+                g2.dispose();
+            }
+        };
+        btnCamara.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        btnCamara.setFocusPainted(false);
+        btnCamara.setContentAreaFilled(false);
+        btnCamara.setBorderPainted(false);
+        btnCamara.setPreferredSize(new Dimension(0, 48)); 
+        btnCamara.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        btnCamara.addActionListener(e -> {
+            Frame parent = (Frame) SwingUtilities.getWindowAncestor(PanelLogin.this);
+            DialogoLoginBiometrico dialog = new DialogoLoginBiometrico(parent);
+            dialog.setVisible(true);
+            if (dialog.isLoginExitoso()) {
+                int idAutenticado = dialog.getIdUsuarioAutenticado();
+                try {
+                    dao.UsuarioDAO uDAO = new dao.UsuarioDAO();
+                    modelo.Usuario logged = uDAO.obtenerUsuarioPorId(idAutenticado);
+                    if (logged != null) {
+                        utilidades.SesionGlobal.setUsuarioActual(logged);
+                        if (utilidades.SesionGlobal.getEmpresaActual() == null) {
+                            modelo.Empresa emp = new dao.EmpresaDAO().obtenerDatos();
+                            if (emp != null) utilidades.SesionGlobal.setEmpresaActual(emp);
+                        }
+                        menuPrincipal.iniciarEntornoApp();
+                    }
+                } catch(Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        
+        gbcDer.gridy = 8; pnlDerecha.add(btnCamara, gbcDer);
+
         pnlTarjeta.add(pnlIzquierda);
         pnlTarjeta.add(pnlDerecha);
 

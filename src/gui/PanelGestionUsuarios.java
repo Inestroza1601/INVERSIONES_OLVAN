@@ -24,6 +24,7 @@ public class PanelGestionUsuarios extends JPanel {
     private JButton btnEliminar;
     private JButton btnLimpiar;
     private JButton btnNuevoRol;
+    private JButton btnBiometria;
     
     // --- Tabla ---
     private JTable tablaUsuarios;
@@ -53,6 +54,19 @@ public class PanelGestionUsuarios extends JPanel {
         btnGuardar.addActionListener(e -> guardarOActualizarUsuario());
         btnLimpiar.addActionListener(e -> limpiarFormulario());
         btnEliminar.addActionListener(e -> desactivarUsuarioSeleccionado());
+        
+        btnBiometria.addActionListener(e -> {
+            int filaSelec = tablaUsuarios.getSelectedRow();
+            if (filaSelec != -1) {
+                String idString = tablaUsuarios.getValueAt(filaSelec, 0).toString();
+                if (!idString.equals("AUTOGENERADO")) {
+                    int idUsuario = Integer.parseInt(idString);
+                    Frame parent = (Frame) SwingUtilities.getWindowAncestor(this);
+                    DialogoRegistroBiometrico dialog = new DialogoRegistroBiometrico(parent, idUsuario);
+                    dialog.setVisible(true);
+                }
+            }
+        });
 
         tablaUsuarios.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting() && tablaUsuarios.getSelectedRow() != -1) {
@@ -174,12 +188,14 @@ public class PanelGestionUsuarios extends JPanel {
         panelForm.add(txtPassword, gbc);
 
         // Panel de botones internos
-        JPanel pnlBotones = new JPanel(new GridLayout(1, 3, 10, 0));
+        JPanel pnlBotones = new JPanel(new GridLayout(2, 2, 10, 10));
         pnlBotones.setBackground(new Color(255, 255, 255)); // Blanco puro
         
         btnGuardar = crearBotonFormulario("Guardar", new Color(39, 174, 96)); // Verde Menta
         btnLimpiar = crearBotonFormulario("Limpiar", new Color(140, 145, 150)); // Gris suave
         btnEliminar = crearBotonFormulario("Desactivar", new Color(227, 0, 15)); // Rojo Logo
+        btnBiometria = crearBotonFormulario("Biometría", new Color(41, 128, 185)); // Azul
+        btnBiometria.setVisible(false);
         
         if (uAct != null && !uAct.tienePermiso("EDITAR_ADMINISTRACION") && !uAct.tienePermiso("CREAR_ADMINISTRACION")) {
             btnGuardar.setEnabled(false);
@@ -194,6 +210,7 @@ public class PanelGestionUsuarios extends JPanel {
         pnlBotones.add(btnGuardar);
         pnlBotones.add(btnLimpiar);
         pnlBotones.add(btnEliminar);
+        pnlBotones.add(btnBiometria);
 
         gbc.gridy = fila++; gbc.gridx = 0; gbc.gridwidth = 2;
         gbc.insets = new Insets(20, 10, 10, 10);
@@ -319,6 +336,7 @@ public class PanelGestionUsuarios extends JPanel {
             btnEliminar.setBackground(new Color(39, 174, 96)); // Verde
         }
         btnEliminar.setVisible(true);
+        btnBiometria.setVisible(true);
         
         panelForm.revalidate();
         panelForm.repaint();
@@ -339,6 +357,7 @@ public class PanelGestionUsuarios extends JPanel {
         btnGuardar.setText("Guardar");
         btnGuardar.setBackground(new Color(39, 174, 96)); // Verde Menta
         btnEliminar.setVisible(false); 
+        btnBiometria.setVisible(false);
         
         panelForm.revalidate();
         panelForm.repaint();
