@@ -25,6 +25,7 @@ public class DialogoLoginBiometrico extends JDialog {
     private boolean loginExitoso = false;
     private int idUsuarioAutenticado = -1;
     private Timer timerDeteccion;
+    private int fallosConsecutivos = 0;
 
     public DialogoLoginBiometrico(Frame parent) {
         super(parent, "Reconocimiento Facial", true);
@@ -89,8 +90,8 @@ public class DialogoLoginBiometrico extends JDialog {
                 int label = (int) resultado[0];
                 double confianza = resultado[1];
 
-                // LBPH: menor confianza es mejor. Umbral t\u00EDpico es ~60-80
-                if (label != -1 && confianza < 80.0) {
+                // LBPH: menor confianza es mejor. Umbral más estricto para evitar falsos positivos (ideal 50-60)
+                if (label != -1 && confianza < 55.0) {
                     int idUsuario = biometriaDAO.obtenerUsuarioPorLabelId(label);
                     if (idUsuario != -1) {
                         System.out.println("Usuario reconocido: ID=" + idUsuario + " (Confianza: " + confianza + ")");
@@ -99,7 +100,21 @@ public class DialogoLoginBiometrico extends JDialog {
                         this.idUsuarioAutenticado = idUsuario;
                         cerrarCamaraYSalir();
                     }
+                } else {
+                    // Rostro detectado pero no reconocido o confianza muy pobre
+                    fallosConsecutivos++;
+                    if (fallosConsecutivos >= 5) {
+                        timerDeteccion.stop();
+                        // Mostrar el mensaje en el hilo de la UI de forma segura
+                        SwingUtilities.invokeLater(() -> {
+                            JOptionPane.showMessageDialog(DialogoLoginBiometrico.this, "Acceso Denegado. Rostro no reconocido o no autorizado.", "Seguridad", JOptionPane.ERROR_MESSAGE);
+                            cerrarCamaraYSalir();
+                        });
+                    }
                 }
+            } else {
+                // Opcional: si deja de ver un rostro, podríamos reiniciar el contador para evitar bloqueos por falsos positivos aislados
+                // fallosConsecutivos = 0; 
             }
         } catch (Exception ex) {
             ex.printStackTrace();
