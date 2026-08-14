@@ -23,6 +23,7 @@ public class MenuPrincipal extends JFrame {
     private JButton btnHistorialVentas;
     private JButton btnGarantias;
     private JButton btnEstadisticas;
+    private JButton btnAyuda;
     private JButton btnCerrarSesion;
     private JButton botonActivo = null;
 
@@ -160,6 +161,7 @@ public class MenuPrincipal extends JFrame {
         btnHistorialVentas = crearBotonWebAnimado("Historial de Ventas", new IconoMenu(9), false);
         btnGarantias = crearBotonWebAnimado("Garant\u00EDas", new IconoMenu(5), false);
         btnEstadisticas = crearBotonWebAnimado("Estad\u00EDsticas", new IconoMenu(7), false);
+        btnAyuda = crearBotonWebAnimado("Orion AI", new IconoMenu(11), false);
         btnCerrarSesion = crearBotonWebAnimado("Cerrar Sesi\u00F3n", new IconoMenu(6), true);
 
         // uAct ya fue declarado arriba
@@ -215,6 +217,7 @@ public class MenuPrincipal extends JFrame {
         }
 
         panelLateralIzquierdo.add(Box.createVerticalGlue());
+        panelLateralIzquierdo.add(btnAyuda);
         panelLateralIzquierdo.add(btnCerrarSesion);
 
         // Panel Central
@@ -306,6 +309,7 @@ public class MenuPrincipal extends JFrame {
         configurarEventoMenu(btnHistorialVentas, () -> new PanelHistorialVentas());
         configurarEventoMenu(btnGarantias, () -> new PanelGestionGarantias());
         configurarEventoMenu(btnEstadisticas, () -> new PanelEstadisticas());
+        configurarEventoMenu(btnAyuda, () -> new PanelOrionAI());
     }
 
 
@@ -643,6 +647,16 @@ public class MenuPrincipal extends JFrame {
                     g2.drawOval(x + 3, y + 3, 14, 14);
                     g2.drawLine(x + 10, y + 5, x + 10, y + 10);
                     g2.drawLine(x + 10, y + 10, x + 14, y + 10);
+                    break;
+                case 11: // Orion AI (Cabeza de robot)
+                    g2.drawRoundRect(x + 3, y + 4, 14, 12, 4, 4); // Cabeza
+                    g2.drawRect(x + 1, y + 8, 2, 4); // Oreja izq
+                    g2.drawRect(x + 17, y + 8, 2, 4); // Oreja der
+                    g2.drawLine(x + 10, y + 1, x + 10, y + 4); // Antena
+                    g2.drawOval(x + 9, y, 2, 2); // Punta antena
+                    g2.fillRect(x + 6, y + 7, 2, 2); // Ojo izq
+                    g2.fillRect(x + 12, y + 7, 2, 2); // Ojo der
+                    g2.drawLine(x + 7, y + 12, x + 13, y + 12); // Boca
                     break;
             }
             g2.dispose();

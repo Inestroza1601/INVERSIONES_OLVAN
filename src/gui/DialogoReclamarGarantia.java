@@ -65,7 +65,7 @@ public class DialogoReclamarGarantia extends JDialog {
         // Izquierda: Observaciones y Resoluci\u00F3n
         JPanel pnlObs = new JPanel(new BorderLayout(0, 10));
         pnlObs.setOpaque(false);
-        JLabel lblObs = new JLabel("Observaciones / Motivo del Da\u00F1o:");
+        JLabel lblObs = new JLabel("<html>Observaciones / Motivo del Da\u00F1o: <font color='red'>*</font></html>");
         lblObs.setFont(new Font("Segoe UI", Font.BOLD, 14));
         
         txtObservacion = new JTextArea();

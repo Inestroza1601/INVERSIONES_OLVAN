@@ -46,7 +46,7 @@ public class DialogoMovimientoKardex extends JDialog {
         gbc.gridy = 1; pnlForm.add(pnlRadios, gbc);
 
         // Cantidad
-        JLabel lblCantidad = new JLabel("Cantidad:"); lblCantidad.setForeground(new Color(45, 45, 45));
+        JLabel lblCantidad = new JLabel("<html>Cantidad: <font color='red'>*</font></html>"); lblCantidad.setForeground(new Color(45, 45, 45));
         txtCantidad = new JTextField(); txtCantidad.setBackground(new Color(250, 250, 250)); txtCantidad.setForeground(new Color(45, 45, 45)); txtCantidad.setCaretColor(new Color(45, 45, 45));
         txtCantidad.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(180, 208, 192)), BorderFactory.createEmptyBorder(8, 10, 8, 10)));
         txtCantidad.addKeyListener(new KeyAdapter() { @Override public void keyTyped(KeyEvent e) { if (!Character.isDigit(e.getKeyChar())) e.consume(); } });
@@ -55,7 +55,7 @@ public class DialogoMovimientoKardex extends JDialog {
         gbc.gridy = 3; pnlForm.add(txtCantidad, gbc);
 
         // Observaci\u00F3n
-        JLabel lblObs = new JLabel("Motivo u Observaci\u00F3n:"); lblObs.setForeground(new Color(45, 45, 45));
+        JLabel lblObs = new JLabel("<html>Motivo u Observaci\u00F3n: <font color='red'>*</font></html>"); lblObs.setForeground(new Color(45, 45, 45));
         txtObservacion = new JTextArea(4, 20); 
         txtObservacion.setText("Ajuste manual del kardex");
         txtObservacion.setBackground(new Color(250, 250, 250)); 

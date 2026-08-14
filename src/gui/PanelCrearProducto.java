@@ -182,9 +182,9 @@ public class PanelCrearProducto extends JPanel implements utilidades.IPanelCierr
         gbc.insets = new Insets(10, 10, 10, 10); 
         
         agregarFila(pnlForm, gbc, 2, "<html>Nombre del Producto: <font color='red'>*</font></html>", txtNombre);
-        agregarFila(pnlForm, gbc, 3, "Categor\u00EDa:", crearPanelCatalogo(cmbCategoria, "Categor\u00EDa"));
-        agregarFila(pnlForm, gbc, 4, "Proveedor:", crearPanelCatalogo(cmbProveedor, "Proveedor"));
-        agregarFila(pnlForm, gbc, 5, "Ubicaci\u00F3n:", crearPanelCatalogo(cmbUbicacion, "Ubicaci\u00F3n"));
+        agregarFila(pnlForm, gbc, 3, "<html>Categor\u00EDa: <font color='red'>*</font></html>", crearPanelCatalogo(cmbCategoria, "Categor\u00EDa"));
+        agregarFila(pnlForm, gbc, 4, "<html>Proveedor: <font color='red'>*</font></html>", crearPanelCatalogo(cmbProveedor, "Proveedor"));
+        agregarFila(pnlForm, gbc, 5, "<html>Ubicaci\u00F3n: <font color='red'>*</font></html>", crearPanelCatalogo(cmbUbicacion, "Ubicaci\u00F3n"));
 
         cmbDiasGarantia = new JComboBox<>(new String[]{"Sin garant\u00EDa", "3 d\u00EDas", "7 d\u00EDas", "15 d\u00EDas", "30 d\u00EDas", "60 d\u00EDas", "90 d\u00EDas", "1 a\u00F1o"});
         cmbDiasGarantia.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -672,7 +672,7 @@ public class PanelCrearProducto extends JPanel implements utilidades.IPanelCierr
         GridBagConstraints gbc = new GridBagConstraints(); gbc.insets = new Insets(10, 5, 10, 5); gbc.fill = GridBagConstraints.HORIZONTAL; gbc.gridx = 0; gbc.weightx = 1.0;
 
         JTextField txtNombreCat = crearInputOscuro();
-        agregarFilaDialog(pnlForm, gbc, 0, "Nombre:", txtNombreCat);
+        agregarFilaDialog(pnlForm, gbc, 0, "<html>Nombre: <font color='red'>*</font></html>", txtNombreCat);
         
         JTextField txtDesc = null, txtEncargado = null, txtTel = null, txtDir = null, txtRepuestos = null;
 
@@ -1069,7 +1069,7 @@ public class PanelCrearProducto extends JPanel implements utilidades.IPanelCierr
         JTextField txtNombreCat = crearInputOscuro();
         txtNombreCat.setText(item.nombre); // Precargar nombre
         gbc.gridwidth = 2; // Ocupar ambas columnas
-        agregarFilaDialog(pnlForm, gbc, 0, "Nombre:", txtNombreCat);
+        agregarFilaDialog(pnlForm, gbc, 0, "<html>Nombre: <font color='red'>*</font></html>", txtNombreCat);
         gbc.gridwidth = 1; // Restaurar
         
         JTextField txtDesc = null, txtEncargado = null, txtTel = null, txtDir = null, txtRepuestos = null;
