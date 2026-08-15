@@ -42,8 +42,11 @@ public class ConexionFactory {
         // 2. Cargar configuraci\u00F3n desde el archivo externo (ra\u00EDz del programa)
         Properties config = new Properties();
         
-        // Apuntamos al archivo f\u00EDsico en la carpeta donde se est\u00E1 ejecutando el programa
+        // Apuntamos al archivo físico en la carpeta donde se está ejecutando el programa
         File archivoConfig = new File("config.properties");
+        if (!archivoConfig.exists() && new File("INVERSIONES_OLVAN/config.properties").exists()) {
+            archivoConfig = new File("INVERSIONES_OLVAN/config.properties");
+        }
         
         if (archivoConfig.exists()) {
             try (InputStream input = new FileInputStream(archivoConfig)) {

@@ -6,10 +6,10 @@ import org.bytedeco.opencv.opencv_core.*;
 import org.bytedeco.opencv.opencv_face.*;
 import org.bytedeco.opencv.opencv_objdetect.*;
 import static org.bytedeco.opencv.global.opencv_core.*;
-
+import static org.bytedeco.opencv.global.opencv_face.*;
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
 import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
-
+import static org.bytedeco.opencv.global.opencv_objdetect.*;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -19,9 +19,19 @@ public class ReconocimientoFacial {
 
     private LBPHFaceRecognizer recognizer;
     private CascadeClassifier faceDetector;
-    private static final String CLASSIFIER_PATH = "haarcascade_frontalface_alt.xml";
-    private static final String MODEL_PATH = "biometria_data/modelo_lbph.yml";
-    private static final String FACES_DIR = "biometria_data/rostros";
+    private static String getBasePath() {
+        if (new File("haarcascade_frontalface_alt.xml").exists()) {
+            return "";
+        } else if (new File("INVERSIONES_OLVAN/haarcascade_frontalface_alt.xml").exists()) {
+            return "INVERSIONES_OLVAN/";
+        }
+        return "";
+    }
+
+    private static final String BASE_PATH = getBasePath();
+    private static final String CLASSIFIER_PATH = BASE_PATH + "haarcascade_frontalface_alt.xml";
+    private static final String MODEL_PATH = BASE_PATH + "biometria_data/modelo_lbph.yml";
+    private static final String FACES_DIR = BASE_PATH + "biometria_data/rostros";
 
     public ReconocimientoFacial() {
         // Asegurar que existan los directorios
@@ -36,11 +46,14 @@ public class ReconocimientoFacial {
         cargarModelo();
     }
 
+    private boolean modeloEntrenado = false;
+
     private void cargarModelo() {
         File f = new File(MODEL_PATH);
         if (f.exists() && f.length() > 0) {
             try {
                 recognizer.read(MODEL_PATH);
+                modeloEntrenado = true;
                 System.out.println("Modelo de reconocimiento facial cargado.");
             } catch (Exception e) {
                 System.err.println("Error al leer el modelo LBPH: " + e.getMessage());
@@ -105,6 +118,7 @@ public class ReconocimientoFacial {
         try {
             recognizer.train(fotos, etiquetas);
             recognizer.save(MODEL_PATH);
+            modeloEntrenado = true;
             System.out.println("Modelo entrenado y guardado exitosamente con " + contador + " im\u00E1genes.");
             return true;
         } catch (Exception e) {
@@ -113,12 +127,19 @@ public class ReconocimientoFacial {
         }
     }
 
+    public boolean isModeloEntrenado() {
+        return modeloEntrenado;
+    }
+
     /**
      * Predice a qui\u00E9n pertenece el rostro en la foto.
      * Retorna un arreglo: [labelId, nivelConfianza]
      * Nivel de confianza m\u00E1s bajo = mayor precisi\u00F3n (idealmente < 60)
      */
     public double[] predecir(Mat rostroRedimensionado) {
+        if (!modeloEntrenado) {
+            return new double[]{-1, 1000.0};
+        }
         IntPointer label = new IntPointer(1);
         DoublePointer confianza = new DoublePointer(1);
         

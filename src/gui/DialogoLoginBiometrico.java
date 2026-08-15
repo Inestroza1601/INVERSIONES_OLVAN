@@ -11,25 +11,26 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-
+import java.io.File;
 
 import org.bytedeco.opencv.opencv_core.Mat;
 import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
 
 public class DialogoLoginBiometrico extends JDialog {
     private Webcam webcam;
-    private WebcamPanel webcamPanel;
+    private FaceIdPanel animPanel;
     private ReconocimientoFacial reconocedor;
     private BiometriaDAO biometriaDAO;
     
     private boolean loginExitoso = false;
     private int idUsuarioAutenticado = -1;
-    private Timer timerDeteccion;
+    private Thread hiloCamara;
+    private volatile boolean corriendo = false;
     private int fallosConsecutivos = 0;
 
     public DialogoLoginBiometrico(Frame parent) {
         super(parent, "Reconocimiento Facial", true);
-        setSize(640, 520);
+        setSize(400, 450); // Ajustar tamaño para que el Face ID se vea más cuadrado y natural
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
 
@@ -47,20 +48,21 @@ public class DialogoLoginBiometrico extends JDialog {
         }
 
         webcam.setViewSize(WebcamResolution.VGA.getSize());
-        webcamPanel = new WebcamPanel(webcam);
-        webcamPanel.setFPSDisplayed(true);
-        webcamPanel.setImageSizeDisplayed(true);
-        webcamPanel.setMirrored(true);
+        if (!webcam.isOpen()) {
+            webcam.open();
+        }
 
-        add(webcamPanel, BorderLayout.CENTER);
+        animPanel = new FaceIdPanel();
+        add(animPanel, BorderLayout.CENTER);
 
         JButton btnCancelar = new JButton("Cancelar");
         btnCancelar.addActionListener(e -> cerrarCamaraYSalir());
         add(btnCancelar, BorderLayout.SOUTH);
 
-        // Timer para leer fotogramas y detectar rostros cada 500ms
-        timerDeteccion = new Timer(500, e -> procesarFrame());
-        timerDeteccion.start();
+        // Hilo en segundo plano para procesar cámara y reconocimiento sin congelar la UI
+        corriendo = true;
+        hiloCamara = new Thread(this::bucleCamara);
+        hiloCamara.start();
         
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -70,11 +72,29 @@ public class DialogoLoginBiometrico extends JDialog {
         });
     }
 
-    private void procesarFrame() {
-        if (!webcam.isOpen()) return;
+    private void bucleCamara() {
+        long ultimoReconocimiento = 0;
+        
+        while (corriendo && webcam.isOpen()) {
+            BufferedImage image = webcam.getImage();
+            if (image == null) continue;
+            
+            // 1. Actualizar previsualización a máxima velocidad (aprox 30 FPS)
+            SwingUtilities.invokeLater(() -> animPanel.updateImage(image));
+            
+            // 2. Reconocimiento facial cada 500ms
+            long ahora = System.currentTimeMillis();
+            if (ahora - ultimoReconocimiento > 500) {
+                ultimoReconocimiento = ahora;
+                procesarReconocimiento(image);
+            }
+            
+            // Pequeña pausa para no saturar CPU
+            try { Thread.sleep(30); } catch (Exception e) {}
+        }
+    }
 
-        BufferedImage image = webcam.getImage();
-        if (image == null) return;
+    private void procesarReconocimiento(BufferedImage image) {
 
         try {
             // Convert BufferedImage to byte array, then to OpenCV Mat
@@ -95,16 +115,20 @@ public class DialogoLoginBiometrico extends JDialog {
                     int idUsuario = biometriaDAO.obtenerUsuarioPorLabelId(label);
                     if (idUsuario != -1) {
                         System.out.println("Usuario reconocido: ID=" + idUsuario + " (Confianza: " + confianza + ")");
-                        timerDeteccion.stop();
+                        corriendo = false; // Detener bucle
                         this.loginExitoso = true;
                         this.idUsuarioAutenticado = idUsuario;
-                        cerrarCamaraYSalir();
+                        
+                        // Iniciar la animación de éxito y luego cerrar en la UI
+                        SwingUtilities.invokeLater(() -> {
+                            animPanel.setSuccess(() -> cerrarCamaraYSalir());
+                        });
                     }
                 } else {
                     // Rostro detectado pero no reconocido o confianza muy pobre
                     fallosConsecutivos++;
                     if (fallosConsecutivos >= 5) {
-                        timerDeteccion.stop();
+                        corriendo = false; // Detener bucle
                         // Mostrar el mensaje en el hilo de la UI de forma segura
                         SwingUtilities.invokeLater(() -> {
                             JOptionPane.showMessageDialog(DialogoLoginBiometrico.this, "Acceso Denegado. Rostro no reconocido o no autorizado.", "Seguridad", JOptionPane.ERROR_MESSAGE);
@@ -122,7 +146,10 @@ public class DialogoLoginBiometrico extends JDialog {
     }
 
     private void cerrarCamaraYSalir() {
-        if (timerDeteccion != null) timerDeteccion.stop();
+        corriendo = false;
+        if (hiloCamara != null && hiloCamara.isAlive()) {
+            hiloCamara.interrupt();
+        }
         if (webcam != null && webcam.isOpen()) {
             webcam.close();
         }
