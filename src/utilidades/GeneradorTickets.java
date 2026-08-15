@@ -504,7 +504,11 @@ public class GeneradorTickets {
             sbInfo.append("Banco: ").append(bancoPago.trim()).append("\n");
         }
         if (referenciaPago != null && !referenciaPago.trim().isEmpty()) {
-            sbInfo.append("Ref/Voucher: ").append(referenciaPago.trim()).append("\n");
+            if (referenciaPago.startsWith("Pago de Apartado #")) {
+                sbInfo.append("Transacci\u00F3n: ").append(referenciaPago.trim()).append("\n");
+            } else {
+                sbInfo.append("Ref/Voucher: ").append(referenciaPago.trim()).append("\n");
+            }
         }
         sbInfo.append("-------------------------------\n");
 
@@ -526,18 +530,58 @@ public class GeneradorTickets {
             double totalFila = (double) fila[5];
             int diasGarantia = (fila.length > 6 && fila[6] != null) ? (int) fila[6] : 0;
 
+            double descuentoFila = 0.0;
+            java.util.regex.Pattern p1 = java.util.regex.Pattern.compile(" <DSC:([\\d.,]+)>");
+            java.util.regex.Matcher m1 = p1.matcher(nom);
+            if (m1.find()) {
+                try { descuentoFila = Double.parseDouble(m1.group(1).replace(",", "")); nom = m1.replaceAll(""); } catch (Exception e) {}
+            }
+            java.util.regex.Pattern p2 = java.util.regex.Pattern.compile(" \\(Orig: L [\\d.,]+ - Desc: L ([\\d.,]+)\\)");
+            java.util.regex.Matcher m2 = p2.matcher(nom);
+            if (m2.find()) {
+                try { descuentoFila = Double.parseDouble(m2.group(1).replace(",", "")); nom = m2.replaceAll(""); } catch (Exception e) {}
+            }
+            java.util.regex.Pattern p3 = java.util.regex.Pattern.compile(" \\(Desc: L ([\\d.,]+)\\)");
+            java.util.regex.Matcher m3 = p3.matcher(nom);
+            if (m3.find()) {
+                try { descuentoFila = Double.parseDouble(m3.group(1).replace(",", "")); nom = m3.replaceAll(""); } catch (Exception e) {}
+            }
+            
             int maxLen = 15;
-
-            // 1. Imprimir Nombre, Cantidad y Precio
-            if (nom.length() <= maxLen) {
-                sbDetalles.append(String.format("%-2s %-15s %,6.2f\n", cant, nom, totalFila));
+            
+            if (descuentoFila > 0) {
+                double descuentoTotal = descuentoFila * cant;
+                double precioOriginalTotal = totalFila + descuentoTotal;
+                
+                // 1. Imprimir Nombre, Cantidad y Precio Original
+                if (nom.length() <= maxLen) {
+                    sbDetalles.append(String.format("%-2s %-15s %,6.2f\n", cant, nom, precioOriginalTotal));
+                } else {
+                    sbDetalles.append(String.format("%-2s %-15s %,6.2f\n", cant, nom.substring(0, maxLen), precioOriginalTotal));
+                    int index = maxLen;
+                    while (index < nom.length()) {
+                        int end = Math.min(index + maxLen, nom.length());
+                        sbDetalles.append(String.format("   %-15s\n", nom.substring(index, end)));
+                        index += maxLen;
+                    }
+                }
+                
+                // 2. Imprimir Descuento y Precio Neto (alineados)
+                sbDetalles.append(String.format("   %-15s %,6.2f\n", "Descuento:", -descuentoTotal));
+                sbDetalles.append(String.format("   %-15s %,6.2f\n", "Precio Neto:", totalFila));
+                
             } else {
-                sbDetalles.append(String.format("%-2s %-15s %,6.2f\n", cant, nom.substring(0, maxLen), totalFila));
-                int index = maxLen;
-                while (index < nom.length()) {
-                    int end = Math.min(index + maxLen, nom.length());
-                    sbDetalles.append(String.format("   %-15s\n", nom.substring(index, end)));
-                    index += maxLen;
+                // 1. Imprimir Nombre, Cantidad y Precio
+                if (nom.length() <= maxLen) {
+                    sbDetalles.append(String.format("%-2s %-15s %,6.2f\n", cant, nom, totalFila));
+                } else {
+                    sbDetalles.append(String.format("%-2s %-15s %,6.2f\n", cant, nom.substring(0, maxLen), totalFila));
+                    int index = maxLen;
+                    while (index < nom.length()) {
+                        int end = Math.min(index + maxLen, nom.length());
+                        sbDetalles.append(String.format("   %-15s\n", nom.substring(index, end)));
+                        index += maxLen;
+                    }
                 }
             }
 
@@ -1313,18 +1357,59 @@ public class GeneradorTickets {
         StringBuilder prods = new StringBuilder();
         for (modelo.DetalleApartado d : detalles) {
             String nom = d.getNombreProducto();
+            double descuentoFila = 0.0;
+            java.util.regex.Pattern p1 = java.util.regex.Pattern.compile(" <DSC:([\\d.,]+)>");
+            java.util.regex.Matcher m1 = p1.matcher(nom);
+            if (m1.find()) {
+                try { descuentoFila = Double.parseDouble(m1.group(1).replace(",", "")); nom = m1.replaceAll(""); } catch (Exception e) {}
+            }
+            java.util.regex.Pattern p2 = java.util.regex.Pattern.compile(" \\(Orig: L [\\d.,]+ - Desc: L ([\\d.,]+)\\)");
+            java.util.regex.Matcher m2 = p2.matcher(nom);
+            if (m2.find()) {
+                try { descuentoFila = Double.parseDouble(m2.group(1).replace(",", "")); nom = m2.replaceAll(""); } catch (Exception e) {}
+            }
+            java.util.regex.Pattern p3 = java.util.regex.Pattern.compile(" \\(Desc: L ([\\d.,]+)\\)");
+            java.util.regex.Matcher m3 = p3.matcher(nom);
+            if (m3.find()) {
+                try { descuentoFila = Double.parseDouble(m3.group(1).replace(",", "")); nom = m3.replaceAll(""); } catch (Exception e) {}
+            }
+
             int maxLen = 15;
             double sub = d.getCantidadApartado() * d.getPrecioUnitarioApartado();
-            if (nom.length() <= maxLen) {
-                prods.append(String.format("%-2d %-15s %,6.2f\n", d.getCantidadApartado(), nom, sub));
+            
+            if (descuentoFila > 0) {
+                double descuentoTotal = descuentoFila * d.getCantidadApartado();
+                double precioOriginalTotal = sub + descuentoTotal;
+                
+                // 1. Imprimir Nombre, Cantidad y Precio Original
+                if (nom.length() <= maxLen) {
+                    prods.append(String.format("%-2d %-15s %,6.2f\n", d.getCantidadApartado(), nom, precioOriginalTotal));
+                } else {
+                    prods.append(String.format("%-2d %-15s %,6.2f\n", d.getCantidadApartado(), nom.substring(0, maxLen), precioOriginalTotal));
+                    int index = maxLen;
+                    while (index < nom.length()) {
+                        int end = Math.min(index + maxLen, nom.length());
+                        prods.append(String.format("   %-15s\n", nom.substring(index, end)));
+                        index += maxLen;
+                    }
+                }
+                
+                // 2. Imprimir Descuento y Precio Neto (alineados)
+                prods.append(String.format("   %-15s %,6.2f\n", "Descuento:", -descuentoTotal));
+                prods.append(String.format("   %-15s %,6.2f\n", "Precio Neto:", sub));
+                
             } else {
-                prods.append(
-                        String.format("%-2d %-15s %,6.2f\n", d.getCantidadApartado(), nom.substring(0, maxLen), sub));
-                int index = maxLen;
-                while (index < nom.length()) {
-                    int end = Math.min(index + maxLen, nom.length());
-                    prods.append(String.format("   %-15s\n", nom.substring(index, end)));
-                    index += maxLen;
+                // 1. Imprimir Nombre, Cantidad y Precio
+                if (nom.length() <= maxLen) {
+                    prods.append(String.format("%-2d %-15s %,6.2f\n", d.getCantidadApartado(), nom, sub));
+                } else {
+                    prods.append(String.format("%-2d %-15s %,6.2f\n", d.getCantidadApartado(), nom.substring(0, maxLen), sub));
+                    int index = maxLen;
+                    while (index < nom.length()) {
+                        int end = Math.min(index + maxLen, nom.length());
+                        prods.append(String.format("   %-15s\n", nom.substring(index, end)));
+                        index += maxLen;
+                    }
                 }
             }
         }

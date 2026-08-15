@@ -434,20 +434,45 @@ public class ApartadoDAO {
                 }
             }
             
-            // Calculate totals
-            double total = ap.getTotalApartado();
-            double subtotal = aplicarISV ? (total / 1.15) : total;
-            double impuesto = aplicarISV ? (total - subtotal) : 0.0;
+            // 2. Fetch Detalles and Calculate Exact Totals based on product tax type
+            List<DetalleApartado> detalles = listarDetalles(idApartado);
+            double exactSubtotal = 0.0;
+            double exactImpuesto = 0.0;
+            double exactTotal = ap.getTotalApartado(); // Keep original total just in case
+
+            for (DetalleApartado d : detalles) {
+                double subFila = d.getSubtotalApartado();
+                int tipoImp = 0; // Default no tax
+                try (PreparedStatement psP = con.prepareStatement("SELECT incluye_impuesto FROM INVENTARIO WHERE id_producto = ?")) {
+                    psP.setInt(1, d.getIdProducto());
+                    try (ResultSet rsp = psP.executeQuery()) {
+                        if (rsp.next()) tipoImp = rsp.getInt("incluye_impuesto");
+                    }
+                }
+                
+                if (tipoImp == 1) { // Incluido
+                    exactSubtotal += subFila / 1.15;
+                    exactImpuesto += subFila - (subFila / 1.15);
+                } else if (tipoImp == 2) { // Exento
+                    exactSubtotal += subFila;
+                } else { // 0 = No incluido
+                    exactSubtotal += subFila;
+                    exactImpuesto += subFila * 0.15;
+                }
+            }
+
+            // Fallback just in case sum does not match exactTotal (floating point issues, etc)
+            // But we will trust our exact calculations for the VENTA table.
             
-            // 2. Insert into VENTAS
+            // 3. Insert into VENTAS
             int idVentaGenerado = 0;
             try (PreparedStatement psVenta = con.prepareStatement(sqlVenta, Statement.RETURN_GENERATED_KEYS)) {
                 psVenta.setInt(1, ap.getIdClienteApartado());
                 psVenta.setInt(2, idUsuarioCaja);
                 psVenta.setInt(3, idMetodoPago);
-                psVenta.setDouble(4, subtotal);
-                psVenta.setDouble(5, impuesto);
-                psVenta.setDouble(6, total);
+                psVenta.setDouble(4, exactSubtotal);
+                psVenta.setDouble(5, exactImpuesto);
+                psVenta.setDouble(6, exactTotal);
                 psVenta.setString(7, "Pago de Apartado #" + idApartado);
                 if (banco == null) psVenta.setNull(8, Types.VARCHAR); else psVenta.setString(8, banco);
                 
@@ -459,11 +484,22 @@ public class ApartadoDAO {
             if (idVentaGenerado == 0) { con.rollback(); return 0; }
             
             // 3. Insert into DETALLES_VENTA
-            List<DetalleApartado> detalles = listarDetalles(idApartado);
             try (PreparedStatement psDetalle = con.prepareStatement(sqlDetalleVenta)) {
                 for (DetalleApartado d : detalles) {
                     double precioUnitario = d.getPrecioUnitarioApartado();
-                    if (aplicarISV) precioUnitario = precioUnitario / 1.15;
+                    
+                    int tipoImp = 0;
+                    try (PreparedStatement psP = con.prepareStatement("SELECT incluye_impuesto FROM INVENTARIO WHERE id_producto = ?")) {
+                        psP.setInt(1, d.getIdProducto());
+                        try (ResultSet rsp = psP.executeQuery()) {
+                            if (rsp.next()) tipoImp = rsp.getInt("incluye_impuesto");
+                        }
+                    }
+                    
+                    if (tipoImp == 1) { // Incluido
+                        precioUnitario = precioUnitario / 1.15;
+                    } // Exento o No Incluido se mantiene el unitario original
+                    
                     double subtotalFila = precioUnitario * d.getCantidadApartado();
                     
                     psDetalle.setInt(1, idVentaGenerado);

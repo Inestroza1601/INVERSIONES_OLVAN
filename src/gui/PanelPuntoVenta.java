@@ -247,7 +247,7 @@ public class PanelPuntoVenta extends JPanel {
         pnlTop.add(pnlTopIzquierdo, BorderLayout.WEST); pnlTop.add(pnlLector, BorderLayout.EAST);
         this.add(pnlTop, BorderLayout.NORTH);
 
-        String[] columnas = {"ID", "Foto", "Nombre del Producto", "Cant.", "Precio Unit.", "Subtotal Fila", "StockMax", "RutaFoto", "IMEI", "DiasGarantia", "IncluyeImpuesto", "PrecioNormal", "PrecioMayorista"};
+        String[] columnas = {"ID", "Foto", "Nombre del Producto", "Cant.", "Precio Unit.", "Subtotal Fila", "StockMax", "RutaFoto", "IMEI", "DiasGarantia", "IncluyeImpuesto", "PrecioNormal", "PrecioMayorista", "PrecioCompra"};
         modeloTablaVentas = new DefaultTableModel(null, columnas) { @Override public boolean isCellEditable(int row, int column) { return false; } };
         tablaVentas = new JTable(modeloTablaVentas); 
         tablaVentas.setShowGrid(false); tablaVentas.setIntercellSpacing(new Dimension(0, 0)); tablaVentas.setRowHeight(60); tablaVentas.setBackground(new Color(255, 255, 255)); tablaVentas.setForeground(new Color(30, 41, 59)); tablaVentas.setFont(new Font("Segoe UI", Font.PLAIN, 14)); tablaVentas.setSelectionBackground(new Color(213, 233, 222)); tablaVentas.setSelectionForeground(new Color(19, 58, 42));
@@ -262,6 +262,7 @@ public class PanelPuntoVenta extends JPanel {
         tablaVentas.getColumnModel().getColumn(10).setMinWidth(0); tablaVentas.getColumnModel().getColumn(10).setMaxWidth(0);
         tablaVentas.getColumnModel().getColumn(11).setMinWidth(0); tablaVentas.getColumnModel().getColumn(11).setMaxWidth(0);
         tablaVentas.getColumnModel().getColumn(12).setMinWidth(0); tablaVentas.getColumnModel().getColumn(12).setMaxWidth(0);
+        tablaVentas.getColumnModel().getColumn(13).setMinWidth(0); tablaVentas.getColumnModel().getColumn(13).setMaxWidth(0);
         
         tablaVentas.getColumnModel().getColumn(1).setPreferredWidth(70); tablaVentas.getColumnModel().getColumn(1).setMaxWidth(70);
         tablaVentas.getColumnModel().getColumn(1).setCellRenderer(new ImagenMiniaturaRenderer());
@@ -353,6 +354,16 @@ public class PanelPuntoVenta extends JPanel {
         lblImpuesto = new JLabel("ISV (15%): L 0.00"); lblImpuesto.setForeground(new Color(140, 145, 150)); lblImpuesto.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         lblTotal = new JLabel("L 0.00"); lblTotal.setForeground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO); lblTotal.setFont(new Font("Segoe UI", Font.BOLD, 36));
 
+        JButton btnCalcularCambio = new JButton("Calcular Cambio"); btnCalcularCambio.setBackground(new Color(243, 156, 18)); btnCalcularCambio.setForeground(Color.WHITE); btnCalcularCambio.setFont(new Font("Segoe UI", Font.BOLD, 14)); btnCalcularCambio.setPreferredSize(new Dimension(0, 40)); btnCalcularCambio.setFocusPainted(false); btnCalcularCambio.setCursor(new Cursor(Cursor.HAND_CURSOR)); btnCalcularCambio.setBorder(BorderFactory.createEmptyBorder(0,0,0,0)); btnCalcularCambio.putClientProperty("JButton.buttonType", "roundRect");
+        utilidades.EfectosUI.aplicarEfectoHover(btnCalcularCambio, new Color(243, 156, 18), new Color(211, 84, 0), Color.WHITE, Color.BLACK);
+        btnCalcularCambio.addActionListener(e -> {
+            if (granTotal > 0) {
+                mostrarDialogoCambio(granTotal);
+            } else {
+                utilidades.Mensajes.showMessageDialog(this, "Debe haber productos en la venta para calcular el cambio.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
         JButton btnCobrar = new JButton("Cobrar Venta"); btnCobrar.setBackground(utilidades.EfectosUI.COLOR_VERDE_PRIMARIO); btnCobrar.setForeground(Color.WHITE); btnCobrar.setFont(new Font("Segoe UI", Font.BOLD, 16)); btnCobrar.setPreferredSize(new Dimension(0, 50)); btnCobrar.setFocusPainted(false); btnCobrar.setCursor(new Cursor(Cursor.HAND_CURSOR)); btnCobrar.setBorder(BorderFactory.createEmptyBorder(0,0,0,0)); btnCobrar.putClientProperty("JButton.buttonType", "roundRect");
         utilidades.EfectosUI.aplicarEfectoHover(btnCobrar, utilidades.EfectosUI.COLOR_VERDE_PRIMARIO, utilidades.EfectosUI.COLOR_VERDE_HOVER, Color.WHITE, Color.BLACK);
         btnCobrar.addActionListener(e -> procesarVenta());
@@ -369,6 +380,7 @@ public class PanelPuntoVenta extends JPanel {
         cmbTipoTransaccion.addActionListener(e -> {
             boolean esApartado = cmbTipoTransaccion.getSelectedIndex() == 1;
             btnCobrar.setText(esApartado ? "Registrar Apartado" : "Cobrar Venta");
+            btnCalcularCambio.setVisible(!esApartado); // Ocultar cambio en apartados
         });
 
         gbc.gridy = 0; gbc.insets = new Insets(0, 0, 5, 0); pnlLiquidacion.add(new JLabel("Tipo Transacci\u00F3n:"){{setForeground(new Color(100, 100, 100)); setFont(new Font("Segoe UI", Font.BOLD, 12));}}, gbc);
@@ -379,8 +391,9 @@ public class PanelPuntoVenta extends JPanel {
         gbc.gridy = 5; gbc.insets = new Insets(15, 0, 0, 0); pnlLiquidacion.add(lblSubtotal, gbc);
         gbc.gridy = 6; gbc.insets = new Insets(5, 0, 0, 0); pnlLiquidacion.add(lblImpuesto, gbc);
         gbc.gridy = 7; gbc.insets = new Insets(15, 0, 0, 0); pnlLiquidacion.add(new JLabel("TOTAL:"){{setForeground(new Color(45, 45, 45)); setFont(new Font("Segoe UI", Font.BOLD, 14));}}, gbc);
-        gbc.gridy = 8; gbc.insets = new Insets(0, 0, 20, 0); pnlLiquidacion.add(lblTotal, gbc);
-        gbc.gridy = 9; gbc.insets = new Insets(0, 0, 0, 0); pnlLiquidacion.add(btnCobrar, gbc);
+        gbc.gridy = 8; gbc.insets = new Insets(0, 0, 10, 0); pnlLiquidacion.add(lblTotal, gbc);
+        gbc.gridy = 9; gbc.insets = new Insets(0, 0, 10, 0); pnlLiquidacion.add(btnCalcularCambio, gbc);
+        gbc.gridy = 10; gbc.insets = new Insets(0, 0, 0, 0); pnlLiquidacion.add(btnCobrar, gbc);
         
         pnlControlVenta.add(pnlLiquidacion, BorderLayout.NORTH);
         this.add(pnlControlVenta, BorderLayout.EAST);
@@ -515,7 +528,7 @@ public class PanelPuntoVenta extends JPanel {
         modeloTablaVentas.addRow(new Object[]{ 
             p.getIdProducto(), p.getImagen_producto(), p.getNombreProducto(), 1, 
             precioUsar, precioUsar, p.getStockProducto(), p.getImagen_producto(), 
-            imei, p.getDiasGarantia(), p.getIncluyeImpuesto(), p.getPrecioVenta(), p.getPrecioMayorista()
+            imei, p.getDiasGarantia(), p.getIncluyeImpuesto(), p.getPrecioVenta(), p.getPrecioMayorista(), p.getPrecioCompra()
         });
         recalcularTotales();
     }
@@ -676,6 +689,59 @@ public class PanelPuntoVenta extends JPanel {
         }
     }
 
+    private boolean mostrarDialogoCambio(double montoACobrar) {
+        JTextField txtPagaCon = new JTextField();
+        txtPagaCon.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        utilidades.EfectosUI.aplicarFormatoMoneda(txtPagaCon);
+        
+        JLabel lblCambio = new JLabel("Cambio: L 0.00");
+        lblCambio.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        lblCambio.setForeground(new Color(39, 174, 96));
+
+        txtPagaCon.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { calc(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { calc(); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { calc(); }
+            private void calc() {
+                try {
+                    double paga = Double.parseDouble(txtPagaCon.getText().replace(",", ""));
+                    if (paga >= montoACobrar) {
+                        lblCambio.setText(String.format("Cambio: L %,.2f", paga - montoACobrar));
+                        lblCambio.setForeground(new Color(39, 174, 96));
+                    } else {
+                        lblCambio.setText("Monto insuficiente");
+                        lblCambio.setForeground(Color.RED);
+                    }
+                } catch (Exception ex) {
+                    lblCambio.setText("Cambio L 0.00");
+                    lblCambio.setForeground(new Color(39, 174, 96));
+                }
+            }
+        });
+
+        Object[] msg = {
+            "Total a Cobrar: L " + String.format("%,.2f", montoACobrar),
+            "¿Con cuánto paga el cliente?", txtPagaCon,
+            lblCambio
+        };
+
+        while (true) {
+            int op = utilidades.Mensajes.showConfirmDialog(this, msg, "Cálculo de Cambio", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (op != JOptionPane.OK_OPTION) return false;
+            
+            try {
+                double paga = Double.parseDouble(txtPagaCon.getText().replace(",", ""));
+                if (paga < montoACobrar) {
+                    utilidades.Mensajes.showMessageDialog(this, "El monto ingresado es menor al total a cobrar.", "Error", JOptionPane.ERROR_MESSAGE);
+                    continue;
+                }
+                return true;
+            } catch (Exception ex) {
+                utilidades.Mensajes.showMessageDialog(this, "Ingrese un monto numérico válido.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
     private void procesarVenta() {
         if(modeloTablaVentas.getRowCount() == 0) { utilidades.Mensajes.showMessageDialog(this, "La venta est\u00E1 vac\u00EDa.", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE); return; }
         
@@ -758,6 +824,10 @@ public class PanelPuntoVenta extends JPanel {
                     return;
                 }
 
+            if (abono > 0 && pago.nombre.toLowerCase().contains("efectivo")) {
+                if (!mostrarDialogoCambio(abono)) return;
+            }
+
                 // Password signature
                 JPasswordField pfPass = new JPasswordField();
                 int opSign = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Ingrese su contrase\u00F1a para firmar el apartado:", pfPass}, "Firma Requerida", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -791,18 +861,33 @@ public class PanelPuntoVenta extends JPanel {
                 List<DetalleApartado> detallesA = new ArrayList<>();
                 List<Object[]> detallesPDF = new ArrayList<>();
                 for (int i = 0; i < modeloTablaVentas.getRowCount(); i++) {
+                    double pNormal = (double) modeloTablaVentas.getValueAt(i, 11);
+                    double pMayor = (double) modeloTablaVentas.getValueAt(i, 12);
+                    double pActual = (double) modeloTablaVentas.getValueAt(i, 4);
+                    
+                    double pBase = pNormal;
+                    if (memoriaMayoristaActivo && memoriaMayoristaGlobal && pMayor > 0) pBase = pMayor;
+                    
+                    double descuentoFila = pBase - pActual;
+                    if (descuentoFila < 0) descuentoFila = 0;
+                    
+                    String desc = (String) modeloTablaVentas.getValueAt(i, 2);
+                    if (descuentoFila > 0) {
+                        desc = desc + " <DSC:" + String.format("%.2f", descuentoFila).replace(",", ".") + ">";
+                    }
+
                     DetalleApartado d = new DetalleApartado();
                     d.setIdProducto((int) modeloTablaVentas.getValueAt(i, 0));
-                    d.setDescripcionApartado((String) modeloTablaVentas.getValueAt(i, 2));
+                    d.setDescripcionApartado(desc);
                     d.setCantidadApartado((int) modeloTablaVentas.getValueAt(i, 3));
-                    d.setPrecioUnitarioApartado((double) modeloTablaVentas.getValueAt(i, 4));
+                    d.setPrecioUnitarioApartado(pActual);
                     d.setSubtotalApartado((double) modeloTablaVentas.getValueAt(i, 5));
                     d.setIdentificadorSerie(modeloTablaVentas.getValueAt(i, 9) != null ? modeloTablaVentas.getValueAt(i, 9).toString() : null);
                     detallesA.add(d);
 
                     detallesPDF.add(new Object[]{
-                        modeloTablaVentas.getValueAt(i, 0), modeloTablaVentas.getValueAt(i, 8), modeloTablaVentas.getValueAt(i, 2),
-                        modeloTablaVentas.getValueAt(i, 3), modeloTablaVentas.getValueAt(i, 4), modeloTablaVentas.getValueAt(i, 5),
+                        modeloTablaVentas.getValueAt(i, 0), modeloTablaVentas.getValueAt(i, 8), desc,
+                        modeloTablaVentas.getValueAt(i, 3), pActual, modeloTablaVentas.getValueAt(i, 5),
                         modeloTablaVentas.getValueAt(i, 9)
                     });
                 }
@@ -848,22 +933,37 @@ public class PanelPuntoVenta extends JPanel {
         }
 
         JPasswordField pfPass = new JPasswordField();
-        int opcion = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Ingrese su contrase\u00F1a de cajero para autorizar la venta:", pfPass}, "Autorizar Cobro", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        int opcion = utilidades.Mensajes.showConfirmDialog(this, new Object[]{"Ingrese su contraseña de cajero para autorizar la venta:", pfPass}, "Autorizar Cobro", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (opcion != JOptionPane.OK_OPTION) return;
 
         String pass = new String(pfPass.getPassword());
         int idUsuarioAutorizado = dao.obtenerIdUsuarioPorPassword(pass);
 
         if (idUsuarioAutorizado <= 0) {
-            utilidades.Mensajes.showMessageDialog(this, "Contrase\u00F1a incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+            utilidades.Mensajes.showMessageDialog(this, "Contraseña incorrecta o usuario inactivo.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         List<Object[]> detalles = new ArrayList<>();
         for(int i = 0; i < modeloTablaVentas.getRowCount(); i++) {
+            double pNormal = (double) modeloTablaVentas.getValueAt(i, 11);
+            double pMayor = (double) modeloTablaVentas.getValueAt(i, 12);
+            double pActual = (double) modeloTablaVentas.getValueAt(i, 4);
+            
+            double pBase = pNormal;
+            if (memoriaMayoristaActivo && memoriaMayoristaGlobal && pMayor > 0) pBase = pMayor;
+            
+            double descuentoFila = pBase - pActual;
+            if (descuentoFila < 0) descuentoFila = 0;
+            
+            String desc = (String) modeloTablaVentas.getValueAt(i, 2);
+            if (descuentoFila > 0) {
+                desc = desc + " <DSC:" + String.format("%.2f", descuentoFila).replace(",", ".") + ">";
+            }
+
             detalles.add(new Object[]{
-                modeloTablaVentas.getValueAt(i, 0), modeloTablaVentas.getValueAt(i, 8), modeloTablaVentas.getValueAt(i, 2),
-                modeloTablaVentas.getValueAt(i, 3), modeloTablaVentas.getValueAt(i, 4), modeloTablaVentas.getValueAt(i, 5),
+                modeloTablaVentas.getValueAt(i, 0), modeloTablaVentas.getValueAt(i, 8), desc,
+                modeloTablaVentas.getValueAt(i, 3), pActual, modeloTablaVentas.getValueAt(i, 5),
                 modeloTablaVentas.getValueAt(i, 9)
             });
         }
@@ -1296,10 +1396,12 @@ public class PanelPuntoVenta extends JPanel {
         // Inyectamos los nuevos \u00EDconos espec\u00EDficos para cada acci\u00F3n
         JMenuItem itemModPrecio = crearMenuItem("Modificar Precio", new Color(13, 110, 253), new IconoPrecio());
         JMenuItem itemModCant = crearMenuItem("Modificar Cantidad", new Color(39, 174, 96), new IconoCantidad());
+        JMenuItem itemRebaja = crearMenuItem("Aplicar / Quitar Rebaja", new Color(139, 92, 246), new IconoRebaja());
         JMenuItem itemQuitar = crearMenuItem("Quitar Producto", new Color(227, 0, 15), new IconoBasurero());
 
         itemModPrecio.addActionListener(e -> modificarPrecio());
         itemModCant.addActionListener(e -> modificarCantidad());
+        itemRebaja.addActionListener(e -> aplicarRebaja());
         itemQuitar.addActionListener(e -> quitarProducto());
 
         if (memoriaMayoristaActivo && !memoriaMayoristaGlobal) {
@@ -1311,6 +1413,7 @@ public class PanelPuntoVenta extends JPanel {
 
         menu.add(itemModPrecio);
         menu.add(itemModCant);
+        menu.add(itemRebaja);
         menu.addSeparator(); 
         menu.add(itemQuitar);
         
@@ -1337,6 +1440,68 @@ public class PanelPuntoVenta extends JPanel {
         recalcularTotales();
     }
     
+    private void aplicarRebaja() {
+        int f = tablaVentas.getSelectedRow(); if (f < 0) return;
+        
+        double precioCompra = (double) modeloTablaVentas.getValueAt(f, 13);
+        double precioActual = (double) modeloTablaVentas.getValueAt(f, 4);
+        
+        double precioNormal = (double) modeloTablaVentas.getValueAt(f, 11);
+        double precioMayorista = (double) modeloTablaVentas.getValueAt(f, 12);
+        double precioBase = precioNormal;
+        if (memoriaMayoristaActivo && memoriaMayoristaGlobal && precioMayorista > 0) {
+            precioBase = precioMayorista;
+        }
+        
+        double descuentoActual = precioBase - precioActual;
+        if (descuentoActual < 0) descuentoActual = 0.0;
+        
+        JTextField txtMontoRebaja = new JTextField(String.valueOf(descuentoActual));
+        txtMontoRebaja.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        utilidades.EfectosUI.aplicarFormatoMoneda(txtMontoRebaja);
+        
+        // Custom option dialog
+        Object[] options = {"Aplicar Rebaja", "Quitar Rebaja", "Cancelar"};
+        Object[] msgs = {
+            "Precio Original: L " + String.format("%,.2f", precioBase) + "  |  Precio Actual: L " + String.format("%,.2f", precioActual),
+            "Ingrese el descuento total a aplicar (ej. 200):", txtMontoRebaja
+        };
+        
+        int op = JOptionPane.showOptionDialog(this, msgs, "Aplicar Rebaja", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+        
+        if (op == 0) { // Aplicar
+            try {
+                double montoDescuento = Double.parseDouble(txtMontoRebaja.getText().replace(",", ""));
+                double nuevoPrecio = precioBase - montoDescuento;
+                if (nuevoPrecio < precioCompra) {
+                    utilidades.Mensajes.showMessageDialog(this, "No se puede aplicar esta rebaja. El precio resultante es menor al costo de compra permitido.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                int cant = (int) modeloTablaVentas.getValueAt(f, 3);
+                modeloTablaVentas.setValueAt(nuevoPrecio, f, 4);
+                modeloTablaVentas.setValueAt(cant * nuevoPrecio, f, 5);
+                
+                String nombreProd = (String) modeloTablaVentas.getValueAt(f, 2);
+                nombreProd = nombreProd.replaceAll(" \\(Orig: L [\\d.,]+ - Desc: L [\\d.,]+\\)", "").replaceAll(" \\(Desc: L [\\d.,]+\\)", "");
+                modeloTablaVentas.setValueAt(nombreProd, f, 2);
+                
+                recalcularTotales();
+            } catch(NumberFormatException ex) {
+                utilidades.Mensajes.showMessageDialog(this, "Ingrese un monto numérico válido.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (op == 1) { // Quitar
+            int cant = (int) modeloTablaVentas.getValueAt(f, 3);
+            modeloTablaVentas.setValueAt(precioBase, f, 4);
+            modeloTablaVentas.setValueAt(cant * precioBase, f, 5);
+            
+            String nombreProd = (String) modeloTablaVentas.getValueAt(f, 2);
+            nombreProd = nombreProd.replaceAll(" \\(Orig: L [\\d.,]+ - Desc: L [\\d.,]+\\)", "").replaceAll(" \\(Desc: L [\\d.,]+\\)", "");
+            modeloTablaVentas.setValueAt(nombreProd, f, 2);
+            
+            recalcularTotales();
+        }
+    }
+
     private JMenuItem crearMenuItem(String texto, Color colorHover, Icon icono) {
         JMenuItem item = new JMenuItem(texto);
         item.setIcon(icono);
@@ -1427,6 +1592,25 @@ public class PanelPuntoVenta extends JPanel {
             g2.setStroke(new BasicStroke(1.5f));
             g2.drawLine(x + 8, y + 8, x + 8, y + 14);
             g2.drawLine(x + 12, y + 8, x + 12, y + 14);
+            g2.dispose();
+        }
+    }
+
+    private class IconoRebaja implements Icon {
+        @Override public int getIconWidth() { return 20; }
+        @Override public int getIconHeight() { return 20; }
+        @Override public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(c.getForeground());
+            g2.setStroke(new BasicStroke(1.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            
+            g2.drawPolygon(new int[]{x+3, x+12, x+17, x+8}, new int[]{y+3, y+3, y+8, y+17}, 4);
+            g2.drawOval(x+6, y+5, 2, 2);
+            g2.setStroke(new BasicStroke(1.2f));
+            g2.drawLine(x+8, y+13, x+13, y+8);
+            g2.drawOval(x+9, y+9, 1, 1);
+            g2.drawOval(x+11, y+11, 1, 1);
             g2.dispose();
         }
     }

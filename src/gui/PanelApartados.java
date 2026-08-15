@@ -235,7 +235,7 @@ public class PanelApartados extends JPanel {
         Apartado ap = dao.obtenerPorId(id);
         
         if (ap == null) return;
-        if (ap.getEstadoApartado().equalsIgnoreCase("Cancelado") || ap.getEstadoApartado().equalsIgnoreCase("Entregado")) {
+        if (ap.getEstadoApartado().equalsIgnoreCase("Cancelado") || ap.getEstadoApartado().equalsIgnoreCase("Entregado") || ap.getEstadoApartado().equalsIgnoreCase("Pagado")) {
             utilidades.Mensajes.showMessageDialog(this, "No se pueden aplicar abonos a apartados en estado: " + ap.getEstadoApartado(), "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }

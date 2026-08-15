@@ -2,11 +2,11 @@ package gui;
 
 import dao.VentasDAO;
 
-import utilidades.GeneradorTickets;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.io.File;
+
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;

@@ -11,7 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
+
 
 import org.bytedeco.opencv.opencv_core.Mat;
 import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
@@ -22,7 +22,6 @@ public class DialogoRegistroBiometrico extends JDialog {
     private ReconocimientoFacial reconocedor;
     private BiometriaDAO biometriaDAO;
     
-    private int idUsuario;
     private int labelId;
     private int fotosTomadas = 0;
     private final int MAX_FOTOS = 30;
@@ -31,7 +30,6 @@ public class DialogoRegistroBiometrico extends JDialog {
 
     public DialogoRegistroBiometrico(Frame parent, int idUsuario) {
         super(parent, "Registro Biom\u00E9trico", true);
-        this.idUsuario = idUsuario;
         setSize(640, 560);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());

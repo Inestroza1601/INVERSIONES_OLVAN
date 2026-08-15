@@ -32,7 +32,7 @@ public class MenuPrincipal extends JFrame {
     private final Color COLOR_FONDO_APP = new Color(232, 243, 236); // Verde Pastel Suave para Fondos
     private final Color COLOR_TEXTO_MENU = new Color(28, 59, 45); // Forest vintage suave para opciones
     private final Color COLOR_VERDE_EMERALD = new Color(45, 106, 79); // Verde Bosque Vintage Elegante
-    private final Color COLOR_VERDE_OSCURO = Color.BLACK; // Negro puro para opci\u00F3n activa
+
     private final Color COLOR_VERDE_HOVER = new Color(192, 218, 204); // Verde vintage suave hover
     private final Color COLOR_ROJO_PELIGRO = new Color(239, 68, 68);
     private final Color COLOR_ROJO_HOVER = new Color(254, 226, 226);
